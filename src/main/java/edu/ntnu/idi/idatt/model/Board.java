@@ -1,5 +1,7 @@
 package edu.ntnu.idi.idatt.model;
 
+import edu.ntnu.idi.idatt.model.Tile.Tile;
+
 import java.util.ArrayList;
 import java.util.List;
 
