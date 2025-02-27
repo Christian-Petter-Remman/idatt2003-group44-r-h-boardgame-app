@@ -1,11 +1,11 @@
-package edu.ntnu.idi.idatt.model;
+package edu.ntnu.idi.idatt.model.Tile;
 
 /**
  * Represents a single tile on the snakes and ladders game board.
  */
 public class Tile {
-  private int numberOfTile; // The tile's position on the board
-  private int destination; // Destination for ladders or snakes (-1 if none)
+  private int numberOfTile;
+  private int destination;
 
   /**
    * Constructor for a normal tile without ladders or snakes.
