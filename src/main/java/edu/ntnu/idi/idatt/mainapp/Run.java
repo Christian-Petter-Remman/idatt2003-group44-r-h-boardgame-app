@@ -15,7 +15,7 @@ public class Run {
     Player player2 = new Player("Christian");
     Dice dice = new Dice(1);
     Board board = new Board();
-    LadderTile.createLadder(1,10);
+    LadderTile TwelveToSixteen = new LadderTile(12,16); // Hva tenker vi om denne metoden
 
 
 
