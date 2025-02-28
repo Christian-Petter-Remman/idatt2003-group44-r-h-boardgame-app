@@ -1,5 +1,7 @@
 package edu.ntnu.idi.idatt.model;
 
+import edu.ntnu.idi.idatt.model.Tile.LadderTile;
+import edu.ntnu.idi.idatt.model.Tile.SnakeTile;
 import edu.ntnu.idi.idatt.model.Tile.Tile;
 
 import java.util.ArrayList;
@@ -14,9 +16,12 @@ public class Board {
       tiles.add(new Tile(i)); // Initialize normal tiles
     }
 
-
-    tiles.set(2, new Tile(3, 22));
-    tiles.set(24, new Tile(25, 5));
+    tiles.set(1-1 , new LadderTile(1, 21));
+    tiles.set(2-1  , new LadderTile(2, 22));
+    tiles.set(3-1 , new LadderTile(3, 23));
+    tiles.set(4-1 , new LadderTile(4, 24));
+    tiles.set(5-1, new LadderTile(5, 25));
+    tiles.set(6-1, new LadderTile(6, 16));
   }
 
   public Tile getTile(int number) {

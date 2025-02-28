@@ -4,6 +4,7 @@ import edu.ntnu.idi.idatt.model.Board;
 import edu.ntnu.idi.idatt.model.Dice;
 import edu.ntnu.idi.idatt.model.Player;
 import edu.ntnu.idi.idatt.model.Tile.LadderTile;
+import edu.ntnu.idi.idatt.model.Tile.SnakeTile;
 
 import java.util.Scanner;
 
@@ -15,7 +16,7 @@ public class Run {
     Player player2 = new Player("Christian");
     Dice dice = new Dice(1);
     Board board = new Board();
-    LadderTile TwelveToSixteen = new LadderTile(12,16); // Hva tenker vi om denne metoden
+
 
 
 
