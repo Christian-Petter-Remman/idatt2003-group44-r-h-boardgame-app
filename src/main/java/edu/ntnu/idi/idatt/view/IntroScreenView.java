@@ -23,7 +23,7 @@ public class IntroScreenView {
       titleLabel.setFont(Font.font("Century Gothic", 32));
       titleLabel.setAlignment(Pos.CENTER);
 
-      Image image1 = new Image("snakesnladders.png");
+      Image image1 = new Image("images/snakesnladders.png");
       HBox imageBox = getHBox(image1);
 
       VBox root = new VBox(20, titleLabel, imageBox);
@@ -42,13 +42,13 @@ public class IntroScreenView {
     imageView1.setFitWidth(200);
     imageView1.setPreserveRatio(false);
 
-    Image image2 = new Image("black.png");
+    Image image2 = new Image("images/black.png");
     ImageView imageView2 = new ImageView(image2);
     imageView2.setFitHeight(150);
     imageView2.setFitWidth(200);
     imageView2.setPreserveRatio(false);
 
-    Image image3 = new Image("black.png");
+    Image image3 = new Image("images/black.png");
     ImageView imageView3 = new ImageView(image3);
     imageView3.setFitHeight(150);
     imageView3.setFitWidth(200);
