@@ -1,5 +1,6 @@
      package edu.ntnu.idi.idatt.model;
 
+     import edu.ntnu.idi.idatt.model.common.dice.Dice;
      import org.junit.jupiter.api.Test;
      import static org.junit.jupiter.api.Assertions.*;
 
