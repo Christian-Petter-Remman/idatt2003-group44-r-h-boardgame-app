@@ -15,21 +15,15 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- Dependency versions -->
-    <javafx.version>21.0.2</javafx.version>
-    <junit.version>5.9.2</junit.version>
+    <javafx.version>23.0.1</javafx.version>
+    <junit.version>5.11.4</junit.version>
   </properties>
 
   <dependencies>
     <!-- JUnit Dependencies -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
+      <artifactId>junit-jupiter</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
@@ -74,8 +68,15 @@
         <version>0.0.8</version>
         <configuration>
           <!-- Replace with your main class -->
-          <mainClass>edu.ntnu.idi.idatt.controller.Test</mainClass>
+          <mainClass>edu.ntnu.idi.idatt</mainClass>
         </configuration>
+      </plugin>
+
+      <!-- Maven Javadoc Plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.11.2</version>
       </plugin>
     </plugins>
   </build>
