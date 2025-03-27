@@ -1,13 +1,21 @@
 package edu.ntnu.idi.idatt.model.boardgames.snakesladders;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.LadderTile;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.SnakeTile;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Tile;
 
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Board {
+
   private List<Tile> tiles;
 
   public Board() {
@@ -65,4 +73,26 @@ public class Board {
   public void setTiles(List<Tile> tiles) {
     this.tiles = tiles;
   }
+
+  public boolean saveToJson(String filePath) {
+    try (Writer writer = new FileWriter(filePath)) {
+      Gson gson = new GsonBuilder().setPrettyPrinting().create();
+      gson.toJson(this, writer);
+      return true;
+    } catch (IOException e) {
+      System.err.println("Error saving to JSON " + e.getMessage());
+      return false;
+    }
+  }
+
+  public static Board loadFromJson(String filePath) {
+    try (Reader reader = new FileReader(filePath)) {
+      Gson gson = new GsonBuilder().create();
+      return gson.fromJson(reader, Board.class);
+    } catch (IOException e) {
+      System.err.println("Error loading from JSON: " + e.getMessage());
+      return null;
+    }
+  }
 }
+
