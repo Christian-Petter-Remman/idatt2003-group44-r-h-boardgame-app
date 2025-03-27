@@ -17,6 +17,14 @@ public class Dice {
     }
   }
 
+  public List<Integer> getLastRolls() {
+    List<Integer> rolls = new ArrayList<>();
+    for (Die die : dice) {
+      rolls.add(die.getFaceValue());
+    }
+    return rolls;
+  }
+
   public int roll() {
     return dice.stream()
         .mapToInt(Die::roll)
