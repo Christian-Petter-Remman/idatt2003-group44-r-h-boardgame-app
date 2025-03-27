@@ -1,5 +1,6 @@
 package edu.ntnu.idi.idatt.view;
 
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -12,7 +13,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class IntroScreenView {
-    private final Stage primaryStage;
+  private final Stage primaryStage;
 
     public IntroScreenView(Stage primaryStage) {
       this.primaryStage = primaryStage;
@@ -35,6 +36,9 @@ public class IntroScreenView {
       primaryStage.setScene(scene);
       primaryStage.show();
     }
+
+  public void setGame(SnakesAndLadders game) {
+  }
 
   private static HBox getHBox(Image image1) {
     ImageView imageView1 = new ImageView(image1);
