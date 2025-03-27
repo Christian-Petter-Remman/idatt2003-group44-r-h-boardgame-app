@@ -15,7 +15,7 @@ public class Board {
   private List<Tile> tiles;
 
   public Board() {
-    initializeDefaultTiles(); // bare tomme ruter 1-100
+    initializeDefaultTiles();
   }
 
   private void initializeDefaultTiles() {
