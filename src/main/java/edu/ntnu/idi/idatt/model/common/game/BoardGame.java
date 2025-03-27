@@ -1,5 +1,6 @@
 package edu.ntnu.idi.idatt.model.common.game;
 
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
 import edu.ntnu.idi.idatt.model.common.player.Player;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,5 +30,6 @@ public abstract class BoardGame {
   public boolean isGameOver() {
     return gameOver;
   }
-}
 
+  public abstract Board getBoard();
+}
