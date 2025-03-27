@@ -64,6 +64,10 @@ public class SnakesAndLadders extends BoardGame {
     return dice.roll();
   }
 
+  public void setDice(Dice dice) {
+    this.dice = dice;
+  }
+
   public Player getWinner() {
     return players.stream()
         .filter(Player::hasWon)
@@ -111,4 +115,5 @@ public class SnakesAndLadders extends BoardGame {
       return false;
     }
   }
+
 }

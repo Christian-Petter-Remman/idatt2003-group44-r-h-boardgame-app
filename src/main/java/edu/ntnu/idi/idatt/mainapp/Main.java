@@ -1,5 +1,9 @@
 package edu.ntnu.idi.idatt.mainapp;
 
+import edu.ntnu.idi.idatt.exceptions.CsvFormatException;
+import edu.ntnu.idi.idatt.exceptions.FileReadException;
+import edu.ntnu.idi.idatt.exceptions.FileWriteException;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.view.ConsoleUI;
@@ -10,23 +14,17 @@ public class Main {
   private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
   public static void main(String[] args) {
-    logger.info("Starting Snakes and Ladders application");
+    try {
+      FileManager.ensureApplicationDirectoriesExist();
+      FileManager.saveDefaultBoard(new Board());
 
-    FileManager.ensureApplicationDirectoriesExist();
+      int players = FileManager.loadOrCreateDefaultPlayers(new SnakesAndLadders());
+      System.out.println("Players loaded: " + players);
 
-    SnakesAndLadders game = new SnakesAndLadders();
-    game.initialize();
+    } catch (FileReadException | FileWriteException | CsvFormatException e) {
+      System.err.println("Startup error: " + e.getMessage());
+      e.printStackTrace();
 
-    FileManager.saveDefaultBoard(game.getBoard());
-
-    FileManager.loadOrCreateDefaultPlayers(game);
-
-    logger.info("Starting console UI");
-    ConsoleUI ui = new ConsoleUI(game);
-    ui.start();
-
-    FileManager.saveLastGamePlayers(game);
-
-    logger.info("Application shutting down");
+    }
   }
 }

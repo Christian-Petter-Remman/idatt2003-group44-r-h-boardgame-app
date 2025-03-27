@@ -16,6 +16,10 @@ public class Die {
     this.random = new Random();
   }
 
+  public int getFaceValue() {
+    return faceValue;
+  }
+
   public int roll() {
     faceValue = random.nextInt(sides) + 1;
     return faceValue;
