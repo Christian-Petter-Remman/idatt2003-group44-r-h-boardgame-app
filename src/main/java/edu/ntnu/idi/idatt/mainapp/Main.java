@@ -28,16 +28,26 @@ public class Main {
   }
 
   private static void ensureApplicationDirectoriesExist() {
-    File logsDir = new File("logs");
-    boolean created = logsDir.mkdirs();
-    if (created) {
-      System.out.println("Logs directory created at: " + logsDir.getAbsolutePath());
-    } else {
-      if (logsDir.exists()) {
-        System.out.println("Logs directory already exists");
-      } else {
-        System.out.println("Failed to create logs directory");
+      String[] directories = {
+          "logs",
+          "data",
+          "data/players",
+          "data/saved_games",
+          "data/custom_boards"
+      };
+
+      for (String dir : directories) {
+        File directory = new File(dir);
+        if (!directory.exists()) {
+          boolean created = directory.mkdirs();
+          if (created) {
+            System.out.println("Directory created at: " + directory.getAbsolutePath());
+          } else {
+            System.out.println("Failed to create directory: " + directory.getAbsolutePath());
+          }
+        } else {
+          System.out.println("Directory already exists: " + directory.getAbsolutePath());
+        }
       }
-    }
   }
 }
