@@ -1,11 +1,15 @@
 package edu.ntnu.idi.idatt.filehandling;
 
+import edu.ntnu.idi.idatt.exceptions.CsvFormatException;
+import edu.ntnu.idi.idatt.exceptions.FileReadException;
+import edu.ntnu.idi.idatt.exceptions.FileWriteException;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 
 public class FileManager {
   private static final Logger logger = LoggerFactory.getLogger(FileManager.class);
@@ -22,11 +26,11 @@ public class FileManager {
 
   public static void ensureApplicationDirectoriesExist() {
     String[] directories = {
-        LOGS_DIR,
-        DATA_DIR,
-        PLAYERS_DIR,
-        SAVED_GAMES_DIR,
-        CUSTOM_BOARDS_DIR
+            LOGS_DIR,
+            DATA_DIR,
+            PLAYERS_DIR,
+            SAVED_GAMES_DIR,
+            CUSTOM_BOARDS_DIR
     };
 
     for (String dir : directories) {
@@ -42,22 +46,23 @@ public class FileManager {
     }
   }
 
-  public static boolean saveDefaultBoard(Board board) {
+  public static void saveDefaultBoard(Board board) throws FileWriteException {
     File boardsDir = new File(CUSTOM_BOARDS_DIR);
     if (!boardsDir.exists()) {
       boardsDir.mkdirs();
     }
 
-    if (board.saveToJson(DEFAULT_BOARD_FILE)) {
-      logger.info("Saved default board to JSON: {}", DEFAULT_BOARD_FILE);
-      return true;
-    } else {
+    if (!board.saveToJson(DEFAULT_BOARD_FILE)) {
       logger.error("Failed to save default board to JSON: {}", DEFAULT_BOARD_FILE);
-      return false;
+      throw new FileWriteException("Could not save default board to file: " + DEFAULT_BOARD_FILE);
     }
+
+    logger.info("Saved default board to JSON: {}", DEFAULT_BOARD_FILE);
   }
 
-  public static int loadOrCreateDefaultPlayers(SnakesAndLadders game) {
+  public static int loadOrCreateDefaultPlayers(SnakesAndLadders game)
+          throws FileReadException, CsvFormatException, FileWriteException {
+
     File playersFile = new File(DEFAULT_PLAYERS_FILE);
     int playersLoaded = 0;
 
@@ -65,25 +70,32 @@ public class FileManager {
       playersLoaded = game.loadPlayersFromCsv(playersFile.getPath());
       logger.info("Loaded {} players from CSV: {}", playersLoaded, playersFile.getPath());
     }
+
     if (playersLoaded == 0) {
       logger.info("No players loaded from CSV. Creating default players");
+
       game.addPlayer("Player 1");
       game.addPlayer("Player 2");
 
-      game.savePlayersToCsv(playersFile.getPath());
+      boolean saved = game.savePlayersToCsv(playersFile.getPath());
+      if (!saved) {
+        throw new FileWriteException("Failed to save default players to CSV");
+      }
+
       logger.info("Saved default players to CSV: {}", playersFile.getPath());
       return 2;
     }
+
     return playersLoaded;
   }
 
-  public static boolean saveLastGamePlayers(SnakesAndLadders game) {
+  public static void saveLastGamePlayers(SnakesAndLadders game) throws FileWriteException {
     boolean success = game.savePlayersToCsv(LAST_GAME_PLAYERS_FILE);
-    if (success) {
-      logger.info("Saved last game players to CSV: {}", LAST_GAME_PLAYERS_FILE);
-    } else {
+    if (!success) {
       logger.error("Failed to save last game players to CSV: {}", LAST_GAME_PLAYERS_FILE);
+      throw new FileWriteException("Could not save last game players to: " + LAST_GAME_PLAYERS_FILE);
     }
-    return success;
+
+    logger.info("Saved last game players to CSV: {}", LAST_GAME_PLAYERS_FILE);
   }
 }
