@@ -2,6 +2,7 @@ package edu.ntnu.idi.idatt.model.boardgames.snakesladders;
 
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Tile;
 import edu.ntnu.idi.idatt.model.common.player.Player;
+import edu.ntnu.idi.idatt.testutil.FixedDice;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,5 +37,22 @@ class SnakesAndLaddersTest {
     game.makeMove(first);
     Player second = game.getCurrentPlayer();
     assertNotEquals(first, second, "Player turn should change after move");
+  }
+
+  @Test
+  void testPlayerWinsWithExactRoll() {
+    game = new SnakesAndLadders();
+    game.addPlayer("Tester");
+    game.initialize();
+
+    Player p = game.getCurrentPlayer();
+    p.setPosition(97);
+
+    game.setDice(new FixedDice(3));
+
+    game.makeMove(p);
+
+    assertTrue(p.hasWon());
+    assertEquals(p, game.getWinner());
   }
 }
