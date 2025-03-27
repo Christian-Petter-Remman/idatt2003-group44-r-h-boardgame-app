@@ -79,6 +79,10 @@ public class SnakesAndLadders extends BoardGame {
     addPlayer(new SnakesAndLaddersPlayer(name));
   }
 
+  public void advanceTurn() {
+    currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+  }
+
   public int loadPlayersFromCsv(String filePath) {
     int playersAdded = 0;
 

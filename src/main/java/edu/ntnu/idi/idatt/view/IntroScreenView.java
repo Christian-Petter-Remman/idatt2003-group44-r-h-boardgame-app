@@ -1,66 +1,62 @@
 package edu.ntnu.idi.idatt.view;
 
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
-import javafx.geometry.Insets;
+import edu.ntnu.idi.idatt.view.GameScreenView;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class IntroScreenView {
-  private final Stage primaryStage;
 
-    public IntroScreenView(Stage primaryStage) {
-      this.primaryStage = primaryStage;
-    }
+  private final Stage stage;
 
-    public void show() {
-      Label titleLabel = new Label("The BoardGame App");
-      titleLabel.setFont(Font.font("Century Gothic", 32));
-      titleLabel.setAlignment(Pos.CENTER);
-
-      Image image1 = new Image("images/snakesnladders.png");
-      HBox imageBox = getHBox(image1);
-
-      VBox root = new VBox(20, titleLabel, imageBox);
-      root.setAlignment(Pos.CENTER);
-      root.setPadding(new Insets(10));
-
-      Scene scene = new Scene(root);
-      primaryStage.setTitle("BoardGame App");
-      primaryStage.setScene(scene);
-      primaryStage.show();
-    }
-
-  public void setGame(SnakesAndLadders game) {
+  public IntroScreenView(Stage stage) {
+    this.stage = stage;
   }
 
-  private static HBox getHBox(Image image1) {
-    ImageView imageView1 = new ImageView(image1);
-    imageView1.setFitHeight(150);
-    imageView1.setFitWidth(200);
-    imageView1.setPreserveRatio(false);
+  public void show() {
+    Label titleLabel = new Label("Snakes and Ladders");
+    titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
 
-    Image image2 = new Image("images/black.png");
-    ImageView imageView2 = new ImageView(image2);
-    imageView2.setFitHeight(150);
-    imageView2.setFitWidth(200);
-    imageView2.setPreserveRatio(false);
+    TextField player1Field = new TextField();
+    player1Field.setPromptText("Player 1 name");
 
-    Image image3 = new Image("images/black.png");
-    ImageView imageView3 = new ImageView(image3);
-    imageView3.setFitHeight(150);
-    imageView3.setFitWidth(200);
-    imageView3.setPreserveRatio(false);
+    TextField player2Field = new TextField();
+    player2Field.setPromptText("Player 2 name");
 
-    HBox imageBox = new HBox(20, imageView1, imageView2, imageView3);
-    imageBox.setAlignment(Pos.CENTER);
-    imageBox.setPadding(new Insets(10));
-    return imageBox;
+    Button startButton = new Button("Start Game");
+    startButton.setOnAction(e -> {
+      String name1 = player1Field.getText().trim();
+      String name2 = player2Field.getText().trim();
+
+      if (name1.isEmpty() || name2.isEmpty()) {
+        showAlert("Please enter names for both players.");
+        return;
+      }
+
+      SnakesAndLadders game = new SnakesAndLadders();
+      game.addPlayer(name1);
+      game.addPlayer(name2);
+      game.initialize();
+
+      GameScreenView gameScreen = new GameScreenView(stage, game);
+      gameScreen.show();
+    });
+
+    VBox root = new VBox(10, titleLabel, player1Field, player2Field, startButton);
+    root.setAlignment(Pos.CENTER);
+    root.setStyle("-fx-padding: 30px;");
+
+    stage.setScene(new Scene(root, 400, 300));
+    stage.setTitle("Snakes and Ladders - Intro");
+    stage.show();
+  }
+
+  private void showAlert(String message) {
+    Alert alert = new Alert(Alert.AlertType.WARNING, message, ButtonType.OK);
+    alert.setHeaderText(null);
+    alert.showAndWait();
   }
 }

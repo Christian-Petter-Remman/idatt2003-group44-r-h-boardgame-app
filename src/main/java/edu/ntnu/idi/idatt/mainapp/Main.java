@@ -1,30 +1,36 @@
 package edu.ntnu.idi.idatt.mainapp;
 
-import edu.ntnu.idi.idatt.exceptions.CsvFormatException;
-import edu.ntnu.idi.idatt.exceptions.FileReadException;
-import edu.ntnu.idi.idatt.exceptions.FileWriteException;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
-import edu.ntnu.idi.idatt.filehandling.FileManager;
-import edu.ntnu.idi.idatt.view.ConsoleUI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import edu.ntnu.idi.idatt.view.IntroScreenView;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
-public class Main {
-  private static final Logger logger = LoggerFactory.getLogger(Main.class);
+public class Main extends Application {
+
+  @Override
+  public void start(Stage primaryStage) {
+    try {
+      // Start GUI på Intro-skjermen
+      IntroScreenView introScreenView = new IntroScreenView(primaryStage);
+      introScreenView.show();
+
+    } catch (Exception e) {
+      showStartupError("Startup Error", e.getMessage());
+      e.printStackTrace(); // Du kan bruke logger her senere
+    }
+  }
+
+  private void showStartupError(String title, String message) {
+    javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+            javafx.scene.control.Alert.AlertType.ERROR,
+            message,
+            javafx.scene.control.ButtonType.OK
+    );
+    alert.setTitle(title);
+    alert.setHeaderText(null);
+    alert.showAndWait();
+  }
 
   public static void main(String[] args) {
-    try {
-      FileManager.ensureApplicationDirectoriesExist();
-      FileManager.saveDefaultBoard(new Board());
-
-      int players = FileManager.loadOrCreateDefaultPlayers(new SnakesAndLadders());
-      System.out.println("Players loaded: " + players);
-
-    } catch (FileReadException | FileWriteException | CsvFormatException e) {
-      System.err.println("Startup error: " + e.getMessage());
-      e.printStackTrace();
-
-    }
+    launch(args);
   }
 }

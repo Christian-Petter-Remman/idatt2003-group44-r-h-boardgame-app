@@ -101,7 +101,7 @@
         <version>0.0.8</version>
         <configuration>
           <!-- Replace with your main class -->
-          <mainClass>edu.ntnu.idi.idatt.mainapp.MainGUI</mainClass>
+          <mainClass>edu.ntnu.idi.idatt.mainapp.Main</mainClass>
         </configuration>
       </plugin>
 

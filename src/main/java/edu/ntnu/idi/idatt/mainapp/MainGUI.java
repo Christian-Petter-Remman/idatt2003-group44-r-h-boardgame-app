@@ -22,7 +22,6 @@ public class MainGUI extends Application {
       FileManager.loadOrCreateDefaultPlayers(game);
 
       IntroScreenView introScreenView = new IntroScreenView(primaryStage);
-      introScreenView.setGame(game);
       introScreenView.show();
 
     } catch (FileReadException | FileWriteException | CsvFormatException e) {
