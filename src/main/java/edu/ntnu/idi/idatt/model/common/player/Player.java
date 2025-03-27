@@ -25,5 +25,5 @@ public abstract class Player {
 
   public abstract boolean hasWon();
 
-  public abstract void move(int steps, Object gameContext);
+  public abstract <T> void move(int steps, T gameContext);
 }

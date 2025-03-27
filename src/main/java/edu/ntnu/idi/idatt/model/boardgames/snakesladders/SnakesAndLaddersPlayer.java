@@ -11,7 +11,7 @@ public class SnakesAndLaddersPlayer extends Player {
 
   @Override
   public int getStartPosition() {
-    return 1;
+    return 0;
   }
 
   @Override
@@ -20,23 +20,22 @@ public class SnakesAndLaddersPlayer extends Player {
   }
 
   @Override
-  public void move(int steps, Object gameContext) {
+  public <T> void move(int steps, T gameContext) {
     if (!(gameContext instanceof Board board)) {
       throw new IllegalArgumentException("Game context must be a Board for SnakesAndLaddersPlayer");
     }
 
     int newPosition = getPosition() + steps;
-
-    if (newPosition > 100) {
-      return;
-    }
+    if (newPosition > 100) return;
 
     setPosition(newPosition);
+    applyTileEffect(board);
+  }
 
-    Tile currentTile = board.getTile(getPosition());
-    if (currentTile.hasSnakeOrLadder()) {
-      setPosition(currentTile.getDestination());
+  private void applyTileEffect(Board board) {
+    Tile tile = board.getTile(getPosition());
+    if (tile.hasSnakeOrLadder()) {
+      setPosition(tile.getDestination());
     }
-
   }
 }
