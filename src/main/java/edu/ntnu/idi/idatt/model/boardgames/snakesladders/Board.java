@@ -14,6 +14,14 @@ public class Board {
     initializeBoard();
   }
 
+  public Board(boolean initialize) {
+    if (initialize) {
+      initializeBoard();
+    } else {
+      tiles = new ArrayList<>();
+    }
+  }
+
   private void initializeBoard() {
     tiles = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -48,5 +56,13 @@ public class Board {
 
   public Tile getTile(int number) {
     return tiles.get(number - 1);
+  }
+
+  public List<Tile> getTiles() {
+    return tiles;
+  }
+
+  public void setTiles(List<Tile> tiles) {
+    this.tiles = tiles;
   }
 }
