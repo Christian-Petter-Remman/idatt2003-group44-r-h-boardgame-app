@@ -52,7 +52,7 @@ public class Board {
     }
   }
 
-  private void addDefaultLadders() {
+  public void addDefaultLadders() {
     addLadder(1, 38);
     addLadder(4, 14);
     addLadder(9, 31);
@@ -64,7 +64,7 @@ public class Board {
     logger.info("Added default ladders to the board");
   }
 
-  private void addDefaultSnakes() {
+  public void addDefaultSnakes() {
     addSnake(17, 7);
     addSnake(54, 34);
     addSnake(62, 19);
