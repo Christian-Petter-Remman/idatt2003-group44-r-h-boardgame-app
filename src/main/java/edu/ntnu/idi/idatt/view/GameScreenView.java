@@ -2,15 +2,14 @@ package edu.ntnu.idi.idatt.view;
 
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.common.player.Player;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class GameScreenView {
-
   private final Stage stage;
   private final SnakesAndLadders game;
 
@@ -19,6 +18,7 @@ public class GameScreenView {
   private Label diceResultLabel;
   private Label positionLabel;
   private Button rollButton;
+  private Button backButton;
 
   public GameScreenView(Stage stage, SnakesAndLadders game) {
     this.stage = stage;
@@ -33,11 +33,22 @@ public class GameScreenView {
     positionLabel = new Label("Position: -");
 
     rollButton = new Button("Roll Dice");
+    rollButton.setStyle("-fx-font-size: 14px;");
     rollButton.setOnAction(e -> handleRoll());
 
+    backButton = new Button("Back");
+    backButton.setStyle("-fx-font-size: 14px;");
+    backButton.setOnAction(e -> {
+              IntroScreenView intro = new IntroScreenView(stage);
+              intro.show();
+            });
+
     boardView = new BoardView(game.getBoard(), game.getPlayers());
+    HBox backBox = new HBox(backButton);
+    backBox.setAlignment(Pos.CENTER_LEFT);
 
     VBox root = new VBox(15,
+            backBox,
             currentPlayerLabel,
             diceResultLabel,
             positionLabel,
@@ -46,10 +57,8 @@ public class GameScreenView {
     );
     root.setAlignment(Pos.CENTER);
     root.setStyle("-fx-padding: 20px;");
-
-    updateView(); // viktig
-
-    stage.setScene(new Scene(root, 600, 700)); // litt større høyde!
+    updateView();
+    stage.setScene(new Scene(root, 600, 700));
     stage.setTitle("Snakes and Ladders - Game");
     stage.show();
   }
@@ -57,9 +66,7 @@ public class GameScreenView {
   private void handleRoll() {
     Player currentPlayer = game.getCurrentPlayer();
     int roll = game.rollDice();
-
     currentPlayer.move(roll, game.getBoard());
-
     diceResultLabel.setText("Roll result: " + roll);
     positionLabel.setText("Position: " + currentPlayer.getPosition());
 
@@ -67,10 +74,8 @@ public class GameScreenView {
       showWinner(currentPlayer);
     } else {
       game.advanceTurn();
-
       updateView();
       boardView.render();
-
     }
   }
 
@@ -78,7 +83,6 @@ public class GameScreenView {
     Player currentPlayer = game.getCurrentPlayer();
     currentPlayerLabel.setText("Current turn: " + currentPlayer.getName());
     positionLabel.setText("Position: " + currentPlayer.getPosition());
-
   }
 
   private void showWinner(Player winner) {
@@ -87,7 +91,6 @@ public class GameScreenView {
     alert.setHeaderText("🎉 " + winner.getName() + " has won the game!");
     alert.setContentText("Final position: " + winner.getPosition());
     alert.showAndWait();
-
     rollButton.setDisable(true);
   }
 }

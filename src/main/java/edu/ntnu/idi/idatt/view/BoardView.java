@@ -30,7 +30,7 @@ public class BoardView extends GridPane {
     for (int i = 0; i < 100; i++) {
       int tileNum = i + 1;
       StackPane cell = new StackPane();
-      cell.setPrefSize(50, 50);
+      cell.setPrefSize(100, 100);
       cell.setStyle("-fx-border-color: black; -fx-background-color: white;");
 
       StringBuilder cellText = new StringBuilder(String.valueOf(tileNum));
@@ -44,7 +44,7 @@ public class BoardView extends GridPane {
       cell.getChildren().add(new Text(cellText.toString()));
 
       int row = 9 - i / 10;
-      int col = (row % 2 == 0) ? i % 10 : 9 - (i % 10); // for "slange-mønster" visning
+      int col = (row % 2 == 0) ? i % 10 : 9 - (i % 10);
 
       add(cell, col, row);
     }
