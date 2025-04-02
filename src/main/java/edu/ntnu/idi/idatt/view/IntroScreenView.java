@@ -42,11 +42,16 @@ public class IntroScreenView {
   );
 
   public void show() {
-    Label header = new Label("Snakes and Ladders");
+    Label header = new Label("Chose your Characters");
+    Label gameLabel = new Label("Snakes and Ladders");
     header.setStyle("-fx-font-weight: bold ; -fx-font-size: 24px;");
+    gameLabel.setStyle("-fx-font-weight: bold ; -fx-font-size: 18px;");
+
+    Button backButton = new Button("Back");
+    backButton.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
 
     Button startButton = new Button("Start");
-    startButton.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+    startButton.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
     startButton.setOnAction(e -> {
       List<SnakesAndLaddersPlayer> players = new ArrayList<>();
       players.add(createSnakesAndLaddersPlayer(player1Name, player1Character));
@@ -87,7 +92,18 @@ public class IntroScreenView {
     VBox centerBox = new VBox(40, row1, row2);
     centerBox.setAlignment(Pos.CENTER);
 
-    VBox root = new VBox(50, header, centerBox, startButton);
+    HBox headerBox = new HBox(header);
+    headerBox.setAlignment(Pos.CENTER);
+
+    HBox gameLabelBox = new HBox(gameLabel);
+    gameLabelBox.setAlignment(Pos.CENTER_RIGHT);
+
+    VBox headerElements = new VBox(gameLabelBox, headerBox);
+
+    HBox buttonBox = new HBox(100, backButton, startButton);
+    buttonBox.setAlignment(Pos.CENTER);
+
+    VBox root = new VBox(50, headerElements, centerBox, buttonBox);
     root.setAlignment(Pos.TOP_CENTER);
     root.setPadding(new Insets(40));
     root.setStyle("-fx-background-color: white;");
