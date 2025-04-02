@@ -10,9 +10,14 @@ public class Main extends Application {
   @Override
   public void start(Stage primaryStage) {
     try {
+      // Sett opp fullscreen direkte
+      primaryStage.setFullScreen(true);
+      primaryStage.setFullScreenExitHint("");
+      primaryStage.setFullScreenExitKeyCombination(javafx.scene.input.KeyCombination.NO_MATCH);
 
-      SnakesAndLaddersCharacterSelectionView snake = new SnakesAndLaddersCharacterSelectionView(primaryStage);
-      snake.show();
+      // Start intro
+      IntroScreenView start = new IntroScreenView(primaryStage);
+      start.show();
 
     } catch (Exception e) {
       showStartupError("Startup Error", e.getMessage());

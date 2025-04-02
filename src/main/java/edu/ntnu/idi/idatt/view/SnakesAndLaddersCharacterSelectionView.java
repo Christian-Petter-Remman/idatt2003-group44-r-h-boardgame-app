@@ -16,6 +16,12 @@ public class SnakesAndLaddersCharacterSelectionView extends AbstractCharacterSel
   }
 
   @Override
+  protected String getBackgroundStyle() {
+
+     return "-fx-background-image: url('images/bakgrun snake.jpg'); -fx-background-size: cover;";
+  }
+
+  @Override
   protected String getHeaderText() {
     return "Choose your Characters";
   }

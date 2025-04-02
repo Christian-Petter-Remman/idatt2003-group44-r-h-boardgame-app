@@ -2,12 +2,14 @@ package edu.ntnu.idi.idatt.view;
 
 import edu.ntnu.idi.idatt.filehandling.PlayerCsvHandler;
 import edu.ntnu.idi.idatt.model.common.player.Player;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
@@ -31,6 +33,8 @@ public abstract class AbstractCharacterSelectionView {
   protected String player2Name = "Player 2";
   protected String player3Name = "Player 3";
   protected String player4Name = "Player 4";
+
+  protected abstract String getBackgroundStyle();
 
   protected final List<String> availableCharacters = List.of(
           "bowser", "peach", "mario", "toad", "charmander", "fish", "luigi", "yoshi", "rock", "snoopdogg"
@@ -97,14 +101,31 @@ public abstract class AbstractCharacterSelectionView {
     HBox buttonBox = new HBox(100, backButton, startButton);
     buttonBox.setAlignment(Pos.CENTER);
 
-    VBox root = new VBox(50, headerElements, centerBox, buttonBox);
+    VBox content = new VBox(50, headerElements, centerBox, buttonBox);
+    content.setAlignment(Pos.TOP_CENTER);
+    content.setPadding(new Insets(40));
+
+    ImageView background = new ImageView(new Image("images/bakgrun snake.jpg"));
+    background.setFitWidth(stage.getWidth());
+    background.setFitHeight(stage.getHeight());
+    background.setPreserveRatio(false);
+    background.setOpacity(0.3);
+
+    StackPane root = new StackPane(background, content);
+
     root.setAlignment(Pos.TOP_CENTER);
     root.setPadding(new Insets(40));
-    root.setStyle("-fx-background-color: white;");
+    root.setStyle(getBackgroundStyle());
 
-    stage.setScene(new Scene(root, 1100, 700));
+    stage.setScene(new Scene(root));
     stage.setTitle("Character Selection");
-    stage.show();
+    Platform.runLater(() -> {
+      stage.setFullScreen(true);
+      stage.setFullScreenExitHint("");
+      stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+    });
+
+
   }
 
   protected VBox createPlayerBox(String defaultName, Consumer<String> nameChangedCallback, Consumer<String> characterSelectedCallback) {
@@ -147,14 +168,20 @@ public abstract class AbstractCharacterSelectionView {
   }
 
   protected StackPane createInactivePlayerBox(String playerLabel, Consumer<String> onNameChanged, Consumer<String> onCharacterSelected) {
-    VBox previewBox = createPlayerBox("", s -> {}, s -> {});
-    previewBox.setStyle("-fx-background-color: #ccc; -fx-opacity: 0.5;");
+    VBox innerContent = createPlayerBox("", s -> {}, s -> {});
+    innerContent.setOpacity(0.3);
+
+    // The gray box behind
+    VBox backgroundBox = new VBox(innerContent);
+    backgroundBox.setAlignment(Pos.CENTER);
+    backgroundBox.setPrefSize(300, 270);
+    backgroundBox.setStyle("-fx-background-color: #ccc;");
 
     Label plusLabel = new Label("+");
     plusLabel.setStyle("-fx-font-size: 64px; -fx-text-fill: #666;");
     StackPane.setAlignment(plusLabel, Pos.CENTER);
 
-    StackPane container = new StackPane(previewBox, plusLabel);
+    StackPane container = new StackPane(backgroundBox, plusLabel);
     container.setPrefSize(300, 270);
 
     container.setOnMouseClicked(e -> {
