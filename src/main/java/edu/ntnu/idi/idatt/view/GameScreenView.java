@@ -40,7 +40,7 @@ public class GameScreenView {
     backButton.setStyle("-fx-font-size: 14px;");
     backButton.setOnAction(e -> {
               IntroScreenView intro = new IntroScreenView(stage);
-              intro.show();
+              intro.prepareScene();
             });
 
     boardView = new BoardView(game.getBoard(), game.getPlayers());

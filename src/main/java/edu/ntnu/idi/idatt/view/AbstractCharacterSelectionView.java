@@ -119,11 +119,8 @@ public abstract class AbstractCharacterSelectionView {
 
     stage.setScene(new Scene(root));
     stage.setTitle("Character Selection");
-    Platform.runLater(() -> {
-      stage.setFullScreen(true);
-      stage.setFullScreenExitHint("");
-      stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-    });
+    stage.setFullScreenExitHint("");
+    stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
 
 
   }

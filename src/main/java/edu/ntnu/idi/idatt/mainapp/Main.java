@@ -3,6 +3,8 @@ package edu.ntnu.idi.idatt.mainapp;
 import edu.ntnu.idi.idatt.view.IntroScreenView;
 import edu.ntnu.idi.idatt.view.SnakesAndLaddersCharacterSelectionView;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -10,14 +12,16 @@ public class Main extends Application {
   @Override
   public void start(Stage primaryStage) {
     try {
-      // Sett opp fullscreen direkte
-      primaryStage.setFullScreen(true);
-      primaryStage.setFullScreenExitHint("");
-      primaryStage.setFullScreenExitKeyCombination(javafx.scene.input.KeyCombination.NO_MATCH);
+      IntroScreenView intro = new IntroScreenView(primaryStage);
+      intro.prepareScene();
 
-      // Start intro
-      IntroScreenView start = new IntroScreenView(primaryStage);
-      start.show();
+      primaryStage.setTitle("BoardGame App");
+      primaryStage.setFullScreenExitHint("");
+      primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+
+      primaryStage.show();
+
+      Platform.runLater(() -> primaryStage.setFullScreen(true));
 
     } catch (Exception e) {
       showStartupError("Startup Error", e.getMessage());

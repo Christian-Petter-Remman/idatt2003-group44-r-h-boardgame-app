@@ -1,7 +1,6 @@
 package edu.ntnu.idi.idatt.view;
 
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -21,30 +20,25 @@ public class IntroScreenView {
     this.primaryStage = primaryStage;
   }
 
-  public void show() {
-    Label titleLabel = new Label("The BoardGame App");
-    titleLabel.setFont(Font.font("Century Gothic", 32));
-    titleLabel.setAlignment(Pos.CENTER);
+  public void prepareScene() {
+      Label titleLabel = new Label("The BoardGame App");
+      titleLabel.setFont(Font.font("Century Gothic", 32));
+      titleLabel.setAlignment(Pos.CENTER);
 
-    Image image1 = new Image("images/snakesnladders.png");
-    HBox imageBox = getHBox(image1);
+      Image image1 = new Image("images/snakesnladders.png");
+      HBox imageBox = getHBox(image1);
 
-    VBox root = new VBox(20, titleLabel, imageBox);
-    root.setAlignment(Pos.CENTER);
-    root.setPadding(new Insets(10));
+      VBox root = new VBox(20, titleLabel, imageBox);
+      root.setAlignment(Pos.CENTER);
+      root.setPadding(new Insets(10));
 
-    Scene scene = new Scene(root);
-    primaryStage.setScene(scene);
-    primaryStage.setTitle("BoardGame App");
+      Scene scene = new Scene(root);
+      primaryStage.setScene(scene);
+      primaryStage.setTitle("BoardGame App");
 
-    primaryStage.setFullScreenExitHint("");
-    primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-    primaryStage.setFullScreen(true);
-
-    Platform.runLater(() -> primaryStage.setFullScreen(true));
-
-    primaryStage.show();
-  }
+      primaryStage.setFullScreenExitHint("");
+      primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+    }
 
   public void setGame(SnakesAndLadders game) {
   }
