@@ -1,6 +1,7 @@
 package edu.ntnu.idi.idatt.mainapp;
 
 import edu.ntnu.idi.idatt.view.IntroScreenView;
+import edu.ntnu.idi.idatt.view.SnakesAndLaddersCharacterSelectionView;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -9,13 +10,13 @@ public class Main extends Application {
   @Override
   public void start(Stage primaryStage) {
     try {
-      // Start GUI på Intro-skjermen
-      IntroScreenView introScreenView = new IntroScreenView(primaryStage);
-      introScreenView.show();
+
+      SnakesAndLaddersCharacterSelectionView snake = new SnakesAndLaddersCharacterSelectionView(primaryStage);
+      snake.show();
 
     } catch (Exception e) {
       showStartupError("Startup Error", e.getMessage());
-      e.printStackTrace(); // Du kan bruke logger her senere
+      e.printStackTrace();
     }
   }
 
