@@ -13,9 +13,14 @@ public class PlayerCsvHandler implements FileHandler<List<Player>> {
 
   @Override
   public void saveToFile(List<Player> players, String fileName) throws IOException {
-    try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+    String directory = "user-data/PlayerFiles/";
+    new File(directory).mkdirs(); // Make sure folders exist
+
+    String fullPath = directory + fileName;
+
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(fullPath))) {
       for (Player player : players) {
-        writer.write(player.getName() + ",Default");
+        writer.write(player.getName() + "," + player.getCharacter());
         writer.newLine();
       }
     }
@@ -37,8 +42,8 @@ public class PlayerCsvHandler implements FileHandler<List<Player>> {
         }
 
         String name = parts[0].trim();
-        // parts[1] = piece type (ignored for now, hardcoded as "Default")
-        players.add(new SnakesAndLaddersPlayer(name));
+        String character = parts[1].trim();
+        players.add(new SnakesAndLaddersPlayer(name, character));
       }
     } catch (FileNotFoundException e) {
       throw new FileReadException("Player CSV file not found: " + fileName, e);

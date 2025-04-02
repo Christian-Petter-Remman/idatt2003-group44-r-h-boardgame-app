@@ -25,7 +25,6 @@ public class BoardJsonHandler implements FileHandler<Board> {
   }
 
   private Board parseBoard(JsonObject jsonObject) {
-    // Normal parsing logic goes here
     return new Board(); // placeholder
   }
 

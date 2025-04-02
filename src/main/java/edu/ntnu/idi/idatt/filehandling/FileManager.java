@@ -74,8 +74,8 @@ public class FileManager {
     if (playersLoaded == 0) {
       logger.info("No players loaded from CSV. Creating default players");
 
-      game.addPlayer("Player 1");
-      game.addPlayer("Player 2");
+      game.addPlayer("Player 1","bowser");
+      game.addPlayer("Player 2","peach");
 
       boolean saved = game.savePlayersToCsv(playersFile.getPath());
       if (!saved) {
