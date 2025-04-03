@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -15,11 +16,11 @@ import javafx.stage.Stage;
 public class IntroScreenView {
   private final Stage primaryStage;
 
-    public IntroScreenView(Stage primaryStage) {
-      this.primaryStage = primaryStage;
-    }
+  public IntroScreenView(Stage primaryStage) {
+    this.primaryStage = primaryStage;
+  }
 
-    public void show() {
+  public void prepareScene() {
       Label titleLabel = new Label("The BoardGame App");
       titleLabel.setFont(Font.font("Century Gothic", 32));
       titleLabel.setAlignment(Pos.CENTER);
@@ -32,19 +33,22 @@ public class IntroScreenView {
       root.setPadding(new Insets(10));
 
       Scene scene = new Scene(root);
-      primaryStage.setTitle("BoardGame App");
       primaryStage.setScene(scene);
-      primaryStage.show();
+      primaryStage.setTitle("BoardGame App");
+
+      primaryStage.setFullScreenExitHint("");
+      primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
     }
 
   public void setGame(SnakesAndLadders game) {
   }
 
-  private static HBox getHBox(Image image1) {
+  private HBox getHBox(Image image1) {
     ImageView imageView1 = new ImageView(image1);
     imageView1.setFitHeight(150);
     imageView1.setFitWidth(200);
     imageView1.setPreserveRatio(false);
+    imageView1.setOnMouseClicked(e -> startSnakesAndLadders());
 
     Image image2 = new Image("images/black.png");
     ImageView imageView2 = new ImageView(image2);
@@ -62,5 +66,10 @@ public class IntroScreenView {
     imageBox.setAlignment(Pos.CENTER);
     imageBox.setPadding(new Insets(10));
     return imageBox;
+  }
+
+  public void startSnakesAndLadders() {
+    SnakesAndLaddersCharacterSelectionView characterSelectionView = new SnakesAndLaddersCharacterSelectionView(primaryStage);
+    characterSelectionView.show();
   }
 }

@@ -5,9 +5,11 @@ import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Tile;
 
 public class SnakesAndLaddersPlayer extends Player {
 
-  public SnakesAndLaddersPlayer(String name) {
-    super(name);
+  public SnakesAndLaddersPlayer(String name, String character) {
+    super(name,character);
   }
+
+
 
   @Override
   public int getStartPosition() {

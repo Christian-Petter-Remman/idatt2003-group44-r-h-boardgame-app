@@ -20,10 +20,7 @@ public class MainGUI extends Application {
       FileManager.saveDefaultBoard(new Board());
       SnakesAndLadders game = new SnakesAndLadders();
       FileManager.loadOrCreateDefaultPlayers(game);
-
-      IntroScreenView introScreenView = new IntroScreenView(primaryStage);
-      introScreenView.setGame(game);
-      introScreenView.show();
+      ;
 
     } catch (FileReadException | FileWriteException | CsvFormatException e) {
       showStartupError("Startup Error", e.getMessage());

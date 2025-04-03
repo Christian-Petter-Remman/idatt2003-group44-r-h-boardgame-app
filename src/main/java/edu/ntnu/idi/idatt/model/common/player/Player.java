@@ -3,10 +3,20 @@ package edu.ntnu.idi.idatt.model.common.player;
 public abstract class Player {
   private final String name;
   private int position;
+  private String character;
 
-  public Player(String name) {
+  public Player(String name, String character) {
     this.name = name;
     this.position = getStartPosition();
+    this.character = character;
+  }
+
+  public void setCharacter(String character) {
+    this.character = character;
+  }
+
+  public String getCharacter() {
+    return character;
   }
 
   public String getName() {

@@ -75,8 +75,12 @@ public class SnakesAndLadders extends BoardGame {
         .orElse(null);
   }
 
-  public void addPlayer(String name) {
-    addPlayer(new SnakesAndLaddersPlayer(name));
+  public void addPlayer(String name, String character) {
+    addPlayer(new SnakesAndLaddersPlayer(name,character));
+  }
+
+  public void advanceTurn() {
+    currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
   }
 
   public int loadPlayersFromCsv(String filePath) {
@@ -92,7 +96,8 @@ public class SnakesAndLadders extends BoardGame {
         String[] parts = line.split(",");
         if (parts.length >= 1) {
           String name = parts[0].trim();
-          addPlayer(new SnakesAndLaddersPlayer(name));
+          String character = parts[1].trim();
+          addPlayer(new SnakesAndLaddersPlayer(name,character));
           playersAdded++;
         }
       }

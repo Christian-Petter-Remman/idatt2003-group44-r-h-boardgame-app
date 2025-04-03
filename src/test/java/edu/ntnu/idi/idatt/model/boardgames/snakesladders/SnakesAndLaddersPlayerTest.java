@@ -14,7 +14,7 @@ public class SnakesAndLaddersPlayerTest {
 
     board.setTile(4, new LadderTile(4, 12));
 
-    Player player = new SnakesAndLaddersPlayer("TestPlayer");
+    Player player = new SnakesAndLaddersPlayer("TestPlayer", "bowser");
 
     player.move(4, board);
 
@@ -25,7 +25,7 @@ public class SnakesAndLaddersPlayerTest {
   public void testMoveWithoutLadderNegative() {
     Board board = new Board();
     board.setTile(4, new LadderTile(4, 12));
-    Player player = new SnakesAndLaddersPlayer("TestPlayer");
+    Player player = new SnakesAndLaddersPlayer("TestPlayer","bowser");
     player.move(4, board);
     assertNotEquals(4, player.getPosition(), "Player should land on tile 12 via ladder");
   }
@@ -33,7 +33,7 @@ public class SnakesAndLaddersPlayerTest {
   @Test
   public void testMoveWithoutLadder() {
     Board board = new Board();
-    Player player = new SnakesAndLaddersPlayer("TestPlayer");
+    Player player = new SnakesAndLaddersPlayer("TestPlayer", "bowser");
 
     player.move(3, board);
 
