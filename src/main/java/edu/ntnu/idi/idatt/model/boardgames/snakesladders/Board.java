@@ -16,6 +16,7 @@ public class Board {
   private static final Logger logger = LoggerFactory.getLogger(Board.class);
   private List<Tile> tiles;
   private final int size;
+  private final List<Ladder> ladders = new ArrayList<>();
 
   public Board() {
     this(100);
@@ -34,13 +35,10 @@ public class Board {
     logger.debug("Initialized empty board with {} tiles", size);
   }
 
-  public void addLadder(int start, int end) {
-    try {
-      setTile(start, new LadderTile(start, end));
-      logger.debug("Added ladder from {} to {}", start, end);
-    } catch (IllegalArgumentException e) {
-      logger.error("Failed to add ladder from {} to {}: {}", start, end, e.getMessage());
-    }
+  public void addFullLadder(int start, int end) {
+    setTile(start, new LadderTile(start, end));
+    ladders.add(new Ladder(start, end));
+    logger.debug("Added full ladder from {} to {}", start, end);
   }
 
   public void addSnake(int start, int end) {
@@ -53,14 +51,14 @@ public class Board {
   }
 
   public void addDefaultLadders() {
-    addLadder(1, 38);
-    addLadder(4, 14);
-    addLadder(9, 31);
-    addLadder(21, 42);
-    addLadder(28, 84);
-    addLadder(51, 67);
-    addLadder(72, 91);
-    addLadder(80, 99);
+    addFullLadder(1, 38);
+    addFullLadder(4, 14);
+    addFullLadder(9, 31);
+    addFullLadder(21, 42);
+    addFullLadder(28, 84);
+    addFullLadder(51, 67);
+    addFullLadder(72, 91);
+    addFullLadder(80, 99);
     logger.info("Added default ladders to the board");
   }
 
@@ -112,8 +110,7 @@ public class Board {
 
     Tile tile = getTile(position);
     if (tile.hasSnakeOrLadder()) {
-      logger.debug("Player landed on special tile at {}, moving to {}",
-          position, tile.getDestination());
+      logger.debug("Player landed on special tile at {}, moving to {}", position, tile.getDestination());
       return tile.getDestination();
     }
     return position;
@@ -122,8 +119,8 @@ public class Board {
   public boolean saveToJson(String filePath) {
     try (Writer writer = new FileWriter(filePath)) {
       Gson gson = new GsonBuilder()
-          .setPrettyPrinting()
-          .create();
+              .setPrettyPrinting()
+              .create();
       gson.toJson(this, writer);
       logger.info("Successfully saved board to JSON: {}", filePath);
       return true;
@@ -147,5 +144,9 @@ public class Board {
 
   public int getSize() {
     return size;
+  }
+
+  public List<Ladder> getLadders() {
+    return new ArrayList<>(ladders);
   }
 }

@@ -1,6 +1,7 @@
 package edu.ntnu.idi.idatt.view;
 
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersFactory;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersPlayer;
 import edu.ntnu.idi.idatt.model.common.player.Player;
 import edu.ntnu.idi.idatt.view.AbstractCharacterSelectionView;
@@ -33,13 +34,15 @@ public class SnakesAndLaddersCharacterSelectionView extends AbstractCharacterSel
 
   @Override
   protected void onStart(List<Player> players) {
-    SnakesAndLadders game = new SnakesAndLadders();
+    SnakesAndLaddersFactory factory = new SnakesAndLaddersFactory();
+    SnakesAndLadders game = (SnakesAndLadders) factory.createBoardGameFromConfiguration("default");
+
     for (Player player : players) {
       if (player instanceof SnakesAndLaddersPlayer snakePlayer) {
         game.addPlayer(snakePlayer);
       }
     }
-    game.initialize();
+
     new GameScreenView(stage, game).show();
   }
 

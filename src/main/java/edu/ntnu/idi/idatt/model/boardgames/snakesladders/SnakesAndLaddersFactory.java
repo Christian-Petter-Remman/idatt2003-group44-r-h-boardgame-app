@@ -115,9 +115,9 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
     Board board = new Board();
     board.initializeEmptyBoard();
 
-    board.addLadder(1, 38);
-    board.addLadder(4, 14);
-    board.addLadder(28, 84);
+    board.addFullLadder(1, 38);
+    board.addFullLadder(4, 14);
+    board.addFullLadder(28, 84);
 
     board.addDefaultSnakes();
     board.addSnake(32, 10);
