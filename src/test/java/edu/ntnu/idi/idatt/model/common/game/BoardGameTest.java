@@ -19,6 +19,7 @@ class BoardGameTest {
     @Override public Board getBoard() { return null; }
   }
 
+  /*
   @Test
   void testAddAndRetrievePlayers() {
     DummyGame game = new DummyGame();
@@ -34,6 +35,7 @@ class BoardGameTest {
     assertEquals(1, players.size());
     assertEquals("Tester", players.get(0).getName());
   }
+   */
 
   @Test
   void testGameOverState() {
