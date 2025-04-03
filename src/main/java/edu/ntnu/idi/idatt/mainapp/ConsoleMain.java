@@ -5,7 +5,7 @@ import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersFactory
 import edu.ntnu.idi.idatt.model.common.factory.BoardGameFactory;
 import edu.ntnu.idi.idatt.model.common.game.BoardGame;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
-import edu.ntnu.idi.idatt.view.ConsoleUI;
+import edu.ntnu.idi.idatt.view.common.ConsoleUI;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.CsvFormatException;
 import edu.ntnu.idi.idatt.exceptions.FileWriteException;
