@@ -8,12 +8,15 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SnakesAndLadders extends BoardGame {
 
   private Board board;
   private Dice dice;
   private int currentPlayerIndex;
+  private static final Logger logger = LoggerFactory.getLogger(SnakesAndLadders.class);
 
   public SnakesAndLadders() {
     super();
@@ -54,6 +57,11 @@ public class SnakesAndLadders extends BoardGame {
   @Override
   public Board getBoard() {
     return board;
+  }
+
+  public void setBoard(Board board) {
+    this.board = board;
+    logger.debug("Set board to {}", board);
   }
 
   public Player getCurrentPlayer() {
