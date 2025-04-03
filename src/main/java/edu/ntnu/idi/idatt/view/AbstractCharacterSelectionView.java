@@ -112,7 +112,6 @@ public abstract class AbstractCharacterSelectionView {
     background.setOpacity(0.3);
 
     StackPane root = new StackPane(background, content);
-
     root.setAlignment(Pos.TOP_CENTER);
     root.setPadding(new Insets(40));
     root.setStyle(getBackgroundStyle());
@@ -121,8 +120,6 @@ public abstract class AbstractCharacterSelectionView {
     stage.setTitle("Character Selection");
     stage.setFullScreenExitHint("");
     stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-
-
   }
 
   protected VBox createPlayerBox(String defaultName, Consumer<String> nameChangedCallback, Consumer<String> characterSelectedCallback) {
@@ -135,7 +132,6 @@ public abstract class AbstractCharacterSelectionView {
     grid.setHgap(15);
     grid.setVgap(15);
     grid.setAlignment(Pos.CENTER);
-
     ToggleGroup toggleGroup = new ToggleGroup();
 
     for (int i = 0; i < availableCharacters.size(); i++) {
@@ -147,7 +143,6 @@ public abstract class AbstractCharacterSelectionView {
       button.setGraphic(imageView);
       button.setToggleGroup(toggleGroup);
       button.setStyle("-fx-background-color: transparent; -fx-padding: 5; -fx-border-color: transparent; -fx-border-radius: 10;");
-
       button.setOnAction(e -> {
         characterSelectedCallback.accept(character);
         highlightSelectedButton(toggleGroup);
@@ -155,7 +150,6 @@ public abstract class AbstractCharacterSelectionView {
 
       grid.add(button, i % 5, i / 5);
     }
-
     VBox box = new VBox(15, nameField, grid);
     box.setPrefSize(300, 270);
     box.setAlignment(Pos.CENTER);
@@ -168,7 +162,6 @@ public abstract class AbstractCharacterSelectionView {
     VBox innerContent = createPlayerBox("", s -> {}, s -> {});
     innerContent.setOpacity(0.3);
 
-    // The gray box behind
     VBox backgroundBox = new VBox(innerContent);
     backgroundBox.setAlignment(Pos.CENTER);
     backgroundBox.setPrefSize(300, 270);
