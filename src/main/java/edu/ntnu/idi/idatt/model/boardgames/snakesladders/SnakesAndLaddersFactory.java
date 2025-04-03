@@ -11,7 +11,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class SnakesAndLaddersFactory extends BoardGameFactory {
 
   private static final String BOARD_DIRECTORY = "data/custom_boards/snakes_and_ladders/";
@@ -66,11 +65,11 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
         board = createHardBoard();
         break;
 
-        default:
-          board = loadBoardFromFile(configurationName + ".json");
-          if (board == null) {
-            board = createDefaultBoard();
-          }
+      default:
+        board = loadBoardFromFile(configurationName + ".json");
+        if (board == null) {
+          board = createDefaultBoard();
+        }
     }
 
     game.setBoard(board);
@@ -100,12 +99,16 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
   private Board createEasyBoard() {
     logger.debug("Creating easy board for Snakes and Ladders");
     Board board = new Board();
-    board.addDefaultLadders();
+    board.initializeEmptyBoard();
+
+    board.addFullLadder(3, 22);
+    board.addFullLadder(5, 8);
+    board.addFullLadder(20, 29);
 
     board.addSnake(20, 5);
-    board.addSnake(49,30);
+    board.addSnake(49, 30);
     board.addSnake(77, 60);
-    board.addSnake(98,81);
+    board.addSnake(98, 81);
 
     return board;
   }
@@ -137,7 +140,7 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
     }
   }
 
-private boolean saveBoardToFile(Board board, String fileName) {
+  private boolean saveBoardToFile(Board board, String fileName) {
     String filePath = BOARD_DIRECTORY + File.separator + fileName;
     try {
       BoardJsonHandler handler = new BoardJsonHandler();
@@ -147,6 +150,5 @@ private boolean saveBoardToFile(Board board, String fileName) {
       logger.error("Failed to save board to file: {}\n Error message: {} ", filePath, e.getMessage());
       return false;
     }
-}
-
+  }
 }

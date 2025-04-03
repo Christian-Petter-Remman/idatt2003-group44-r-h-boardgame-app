@@ -36,9 +36,12 @@ public class Board {
   }
 
   public void addFullLadder(int start, int end) {
+    if (start >= end || start < 1 || end > size) {
+      throw new IllegalArgumentException("Invalid ladder positions");
+    }
+    Ladder ladder = new Ladder(start, end);
+    ladders.add(ladder);
     setTile(start, new LadderTile(start, end));
-    ladders.add(new Ladder(start, end));
-    logger.debug("Added full ladder from {} to {}", start, end);
   }
 
   public void addSnake(int start, int end) {
@@ -110,7 +113,8 @@ public class Board {
 
     Tile tile = getTile(position);
     if (tile.hasSnakeOrLadder()) {
-      logger.debug("Player landed on special tile at {}, moving to {}", position, tile.getDestination());
+      logger.debug("Player landed on special tile at {}, moving to {}",
+              position, tile.getDestination());
       return tile.getDestination();
     }
     return position;
