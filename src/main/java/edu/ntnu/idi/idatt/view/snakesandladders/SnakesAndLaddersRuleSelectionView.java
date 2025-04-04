@@ -1,17 +1,23 @@
 package edu.ntnu.idi.idatt.view.snakesandladders;
 
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersFactory;
+import edu.ntnu.idi.idatt.model.common.dice.Dice;
 import edu.ntnu.idi.idatt.model.common.player.Player;
 import edu.ntnu.idi.idatt.view.common.AbstractRuleSelectionView;
+import edu.ntnu.idi.idatt.view.common.GameScreenView;
+import java.io.IOException;
 import java.util.List;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -50,6 +56,8 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
   protected void addRuleOptions() {
     addTitleSection();
     addDifficultySection();
+    addGameSettingsSection();
+    addNavigationButtons();
 
 
   }
@@ -57,12 +65,18 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
 
   @Override
   protected void onStart(List<Player> players ) {
-
   }
 
   @Override
   protected void onBack(){
+  }
 
+  public List<Player> getPlayers() {
+    return players;
+  }
+
+  public void setPlayers(List<Player> players) {
+    this.players = players;
   }
 
   private void addTitleSection() {
@@ -96,15 +110,111 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     return button;
   }
 
+  private void addGameSettingsSection() {
+    // Dice
+    Label diceLabel = new Label("Number of Dice:");
+    diceLabel.setFont(Font.font("Monospace", FontWeight.BOLD, 16));
+    diceField = new TextField("1");
+    diceField.setPrefWidth(100);
 
+    // Ladders
+    Label laddersLabel = new Label("Number of Ladders:");
+    laddersLabel.setFont(Font.font("Monospace", FontWeight.BOLD, 16));
+    laddersField = new TextField("8");
+    laddersField.setPrefWidth(100);
 
-  public List<Player> getPlayers() {
-    return players;
+    // Penalty Fields
+    Label penaltyLabel = new Label("Number of Penalty Fields:");
+    penaltyLabel.setFont(Font.font("Monospace", FontWeight.BOLD, 16));
+    penaltyField = new TextField("8");
+    penaltyField.setPrefWidth(100);
+
+    GridPane settingsGrid = new GridPane();
+    settingsGrid.setHgap(10);
+    settingsGrid.setVgap(10);
+    settingsGrid.addRow(0, diceLabel, diceField);
+    settingsGrid.addRow(1, laddersLabel, laddersField);
+    settingsGrid.addRow(2, penaltyLabel, penaltyField);
+
+    layout.add(settingsGrid, 0, 2, 2, 1);
   }
 
-  public void setPlayers(List<Player> players) {
-    this.players = players;
+  private void addNavigationButtons() {
+    Button backButton = getBackButton();
+
+    //startGameButton declared in super
+    startGameButton.setText("Start Game");
+    startGameButton.setFont(Font.font("Monospace", FontWeight.BOLD, 16));
+    startGameButton.setPrefWidth(200);
+    startGameButton.setOnAction(e -> onStart(players));
+
+    HBox buttonBox = new HBox(20, backButton, startGameButton);
+    buttonBox.setAlignment(Pos.CENTER);
+    layout.add(buttonBox, 0, 3, 2, 1);
   }
+
+  private Button getBackButton() {
+    Button backButton = new Button("Back");
+    backButton.setFont(Font.font("Monospace", FontWeight.BOLD, 16));
+    backButton.setOnAction(e -> onBack());
+    return backButton;
+  }
+
+  private void setupStartButton() {
+    startGameButton.setOnAction(e -> {
+      try {
+        validateInputs();
+
+      } catch (NumberFormatException ex) {
+
+      }
+    });
+  }
+
+  private void validateInputs() throws NumberFormatException {
+    int diceCount = Integer.parseInt(diceField.getText());
+    int ladderCount = Integer.parseInt(laddersField.getText());
+    int penaltyCount = Integer.parseInt(penaltyField.getText());
+
+    if (diceCount < 1) {
+      throw new NumberFormatException();
+    }
+    if (ladderCount < 1 || penaltyCount < 0) {
+      throw new NumberFormatException();
+    }
+  }
+
+  private void startGameWithSettings() {
+    try {
+      int diceCount = Integer.parseInt(diceField.getText());
+      int ladderCount = Integer.parseInt(laddersField.getText());
+      int penaltyCount = Integer.parseInt(penaltyField.getText());
+
+      SnakesAndLadders game = (SnakesAndLadders) factory.createBoardGameFromConfiguration(
+          selectedDifficulty);
+      game.setDice(new Dice(diceCount));
+
+      if (!selectedDifficulty.equals("default")) {
+        adjustBoard();
+      }
+
+      for (Player player : players) {
+        game.addPlayer(player);
+      }
+
+      game.initialize();
+      new GameScreenView(primaryStage, game).show();
+    } catch (Exception e) {
+      logger.error("Error starting game: {}", e.getMessage());
+      showError("Game Error", "Could not initialize game with selected settings");
+    }
+  }
+
+    private void adjustBoard() {
+
+    }
+
+
 
   private void showError(String title, String message) {
     Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -116,7 +226,7 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
 
   @Override
   public void show() {
-    Scene scene = new Scene(layout, 600, 500);
+    Scene scene = new Scene(layout, 800, 600);
     primaryStage.setScene(scene);
     primaryStage.setTitle("Snakes and Ladders - Game Rules");
     primaryStage.show();
