@@ -91,7 +91,7 @@ public abstract class AbstractCharacterSelectionView {
     scrollPane.getStyleClass().add("edge-to-edge");
     scrollPane.setStyle("-fx-background-color: transparent;");
 
-    ImageView background = new ImageView(new Image("images/bakgrun snake.jpg"));
+    ImageView background = new ImageView(new Image("images/snakesbackground.jpg"));
     background.setFitWidth(stage.getWidth());
     background.setFitHeight(stage.getHeight());
     background.setPreserveRatio(false);

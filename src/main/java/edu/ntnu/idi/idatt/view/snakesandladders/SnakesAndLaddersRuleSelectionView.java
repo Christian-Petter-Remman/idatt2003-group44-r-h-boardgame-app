@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -33,6 +34,8 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     this.factory = new SnakesAndLaddersFactory();
     setupLayout();
     addRuleOptions();
+
+
   }
 
   private void setupLayout() {
@@ -45,34 +48,55 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
 
   @Override
   protected void addRuleOptions() {
+    addTitleSection();
+    addDifficultySection();
+
+
+  }
+
+
+  @Override
+  protected void onStart(List<Player> players ) {
+
+  }
+
+  @Override
+  protected void onBack(){
+
+  }
+
+  private void addTitleSection() {
     Label titleLabel = new Label("Customize game");
     titleLabel.setFont(Font.font("Monospace", FontWeight.BOLD, 36));
     layout.add(titleLabel, 0, 0, 2, 1);
-
-    Label difficultyLabel = new Label("Difficulty:");
-    difficultyLabel.setFont(Font.font("Monospace", FontWeight.BOLD, 16));
-
-    ToggleGroup difficultyGroup = new ToggleGroup();
-    RadioButton easyButton = new RadioButton("Easy");
-    RadioButton normalButton = new RadioButton("Default");
-    RadioButton hardButton = new RadioButton("Hard");
-
-    easyButton.setToggleGroup(difficultyGroup);
-    normalButton.setToggleGroup(difficultyGroup);
-    hardButton.setToggleGroup(difficultyGroup);
-    normalButton.setSelected(true);
-
-    easyButton.setUserData("easy");
-    normalButton.setUserData("default");
-    hardButton.setUserData("hard");
-
-    difficultyGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue != null) {
-        selectedDifficulty = (String) newValue.getUserData();
-        logger.info("Selected difficulty: {}", selectedDifficulty);
-      }
-    });
   }
+
+  private void addDifficultySection() {
+      Label difficultyLabel = new Label("Difficulty:");
+      difficultyLabel.setFont(Font.font("Monospace", FontWeight.BOLD, 16));
+
+      ToggleGroup difficultyGroup = new ToggleGroup();
+      RadioButton easyButton = createRadioButton("Easy", "easy", difficultyGroup);
+      RadioButton normalButton = createRadioButton("Default", "default", difficultyGroup);
+      RadioButton hardButton = createRadioButton("Hard", "hard", difficultyGroup);
+      normalButton.setSelected(true);
+
+      HBox difficultyBox = new HBox(20, easyButton, normalButton, hardButton);
+      difficultyBox.setAlignment(Pos.CENTER_LEFT);
+
+      layout.add(difficultyLabel, 0, 1);
+      layout.add(difficultyBox, 1, 1);
+  }
+
+  private RadioButton createRadioButton(String text, String userData, ToggleGroup group) {
+    RadioButton button = new RadioButton(text);
+    button.setToggleGroup(group);
+    button.setUserData(userData);
+    button.setOnAction(e -> selectedDifficulty = userData);
+    return button;
+  }
+
+
 
   public List<Player> getPlayers() {
     return players;

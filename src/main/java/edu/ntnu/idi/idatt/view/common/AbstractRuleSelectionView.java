@@ -1,5 +1,7 @@
 package edu.ntnu.idi.idatt.view.common;
 
+import edu.ntnu.idi.idatt.model.common.player.Player;
+import java.util.List;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -32,6 +34,8 @@ public abstract class AbstractRuleSelectionView {
   }
 
   protected abstract void addRuleOptions();
+  protected abstract void onStart(List<Player> players);
+  protected abstract void onBack();
 
   public void show(){
     Scene scene = new Scene(layout);
