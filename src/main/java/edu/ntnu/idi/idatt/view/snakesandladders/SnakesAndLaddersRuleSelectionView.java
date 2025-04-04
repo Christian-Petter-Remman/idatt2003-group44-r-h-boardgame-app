@@ -1,7 +1,7 @@
 package edu.ntnu.idi.idatt.view.snakesandladders;
 
 import edu.ntnu.idi.idatt.controller.snakesandladders.SnakesAndLaddersRuleSelectionController;
-import edu.ntnu.idi.idatt.exceptions.InvalidGameConfigurationException;
+import edu.ntnu.idi.idatt.controller_observers.DifficultyObserver;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersFactory;
 import edu.ntnu.idi.idatt.model.common.player.Player;
@@ -18,31 +18,65 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView {
+public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView implements DifficultyObserver {
   private static final Logger logger = LoggerFactory.getLogger(SnakesAndLaddersRuleSelectionView.class);
 
   private final SnakesAndLaddersRuleSelectionController controller;
-  private final SnakesAndLaddersFactory factory;
-  private String selectedDifficulty = "default";
   private List<Player> players;
 
-  private ToggleGroup difficultyGroup;
+  private String selectedDifficulty = "default";
   private TextField diceField;
   private TextField laddersField;
   private TextField penaltyField;
 
+  private ToggleGroup difficultyGroup;
+
   public SnakesAndLaddersRuleSelectionView(Stage primaryStage) {
     super(primaryStage);
-    this.factory = new SnakesAndLaddersFactory();
-    this.controller = new SnakesAndLaddersRuleSelectionController(factory);
+    controller = new SnakesAndLaddersRuleSelectionController(new SnakesAndLaddersFactory());
+    controller.addObserver(this); // Registering this view as an observer
   }
 
   @Override
   protected void initializeCustomComponents() {
-    difficultyGroup = new ToggleGroup();
     diceField = createTextField("1");
     laddersField = createTextField("8");
     penaltyField = createTextField("8");
+
+    difficultyGroup = new ToggleGroup();
+    createRadioButton("Easy", "easy", difficultyGroup);
+    createRadioButton("Normal", "default", difficultyGroup);
+    createRadioButton("Hard", "hard", difficultyGroup);
+
+    difficultyGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue != null) {
+        String difficulty = (String) newValue.getUserData();
+        controller.setDifficulty(difficulty);
+        logger.info("Selected difficulty: {}", difficulty);
+      }
+    });
+  }
+
+  @Override
+  public void onDifficultyChanged(String difficulty) {
+    this.selectedDifficulty = difficulty; // Update selectedDifficulty
+    switch (difficulty.toLowerCase()) {
+      case "easy":
+        laddersField.setText("10");
+        penaltyField.setText("4");
+        break;
+      case "default":
+        laddersField.setText("8");
+        penaltyField.setText("8");
+        break;
+      case "hard":
+        laddersField.setText("4");
+        penaltyField.setText("10");
+        break;
+      default:
+        logger.warn("Invalid difficulty: {}", difficulty);
+        break;
+    }
   }
 
   @Override
@@ -50,24 +84,25 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     GridPane settingsGrid = new GridPane();
     settingsGrid.setVgap(15);
     settingsGrid.setHgap(15);
-    settingsGrid.setPadding(new Insets(20, 0, 0, 0));
+    settingsGrid.setPadding(new Insets(20));
 
-    // Difficulty section
     Label difficultyLabel = new Label("Difficulty:");
-    difficultyLabel.setStyle("-fx-font-weight: bold;");
     HBox difficultyBox = new HBox(20,
-        createRadioButton("Easy", "easy"),
-        createRadioButton("Normal", "default"),
-        createRadioButton("Hard", "hard")
+        createRadioButton("Easy", "easy", difficultyGroup),
+        createRadioButton("Normal", "default", difficultyGroup),
+        createRadioButton("Hard", "hard", difficultyGroup)
     );
     settingsGrid.addRow(0, difficultyLabel, difficultyBox);
 
-    // Game settings
     settingsGrid.addRow(1, new Label("Number of Dice:"), diceField);
     settingsGrid.addRow(2, new Label("Number of Ladders:"), laddersField);
     settingsGrid.addRow(3, new Label("Number of Penalty Fields:"), penaltyField);
 
-    layout.add(settingsGrid, 0, 2, 2, 1);
+    HBox buttonBox = new HBox(20, backButton, startGameButton);
+    buttonBox.setAlignment(Pos.CENTER);
+
+    layout.add(settingsGrid, 0, 2);
+    layout.add(buttonBox, 0, 3);
   }
 
   @Override
@@ -82,13 +117,6 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
       int diceCount = Integer.parseInt(diceField.getText());
       int ladders = Integer.parseInt(laddersField.getText());
       int penalties = Integer.parseInt(penaltyField.getText());
-
-      if (!controller.validateInput(diceCount, ladders, penalties)) {
-        logger.warn("Invalid input: diceCount={}, ladders={}, penalties={}", diceCount, ladders, penalties);
-        showErrorDialog("Invalid Input", "Please check your input values.");
-        throw new InvalidGameConfigurationException("Invalid Game Configuration");
-      }
-
 
       SnakesAndLadders game = controller.startGame(
           selectedDifficulty,
@@ -109,17 +137,15 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
 
   @Override
   protected void onBack() {
-    // Implement back navigation logic
     logger.info("Navigating back from rules screen");
-    primaryStage.close();
+    primaryStage.close(); // Implement navigation logic here
   }
 
-  private RadioButton createRadioButton(String text, String difficulty) {
+  private RadioButton createRadioButton(String text, String difficulty, ToggleGroup group) {
     RadioButton button = new RadioButton(text);
-    button.setToggleGroup(difficultyGroup);
+    button.setToggleGroup(group);
     button.setUserData(difficulty);
-    button.setOnAction(e -> selectedDifficulty = difficulty);
-    if (difficulty.equals("default")) button.setSelected(true);
+    if (difficulty.equalsIgnoreCase(selectedDifficulty)) button.setSelected(true);
     return button;
   }
 
