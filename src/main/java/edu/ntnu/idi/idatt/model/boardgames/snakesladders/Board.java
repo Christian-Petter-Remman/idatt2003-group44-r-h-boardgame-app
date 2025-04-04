@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.LadderTile;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.SnakeTile;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Tile;
+import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +44,14 @@ public class Board {
     }
   }
 
+  public void addRandomLadder() {
+    Random random = new Random();
+    int start = random.nextInt(size - 10) + 1;
+    int end = ((start / 10) + 1) * 10 + random.nextInt(10 - (start % 10));
+    addLadder(start, end);
+    logger.info("Added random ladder from {} to {}", start, end);
+  }
+
   public void addSnake(int start, int end) {
     try {
       setTile(start, new SnakeTile(start, end));
@@ -51,6 +60,15 @@ public class Board {
       logger.error("Failed to add snake from {} to {}: {}", start, end, e.getMessage());
     }
   }
+
+  public void addRandomSnake() {
+    Random random = new Random();
+    int start = random.nextInt(size - 10) + 11;
+    int end = random.nextInt(start - 1) + 1;
+    addSnake(start, end);
+    logger.info("Added random snake from {} to {}", start, end);
+  }
+
 
   public void addDefaultLadders() {
     addLadder(1, 38);
