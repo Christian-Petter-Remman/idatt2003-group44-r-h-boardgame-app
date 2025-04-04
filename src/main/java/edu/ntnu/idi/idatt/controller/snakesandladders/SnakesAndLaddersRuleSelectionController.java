@@ -22,7 +22,7 @@ public class SnakesAndLaddersRuleSelectionController {
     this.factory = factory;
   }
 
-  public SnakesAndLadders createGame(String difficulty, int diceCount, int ladderCount,
+  public SnakesAndLadders startGame(String difficulty, int diceCount, int ladderCount,
       int penaltyCount, List<Player> players)
       throws InvalidGameConfigurationException {
     validateDifficulty(difficulty);
@@ -49,14 +49,14 @@ public class SnakesAndLaddersRuleSelectionController {
     }
   }
 
-  public void validateInput(int diceCount, int ladderCount, int penaltyCount)
-      throws InvalidGameConfigurationException {
-    if (diceCount < 1 || diceCount > 3) {
+  public boolean validateInput(int diceCount, int ladderCount, int penaltyCount) throws InvalidGameConfigurationException {
+    if (diceCount < 1) {
       throw new InvalidGameConfigurationException("Dice count must be between 1 and 3");
     }
     if (ladderCount < 0 || penaltyCount < 0) {
       throw new InvalidGameConfigurationException("Ladders and penalties cannot be negative");
     }
+    return ladderCount >= 1;
   }
 
   private void validateDifficulty(String difficulty) throws InvalidGameConfigurationException {
