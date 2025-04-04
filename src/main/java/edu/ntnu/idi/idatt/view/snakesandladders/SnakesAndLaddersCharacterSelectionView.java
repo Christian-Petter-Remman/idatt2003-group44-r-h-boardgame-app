@@ -33,14 +33,9 @@ public class SnakesAndLaddersCharacterSelectionView extends AbstractCharacterSel
 
   @Override
   protected void onStart(List<Player> players) {
-    SnakesAndLadders game = new SnakesAndLadders();
-    for (Player player : players) {
-      if (player instanceof SnakesAndLaddersPlayer snakePlayer) {
-        game.addPlayer(snakePlayer);
-      }
-    }
-    game.initialize();
-    new GameScreenView(stage, game).show();
+    SnakesAndLaddersRuleSelectionView ruleView = new SnakesAndLaddersRuleSelectionView(stage);
+    ruleView.setPlayers(players);
+    ruleView.show();
   }
 
   @Override
