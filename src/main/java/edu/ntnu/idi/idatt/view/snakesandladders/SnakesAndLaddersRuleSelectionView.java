@@ -1,12 +1,12 @@
 package edu.ntnu.idi.idatt.view.snakesandladders;
 
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersFactory;
 import edu.ntnu.idi.idatt.model.common.dice.Dice;
 import edu.ntnu.idi.idatt.model.common.player.Player;
 import edu.ntnu.idi.idatt.view.common.AbstractRuleSelectionView;
 import edu.ntnu.idi.idatt.view.common.GameScreenView;
-import java.io.IOException;
 import java.util.List;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -58,17 +58,16 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     addDifficultySection();
     addGameSettingsSection();
     addNavigationButtons();
-
-
   }
-
 
   @Override
   protected void onStart(List<Player> players ) {
   }
 
   @Override
-  protected void onBack(){
+  protected void onBack() {
+    logger.info("Closing game settings, returning to player selection.");
+    primaryStage.close();
   }
 
   public List<Player> getPlayers() {
@@ -164,9 +163,9 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     startGameButton.setOnAction(e -> {
       try {
         validateInputs();
-
+        startGameWithSettings();
       } catch (NumberFormatException ex) {
-
+        showError("Invalid Input", "Please enter valid numbers for dice, ladders, and penalties.");
       }
     });
   }
@@ -195,7 +194,7 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
       game.setDice(new Dice(diceCount));
 
       if (!selectedDifficulty.equals("default")) {
-        adjustBoard();
+        adjustBoard(game.getBoard(), ladderCount, penaltyCount);
       }
 
       for (Player player : players) {
@@ -210,9 +209,24 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     }
   }
 
-    private void adjustBoard() {
+    private void adjustBoard(Board board, int ladderCount, int penaltyCount) {
+    board.initializeEmptyBoard();
+    addRandomLadders(board, ladderCount);
+    addRandomPenalties(board, penaltyCount);
 
     }
+
+  private void addRandomLadders(Board board, int count) {
+    for (int i = 0; i < count; i++) {
+      board.addRandomLadder();
+    }
+  }
+
+    private void addRandomPenalties (Board board,int count) {
+    for (int i = 0; i < count; i++) {
+      board.addRandomSnake();
+    }
+  }
 
 
 
