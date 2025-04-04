@@ -35,7 +35,7 @@ public abstract class AbstractCharacterSelectionView {
   protected abstract String getBackgroundStyle();
 
   protected final List<String> availableCharacters = List.of(
-          "bowser", "peach", "mario", "toad", "charmander", "fish", "luigi", "yoshi", "rock", "snoopdogg"
+      "bowser", "peach", "mario", "toad", "charmander", "fish", "luigi", "yoshi", "rock", "snoopdogg"
   );
 
   public AbstractCharacterSelectionView(Stage stage) {
@@ -52,28 +52,7 @@ public abstract class AbstractCharacterSelectionView {
     backButton.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
     backButton.setOnAction(e -> onBack());
 
-    Button startButton = new Button("Start");
-    startButton.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-    startButton.setOnAction(e -> {
-      List<Player> players = new ArrayList<>();
-      players.add(createPlayer(player1Name, player1Character));
-      players.add(createPlayer(player2Name, player2Character));
-
-      if (player3Character != null) {
-        players.add(createPlayer(player3Name, player3Character));
-      }
-      if (player4Character != null) {
-        players.add(createPlayer(player4Name, player4Character));
-      }
-
-      try {
-        savePlayersToFile(players, createCustomFileName(player1Name, player2Name));
-      } catch (IOException ex) {
-        throw new RuntimeException(ex);
-      }
-
-      onStart(players);
-    });
+    Button startButton = getStartButton();
 
     VBox player1Box = createPlayerBox("Player 1", c -> player1Name = c, c -> player1Character = c);
     VBox player2Box = createPlayerBox("Player 2", c -> player2Name = c, c -> player2Character = c);
@@ -98,10 +77,19 @@ public abstract class AbstractCharacterSelectionView {
 
     HBox buttonBox = new HBox(100, backButton, startButton);
     buttonBox.setAlignment(Pos.CENTER);
+    buttonBox.setPadding(new Insets(20, 0, 40, 0));
 
-    VBox content = new VBox(50, headerElements, centerBox, buttonBox);
+    VBox content = new VBox(30, headerElements, centerBox, buttonBox);
     content.setAlignment(Pos.TOP_CENTER);
     content.setPadding(new Insets(40));
+    
+    ScrollPane scrollPane = new ScrollPane(content);
+    scrollPane.setFitToWidth(true);
+    scrollPane.setFitToHeight(true);
+    scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+    scrollPane.getStyleClass().add("edge-to-edge");
+    scrollPane.setStyle("-fx-background-color: transparent;");
 
     ImageView background = new ImageView(new Image("images/bakgrun snake.jpg"));
     background.setFitWidth(stage.getWidth());
@@ -109,18 +97,40 @@ public abstract class AbstractCharacterSelectionView {
     background.setPreserveRatio(false);
     background.setOpacity(0.3);
 
-    StackPane root = new StackPane(background, content);
-
-    root.setAlignment(Pos.TOP_CENTER);
-    root.setPadding(new Insets(40));
+    StackPane root = new StackPane(background, scrollPane);
     root.setStyle(getBackgroundStyle());
 
-    stage.setScene(new Scene(root));
+    Scene scene = new Scene(root, 800, 700);
+    stage.setScene(scene);
     stage.setTitle("Character Selection");
     stage.setFullScreenExitHint("");
     stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+  }
 
+  private Button getStartButton() {
+    Button startButton = new Button("Start");
+    startButton.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+    startButton.setOnAction(e -> {
+      List<Player> players = new ArrayList<>();
+      players.add(createPlayer(player1Name, player1Character));
+      players.add(createPlayer(player2Name, player2Character));
 
+      if (player3Character != null) {
+        players.add(createPlayer(player3Name, player3Character));
+      }
+      if (player4Character != null) {
+        players.add(createPlayer(player4Name, player4Character));
+      }
+
+      try {
+        savePlayersToFile(players, createCustomFileName(player1Name, player2Name));
+      } catch (IOException ex) {
+        throw new RuntimeException(ex);
+      }
+
+      onStart(players);
+    });
+    return startButton;
   }
 
   protected VBox createPlayerBox(String defaultName, Consumer<String> nameChangedCallback, Consumer<String> characterSelectedCallback) {
@@ -137,19 +147,8 @@ public abstract class AbstractCharacterSelectionView {
     ToggleGroup toggleGroup = new ToggleGroup();
 
     for (int i = 0; i < availableCharacters.size(); i++) {
-      String character = availableCharacters.get(i);
-      Image image = new Image("PlayerIcons/" + character + ".png", 75, 75, true, true);
-      ImageView imageView = new ImageView(image);
-
-      ToggleButton button = new ToggleButton();
-      button.setGraphic(imageView);
-      button.setToggleGroup(toggleGroup);
-      button.setStyle("-fx-background-color: transparent; -fx-padding: 5; -fx-border-color: transparent; -fx-border-radius: 10;");
-
-      button.setOnAction(e -> {
-        characterSelectedCallback.accept(character);
-        highlightSelectedButton(toggleGroup);
-      });
+      ToggleButton button = getToggleButton(characterSelectedCallback, i,
+          toggleGroup);
 
       grid.add(button, i % 5, i / 5);
     }
@@ -160,6 +159,24 @@ public abstract class AbstractCharacterSelectionView {
     box.setPadding(new Insets(15));
     box.setStyle("-fx-background-color: #ddd;");
     return box;
+  }
+
+  private ToggleButton getToggleButton(Consumer<String> characterSelectedCallback, int i,
+      ToggleGroup toggleGroup) {
+    String character = availableCharacters.get(i);
+    Image image = new Image("PlayerIcons/" + character + ".png", 75, 75, true, true);
+    ImageView imageView = new ImageView(image);
+
+    ToggleButton button = new ToggleButton();
+    button.setGraphic(imageView);
+    button.setToggleGroup(toggleGroup);
+    button.setStyle("-fx-background-color: transparent; -fx-padding: 5; -fx-border-color: transparent; -fx-border-radius: 10;");
+
+    button.setOnAction(e -> {
+      characterSelectedCallback.accept(character);
+      highlightSelectedButton(toggleGroup);
+    });
+    return button;
   }
 
   protected StackPane createInactivePlayerBox(String playerLabel, Consumer<String> onNameChanged, Consumer<String> onCharacterSelected) {
@@ -182,7 +199,7 @@ public abstract class AbstractCharacterSelectionView {
     container.setOnMouseClicked(e -> {
       VBox activeBox = createPlayerBox(playerLabel, onNameChanged, onCharacterSelected);
 
-      Button removeButton = new Button("\u2716");
+      Button removeButton = new Button("✖");
       removeButton.setStyle("-fx-background-color: transparent; -fx-font-size: 16px; -fx-text-fill: #444; -fx-padding: 0;");
       removeButton.setPrefSize(24, 24);
       removeButton.setFocusTraversable(false);
@@ -195,7 +212,7 @@ public abstract class AbstractCharacterSelectionView {
       removeButton.setOnAction(ev -> {
         int index = ((Pane) activeStack.getParent()).getChildren().indexOf(activeStack);
         ((Pane) activeStack.getParent()).getChildren().set(index,
-                createInactivePlayerBox(playerLabel, onNameChanged, onCharacterSelected));
+            createInactivePlayerBox(playerLabel, onNameChanged, onCharacterSelected));
         ev.consume();
       });
 
