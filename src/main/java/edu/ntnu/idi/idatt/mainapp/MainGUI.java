@@ -6,7 +6,6 @@ import edu.ntnu.idi.idatt.exceptions.FileWriteException;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
-import edu.ntnu.idi.idatt.view.IntroScreenView;
 import javafx.application.Application;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;

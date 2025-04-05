@@ -118,7 +118,7 @@ public class SnakesAndLadders extends BoardGame {
         }
       }
     } catch (IOException e) {
-      System.err.println("Error reading from CSV " + e.getMessage());
+      logger.error("Error reading from CSV {}", e.getMessage());
     }
 
     return playersAdded;
@@ -132,7 +132,7 @@ public class SnakesAndLadders extends BoardGame {
       }
       return true;
     } catch (IOException e) {
-      System.err.println("Error saving players to CSV: " + e.getMessage());
+      logger.error("Error saving players to CSV: {}", e.getMessage());
       return false;
     }
   }

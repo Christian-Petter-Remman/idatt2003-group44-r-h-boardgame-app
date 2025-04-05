@@ -13,7 +13,7 @@ public class PlayerCsvHandler implements FileHandler<List<Player>> {
 
   @Override
   public void saveToFile(List<Player> players, String fileName) throws IOException {
-    String directory = "user-data/PlayerFiles/";
+    String directory = "data/user-data/player-files/";
     new File(directory).mkdirs(); // Make sure folders exist
 
     String fullPath = directory + fileName;
