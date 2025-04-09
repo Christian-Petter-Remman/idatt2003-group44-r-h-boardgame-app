@@ -18,6 +18,7 @@ public class Board {
   private List<Tile> tiles;
   private final int size;
   private final List<Ladder> ladders = new ArrayList<>();
+  private final List<Snake> snakes = new ArrayList<>();
 
   public Board() {
     this(100);
@@ -170,5 +171,9 @@ public class Board {
 
   public List<Ladder> getLadders() {
     return new ArrayList<>(ladders);
+  }
+
+  public List<Snake> getSnakes() {
+    return new ArrayList<>(snakes);
   }
 }
