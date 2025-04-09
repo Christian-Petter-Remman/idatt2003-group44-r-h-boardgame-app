@@ -1,6 +1,7 @@
 package edu.ntnu.idi.idatt.view.snakesandladders;
 
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersFactory;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersPlayer;
 import edu.ntnu.idi.idatt.model.common.player.Player;
 import edu.ntnu.idi.idatt.view.common.AbstractCharacterSelectionView;
@@ -18,7 +19,7 @@ public class SnakesAndLaddersCharacterSelectionView extends AbstractCharacterSel
   @Override
   protected String getBackgroundStyle() {
 
-     return "-fx-background-image: url('images/snakesbackground.jpg'); -fx-background-size: cover;";
+     return "-fx-background-image: url('images/bakgrun snake.jpg'); -fx-background-size: cover;";
   }
 
   @Override
@@ -33,9 +34,16 @@ public class SnakesAndLaddersCharacterSelectionView extends AbstractCharacterSel
 
   @Override
   protected void onStart(List<Player> players) {
-    SnakesAndLaddersRuleSelectionView ruleView = new SnakesAndLaddersRuleSelectionView(stage);
-    ruleView.setPlayers(players);
-    ruleView.show();
+    SnakesAndLaddersFactory factory = new SnakesAndLaddersFactory();
+    SnakesAndLadders game = (SnakesAndLadders) factory.createBoardGameFromConfiguration("default");
+
+    for (Player player : players) {
+      if (player instanceof SnakesAndLaddersPlayer snakePlayer) {
+        game.addPlayer(snakePlayer);
+      }
+    }
+
+    new GameScreenView(stage, game).show();
   }
 
   @Override

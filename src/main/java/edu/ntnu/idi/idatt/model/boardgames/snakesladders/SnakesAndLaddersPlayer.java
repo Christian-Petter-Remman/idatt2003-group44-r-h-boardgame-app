@@ -30,9 +30,9 @@ public class SnakesAndLaddersPlayer extends Player {
     int newPosition = getPosition() + steps;
     if (newPosition > 100) return;
 
-    setPosition(newPosition);
-    applyTileEffect(board);
+    setPosition(board.getFinalPosition(newPosition));
   }
+
 
   private void applyTileEffect(Board board) {
     Tile tile = board.getTile(getPosition());
