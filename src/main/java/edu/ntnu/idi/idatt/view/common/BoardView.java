@@ -3,7 +3,9 @@ package edu.ntnu.idi.idatt.view.common;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Ladder;
 import edu.ntnu.idi.idatt.model.common.player.Player;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -13,34 +15,62 @@ import javafx.scene.text.Text;
 
 import java.util.List;
 
-public class BoardView extends GridPane {
+public class BoardView extends StackPane {
 
   private final Board board;
   private final List<Player> players;
+  private final GridPane boardGrid = new GridPane(); // Board tiles
+  private final Pane ladderOverlay = new Pane();     // Draw ladders
+  private int tileSize = 90;
 
   public BoardView(Board board, List<Player> players) {
     this.board = board;
     this.players = players;
 
-    setHgap(2);
-    setVgap(2);
-    setAlignment(Pos.CENTER);
-    setPrefSize(900, 900);
-    setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-    setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+    boardGrid.setHgap(2);
+    boardGrid.setVgap(2);
+    boardGrid.setAlignment(Pos.CENTER);
+    boardGrid.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+    boardGrid.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+
+    ladderOverlay.setPickOnBounds(false); // Allow clicks to pass through
+    ladderOverlay.setMouseTransparent(true); // Don't block input
+
+    getChildren().addAll(boardGrid, ladderOverlay); // Stack layers
     render();
   }
 
   public void render() {
-    getChildren().clear();
+    boardGrid.getChildren().clear();
+    boardGrid.getColumnConstraints().clear();
+    boardGrid.getRowConstraints().clear();
+    ladderOverlay.getChildren().clear();
+
+    int boardSize = 10;
+
+    boardGrid.setPrefSize(tileSize * boardSize, tileSize * boardSize);
+    boardGrid.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+    boardGrid.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+    ladderOverlay.setPrefSize(tileSize * boardSize, tileSize * boardSize);
+
+    for (int i = 0; i < boardSize; i++) {
+      ColumnConstraints colConst = new ColumnConstraints(tileSize);
+      colConst.setHalignment(HPos.CENTER);
+      boardGrid.getColumnConstraints().add(colConst);
+
+      RowConstraints rowConst = new RowConstraints(tileSize);
+      rowConst.setValignment(VPos.CENTER);
+      boardGrid.getRowConstraints().add(rowConst);
+    }
 
     for (int i = 0; i < 100; i++) {
       int tileNum = i + 1;
       StackPane cell = new StackPane();
-      cell.setPrefSize(100, 100);
+      cell.setPrefSize(tileSize, tileSize);
+      cell.setMinSize(tileSize, tileSize);
+      cell.setMaxSize(tileSize, tileSize);
       cell.setStyle("-fx-border-color: black; -fx-background-color: white;");
 
-      // Optional: still show tile number in background
       Text tileNumber = new Text(String.valueOf(tileNum));
       tileNumber.setStyle("-fx-fill: #ccc;");
       cell.getChildren().add(tileNumber);
@@ -56,13 +86,13 @@ public class BoardView extends GridPane {
 
       int row = 9 - i / 10;
       int col = (row % 2 == 0) ? i % 10 : 9 - (i % 10);
-      add(cell, col, row);
+      boardGrid.add(cell, col, row);
     }
 
-    // === 2. Draw ladders ===
     for (Ladder ladder : board.getLadders()) {
       drawLadder(ladder.start(), ladder.end());
     }
+    for (Snak)
   }
 
   private void drawLadder(int start, int end) {
@@ -72,14 +102,13 @@ public class BoardView extends GridPane {
     int endRow = 9 - (end - 1) / 10;
     int endCol = (endRow % 2 == 0) ? (end - 1) % 10 : 9 - (end - 1) % 10;
 
-    double cellSize = 100;
-    double gap = getHgap();
+    double gap = boardGrid.getHgap();
 
-    double startX = startCol * (cellSize + gap) + cellSize / 2.0;
-    double startY = startRow * (cellSize + gap) + cellSize / 2.0;
+    double startX = startCol * (tileSize + gap) + tileSize / 2.0;
+    double startY = startRow * (tileSize + gap) + tileSize / 2.0;
 
-    double endX = endCol * (cellSize + gap) + cellSize / 2.0;
-    double endY = endRow * (cellSize + gap) + cellSize / 2.0;
+    double endX = endCol * (tileSize + gap) + tileSize / 2.0;
+    double endY = endRow * (tileSize + gap) + tileSize / 2.0;
 
     double dx = endX - startX;
     double dy = endY - startY;
@@ -95,9 +124,9 @@ public class BoardView extends GridPane {
     left.setStrokeWidth(3);
     right.setStrokeWidth(3);
 
-    getChildren().addAll(left, right);
+    ladderOverlay.getChildren().addAll(left, right);
 
-    int steps = 5;
+    int steps = 7;
     for (int i = 1; i < steps; i++) {
       double ratio = i / (double) steps;
       double midX = startX + dx * ratio;
@@ -107,9 +136,13 @@ public class BoardView extends GridPane {
               midX - offsetX, midY - offsetY,
               midX + offsetX, midY + offsetY
       );
-      rung.setStroke(Color.BURLYWOOD);
+      rung.setStroke(Color.BROWN);
       rung.setStrokeWidth(2);
-      getChildren().add(rung);
+      ladderOverlay.getChildren().add(rung);
     }
+  }
+
+  private void drawSnakes(int start, int end) {
+
   }
 }

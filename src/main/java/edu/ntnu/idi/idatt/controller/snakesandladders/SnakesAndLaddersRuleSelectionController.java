@@ -59,7 +59,7 @@ public class SnakesAndLaddersRuleSelectionController {
       }
 
       addPlayers(players);
-      currentGame.initialize();
+      currentGame.initialize(currentGame.getBoard());
 
       logger.info("Game created with difficulty: {}, dice: {}, ladders: {}, penalties: {}",
           difficulty, diceCount, ladderCount, penaltyCount);

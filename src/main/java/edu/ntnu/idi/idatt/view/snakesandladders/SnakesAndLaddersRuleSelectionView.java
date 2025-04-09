@@ -34,7 +34,7 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
   public SnakesAndLaddersRuleSelectionView(Stage primaryStage) {
     super(primaryStage);
     controller = new SnakesAndLaddersRuleSelectionController(new SnakesAndLaddersFactory());
-    controller.addObserver(this); // Registering this view as an observer
+    controller.addObserver(this);
   }
 
   @Override
