@@ -20,6 +20,9 @@ public class Board {
   private final List<Ladder> ladders = new ArrayList<>();
   private final List<Snake> snakes = new ArrayList<>();
 
+
+
+
   public Board() {
     this(100);
   }
@@ -55,12 +58,12 @@ public class Board {
   }
 
   public void addSnake(int start, int end) {
-    try {
-      setTile(start, new SnakeTile(start, end));
-      logger.debug("Added snake from {} to {}", start, end);
-    } catch (IllegalArgumentException e) {
-      logger.error("Failed to add snake from {} to {}: {}", start, end, e.getMessage());
+    if (start <= end || start > size || end < 1) {
+      throw new IllegalArgumentException("Invalid snake positions");
     }
+    Snake snake = new Snake(start, end);
+    snakes.add(snake);
+    setTile(start, new SnakeTile(start, end));
   }
 
   public void addRandomSnake() {
@@ -176,4 +179,5 @@ public class Board {
   public List<Snake> getSnakes() {
     return new ArrayList<>(snakes);
   }
+
 }

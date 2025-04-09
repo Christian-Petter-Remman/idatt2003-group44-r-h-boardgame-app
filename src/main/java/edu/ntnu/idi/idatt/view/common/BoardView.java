@@ -3,7 +3,9 @@ package edu.ntnu.idi.idatt.view.common;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Ladder;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Snake;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.LadderTile;
 import edu.ntnu.idi.idatt.model.common.player.Player;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.SnakeTile;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -15,15 +17,16 @@ import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
+
 import java.util.List;
 
 public class BoardView extends StackPane {
 
   private final Board board;
   private final List<Player> players;
-  private final GridPane boardGrid = new GridPane();             // Tiles
-  private final Pane ladderSnakeOverlay = new Pane();            // Ladders + Snakes
-  private int tileSize = 90;
+  private final GridPane boardGrid = new GridPane();
+  private final Pane ladderSnakeOverlay = new Pane();
+  private final int tileSize = 90;
 
   public BoardView(Board board, List<Player> players) {
     this.board = board;
@@ -67,11 +70,15 @@ public class BoardView extends StackPane {
 
     for (int i = 0; i < 100; i++) {
       int tileNum = i + 1;
+
       StackPane cell = new StackPane();
       cell.setPrefSize(tileSize, tileSize);
       cell.setMinSize(tileSize, tileSize);
       cell.setMaxSize(tileSize, tileSize);
-      cell.setStyle("-fx-border-color: black; -fx-background-color: white;");
+
+      String color = getTileColor(tileNum);
+      cell.setStyle("-fx-border-color: black; -fx-background-color: " + color + ";");
+
 
       Text tileNumber = new Text(String.valueOf(tileNum));
       tileNumber.setStyle("-fx-fill: #ccc;");
@@ -115,10 +122,11 @@ public class BoardView extends StackPane {
     Line left = new Line(startPos[0] + offsetX, startPos[1] + offsetY, endPos[0] + offsetX, endPos[1] + offsetY);
     Line right = new Line(startPos[0] - offsetX, startPos[1] - offsetY, endPos[0] - offsetX, endPos[1] - offsetY);
 
-    left.setStroke(Color.DARKGREEN);
-    right.setStroke(Color.DARKGREEN);
+    left.setStroke(Color.BURLYWOOD);
+    right.setStroke(Color.BURLYWOOD);
     left.setStrokeWidth(3);
     right.setStrokeWidth(3);
+
 
     ladderSnakeOverlay.getChildren().addAll(left, right);
 
@@ -132,7 +140,7 @@ public class BoardView extends StackPane {
               midX - offsetX, midY - offsetY,
               midX + offsetX, midY + offsetY
       );
-      rung.setStroke(Color.BROWN);
+      rung.setStroke(Color.BURLYWOOD);
       rung.setStrokeWidth(2);
       ladderSnakeOverlay.getChildren().add(rung);
     }
@@ -169,5 +177,72 @@ public class BoardView extends StackPane {
     double y = row * (tileSize + gap) + tileSize / 2.0;
 
     return new double[]{x, y};
+  }
+
+  private int[] getSnakeStart() {
+    List<Snake> snakes = board.getSnakes();
+    int[] starts = new int[snakes.size()];
+
+    for (int i = 0; i < snakes.size(); i++) {
+      starts[i] = snakes.get(i).start();
+    }
+    return starts;
+  }
+
+  private int[] getSnakeEnd() {
+    List<Snake> snakes = board.getSnakes();
+    int[] ends = new int[snakes.size()];
+    for (int i = 0; i < snakes.size(); i++) {
+      ends[i] = snakes.get(i).end();
+    }return ends;
+  }
+
+  private int[] getLadderStart() {
+    List<Ladder> ladders = board.getLadders();
+    int[] starts = new int[ladders.size()];
+    for (int i = 0; i < ladders.size(); i++) {
+      starts[i] = ladders.get(i).start();
+    }
+    return starts;
+  }
+
+  private int[] getLadderEnd() {
+    List<Ladder> ladders = board.getLadders();
+    int[] ends = new int[ladders.size()];
+    for (int i = 0; i < ladders.size(); i++) {
+      ends[i] = ladders.get(i).end();
+    }
+    return ends;
+  }
+
+  private boolean isIn(int tileNum, int[] positions) {
+    for (int pos : positions) {
+      if (tileNum == pos) return true;
+    }
+    return false;
+  }
+
+  private boolean isSnakeStart(int tileNum) {
+    return isIn(tileNum, getSnakeStart());
+  }
+
+  private boolean isSnakeEnd(int tileNum) {
+    return isIn(tileNum, getSnakeEnd());
+  }
+
+  private boolean isLadderStart(int tileNum) {
+    return isIn(tileNum, getLadderStart());
+  }
+
+  private boolean isLadderEnd(int tileNum) {
+    return isIn(tileNum, getLadderEnd());
+  }
+
+  private String getTileColor(int tileNum) {
+    if (isSnakeStart(tileNum)) return "red";
+    if (isSnakeEnd(tileNum)) return "pink";
+    if (isLadderStart(tileNum)) return "darkgreen";
+    if (isLadderEnd(tileNum)) return "lightgreen";
+    return "white";
   }
 }

@@ -70,8 +70,8 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
         penaltyField.setText("8");
         break;
       case "hard":
-        laddersField.setText("4");
-        penaltyField.setText("10");
+        laddersField.setText("5");
+        penaltyField.setText("5");
         break;
       default:
         logger.warn("Invalid difficulty: {}", difficulty);
@@ -138,7 +138,7 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
   @Override
   protected void onBack() {
     logger.info("Navigating back from rules screen");
-    primaryStage.close(); // Implement navigation logic here
+    primaryStage.close();
   }
 
   private RadioButton createRadioButton(String text, String difficulty, ToggleGroup group) {

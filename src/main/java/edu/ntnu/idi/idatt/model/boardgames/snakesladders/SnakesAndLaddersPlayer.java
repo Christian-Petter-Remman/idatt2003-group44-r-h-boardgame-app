@@ -9,8 +9,6 @@ public class SnakesAndLaddersPlayer extends Player {
     super(name,character);
   }
 
-
-
   @Override
   public int getStartPosition() {
     return 0;
@@ -31,13 +29,5 @@ public class SnakesAndLaddersPlayer extends Player {
     if (newPosition > 100) return;
 
     setPosition(board.getFinalPosition(newPosition));
-  }
-
-
-  private void applyTileEffect(Board board) {
-    Tile tile = board.getTile(getPosition());
-    if (tile.hasSnakeOrLadder()) {
-      setPosition(tile.getDestination());
-    }
   }
 }
