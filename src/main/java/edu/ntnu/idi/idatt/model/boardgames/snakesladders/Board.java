@@ -49,7 +49,7 @@ public class Board {
     Random random = new Random();
     int start = random.nextInt(size - 10) + 1;
     int end = ((start / 10) + 1) * 10 + random.nextInt(10 - (start % 10));
-    addLadder(start, end);
+    addFullLadder(start, end);
     logger.info("Added random ladder from {} to {}", start, end);
   }
 
