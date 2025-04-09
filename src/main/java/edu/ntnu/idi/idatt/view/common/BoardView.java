@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.view;
+package edu.ntnu.idi.idatt.view.common;
 
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Ladder;
@@ -34,13 +34,13 @@ public class BoardView extends GridPane {
   public void render() {
     getChildren().clear();
 
-    // === 1. Draw tiles and players ===
     for (int i = 0; i < 100; i++) {
       int tileNum = i + 1;
       StackPane cell = new StackPane();
       cell.setPrefSize(100, 100);
       cell.setStyle("-fx-border-color: black; -fx-background-color: white;");
 
+      // Optional: still show tile number in background
       Text tileNumber = new Text(String.valueOf(tileNum));
       tileNumber.setStyle("-fx-fill: #ccc;");
       cell.getChildren().add(tileNumber);

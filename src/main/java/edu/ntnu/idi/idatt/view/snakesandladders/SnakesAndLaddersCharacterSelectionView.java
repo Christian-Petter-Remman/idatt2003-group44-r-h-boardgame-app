@@ -1,11 +1,11 @@
-package edu.ntnu.idi.idatt.view;
+package edu.ntnu.idi.idatt.view.snakesandladders;
 
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersFactory;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersPlayer;
 import edu.ntnu.idi.idatt.model.common.player.Player;
-import edu.ntnu.idi.idatt.view.AbstractCharacterSelectionView;
-import edu.ntnu.idi.idatt.view.GameScreenView;
+import edu.ntnu.idi.idatt.view.common.AbstractCharacterSelectionView;
+import edu.ntnu.idi.idatt.view.common.GameScreenView;
 import javafx.stage.Stage;
 
 import java.util.List;

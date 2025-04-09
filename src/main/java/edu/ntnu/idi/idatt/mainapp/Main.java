@@ -1,7 +1,6 @@
 package edu.ntnu.idi.idatt.mainapp;
 
-import edu.ntnu.idi.idatt.view.IntroScreenView;
-import edu.ntnu.idi.idatt.view.SnakesAndLaddersCharacterSelectionView;
+import edu.ntnu.idi.idatt.view.common.IntroScreenView;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.input.KeyCombination;
