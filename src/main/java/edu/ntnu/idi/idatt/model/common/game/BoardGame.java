@@ -14,7 +14,7 @@ public abstract class BoardGame {
     gameOver = false;
   }
 
-  public abstract void initialize();
+  public abstract void initialize(Board board);
   public abstract void makeMove(Player player);
   public abstract boolean isValidMove(Player player, int move);
   public abstract boolean checkWinCondition();

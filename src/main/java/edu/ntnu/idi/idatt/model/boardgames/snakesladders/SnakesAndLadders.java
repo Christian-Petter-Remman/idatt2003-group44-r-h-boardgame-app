@@ -26,9 +26,10 @@ public class SnakesAndLadders extends BoardGame {
     currentPlayerIndex = 0;
   }
 
+
   @Override
-  public void initialize() {
-    board = new Board();
+  public void initialize (Board board) {
+    this.board = board;
     dice = new Dice(1);
   }
 

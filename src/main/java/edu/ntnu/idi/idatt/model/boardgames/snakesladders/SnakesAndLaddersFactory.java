@@ -20,7 +20,7 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
   public BoardGame createBoardGame() {
     SnakesAndLadders game = new SnakesAndLadders();
     game.setBoard(createDefaultBoard());
-    game.initialize();
+    game.initialize(game.getBoard());
     return game;
   }
 
@@ -73,7 +73,7 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
     }
 
     game.setBoard(board);
-    game.initialize();
+    game.initialize(game.getBoard());
     return game;
   }
 

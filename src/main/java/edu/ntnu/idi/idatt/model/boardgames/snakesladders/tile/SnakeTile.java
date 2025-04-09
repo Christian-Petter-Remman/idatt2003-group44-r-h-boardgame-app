@@ -19,4 +19,12 @@ public class SnakeTile extends Tile {
       throw new IllegalArgumentException("A snake must lead to a lower tile.");
     }
   }
+
+  public int getStartDestination() {
+    return getDestination();
+  }
+
+  public int getEndDestination() {
+    return getNumberOfTile();
+  }
 }

@@ -183,7 +183,6 @@ public abstract class AbstractCharacterSelectionView {
     VBox innerContent = createPlayerBox("", s -> {}, s -> {});
     innerContent.setOpacity(0.3);
 
-    // The gray box behind
     VBox backgroundBox = new VBox(innerContent);
     backgroundBox.setAlignment(Pos.CENTER);
     backgroundBox.setPrefSize(300, 270);

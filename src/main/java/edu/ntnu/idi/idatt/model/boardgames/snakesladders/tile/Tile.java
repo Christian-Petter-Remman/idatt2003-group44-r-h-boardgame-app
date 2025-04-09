@@ -54,7 +54,7 @@ public class Tile {
    *
    * @return the tile number
    */
-  public int getNumberOfTile() {
+  public  int getNumberOfTile() {
     return numberOfTile;
   }
 

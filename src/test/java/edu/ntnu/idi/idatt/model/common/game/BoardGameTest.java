@@ -12,7 +12,7 @@ class BoardGameTest {
 
   // Enkel implementasjon for å teste det abstrakte
   static class DummyGame extends BoardGame {
-    @Override public void initialize() {}
+    @Override public void initialize(Board board) {}
     @Override public void makeMove(Player p) {}
     @Override public boolean isValidMove(Player p, int roll) { return true; }
     @Override public boolean checkWinCondition() { return false; }
