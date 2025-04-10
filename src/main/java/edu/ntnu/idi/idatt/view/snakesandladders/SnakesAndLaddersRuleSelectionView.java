@@ -1,5 +1,7 @@
 package edu.ntnu.idi.idatt.view.snakesandladders;
 
+import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
+
 import edu.ntnu.idi.idatt.controller.snakesandladders.SnakesAndLaddersRuleSelectionController;
 import edu.ntnu.idi.idatt.controller_observers.DifficultyObserver;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
@@ -128,10 +130,11 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
       new GameScreenView(primaryStage, game).show();
 
     } catch (NumberFormatException e) {
-      showErrorDialog("Invalid Input", "Please enter valid numbers in all fields.");
+      logger.error("Error with starting game: {}", e.getMessage());
+      showAlert("Invalid Input", "Please enter valid numbers in all fields.");
     } catch (Exception e) {
       logger.error("Error starting game: {}", e.getMessage());
-      showErrorDialog("Game Error", "An error occurred while starting the game.");
+      showAlert("Game Error", "An error occurred while starting the game.");
     }
   }
 
@@ -153,14 +156,6 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     TextField field = new TextField(defaultValue);
     field.setPrefWidth(100);
     return field;
-  }
-
-  private void showErrorDialog(String title, String message) {
-    Alert alert = new Alert(Alert.AlertType.ERROR);
-    alert.setTitle(title);
-    alert.setHeaderText(null);
-    alert.setContentText(message);
-    alert.showAndWait();
   }
 
   public void setPlayers(List<Player> players) {

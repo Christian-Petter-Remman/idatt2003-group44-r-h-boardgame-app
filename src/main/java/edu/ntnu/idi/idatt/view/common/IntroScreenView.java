@@ -1,5 +1,7 @@
 package edu.ntnu.idi.idatt.view.common;
 
+import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
+
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.view.snakesandladders.SnakesAndLaddersCharacterSelectionView;
 import javafx.geometry.Insets;
@@ -13,9 +15,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IntroScreenView {
   private final Stage primaryStage;
+  private final Logger logger = LoggerFactory.getLogger(IntroScreenView.class);
 
   public IntroScreenView(Stage primaryStage) {
     this.primaryStage = primaryStage;
@@ -70,7 +75,12 @@ public class IntroScreenView {
   }
 
   public void startSnakesAndLadders() {
-    SnakesAndLaddersCharacterSelectionView characterSelectionView = new SnakesAndLaddersCharacterSelectionView(primaryStage);
-    characterSelectionView.show();
+    try {
+      SnakesAndLaddersCharacterSelectionView characterSelectionView = new SnakesAndLaddersCharacterSelectionView(primaryStage);
+      characterSelectionView.show();
+    } catch (Exception e) {
+      logger.error("Error loading Character Selection Screen: {}", e.getMessage());
+      showAlert("Error", "An error occurred while loading the Character Selection Screen for Snakes And Ladders");
+    }
   }
 }
