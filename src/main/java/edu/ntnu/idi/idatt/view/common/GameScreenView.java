@@ -2,6 +2,7 @@ package edu.ntnu.idi.idatt.view.common;
 
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.common.player.Player;
+import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -10,6 +11,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.List;
 
@@ -74,17 +76,41 @@ public class GameScreenView {
   private void handleRoll() {
     Player currentPlayer = game.getCurrentPlayer();
     int roll = game.rollDice();
-    currentPlayer.move(roll, game.getBoard());
-    diceResultLabel.setText("Roll result: " + roll);
-    positionLabel.setText("Position: " + currentPlayer.getPosition());
+    int tentative = currentPlayer.getPosition() + roll;
 
-    if (currentPlayer.hasWon()) {
-      showWinner(currentPlayer);
-    } else {
-      game.advanceTurn();
-      updateView();
-      boardView.render();
+    if (tentative > 100) {
+      diceResultLabel.setText("Roll result: " + roll + " (invalid move)");
+      return;
     }
+
+    // Step 1: Show landing tile
+    diceResultLabel.setText("Roll result: " + roll);
+    positionLabel.setText("Position: " + tentative);
+    currentPlayer.setPosition(tentative);
+    boardView.render();
+    rollButton.setDisable(true);
+
+    PauseTransition pause = new PauseTransition(Duration.seconds(1));
+    pause.setOnFinished(event -> {
+      int finalPos = game.getBoard().getFinalPosition(tentative);
+
+      if (finalPos != tentative) {
+        currentPlayer.setPosition(finalPos);
+        boardView.render();
+      }
+
+      currentPlayer.setPosition(finalPos);
+      positionLabel.setText("Position: " + finalPos);
+
+      if (currentPlayer.hasWon()) {
+        showWinner(currentPlayer);
+      } else {
+        game.advanceTurn();
+        currentPlayerLabel.setText("Current turn: " + game.getCurrentPlayer().getName());
+        rollButton.setDisable(false);
+      }
+    });
+    pause.play();
   }
 
   private void updateView() {

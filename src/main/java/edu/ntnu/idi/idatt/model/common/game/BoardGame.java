@@ -31,7 +31,7 @@ public abstract class BoardGame {
     return gameOver;
   }
 
-  protected void setGameOver(boolean gameOver) {
+  public void setGameOver(boolean gameOver) {
     this.gameOver = gameOver;
   }
 
