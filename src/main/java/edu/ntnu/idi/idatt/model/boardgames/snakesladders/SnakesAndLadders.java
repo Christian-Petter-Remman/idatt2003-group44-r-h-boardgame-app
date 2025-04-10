@@ -26,7 +26,6 @@ public class SnakesAndLadders extends BoardGame {
     currentPlayerIndex = 0;
   }
 
-
   @Override
   public void initialize (Board board) {
     this.board = board;
@@ -38,9 +37,9 @@ public class SnakesAndLadders extends BoardGame {
     if (!(player instanceof SnakesAndLaddersPlayer)) {
       throw new IllegalArgumentException("Player must be a SnakesAndLaddersPlayer");
     }
-
     int roll = dice.roll();
     player.move(roll, board);
+
     if (player.hasWon()) {
       gameOver = true;
     } else {

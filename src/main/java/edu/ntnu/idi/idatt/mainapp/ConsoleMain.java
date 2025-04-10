@@ -5,7 +5,7 @@ import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersFactory
 import edu.ntnu.idi.idatt.model.common.factory.BoardGameFactory;
 import edu.ntnu.idi.idatt.model.common.game.BoardGame;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
-import edu.ntnu.idi.idatt.view.common.ConsoleUI;
+//import edu.ntnu.idi.idatt.view.common.ConsoleUI;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.CsvFormatException;
 import edu.ntnu.idi.idatt.exceptions.FileWriteException;
@@ -46,8 +46,8 @@ public class ConsoleMain {
 
       // Start the console UI
       logger.info("Starting console UI");
-      ConsoleUI ui = new ConsoleUI(snakesAndLadders);
-      ui.start();
+//      ConsoleUI ui = new ConsoleUI(snakesAndLadders);
+//      ui.start();
 
       // Save players after the game ends
       FileManager.saveLastGamePlayers(snakesAndLadders);
