@@ -34,7 +34,7 @@ public abstract class AbstractCharacterSelectionView {
 
   protected abstract String getBackgroundStyle();
 
-  protected final List<String> availableCharacters = List.of(
+  public final List<String> availableCharacters = List.of(
       "bowser", "peach", "mario", "toad", "charmander", "fish", "luigi", "yoshi", "rock", "snoopdogg"
   );
 

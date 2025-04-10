@@ -7,9 +7,9 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -21,10 +21,25 @@ public class GameScreenView {
 
   private BoardView boardView;
   private Label currentPlayerLabel;
+  private Image currentPlayerImage;
   private Label diceResultLabel;
   private Label positionLabel;
   private Button rollButton;
   private Button backButton;
+  private ImageView imageView;
+  private Label playerLabel;
+  private Image player1Image;
+  private ImageView player1ImageView;
+  private Image player2Image;
+  private ImageView player2ImageView;
+  private Image player3Image;
+  private ImageView player3ImageView;
+  private Image player4Image;
+  private ImageView player4ImageView;
+  private Label player1Label;
+  private Label player2Label;
+  private Label player3Label;
+  private Label player4Label;
 
   public GameScreenView(Stage stage, SnakesAndLadders game) {
     this.stage = stage;
@@ -33,16 +48,66 @@ public class GameScreenView {
 
   public void show() {
     currentPlayerLabel = new Label("Current turn: ");
-    currentPlayerLabel.setStyle("-fx-font-size: 18px;");
+    currentPlayerLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+    currentPlayerLabel.setMinWidth(150);
+
     diceResultLabel = new Label("Roll result: -");
     positionLabel = new Label("Position: -");
 
+    currentPlayerImage = new Image("PlayerIcons/" + game.getCurrentPlayer().getCharacter() + ".png", 150, 150, true, true);
+    imageView = new ImageView(currentPlayerImage);
+
+    playerLabel = new Label("Players");
+    playerLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+    playerLabel.setAlignment(Pos.CENTER);
+    playerLabel.setMaxWidth(Double.MAX_VALUE);
+
+    GridPane playerGrid = new GridPane();
+    playerGrid.setHgap(60);
+    playerGrid.setVgap(60);
+    playerGrid.setAlignment(Pos.CENTER);
+
+    player1Image = new Image("PlayerIcons/" + game.getCharacterNames().get(0) + ".png", 75, 75, true, true);
+    player1ImageView = new ImageView(player1Image);
+    player1Label = new Label(game.getPlayers().get(0).getName());
+    VBox player1Box = new VBox(5, player1ImageView, player1Label);
+    player1Box.setAlignment(Pos.CENTER);
+    playerGrid.add(player1Box, 0, 0);
+
+    player2Image = new Image("PlayerIcons/" + game.getCharacterNames().get(1) + ".png", 75, 75, true, true);
+    player2ImageView = new ImageView(player2Image);
+    player2Label = new Label(game.getPlayers().get(1).getName());
+    VBox player2Box = new VBox(5, player2ImageView, player2Label);
+    player2Box.setAlignment(Pos.CENTER);
+    playerGrid.add(player2Box, 1, 0);
+
+    if (game.getCharacterNames().size() >= 3 ) {
+      player3Image = new Image("PlayerIcons/" + game.getCharacterNames().get(2) + ".png", 75, 75, true, true);
+      player3ImageView = new ImageView(player3Image);
+      player3Label = new Label(game.getPlayers().get(2).getName());
+      VBox player3Box = new VBox(5, player3ImageView, player3Label);
+      player3Box.setAlignment(Pos.CENTER);
+      playerGrid.add(player3Box, 0, 1);
+    }
+
+    if (game.getCharacterNames().size() >= 4 ) {
+      player4Image = new Image("PlayerIcons/" + game.getCharacterNames().get(3) + ".png", 75, 75, true, true);
+      player4ImageView = new ImageView(player4Image);
+      player4Label = new Label(game.getPlayers().get(1).getName());
+      VBox player4Box = new VBox(5, player4ImageView, player4Label);
+      player4Box.setAlignment(Pos.CENTER);
+      playerGrid.add(player4Box, 1, 1);
+    }
+
+
+
+
     rollButton = new Button("Roll Dice");
-    rollButton.setStyle("-fx-font-size: 14px;");
+    rollButton.setStyle("-fx-font-size: 12px;");
     rollButton.setOnAction(e -> handleRoll());
 
     backButton = new Button("Back");
-    backButton.setStyle("-fx-font-size: 14px;");
+    backButton.setStyle("-fx-font-size: 12px;");
     backButton.setOnAction(e -> {
       IntroScreenView intro = new IntroScreenView(stage);
       intro.prepareScene();
@@ -51,9 +116,13 @@ public class GameScreenView {
     List<Player> genericPlayers = game.getPlayers();
     boardView = new BoardView(game.getBoard(), genericPlayers);
 
-    VBox topRightInfo = new VBox(10, currentPlayerLabel, diceResultLabel, positionLabel);
-    topRightInfo.setAlignment(Pos.TOP_CENTER);
-    topRightInfo.setPadding(new Insets(10));
+    HBox topRightInfo = new HBox(60, currentPlayerLabel, imageView);
+    topRightInfo.setAlignment(Pos.CENTER_LEFT);
+    topRightInfo.setPadding(new Insets(20, 10, 0, 10));
+
+    VBox playerLabelBox = new VBox(20, playerLabel, playerGrid);
+    playerLabelBox.setAlignment(Pos.TOP_CENTER);
+    playerLabelBox.setPadding(new Insets(150, 0, 0, 0)); //
 
     HBox buttonBox = new HBox(20, backButton, rollButton);
     buttonBox.setAlignment(Pos.BOTTOM_CENTER);
@@ -61,6 +130,7 @@ public class GameScreenView {
 
     BorderPane rightColumn = new BorderPane();
     rightColumn.setTop(topRightInfo);
+    rightColumn.setCenter(playerLabelBox);
     rightColumn.setBottom(buttonBox);
     rightColumn.setPrefWidth(300);
 
@@ -75,6 +145,8 @@ public class GameScreenView {
 
   private void handleRoll() {
     Player currentPlayer = game.getCurrentPlayer();
+    currentPlayerImage = new Image("PlayerIcons/" + currentPlayer.getCharacter() + ".png", 150, 150, true, true);
+    imageView.setImage(currentPlayerImage);
     int roll = game.rollDice();
     int tentative = currentPlayer.getPosition() + roll;
 
@@ -106,7 +178,7 @@ public class GameScreenView {
         showWinner(currentPlayer);
       } else {
         game.advanceTurn();
-        currentPlayerLabel.setText("Current turn: " + game.getCurrentPlayer().getName());
+        currentPlayerLabel.setText("Current turn:");
         rollButton.setDisable(false);
       }
     });

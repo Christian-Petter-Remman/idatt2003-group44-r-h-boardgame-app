@@ -76,6 +76,14 @@ public class SnakesAndLadders extends BoardGame {
     return players.get(currentPlayerIndex);
   }
 
+  public List<String> getCharacterNames() {
+    List<String> characterNames = new ArrayList<>();
+    for (Player player : players) {
+      characterNames.add(player.getCharacter());
+    }
+    return characterNames;
+  }
+
   public int rollDice() {
     return dice.roll();
   }
