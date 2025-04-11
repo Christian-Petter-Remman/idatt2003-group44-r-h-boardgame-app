@@ -1,5 +1,7 @@
 package edu.ntnu.idi.idatt.view.common;
 
+import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
+
 import edu.ntnu.idi.idatt.filehandling.PlayerCsvHandler;
 import edu.ntnu.idi.idatt.model.common.Player;
 import java.util.HashSet;
@@ -20,8 +22,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractCharacterSelectionView {
+  protected static final Logger logger = LoggerFactory.getLogger(AbstractCharacterSelectionView.class);
 
   protected final Stage stage;
   protected Set<String> selectedCharacters = new HashSet<>();
@@ -91,7 +96,7 @@ public abstract class AbstractCharacterSelectionView {
     VBox content = new VBox(30, headerElements, centerBox, buttonBox);
     content.setAlignment(Pos.TOP_CENTER);
     content.setPadding(new Insets(40));
-    
+
     ScrollPane scrollPane = new ScrollPane(content);
     scrollPane.setFitToWidth(true);
     scrollPane.setFitToHeight(true);
@@ -156,9 +161,7 @@ public abstract class AbstractCharacterSelectionView {
     ToggleGroup toggleGroup = new ToggleGroup();
 
     for (int i = 0; i < availableCharacters.size(); i++) {
-      ToggleButton button = getToggleButton(characterSelectedCallback, i,
-          toggleGroup);
-
+      ToggleButton button = getToggleButton(characterSelectedCallback, i, toggleGroup);
       grid.add(button, i % 5, i / 5);
     }
 
@@ -170,9 +173,7 @@ public abstract class AbstractCharacterSelectionView {
     return box;
   }
 
-  private ToggleButton getToggleButton(Consumer<String> characterSelectedCallback, int i,
-      ToggleGroup toggleGroup) {
-
+  private ToggleButton getToggleButton(Consumer<String> characterSelectedCallback, int i, ToggleGroup toggleGroup) {
     String character = availableCharacters.get(i);
     Image image = new Image("PlayerIcons/" + character + ".png", 75, 75, true, true);
     ImageView imageView = new ImageView(image);
@@ -183,11 +184,21 @@ public abstract class AbstractCharacterSelectionView {
     button.setStyle("-fx-background-color: transparent; -fx-padding: 5; -fx-border-color: transparent; -fx-border-radius: 10;");
 
     button.setOnAction(e -> {
-      characterSelectedCallback.accept(character);
+      if (button.isSelected()) {
+        if (!selectedCharacters.contains(character)) {
+          characterSelectedCallback.accept(character);
+          selectedCharacters.add(character);
+          updateCharacterAvailability();
+        } else {
+          button.setSelected(false);
+        }
+      } else {
+        selectedCharacters.remove(character);
+        updateCharacterAvailability();
+      }
       highlightSelectedButton(toggleGroup);
-      selectedCharacters.add(character);
-      updateCharacterAvailability();
     });
+
     return button;
   }
 
@@ -221,15 +232,35 @@ public abstract class AbstractCharacterSelectionView {
       activeStack.setPrefSize(300, 270);
 
       removeButton.setOnAction(ev -> {
+        try {
+          GridPane grid = findGridPane(activeBox);
+          if (grid != null) {
+            for (Node node : grid.getChildren()) {
+              if (node instanceof ToggleButton button) {
+                if (button.isSelected()) {
+                  String character = extractCharacterName(button);
+                  selectedCharacters.remove(character);
+                }
+              }
+            }
+          }
+          updateCharacterAvailability();
+        } catch (Exception ex) {
+          logger.error("Error when removing player: {}", ex.getMessage());
+          showAlert("Error", "An error occurred while removing the character");
+        }
+
         int index = ((Pane) activeStack.getParent()).getChildren().indexOf(activeStack);
         ((Pane) activeStack.getParent()).getChildren().set(index,
             createInactivePlayerBox(playerLabel, onNameChanged, onCharacterSelected));
         ev.consume();
       });
+
       int index = ((Pane) container.getParent()).getChildren().indexOf(container);
       ((Pane) container.getParent()).getChildren().set(index, activeStack);
       e.consume();
     });
+
     return container;
   }
 
@@ -245,44 +276,80 @@ public abstract class AbstractCharacterSelectionView {
   }
 
   protected void updateCharacterAvailability() {
-    for (Node node : List.of(player1Box, player2Box)) {
-      if (node instanceof VBox) {
-        updateVBoxAvailability((VBox) node);
+    try {
+      for (VBox node : List.of(player1Box, player2Box)) {
+        if (node != null) {
+          updateVBoxAvailability(node);
+        }
       }
-    }
 
-    for (Node node : List.of(player3Box, player4Box)) {
-      if (node instanceof StackPane) {
-        updateStackPaneAvailability((StackPane) node);
+      for (StackPane node : List.of(player3Box, player4Box)) {
+        if (node != null) {
+          updateStackPaneAvailability(node);
+        }
       }
+    } catch (Exception e) {
+      logger.error("Error updating character availability: {}", e.getMessage());
+      showAlert("Error", "An error occurred while updating character availability");
     }
   }
 
   private void updateVBoxAvailability(VBox box) {
-    GridPane grid = (GridPane) box.getChildren().get(1);
-    for (Node child : grid.getChildren()) {
-      if (child instanceof ToggleButton) {
-        ToggleButton button = (ToggleButton) child;
-        String character = ((ImageView) button.getGraphic()).getImage().getUrl().split("/")[2].split("\\.")[0];
-        if (selectedCharacters.contains(character)) {
-          button.setDisable(true);
-          button.setOpacity(0.3);
-        } else {
-          button.setDisable(false);
-          button.setOpacity(1.0);
+    try {
+      GridPane grid = findGridPane(box);
+      if (grid == null) return;
+
+      for (Node child : grid.getChildren()) {
+        if (child instanceof ToggleButton button) {
+          String character = extractCharacterName(button);
+          if (selectedCharacters.contains(character) && !button.isSelected()) {
+            button.setDisable(true);
+            button.setOpacity(0.3);
+          } else {
+            button.setDisable(false);
+            button.setOpacity(1.0);
+          }
         }
       }
+    } catch (Exception e) {
+      logger.error("Error updating VBox availability: {}", e.getMessage());
+      showAlert("Error", "An error occurred while updating VBox(character) availability");
     }
   }
 
   private void updateStackPaneAvailability(StackPane stack) {
-    for (Node child : stack.getChildren()) {
-      if (child instanceof VBox && ((VBox) child).getOpacity() == 1.0) {
-        updateVBoxAvailability((VBox) child);
+    try {
+      for (Node child : stack.getChildren()) {
+        if (child instanceof VBox box) {
+          if (box.getOpacity() > 0.5) {
+            updateVBoxAvailability(box);
+          }
+        }
       }
+    } catch (Exception e) {
+      logger.error("Error updating StackPane availability: {}", e.getMessage());
+      showAlert("Error", "An error occurred while updating StackPane(character) availability");
     }
   }
 
+  private GridPane findGridPane(VBox box) {
+    if (box == null || box.getChildren().size() < 2) return null;
+
+    Node node = box.getChildren().get(1);
+    return (node instanceof GridPane) ? (GridPane) node : null;
+  }
+
+  private String extractCharacterName(ToggleButton button) {
+    if (button.getGraphic() instanceof ImageView imageView) {
+      String url = imageView.getImage().getUrl();
+      String[] parts = url.split("/");
+      if (parts.length > 2) {
+        String filename = parts[parts.length - 1];
+        return filename.split("\\.")[0];
+      }
+    }
+    return "";
+  }
 
   protected void savePlayersToFile(List<Player> players, String fileName) throws IOException {
     PlayerCsvHandler playerCsvHandler = new PlayerCsvHandler();
