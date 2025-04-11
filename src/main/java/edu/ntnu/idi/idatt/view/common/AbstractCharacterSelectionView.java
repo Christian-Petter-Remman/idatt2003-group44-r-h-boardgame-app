@@ -2,8 +2,11 @@ package edu.ntnu.idi.idatt.view.common;
 
 import edu.ntnu.idi.idatt.filehandling.PlayerCsvHandler;
 import edu.ntnu.idi.idatt.model.common.Player;
+import java.util.HashSet;
+import java.util.Set;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -21,11 +24,17 @@ import java.util.function.Consumer;
 public abstract class AbstractCharacterSelectionView {
 
   protected final Stage stage;
+  protected Set<String> selectedCharacters = new HashSet<>();
 
   protected String player1Character;
   protected String player2Character;
   protected String player3Character;
   protected String player4Character;
+
+  VBox player1Box;
+  VBox player2Box;
+  StackPane player3Box;
+  StackPane player4Box;
 
   protected String player1Name = "Player 1";
   protected String player2Name = "Player 2";
@@ -54,10 +63,10 @@ public abstract class AbstractCharacterSelectionView {
 
     Button startButton = getStartButton();
 
-    VBox player1Box = createPlayerBox("Player 1", c -> player1Name = c, c -> player1Character = c);
-    VBox player2Box = createPlayerBox("Player 2", c -> player2Name = c, c -> player2Character = c);
-    StackPane player3Box = createInactivePlayerBox("Player 3", c -> player3Name = c, c -> player3Character = c);
-    StackPane player4Box = createInactivePlayerBox("Player 4", c -> player4Name = c, c -> player4Character = c);
+    player1Box = createPlayerBox("Player 1", c -> player1Name = c, c -> player1Character = c);
+    player2Box = createPlayerBox("Player 2", c -> player2Name = c, c -> player2Character = c);
+    player3Box = createInactivePlayerBox("Player 3", c -> player3Name = c, c -> player3Character = c);
+    player4Box = createInactivePlayerBox("Player 4", c -> player4Name = c, c -> player4Character = c);
 
     HBox row1 = new HBox(50, player1Box, player2Box);
     HBox row2 = new HBox(50, player3Box, player4Box);
@@ -163,6 +172,7 @@ public abstract class AbstractCharacterSelectionView {
 
   private ToggleButton getToggleButton(Consumer<String> characterSelectedCallback, int i,
       ToggleGroup toggleGroup) {
+
     String character = availableCharacters.get(i);
     Image image = new Image("PlayerIcons/" + character + ".png", 75, 75, true, true);
     ImageView imageView = new ImageView(image);
@@ -175,6 +185,8 @@ public abstract class AbstractCharacterSelectionView {
     button.setOnAction(e -> {
       characterSelectedCallback.accept(character);
       highlightSelectedButton(toggleGroup);
+      selectedCharacters.add(character);
+      updateCharacterAvailability();
     });
     return button;
   }
@@ -214,12 +226,10 @@ public abstract class AbstractCharacterSelectionView {
             createInactivePlayerBox(playerLabel, onNameChanged, onCharacterSelected));
         ev.consume();
       });
-
       int index = ((Pane) container.getParent()).getChildren().indexOf(container);
       ((Pane) container.getParent()).getChildren().set(index, activeStack);
       e.consume();
     });
-
     return container;
   }
 
@@ -233,6 +243,46 @@ public abstract class AbstractCharacterSelectionView {
       }
     }
   }
+
+  protected void updateCharacterAvailability() {
+    for (Node node : List.of(player1Box, player2Box)) {
+      if (node instanceof VBox) {
+        updateVBoxAvailability((VBox) node);
+      }
+    }
+
+    for (Node node : List.of(player3Box, player4Box)) {
+      if (node instanceof StackPane) {
+        updateStackPaneAvailability((StackPane) node);
+      }
+    }
+  }
+
+  private void updateVBoxAvailability(VBox box) {
+    GridPane grid = (GridPane) box.getChildren().get(1);
+    for (Node child : grid.getChildren()) {
+      if (child instanceof ToggleButton) {
+        ToggleButton button = (ToggleButton) child;
+        String character = ((ImageView) button.getGraphic()).getImage().getUrl().split("/")[2].split("\\.")[0];
+        if (selectedCharacters.contains(character)) {
+          button.setDisable(true);
+          button.setOpacity(0.3);
+        } else {
+          button.setDisable(false);
+          button.setOpacity(1.0);
+        }
+      }
+    }
+  }
+
+  private void updateStackPaneAvailability(StackPane stack) {
+    for (Node child : stack.getChildren()) {
+      if (child instanceof VBox && ((VBox) child).getOpacity() == 1.0) {
+        updateVBoxAvailability((VBox) child);
+      }
+    }
+  }
+
 
   protected void savePlayersToFile(List<Player> players, String fileName) throws IOException {
     PlayerCsvHandler playerCsvHandler = new PlayerCsvHandler();
