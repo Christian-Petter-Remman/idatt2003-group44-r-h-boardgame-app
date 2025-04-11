@@ -3,10 +3,10 @@ package edu.ntnu.idi.idatt.view.snakesandladders;
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
 import edu.ntnu.idi.idatt.controller.snakesandladders.SnakesAndLaddersRuleSelectionController;
-import edu.ntnu.idi.idatt.controller_observers.DifficultyObserver;
+import edu.ntnu.idi.idatt.model.model_observers.DifficultyObserver;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersFactory;
-import edu.ntnu.idi.idatt.model.common.player.Player;
+import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.view.common.AbstractRuleSelectionView;
 import edu.ntnu.idi.idatt.view.common.GameScreenView;
 import javafx.geometry.Insets;

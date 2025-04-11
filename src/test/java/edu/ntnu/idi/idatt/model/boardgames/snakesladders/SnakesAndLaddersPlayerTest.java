@@ -1,7 +1,7 @@
 package edu.ntnu.idi.idatt.model.boardgames.snakesladders;
 
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.LadderTile;
-import edu.ntnu.idi.idatt.model.common.player.Player;
+import edu.ntnu.idi.idatt.model.common.Player;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

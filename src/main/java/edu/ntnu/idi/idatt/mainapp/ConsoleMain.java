@@ -2,8 +2,8 @@ package edu.ntnu.idi.idatt.mainapp;
 
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersFactory;
-import edu.ntnu.idi.idatt.model.common.factory.BoardGameFactory;
-import edu.ntnu.idi.idatt.model.common.game.BoardGame;
+import edu.ntnu.idi.idatt.model.common.BoardGameFactory;
+import edu.ntnu.idi.idatt.model.common.BoardGame;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 //import edu.ntnu.idi.idatt.view.common.ConsoleUI;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;

@@ -3,7 +3,7 @@ package edu.ntnu.idi.idatt.filehandling;
 import edu.ntnu.idi.idatt.exceptions.CsvFormatException;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersPlayer;
-import edu.ntnu.idi.idatt.model.common.player.Player;
+import edu.ntnu.idi.idatt.model.common.Player;
 import org.junit.jupiter.api.*;
 
 import java.io.File;

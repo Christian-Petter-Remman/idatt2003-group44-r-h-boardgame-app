@@ -1,8 +1,8 @@
 package edu.ntnu.idi.idatt.model.boardgames.snakesladders;
 
-import edu.ntnu.idi.idatt.model.common.game.BoardGame;
-import edu.ntnu.idi.idatt.model.common.player.Player;
-import edu.ntnu.idi.idatt.model.common.dice.Dice;
+import edu.ntnu.idi.idatt.model.common.BoardGame;
+import edu.ntnu.idi.idatt.model.common.Player;
+import edu.ntnu.idi.idatt.model.common.Dice;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;

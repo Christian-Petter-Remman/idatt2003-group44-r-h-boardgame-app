@@ -1,6 +1,6 @@
 package edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile;
 
-import edu.ntnu.idi.idatt.model.common.player.Player;
+import edu.ntnu.idi.idatt.model.common.Player;
 
 public interface TileAction {
 

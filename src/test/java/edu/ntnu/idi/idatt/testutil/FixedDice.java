@@ -1,6 +1,6 @@
 package edu.ntnu.idi.idatt.testutil;
 
-import edu.ntnu.idi.idatt.model.common.dice.Dice;
+import edu.ntnu.idi.idatt.model.common.Dice;
 
 public class FixedDice extends Dice {
   private final int fixedValue;
