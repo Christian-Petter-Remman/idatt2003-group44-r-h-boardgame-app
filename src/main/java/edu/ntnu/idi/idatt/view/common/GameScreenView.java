@@ -41,6 +41,11 @@ public class GameScreenView {
   private Label player3Label;
   private Label player4Label;
 
+  Label player1TurnLabel = new Label();
+  Label player2TurnLabel = new Label();
+  Label player3TurnLabel = new Label();
+  Label player4TurnLabel = new Label();
+
   public GameScreenView(Stage stage, SnakesAndLadders game) {
     this.stage = stage;
     this.game = game;
@@ -67,17 +72,26 @@ public class GameScreenView {
     playerGrid.setVgap(60);
     playerGrid.setAlignment(Pos.CENTER);
 
+    List<Player> players = game.getPlayers();
+    Player Player1 = players.get(0);
+    Player Player2 = players.get(1);
+    String Player1Position = String.valueOf(Player1.getPosition());
+    String Player2Position = String.valueOf(Player2.getPosition());
+
+
     player1Image = new Image("PlayerIcons/" + game.getCharacterNames().get(0) + ".png", 75, 75, true, true);
     player1ImageView = new ImageView(player1Image);
     player1Label = new Label(game.getPlayers().get(0).getName());
-    VBox player1Box = new VBox(5, player1ImageView, player1Label);
+    player1TurnLabel.setText(Player1Position);
+    VBox player1Box = new VBox(5, player1ImageView, player1Label, player1TurnLabel);
     player1Box.setAlignment(Pos.CENTER);
     playerGrid.add(player1Box, 0, 0);
 
     player2Image = new Image("PlayerIcons/" + game.getCharacterNames().get(1) + ".png", 75, 75, true, true);
     player2ImageView = new ImageView(player2Image);
     player2Label = new Label(game.getPlayers().get(1).getName());
-    VBox player2Box = new VBox(5, player2ImageView, player2Label);
+    player2TurnLabel.setText(Player2Position);
+    VBox player2Box = new VBox(5, player2ImageView, player2Label, player2TurnLabel);
     player2Box.setAlignment(Pos.CENTER);
     playerGrid.add(player2Box, 1, 0);
 
@@ -85,7 +99,10 @@ public class GameScreenView {
       player3Image = new Image("PlayerIcons/" + game.getCharacterNames().get(2) + ".png", 75, 75, true, true);
       player3ImageView = new ImageView(player3Image);
       player3Label = new Label(game.getPlayers().get(2).getName());
-      VBox player3Box = new VBox(5, player3ImageView, player3Label);
+      Player Player3 = players.get(2);
+      String Player3Position = String.valueOf(Player3.getPosition());
+      player3TurnLabel.setStyle(Player3Position);
+      VBox player3Box = new VBox(5, player3ImageView, player3Label, player3TurnLabel);
       player3Box.setAlignment(Pos.CENTER);
       playerGrid.add(player3Box, 0, 1);
     }
@@ -94,13 +111,13 @@ public class GameScreenView {
       player4Image = new Image("PlayerIcons/" + game.getCharacterNames().get(3) + ".png", 75, 75, true, true);
       player4ImageView = new ImageView(player4Image);
       player4Label = new Label(game.getPlayers().get(1).getName());
-      VBox player4Box = new VBox(5, player4ImageView, player4Label);
+      Player Player4 = players.get(3);
+      String Player4Position = String.valueOf(Player4.getPosition());
+      player4TurnLabel.setStyle(Player4Position);
+      VBox player4Box = new VBox(5, player4ImageView, player4Label, player4TurnLabel);
       player4Box.setAlignment(Pos.CENTER);
       playerGrid.add(player4Box, 1, 1);
     }
-
-
-
 
     rollButton = new Button("Roll Dice");
     rollButton.setStyle("-fx-font-size: 12px;");
@@ -147,6 +164,7 @@ public class GameScreenView {
     Player currentPlayer = game.getCurrentPlayer();
     currentPlayerImage = new Image("PlayerIcons/" + currentPlayer.getCharacter() + ".png", 150, 150, true, true);
     imageView.setImage(currentPlayerImage);
+
     int roll = game.rollDice();
     int tentative = currentPlayer.getPosition() + roll;
 
@@ -174,6 +192,8 @@ public class GameScreenView {
       currentPlayer.setPosition(finalPos);
       positionLabel.setText("Position: " + finalPos);
 
+      updatePositionLabel();
+
       if (currentPlayer.hasWon()) {
         showWinner(currentPlayer);
       } else {
@@ -198,5 +218,29 @@ public class GameScreenView {
     alert.setContentText("Final position: " + winner.getPosition());
     alert.showAndWait();
     rollButton.setDisable(true);
+  }
+
+  private void updatePositionLabel() {
+    List<Player> players = game.getPlayers();
+
+    if (!players.isEmpty()) {
+      Player player1 = players.getFirst();
+      player1TurnLabel.setText(String.valueOf(player1.getPosition()));
+    }
+
+    if (players.size() >= 2) {
+      Player player2 = players.get(1);
+      player2TurnLabel.setText(String.valueOf(player2.getPosition()));
+    }
+
+    if (players.size() >= 3) {
+      Player player3 = players.get(2);
+      player3TurnLabel.setText(String.valueOf(player3.getPosition()));
+    }
+
+    if (players.size() >= 4) {
+      Player player4 = players.get(3);
+      player4TurnLabel.setText(String.valueOf(player4.getPosition()));
+    }
   }
 }
