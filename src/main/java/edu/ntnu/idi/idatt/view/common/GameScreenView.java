@@ -1,7 +1,7 @@
 package edu.ntnu.idi.idatt.view.common;
 
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
-import edu.ntnu.idi.idatt.model.common.player.Player;
+import edu.ntnu.idi.idatt.model.common.Player;
 import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

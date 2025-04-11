@@ -1,6 +1,4 @@
-package edu.ntnu.idi.idatt.model.common.factory;
-
-import edu.ntnu.idi.idatt.model.common.game.BoardGame;
+package edu.ntnu.idi.idatt.model.common;
 
 public abstract class BoardGameFactory {
 

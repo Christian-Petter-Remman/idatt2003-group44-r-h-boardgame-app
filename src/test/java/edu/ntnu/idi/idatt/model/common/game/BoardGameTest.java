@@ -1,10 +1,9 @@
 package edu.ntnu.idi.idatt.model.common.game;
 
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
-import edu.ntnu.idi.idatt.model.common.player.Player;
+import edu.ntnu.idi.idatt.model.common.BoardGame;
+import edu.ntnu.idi.idatt.model.common.Player;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 

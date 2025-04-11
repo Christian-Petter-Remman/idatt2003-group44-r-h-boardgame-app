@@ -1,6 +1,6 @@
 package edu.ntnu.idi.idatt.view.common;
 
-import edu.ntnu.idi.idatt.model.common.player.Player;
+import edu.ntnu.idi.idatt.model.common.Player;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;

@@ -1,12 +1,12 @@
 package edu.ntnu.idi.idatt.controller.snakesandladders;
 
-import edu.ntnu.idi.idatt.controller_observers.DifficultyObserver;
+import edu.ntnu.idi.idatt.model.model_observers.DifficultyObserver;
 import edu.ntnu.idi.idatt.exceptions.*;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersFactory;
-import edu.ntnu.idi.idatt.model.common.dice.Dice;
-import edu.ntnu.idi.idatt.model.common.player.Player;
+import edu.ntnu.idi.idatt.model.common.Dice;
+import edu.ntnu.idi.idatt.model.common.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 import org.slf4j.Logger;

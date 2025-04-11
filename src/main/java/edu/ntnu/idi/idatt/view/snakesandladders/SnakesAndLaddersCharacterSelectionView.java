@@ -3,11 +3,9 @@ package edu.ntnu.idi.idatt.view.snakesandladders;
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersPlayer;
-import edu.ntnu.idi.idatt.model.common.player.Player;
+import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.view.common.AbstractCharacterSelectionView;
 import javafx.stage.Stage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -17,7 +15,6 @@ public class SnakesAndLaddersCharacterSelectionView extends AbstractCharacterSel
     super(stage);
   }
 
-  private final Logger logger = LoggerFactory.getLogger(SnakesAndLaddersCharacterSelectionView.class);
 
   @Override
   protected String getBackgroundStyle() {

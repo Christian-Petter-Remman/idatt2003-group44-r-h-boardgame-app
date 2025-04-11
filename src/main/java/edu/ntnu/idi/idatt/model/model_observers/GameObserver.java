@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.model.model_observers.game;
+package edu.ntnu.idi.idatt.model.model_observers;
 
 public interface GameObserver {
   void onGameStart();

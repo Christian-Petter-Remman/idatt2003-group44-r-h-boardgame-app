@@ -1,9 +1,12 @@
 package edu.ntnu.idi.idatt.view.common;
 
 import edu.ntnu.idi.idatt.filehandling.PlayerCsvHandler;
-import edu.ntnu.idi.idatt.model.common.player.Player;
+import edu.ntnu.idi.idatt.model.common.Player;
+import java.util.HashSet;
+import java.util.Set;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -11,6 +14,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -19,13 +24,23 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class AbstractCharacterSelectionView {
+  protected static final Logger logger = LoggerFactory.getLogger(AbstractCharacterSelectionView.class);
 
   protected final Stage stage;
+  protected Set<String> selectedCharacters = new HashSet<>();
 
   protected String player1Character;
   protected String player2Character;
   protected String player3Character;
   protected String player4Character;
+
+  VBox player1Box;
+  VBox player2Box;
+  VBox player3Box;
+  VBox player4Box;
+
+  private boolean isPlayer3Active = false;
+  private boolean isPlayer4Active = false;
 
   protected String player1Name = "Player 1";
   protected String player2Name = "Player 2";
@@ -54,10 +69,10 @@ public abstract class AbstractCharacterSelectionView {
 
     Button startButton = getStartButton();
 
-    VBox player1Box = createPlayerBox("Player 1", c -> player1Name = c, c -> player1Character = c);
-    VBox player2Box = createPlayerBox("Player 2", c -> player2Name = c, c -> player2Character = c);
-    StackPane player3Box = createInactivePlayerBox("Player 3", c -> player3Name = c, c -> player3Character = c);
-    StackPane player4Box = createInactivePlayerBox("Player 4", c -> player4Name = c, c -> player4Character = c);
+    player1Box = createPlayerBox("Player 1", c -> player1Name = c, c -> player1Character = c);
+    player2Box = createPlayerBox("Player 2", c -> player2Name = c, c -> player2Character = c);
+    player3Box = createInactivePlayerBox("Player 3", c -> player3Name = c, c -> player3Character = c);
+    player4Box = createInactivePlayerBox("Player 4", c -> player4Name = c, c -> player4Character = c);
 
     HBox row1 = new HBox(50, player1Box, player2Box);
     HBox row2 = new HBox(50, player3Box, player4Box);
@@ -82,7 +97,7 @@ public abstract class AbstractCharacterSelectionView {
     VBox content = new VBox(30, headerElements, centerBox, buttonBox);
     content.setAlignment(Pos.TOP_CENTER);
     content.setPadding(new Insets(40));
-    
+
     ScrollPane scrollPane = new ScrollPane(content);
     scrollPane.setFitToWidth(true);
     scrollPane.setFitToHeight(true);
@@ -147,9 +162,7 @@ public abstract class AbstractCharacterSelectionView {
     ToggleGroup toggleGroup = new ToggleGroup();
 
     for (int i = 0; i < availableCharacters.size(); i++) {
-      ToggleButton button = getToggleButton(characterSelectedCallback, i,
-          toggleGroup);
-
+      ToggleButton button = getToggleButton(characterSelectedCallback, i, toggleGroup);
       grid.add(button, i % 5, i / 5);
     }
 
@@ -161,8 +174,7 @@ public abstract class AbstractCharacterSelectionView {
     return box;
   }
 
-  private ToggleButton getToggleButton(Consumer<String> characterSelectedCallback, int i,
-      ToggleGroup toggleGroup) {
+  private ToggleButton getToggleButton(Consumer<String> characterSelectedCallback, int i, ToggleGroup toggleGroup) {
     String character = availableCharacters.get(i);
     Image image = new Image("PlayerIcons/" + character + ".png", 75, 75, true, true);
     ImageView imageView = new ImageView(image);
@@ -173,54 +185,123 @@ public abstract class AbstractCharacterSelectionView {
     button.setStyle("-fx-background-color: transparent; -fx-padding: 5; -fx-border-color: transparent; -fx-border-radius: 10;");
 
     button.setOnAction(e -> {
-      characterSelectedCallback.accept(character);
+      if (button.isSelected()) {
+        if (!selectedCharacters.contains(character)) {
+          characterSelectedCallback.accept(character);
+          selectedCharacters.add(character);
+          updateCharacterAvailability();
+        } else {
+          button.setSelected(false);
+        }
+      } else {
+        selectedCharacters.remove(character);
+        updateCharacterAvailability();
+      }
       highlightSelectedButton(toggleGroup);
     });
+
     return button;
   }
 
-  protected StackPane createInactivePlayerBox(String playerLabel, Consumer<String> onNameChanged, Consumer<String> onCharacterSelected) {
-    VBox innerContent = createPlayerBox("", s -> {}, s -> {});
-    innerContent.setOpacity(0.3);
+  protected VBox createInactivePlayerBox(String playerLabel, Consumer<String> onNameChanged, Consumer<String> onCharacterSelected) {
+    VBox box = new VBox();
+    box.setPrefSize(300, 270);
+    box.setAlignment(Pos.CENTER);
+    box.setStyle("-fx-background-color: #ccc;");
 
-    VBox backgroundBox = new VBox(innerContent);
-    backgroundBox.setAlignment(Pos.CENTER);
-    backgroundBox.setPrefSize(300, 270);
-    backgroundBox.setStyle("-fx-background-color: #ccc;");
+    getInactivePlayerBackground(box);
 
-    Label plusLabel = new Label("+");
-    plusLabel.setStyle("-fx-font-size: 64px; -fx-text-fill: #666;");
-    StackPane.setAlignment(plusLabel, Pos.CENTER);
+    activateInactivePlayer(playerLabel, onNameChanged, onCharacterSelected, box);
 
-    StackPane container = new StackPane(backgroundBox, plusLabel);
-    container.setPrefSize(300, 270);
+    return box;
+  }
 
-    container.setOnMouseClicked(e -> {
+  private void activateInactivePlayer(String playerLabel, Consumer<String> onNameChanged,
+      Consumer<String> onCharacterSelected, VBox box) {
+    box.setOnMouseClicked(e -> {
       VBox activeBox = createPlayerBox(playerLabel, onNameChanged, onCharacterSelected);
 
       Button removeButton = new Button("✖");
       removeButton.setStyle("-fx-background-color: transparent; -fx-font-size: 16px; -fx-text-fill: #444; -fx-padding: 0;");
       removeButton.setPrefSize(24, 24);
       removeButton.setFocusTraversable(false);
-      StackPane.setAlignment(removeButton, Pos.TOP_RIGHT);
-      StackPane.setMargin(removeButton, new Insets(5));
 
-      StackPane activeStack = new StackPane(activeBox, removeButton);
-      activeStack.setPrefSize(300, 270);
+      StackPane buttonContainer = new StackPane(removeButton);
+      buttonContainer.setAlignment(Pos.TOP_RIGHT);
+      buttonContainer.setPadding(new Insets(5));
 
       removeButton.setOnAction(ev -> {
-        int index = ((Pane) activeStack.getParent()).getChildren().indexOf(activeStack);
-        ((Pane) activeStack.getParent()).getChildren().set(index,
-            createInactivePlayerBox(playerLabel, onNameChanged, onCharacterSelected));
+        deactivatePlayer(box, playerLabel, onNameChanged, onCharacterSelected);
+        updateCharacterAvailability();
         ev.consume();
       });
 
-      int index = ((Pane) container.getParent()).getChildren().indexOf(container);
-      ((Pane) container.getParent()).getChildren().set(index, activeStack);
+      HBox topRow = new HBox();
+      topRow.setAlignment(Pos.TOP_RIGHT);
+      topRow.getChildren().add(removeButton);
+
+      VBox container = new VBox();
+      container.getChildren().addAll(topRow, activeBox);
+
+      box.getChildren().clear();
+      box.getChildren().add(container);
+      box.setStyle("-fx-background-color: #ddd;");
+
+      if (box == player3Box) isPlayer3Active = true;
+      if (box == player4Box) isPlayer4Active = true;
+
+      updateCharacterAvailability();
       e.consume();
     });
+  }
 
-    return container;
+  private void getInactivePlayerBackground(VBox box) {
+    Image backgroundImage = new Image("images/salbackground.png");
+    ImageView backgroundView = new ImageView(backgroundImage);
+    backgroundView.setFitWidth(300);
+    backgroundView.setFitHeight(270);
+    backgroundView.setOpacity(0.3);
+
+    Label plusLabel = new Label("+");
+    plusLabel.setStyle("-fx-font-size: 64px; -fx-text-fill: #666;");
+
+    StackPane content = new StackPane(backgroundView, plusLabel);
+    content.setAlignment(Pos.CENTER);
+
+    box.getChildren().add(content);
+  }
+
+  private void deactivatePlayer(VBox box, String playerLabel, Consumer<String> onNameChanged, Consumer<String> onCharacterSelected) {
+    try {
+      GridPane grid = findGridPane(box);
+      if (grid != null) {
+        for (Node node : grid.getChildren()) {
+          if (node instanceof ToggleButton button) {
+            if (button.isSelected()) {
+              String character = extractCharacterName(button);
+              selectedCharacters.remove(character);
+            }
+          }
+        }
+      }
+
+      if (box == player3Box) {
+        isPlayer3Active = false;
+        player3Character = null;
+      } else if (box == player4Box) {
+        isPlayer4Active = false;
+        player4Character = null;
+      }
+
+      box.getChildren().clear();
+
+      getInactivePlayerBackground(box);
+      box.setStyle("-fx-background-color: #ccc;");
+
+      activateInactivePlayer(playerLabel, onNameChanged, onCharacterSelected, box);
+    } catch (Exception ex) {
+      logger.error("Error deactivating player: {}", ex.getMessage());
+    }
   }
 
   protected void highlightSelectedButton(ToggleGroup toggleGroup) {
@@ -232,6 +313,88 @@ public abstract class AbstractCharacterSelectionView {
         button.setStyle("-fx-background-color: transparent; -fx-padding: 5; -fx-border-color: transparent;");
       }
     }
+  }
+
+  protected void updateCharacterAvailability() {
+    try {
+      updateVBoxAvailability(player1Box);
+      updateVBoxAvailability(player2Box);
+      if (isPlayer3Active) updateVBoxAvailability(player3Box);
+      if (isPlayer4Active) updateVBoxAvailability(player4Box);
+    } catch (Exception e) {
+      logger.error("Error updating character availability: {}", e.getMessage());
+    }
+  }
+
+  private void updateVBoxAvailability(VBox box) {
+    try {
+      GridPane grid = findGridPane(box);
+      if (grid == null) {
+        for (Node child : box.getChildren()) {
+          if (child instanceof VBox) {
+            grid = findGridPane((VBox) child);
+            if (grid != null) break;
+          } else if (child instanceof HBox) {
+            for (Node hboxChild : ((HBox) child).getChildren()) {
+              if (hboxChild instanceof VBox) {
+                grid = findGridPane((VBox) hboxChild);
+                if (grid != null) break;
+              }
+            }
+            if (grid != null) break;
+          }
+        }
+
+        if (grid == null) return;
+      }
+
+      for (Node child : grid.getChildren()) {
+        if (child instanceof ToggleButton button) {
+          String character = extractCharacterName(button);
+
+          if (selectedCharacters.contains(character) && !button.isSelected()) {
+            button.setDisable(true);
+            button.setOpacity(0.3);
+          } else {
+            button.setDisable(false);
+            button.setOpacity(1.0);
+          }
+        }
+      }
+    } catch (Exception e) {
+      logger.error("Error updating VBox availability: {}", e.getMessage());
+    }
+  }
+
+  private GridPane findGridPane(VBox box) {
+    if (box == null || box.getChildren().isEmpty()) return null;
+
+    for (Node child : box.getChildren()) {
+      if (child instanceof GridPane) {
+        return (GridPane) child;
+      }
+    }
+
+    if (box.getChildren().size() > 1) {
+      Node node = box.getChildren().get(1);
+      if (node instanceof GridPane) {
+        return (GridPane) node;
+      }
+    }
+
+    return null;
+  }
+
+  private String extractCharacterName(ToggleButton button) {
+    if (button.getGraphic() instanceof ImageView imageView) {
+      String url = imageView.getImage().getUrl();
+      String[] parts = url.split("/");
+      if (parts.length > 2) {
+        String filename = parts[parts.length - 1];
+        return filename.split("\\.")[0];
+      }
+    }
+    return "";
   }
 
   protected void savePlayersToFile(List<Player> players, String fileName) throws IOException {

@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.model.common.player;
+package edu.ntnu.idi.idatt.model.common;
 
 public abstract class Player {
   private final String name;

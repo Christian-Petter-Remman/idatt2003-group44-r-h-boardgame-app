@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.model.common.dice;
+package edu.ntnu.idi.idatt.model.common;
 
 import java.util.Random;
 

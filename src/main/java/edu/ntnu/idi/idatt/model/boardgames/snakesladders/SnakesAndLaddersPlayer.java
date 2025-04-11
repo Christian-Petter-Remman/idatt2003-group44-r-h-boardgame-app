@@ -1,7 +1,6 @@
 package edu.ntnu.idi.idatt.model.boardgames.snakesladders;
 
-import edu.ntnu.idi.idatt.model.common.player.Player;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Tile;
+import edu.ntnu.idi.idatt.model.common.Player;
 
 public class SnakesAndLaddersPlayer extends Player {
 
