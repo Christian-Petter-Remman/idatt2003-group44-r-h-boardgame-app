@@ -99,6 +99,7 @@ public class SnakesAndLadders extends BoardGame {
         .orElse(null);
   }
 
+
   public void addPlayer(String name, String character) {
     addPlayer(new SnakesAndLaddersPlayer(name,character));
   }
