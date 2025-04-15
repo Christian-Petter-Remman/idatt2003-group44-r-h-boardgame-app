@@ -25,8 +25,34 @@ public class BoardJsonHandler implements FileHandler<Board> {
   }
 
   private Board parseBoard(JsonObject jsonObject) {
-    return new Board(); // placeholder
+    Board board = new Board();
+    board.initializeEmptyBoard();
+
+    // Parse ladders
+    if (jsonObject.has("ladders")) {
+      JsonArray laddersArray = jsonObject.getAsJsonArray("ladders");
+      for (JsonElement element : laddersArray) {
+        JsonObject ladder = element.getAsJsonObject();
+        int start = ladder.get("start").getAsInt();
+        int end = ladder.get("end").getAsInt();
+        board.addFullLadder(start, end);
+      }
+    }
+
+    // Parse snakes
+    if (jsonObject.has("snakes")) {
+      JsonArray snakesArray = jsonObject.getAsJsonArray("snakes");
+      for (JsonElement element : snakesArray) {
+        JsonObject snake = element.getAsJsonObject();
+        int start = snake.get("start").getAsInt();
+        int end = snake.get("end").getAsInt();
+        board.addSnake(start, end);
+      }
+    }
+
+    return board;
   }
+
 
   public BoardJsonHandler() {
     this.gson = new GsonBuilder().setPrettyPrinting().create();
