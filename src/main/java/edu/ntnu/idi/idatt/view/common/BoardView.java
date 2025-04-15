@@ -11,13 +11,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
 
 import java.util.List;
-
 public class BoardView extends StackPane {
 
   private final Board board;
@@ -77,7 +77,6 @@ public class BoardView extends StackPane {
       String color = getTileColor(tileNum);
       cell.setStyle("-fx-border-color: black; -fx-background-color: " + color + ";");
 
-
       Text tileNumber = new Text(String.valueOf(tileNum));
       tileNumber.setStyle("-fx-fill: #ccc;");
       cell.getChildren().add(tileNumber);
@@ -96,9 +95,11 @@ public class BoardView extends StackPane {
       boardGrid.add(cell, col, row);
     }
 
+
     for (Ladder ladder : board.getLadders()) {
       drawLadder(ladder.start(), ladder.end());
     }
+
     for (Snake snake : board.getSnakes()) {
       drawSnake(snake.start(), snake.end());
     }
@@ -113,30 +114,45 @@ public class BoardView extends StackPane {
 
     double dx = endPos[0] - startPos[0];
     double dy = endPos[1] - startPos[1];
+    double distance = Math.sqrt(dx * dx + dy * dy);
 
-    double offsetX = -dy / Math.sqrt(dx * dx + dy * dy) * 10;
-    double offsetY = dx / Math.sqrt(dx * dx + dy * dy) * 10;
+    double dirX = dx / distance;
+    double dirY = dy / distance;
 
-    Line left = new Line(startPos[0] + offsetX, startPos[1] + offsetY, endPos[0] + offsetX, endPos[1] + offsetY);
-    Line right = new Line(startPos[0] - offsetX, startPos[1] - offsetY, endPos[0] - offsetX, endPos[1] - offsetY);
+    double perpX = -dirY;
+    double perpY = dirX;
+
+    double ladderWidth = Math.min(10, Math.max(5, distance / 20));
+
+    double offsetX = perpX * ladderWidth;
+    double offsetY = perpY * ladderWidth;
+
+    Line left = new Line(
+        startPos[0] + offsetX, startPos[1] + offsetY,
+        endPos[0] + offsetX, endPos[1] + offsetY
+    );
+    Line right = new Line(
+        startPos[0] - offsetX, startPos[1] - offsetY,
+        endPos[0] - offsetX, endPos[1] - offsetY
+    );
 
     left.setStroke(Color.BURLYWOOD);
     right.setStroke(Color.BURLYWOOD);
     left.setStrokeWidth(3);
     right.setStrokeWidth(3);
 
-
     ladderSnakeOverlay.getChildren().addAll(left, right);
 
-    int steps = 7;
+    int steps = Math.max(3, Math.min(8, (int)(distance / 30)));
+
     for (int i = 1; i < steps; i++) {
       double ratio = i / (double) steps;
       double midX = startPos[0] + dx * ratio;
       double midY = startPos[1] + dy * ratio;
 
       Line rung = new Line(
-              midX - offsetX, midY - offsetY,
-              midX + offsetX, midY + offsetY
+          midX - offsetX, midY - offsetY,
+          midX + offsetX, midY + offsetY
       );
       rung.setStroke(Color.BURLYWOOD);
       rung.setStrokeWidth(2);
@@ -148,23 +164,37 @@ public class BoardView extends StackPane {
     double[] startPos = getTileCenter(start);
     double[] endPos = getTileCenter(end);
 
-    double ctrlX1 = (startPos[0] + endPos[0]) / 2 + 60;
-    double ctrlY1 = (startPos[1] + endPos[1]) / 2 - 60;
-    double ctrlX2 = (startPos[0] + endPos[0]) / 2 - 60;
-    double ctrlY2 = (startPos[1] + endPos[1]) / 2 + 60;
+    double dx = endPos[0] - startPos[0];
+    double dy = endPos[1] - startPos[1];
+    double distance = Math.sqrt(dx * dx + dy * dy);
+
+    double curveAmplitude = Math.min(distance * 0.2, 25);
+
+    double perpX = -dy / distance;
+    double perpY = dx / distance;
+
+    double ctrlX1 = startPos[0] + dx * 0.3 + perpX * curveAmplitude;
+    double ctrlY1 = startPos[1] + dy * 0.3 + perpY * curveAmplitude;
+    double ctrlX2 = startPos[0] + dx * 0.7 - perpX * curveAmplitude;
+    double ctrlY2 = startPos[1] + dy * 0.7 - perpY * curveAmplitude;
 
     CubicCurve snake = new CubicCurve(
-            startPos[0], startPos[1],
-            ctrlX1, ctrlY1,
-            ctrlX2, ctrlY2,
-            endPos[0], endPos[1]
+        startPos[0], startPos[1],
+        ctrlX1, ctrlY1,
+        ctrlX2, ctrlY2,
+        endPos[0], endPos[1]
     );
     snake.setStroke(Color.DARKRED);
     snake.setStrokeWidth(4);
     snake.setFill(null);
 
     ladderSnakeOverlay.getChildren().add(snake);
+
+    Circle head = new Circle(startPos[0], startPos[1], 6, Color.DARKRED);
+    Circle tail = new Circle(endPos[0], endPos[1], 4, Color.DARKRED);
+    ladderSnakeOverlay.getChildren().addAll(head, tail);
   }
+
 
   private double[] getTileCenter(int tileNumber) {
     int row = 9 - (tileNumber - 1) / 10;
@@ -192,7 +222,8 @@ public class BoardView extends StackPane {
     int[] ends = new int[snakes.size()];
     for (int i = 0; i < snakes.size(); i++) {
       ends[i] = snakes.get(i).end();
-    }return ends;
+    }
+    return ends;
   }
 
   private int[] getLadderStart() {

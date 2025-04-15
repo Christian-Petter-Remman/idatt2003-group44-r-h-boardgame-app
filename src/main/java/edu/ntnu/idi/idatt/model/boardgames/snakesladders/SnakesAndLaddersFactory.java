@@ -1,7 +1,5 @@
 package edu.ntnu.idi.idatt.model.boardgames.snakesladders;
 
-import edu.ntnu.idi.idatt.exceptions.FileReadException;
-import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
 import edu.ntnu.idi.idatt.filehandling.*;
 import edu.ntnu.idi.idatt.model.common.BoardGameFactory;
 import edu.ntnu.idi.idatt.model.common.BoardGame;
@@ -52,24 +50,18 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
     SnakesAndLadders game = new SnakesAndLadders();
     Board board;
 
-    switch (configurationName.toLowerCase()) {
-      case "default":
-        board = createDefaultBoard();
-        break;
+    board = loadBoardFromFile(configurationName + ".json");
 
-      case "easy":
-        board = createEasyBoard();
-        break;
-
-      case "hard":
-        board = createHardBoard();
-        break;
-
-      default:
-        board = loadBoardFromFile(configurationName + ".json");
-        if (board == null) {
-          board = createDefaultBoard();
+    if (board == null) {
+      board = switch (configurationName.toLowerCase()) {
+        case "default" -> createDefaultBoard();
+        case "easy" -> createEasyBoard();
+        case "hard" -> createHardBoard();
+        default -> {
+          logger.warn("Unknown configuration: {}, using default", configurationName);
+          yield createDefaultBoard();
         }
+      };
     }
 
     game.setBoard(board);
@@ -96,25 +88,44 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
     return board;
   }
 
+  private Board loadBoardFromFile(String fileName) {
+    String filePath = BOARD_DIRECTORY + fileName;
+    File file = new File(filePath);
+
+    if (!file.exists()) {
+      logger.debug("Board file does not exist: {}", filePath);
+      return null;
+    }
+
+    try {
+      BoardJsonHandler handler = new BoardJsonHandler();
+      Board board = handler.loadFromFile(filePath);
+      logger.info("Successfully loaded board from: {}", filePath);
+      return board;
+    } catch (Exception e) {
+      logger.error("Failed to load board from file: {}", e.getMessage());
+      return null;
+    }
+  }
+
   private Board createEasyBoard() {
-    logger.debug("Creating easy board for Snakes and Ladders");
+    logger.info("Creating easy board for Snakes and Ladders");
     Board board = new Board();
     board.initializeEmptyBoard();
 
     board.addFullLadder(3, 22);
-    board.addFullLadder(5, 8);
-    board.addFullLadder(20, 29);
+    board.addFullLadder(35, 67);
+    board.addFullLadder(60, 82);
 
     board.addSnake(20, 5);
     board.addSnake(49, 30);
-    board.addSnake(77, 60);
     board.addSnake(98, 81);
 
     return board;
   }
 
   private Board createHardBoard() {
-    logger.debug("Creating hard board configuration");
+    logger.info("Creating hard board configuration");
     Board board = new Board();
     board.initializeEmptyBoard();
 
@@ -127,17 +138,6 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
     board.addSnake(48, 26);
 
     return board;
-  }
-
-  private Board loadBoardFromFile(String fileName) {
-    String filePath = BOARD_DIRECTORY + File.separator + fileName;
-    try {
-      BoardJsonHandler handler = new BoardJsonHandler();
-      return handler.loadBoardFromFile(filePath);
-    } catch (FileReadException | JsonParsingException e) {
-      logger.error("Failed to load board from file: {}\n Error message: {} ", filePath, e.getMessage());
-      return null;
-    }
   }
 
   private boolean saveBoardToFile(Board board, String fileName) {

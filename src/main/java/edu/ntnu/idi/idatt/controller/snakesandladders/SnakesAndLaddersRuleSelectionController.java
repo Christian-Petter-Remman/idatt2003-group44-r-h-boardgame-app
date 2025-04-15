@@ -50,12 +50,29 @@ public class SnakesAndLaddersRuleSelectionController {
       throws InvalidGameConfigurationException {
     validateDifficulty(difficulty);
     validateInput(diceCount, ladderCount, penaltyCount);
+
     try {
+      // Load the base board for the selected difficulty
       currentGame = (SnakesAndLadders) factory.createBoardGameFromConfiguration(difficulty);
       currentGame.setDice(new Dice(diceCount));
 
-      if (!difficulty.equals("default")) {
-        adjustBoard(currentGame.getBoard(), ladderCount, penaltyCount);
+      // If custom counts are specified, adjust the board
+      if (ladderCount != getDefaultLadderCount(difficulty) ||
+          penaltyCount != getDefaultPenaltyCount(difficulty)) {
+
+        logger.info("Using custom configuration with {} ladders and {} penalties",
+            ladderCount, penaltyCount);
+
+        // Create a new board with the specified counts
+        Board board = new Board();
+        board.initializeEmptyBoard();
+
+        // Add the specified number of ladders and snakes
+        addRandomLadders(board, ladderCount);
+        addRandomSnakes(board, penaltyCount);
+
+        // Set the new board
+        currentGame.setBoard(board);
       }
 
       addPlayers(players);
@@ -69,6 +86,22 @@ public class SnakesAndLaddersRuleSelectionController {
       logger.error("Failed to create game: {}", e.getMessage());
       throw new InvalidGameConfigurationException("Invalid game configuration: " + e.getMessage());
     }
+  }
+
+  private int getDefaultLadderCount(String difficulty) {
+    return switch (difficulty.toLowerCase()) {
+      case "easy" -> 10;
+      case "hard" -> 5;
+      default -> 8;
+    };
+  }
+
+  private int getDefaultPenaltyCount(String difficulty) {
+    return switch (difficulty.toLowerCase()) {
+      case "easy" -> 4;
+      case "hard" -> 10;
+      default -> 8;
+    };
   }
 
   public void validateInput(int diceCount, int ladderCount, int penaltyCount) {
@@ -129,9 +162,5 @@ public class SnakesAndLaddersRuleSelectionController {
 
   public String getSelectedDifficulty() {
     return selectedDifficulty;
-  }
-
-  public void setSelectedDifficulty(String selectedDifficulty) {
-    this.selectedDifficulty = selectedDifficulty;
   }
 }

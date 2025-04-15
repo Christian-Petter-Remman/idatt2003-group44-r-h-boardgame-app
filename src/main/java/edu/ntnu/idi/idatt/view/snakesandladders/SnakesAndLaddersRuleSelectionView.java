@@ -31,12 +31,16 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
   private TextField laddersField;
   private TextField penaltyField;
 
-  private ToggleGroup difficultyGroup;
+  private RadioButton easyButton;
+  private RadioButton normalButton;
+  private RadioButton hardButton;
+
+  private boolean uiInitialized = false;
 
   public SnakesAndLaddersRuleSelectionView(Stage primaryStage) {
     super(primaryStage);
     controller = new SnakesAndLaddersRuleSelectionController(new SnakesAndLaddersFactory());
-    controller.addObserver(this);
+
   }
 
   @Override
@@ -45,35 +49,50 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     laddersField = createTextField("8");
     penaltyField = createTextField("8");
 
-    difficultyGroup = new ToggleGroup();
-    createRadioButton("Easy", "easy", difficultyGroup);
-    createRadioButton("Normal", "default", difficultyGroup);
-    createRadioButton("Hard", "hard", difficultyGroup);
+    ToggleGroup difficultyGroup = new ToggleGroup();
+
+    easyButton = createRadioButton("Easy", "easy", difficultyGroup);
+    normalButton = createRadioButton("Normal", "default", difficultyGroup);
+    hardButton = createRadioButton("Hard", "hard", difficultyGroup);
+
+    normalButton.setSelected(true);
 
     difficultyGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue != null) {
         String difficulty = (String) newValue.getUserData();
+        selectedDifficulty = difficulty;
         controller.setDifficulty(difficulty);
         logger.info("Selected difficulty: {}", difficulty);
       }
     });
+
+    uiInitialized = true;
   }
 
   @Override
   public void onDifficultyChanged(String difficulty) {
-    this.selectedDifficulty = difficulty; // Update selectedDifficulty
+    this.selectedDifficulty = difficulty;
+
+    if (!uiInitialized) {
+      logger.info("UI not yet initialized, skipping radio button update");
+      return;
+    }
+
     switch (difficulty.toLowerCase()) {
       case "easy":
+        if (easyButton != null) easyButton.setSelected(true);
         laddersField.setText("10");
         penaltyField.setText("4");
         break;
       case "default":
+        if (normalButton != null) normalButton.setSelected(true);
         laddersField.setText("8");
         penaltyField.setText("8");
         break;
       case "hard":
+        if (hardButton != null) hardButton.setSelected(true);
         laddersField.setText("5");
-        penaltyField.setText("5");
+        penaltyField.setText("10");
         break;
       default:
         logger.warn("Invalid difficulty: {}", difficulty);
@@ -89,11 +108,8 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     settingsGrid.setPadding(new Insets(20));
 
     Label difficultyLabel = new Label("Difficulty:");
-    HBox difficultyBox = new HBox(20,
-        createRadioButton("Easy", "easy", difficultyGroup),
-        createRadioButton("Normal", "default", difficultyGroup),
-        createRadioButton("Hard", "hard", difficultyGroup)
-    );
+
+    HBox difficultyBox = new HBox(20, easyButton, normalButton, hardButton);
     settingsGrid.addRow(0, difficultyLabel, difficultyBox);
 
     settingsGrid.addRow(1, new Label("Number of Dice:"), diceField);
@@ -148,7 +164,6 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     RadioButton button = new RadioButton(text);
     button.setToggleGroup(group);
     button.setUserData(difficulty);
-    if (difficulty.equalsIgnoreCase(selectedDifficulty)) button.setSelected(true);
     return button;
   }
 
@@ -160,5 +175,12 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
 
   public void setPlayers(List<Player> players) {
     this.players = players;
+  }
+
+  @Override
+  public void show() {
+    super.show();
+    controller.addObserver(this);
+    controller.setDifficulty(selectedDifficulty);
   }
 }
