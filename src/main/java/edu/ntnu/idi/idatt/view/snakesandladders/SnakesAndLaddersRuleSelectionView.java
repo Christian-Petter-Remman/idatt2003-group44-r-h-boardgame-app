@@ -31,8 +31,6 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
   private TextField laddersField;
   private TextField penaltyField;
 
-  private ToggleGroup difficultyGroup;
-
   private RadioButton easyButton;
   private RadioButton normalButton;
   private RadioButton hardButton;
@@ -51,7 +49,7 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     laddersField = createTextField("8");
     penaltyField = createTextField("8");
 
-    difficultyGroup = new ToggleGroup();
+    ToggleGroup difficultyGroup = new ToggleGroup();
 
     easyButton = createRadioButton("Easy", "easy", difficultyGroup);
     normalButton = createRadioButton("Normal", "default", difficultyGroup);
