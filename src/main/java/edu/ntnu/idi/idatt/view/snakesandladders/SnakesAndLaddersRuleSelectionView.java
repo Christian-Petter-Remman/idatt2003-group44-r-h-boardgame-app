@@ -92,7 +92,7 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
       case "hard":
         if (hardButton != null) hardButton.setSelected(true);
         laddersField.setText("5");
-        penaltyField.setText("5");
+        penaltyField.setText("10");
         break;
       default:
         logger.warn("Invalid difficulty: {}", difficulty);

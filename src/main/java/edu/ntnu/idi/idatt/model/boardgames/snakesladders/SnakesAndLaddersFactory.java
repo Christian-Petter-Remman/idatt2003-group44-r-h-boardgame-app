@@ -1,7 +1,5 @@
 package edu.ntnu.idi.idatt.model.boardgames.snakesladders;
 
-import edu.ntnu.idi.idatt.exceptions.FileReadException;
-import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
 import edu.ntnu.idi.idatt.filehandling.*;
 import edu.ntnu.idi.idatt.model.common.BoardGameFactory;
 import edu.ntnu.idi.idatt.model.common.BoardGame;
@@ -55,20 +53,15 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
     board = loadBoardFromFile(configurationName + ".json");
 
     if (board == null) {
-      switch (configurationName.toLowerCase()) {
-        case "default":
-          board = createDefaultBoard();
-          break;
-        case "easy":
-          board = createEasyBoard();
-          break;
-        case "hard":
-          board = createHardBoard();
-          break;
-        default:
+      board = switch (configurationName.toLowerCase()) {
+        case "default" -> createDefaultBoard();
+        case "easy" -> createEasyBoard();
+        case "hard" -> createHardBoard();
+        default -> {
           logger.warn("Unknown configuration: {}, using default", configurationName);
-          board = createDefaultBoard();
-      }
+          yield createDefaultBoard();
+        }
+      };
     }
 
     game.setBoard(board);
@@ -116,24 +109,23 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
   }
 
   private Board createEasyBoard() {
-    logger.debug("Creating easy board for Snakes and Ladders");
+    logger.info("Creating easy board for Snakes and Ladders");
     Board board = new Board();
     board.initializeEmptyBoard();
 
     board.addFullLadder(3, 22);
-    board.addFullLadder(5, 8);
-    board.addFullLadder(20, 29);
+    board.addFullLadder(35, 67);
+    board.addFullLadder(60, 82);
 
     board.addSnake(20, 5);
     board.addSnake(49, 30);
-    board.addSnake(77, 60);
     board.addSnake(98, 81);
 
     return board;
   }
 
   private Board createHardBoard() {
-    logger.debug("Creating hard board configuration");
+    logger.info("Creating hard board configuration");
     Board board = new Board();
     board.initializeEmptyBoard();
 
