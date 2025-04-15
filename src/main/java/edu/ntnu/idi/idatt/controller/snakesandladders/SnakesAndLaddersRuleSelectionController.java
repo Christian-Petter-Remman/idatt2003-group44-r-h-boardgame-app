@@ -131,7 +131,4 @@ public class SnakesAndLaddersRuleSelectionController {
     return selectedDifficulty;
   }
 
-  public void setSelectedDifficulty(String selectedDifficulty) {
-    this.selectedDifficulty = selectedDifficulty;
-  }
 }
