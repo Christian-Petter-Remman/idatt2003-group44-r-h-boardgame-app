@@ -52,24 +52,23 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
     SnakesAndLadders game = new SnakesAndLadders();
     Board board;
 
-    switch (configurationName.toLowerCase()) {
-      case "default":
-        board = createDefaultBoard();
-        break;
+    board = loadBoardFromFile(configurationName + ".json");
 
-      case "easy":
-        board = createEasyBoard();
-        break;
-
-      case "hard":
-        board = createHardBoard();
-        break;
-
-      default:
-        board = loadBoardFromFile(configurationName + ".json");
-        if (board == null) {
+    if (board == null) {
+      switch (configurationName.toLowerCase()) {
+        case "default":
           board = createDefaultBoard();
-        }
+          break;
+        case "easy":
+          board = createEasyBoard();
+          break;
+        case "hard":
+          board = createHardBoard();
+          break;
+        default:
+          logger.warn("Unknown configuration: {}, using default", configurationName);
+          board = createDefaultBoard();
+      }
     }
 
     game.setBoard(board);
@@ -94,6 +93,26 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
     board.initializeEmptyBoard();
     board.addDefaultLaddersAndSnakes();
     return board;
+  }
+
+  private Board loadBoardFromFile(String fileName) {
+    String filePath = BOARD_DIRECTORY + fileName;
+    File file = new File(filePath);
+
+    if (!file.exists()) {
+      logger.debug("Board file does not exist: {}", filePath);
+      return null;
+    }
+
+    try {
+      BoardJsonHandler handler = new BoardJsonHandler();
+      Board board = handler.loadFromFile(filePath);
+      logger.info("Successfully loaded board from: {}", filePath);
+      return board;
+    } catch (Exception e) {
+      logger.error("Failed to load board from file: {}", e.getMessage());
+      return null;
+    }
   }
 
   private Board createEasyBoard() {
@@ -127,17 +146,6 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
     board.addSnake(48, 26);
 
     return board;
-  }
-
-  private Board loadBoardFromFile(String fileName) {
-    String filePath = BOARD_DIRECTORY + File.separator + fileName;
-    try {
-      BoardJsonHandler handler = new BoardJsonHandler();
-      return handler.loadBoardFromFile(filePath);
-    } catch (FileReadException | JsonParsingException e) {
-      logger.error("Failed to load board from file: {}\n Error message: {} ", filePath, e.getMessage());
-      return null;
-    }
   }
 
   private boolean saveBoardToFile(Board board, String fileName) {
