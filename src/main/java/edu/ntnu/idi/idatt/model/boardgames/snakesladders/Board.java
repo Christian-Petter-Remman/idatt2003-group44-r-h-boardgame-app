@@ -5,23 +5,21 @@ import com.google.gson.GsonBuilder;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.LadderTile;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.SnakeTile;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Tile;
-import java.util.Random;
+import java.io.*;
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-
 public class Board {
   private static final Logger logger = LoggerFactory.getLogger(Board.class);
+  private static final int MAX_LADDERS = 15;
+  private static final int MAX_SNAKES = 15;
+  private static final int MAX_ATTEMPTS_PER_PLACEMENT = 50;
+
   private List<Tile> tiles;
   private final int size;
   private final List<Ladder> ladders = new ArrayList<>();
   private final List<Snake> snakes = new ArrayList<>();
-
-
-
 
   public Board() {
     this(100);
@@ -34,44 +32,118 @@ public class Board {
 
   public void initializeEmptyBoard() {
     tiles = new ArrayList<>();
-    for (int i = 1; i <= size; i++) {
-      tiles.add(new Tile(i));
-    }
-    logger.debug("Initialized empty board with {} tiles", size);
+    for (int i = 1; i <= size; i++) tiles.add(new Tile(i));
+    ladders.clear();
+    snakes.clear();
   }
 
   public void addFullLadder(int start, int end) {
-    if (start >= end || start < 1 || end > size) {
-      throw new IllegalArgumentException("Invalid ladder positions");
+    if (isValidLadderPlacement(start, end)) {
+      ladders.add(new Ladder(start, end));
+      setTile(start, new LadderTile(start, end));
     }
-    Ladder ladder = new Ladder(start, end);
-    ladders.add(ladder);
-    setTile(start, new LadderTile(start, end));
-  }
-
-  public void addRandomLadder() {
-    Random random = new Random();
-    int start = random.nextInt(size - 10) + 1;
-    int end = ((start / 10) + 1) * 10 + random.nextInt(10 - (start % 10));
-    addFullLadder(start, end);
-    logger.info("Added random ladder from {} to {}", start, end);
   }
 
   public void addSnake(int start, int end) {
-    if (start <= end || start > size || end < 1) {
-      throw new IllegalArgumentException("Invalid snake positions");
+    if (isValidSnakePlacement(start, end)) {
+      snakes.add(new Snake(start, end));
+      setTile(start, new SnakeTile(start, end));
     }
-    Snake snake = new Snake(start, end);
-    snakes.add(snake);
-    setTile(start, new SnakeTile(start, end));
   }
 
-  public void addRandomSnake() {
+  public void addRandomLadders(int count) {
+    int added = 0;
+    for (int i = 0; i < count && ladders.size() < MAX_LADDERS; i++) {
+      if (tryAddRandomLadder()) added++;
+    }
+    logger.info("Added {} of {} requested ladders", added, count);
+  }
+
+  public void addRandomSnakes(int count) {
+    int added = 0;
+    for (int i = 0; i < count && snakes.size() < MAX_SNAKES; i++) {
+      if (tryAddRandomSnake()) added++;
+    }
+    logger.info("Added {} of {} requested snakes", added, count);
+  }
+
+  private boolean tryAddRandomLadder() {
     Random random = new Random();
-    int start = random.nextInt(size - 10) + 11;
-    int end = random.nextInt(start - 1) + 1;
-    addSnake(start, end);
-    logger.info("Added random snake from {} to {}", start, end);
+    for (int attempt = 0; attempt < MAX_ATTEMPTS_PER_PLACEMENT; attempt++) {
+      int start = random.nextInt(size - 1) + 1;
+      int startRow = getRow(start);
+      int end = findValidLadderEnd(start, startRow, random);
+      if (end != -1 && isValidLadderPlacement(start, end)) {
+        addFullLadder(start, end);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private boolean tryAddRandomSnake() {
+    Random random = new Random();
+    for (int attempt = 0; attempt < MAX_ATTEMPTS_PER_PLACEMENT; attempt++) {
+      int start = random.nextInt(size - 1) + 2;
+      int startRow = getRow(start);
+      int end = findValidSnakeEnd(start, startRow, random);
+      if (end != -1 && isValidSnakePlacement(start, end)) {
+        addSnake(start, end);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private int findValidLadderEnd(int start, int startRow, Random random) {
+    if (startRow <= 0) {
+      return -1;
+    }
+    for (int attempt = 0; attempt < 100; attempt++) {
+      int endRow = random.nextInt(startRow);
+      int end = randomInRow(endRow, random);
+      if (end > start && getRow(end) < startRow) return end;
+    }
+    return -1;
+  }
+
+  private int findValidSnakeEnd(int start, int startRow, Random random) {
+    if (startRow >= 9) {
+      return -1;
+    }
+    for (int attempt = 0; attempt < 100; attempt++) {
+      int endRow = startRow + 1 + random.nextInt(9 - startRow);
+      int end = randomInRow(endRow, random);
+      if (end < start && getRow(end) > startRow) return end;
+    }
+    return -1;
+  }
+
+  private int getRow(int position) {
+    return (position - 1) / 10;
+  }
+
+  private int randomInRow(int row, Random random) {
+    int min = row * 10 + 1;
+    int max = (row + 1) * 10;
+    return min + random.nextInt(max - min + 1);
+  }
+
+  private boolean isValidLadderPlacement(int start, int end) {
+    return start < end &&
+        getRow(start) != getRow(end) &&
+        hasExistingConnection(start, end);
+  }
+
+  private boolean isValidSnakePlacement(int start, int end) {
+    return start > end &&
+        getRow(start) != getRow(end) &&
+        hasExistingConnection(start, end);
+  }
+
+  private boolean hasExistingConnection(int start, int end) {
+    return ladders.stream().noneMatch(l -> l.start() == start || l.end() == end) &&
+        snakes.stream().noneMatch(s -> s.start() == start || s.end() == end);
   }
 
 
@@ -116,11 +188,6 @@ public class Board {
     return new ArrayList<>(tiles);
   }
 
-  public void setTiles(List<Tile> tiles) {
-    this.tiles = new ArrayList<>(tiles);
-    logger.debug("Set {} tiles on the board", tiles.size());
-  }
-
   public void setTile(int tileNumber, Tile tile) {
     if (tileNumber < 1 || tileNumber > size) {
       throw new IllegalArgumentException("Invalid tile number: " + tileNumber);
@@ -132,11 +199,10 @@ public class Board {
     if (position < 1 || position > size) {
       return position;
     }
-
     Tile tile = getTile(position);
     if (tile.hasSnakeOrLadder()) {
       logger.debug("Player landed on special tile at {}, moving to {}",
-              position, tile.getDestination());
+          position, tile.getDestination());
       return tile.getDestination();
     }
     return position;
@@ -145,26 +211,14 @@ public class Board {
   public boolean saveToJson(String filePath) {
     try (Writer writer = new FileWriter(filePath)) {
       Gson gson = new GsonBuilder()
-              .setPrettyPrinting()
-              .create();
+          .setPrettyPrinting()
+          .create();
       gson.toJson(this, writer);
       logger.info("Successfully saved board to JSON: {}", filePath);
       return true;
     } catch (IOException e) {
       logger.error("Error saving board to JSON: {}", e.getMessage());
       return false;
-    }
-  }
-
-  public static Board loadFromJson(String filePath) {
-    try (Reader reader = new FileReader(filePath)) {
-      Gson gson = new GsonBuilder().create();
-      Board board = gson.fromJson(reader, Board.class);
-      logger.info("Successfully loaded board from JSON: {}", filePath);
-      return board;
-    } catch (IOException e) {
-      logger.error("Error loading board from JSON: {}", e.getMessage());
-      return null;
     }
   }
 
@@ -179,5 +233,4 @@ public class Board {
   public List<Snake> getSnakes() {
     return new ArrayList<>(snakes);
   }
-
 }
