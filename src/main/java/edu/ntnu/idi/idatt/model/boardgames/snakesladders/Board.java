@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.LadderTile;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.SnakeTile;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Tile;
-import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,9 +18,6 @@ public class Board {
   private final int size;
   private final List<Ladder> ladders = new ArrayList<>();
   private final List<Snake> snakes = new ArrayList<>();
-
-
-
 
   public Board() {
     this(100);
@@ -37,6 +33,8 @@ public class Board {
     for (int i = 1; i <= size; i++) {
       tiles.add(new Tile(i));
     }
+    ladders.clear();
+    snakes.clear();
     logger.debug("Initialized empty board with {} tiles", size);
   }
 
@@ -49,14 +47,6 @@ public class Board {
     setTile(start, new LadderTile(start, end));
   }
 
-  public void addRandomLadder() {
-    Random random = new Random();
-    int start = random.nextInt(size - 10) + 1;
-    int end = ((start / 10) + 1) * 10 + random.nextInt(10 - (start % 10));
-    addFullLadder(start, end);
-    logger.info("Added random ladder from {} to {}", start, end);
-  }
-
   public void addSnake(int start, int end) {
     if (start <= end || start > size || end < 1) {
       throw new IllegalArgumentException("Invalid snake positions");
@@ -66,14 +56,10 @@ public class Board {
     setTile(start, new SnakeTile(start, end));
   }
 
-  public void addRandomSnake() {
-    Random random = new Random();
-    int start = random.nextInt(size - 10) + 11;
-    int end = random.nextInt(start - 1) + 1;
-    addSnake(start, end);
-    logger.info("Added random snake from {} to {}", start, end);
+  public void addDefaultLaddersAndSnakes() {
+    addDefaultLadders();
+    addDefaultSnakes();
   }
-
 
   public void addDefaultLadders() {
     addFullLadder(1, 38);
@@ -99,11 +85,6 @@ public class Board {
     logger.info("Added default snakes to the board");
   }
 
-  public void addDefaultLaddersAndSnakes() {
-    addDefaultLadders();
-    addDefaultSnakes();
-  }
-
   public Tile getTile(int number) {
     if (number < 1 || number > size) {
       logger.warn("Attempted to get invalid tile number: {}", number);
@@ -114,11 +95,6 @@ public class Board {
 
   public List<Tile> getTiles() {
     return new ArrayList<>(tiles);
-  }
-
-  public void setTiles(List<Tile> tiles) {
-    this.tiles = new ArrayList<>(tiles);
-    logger.debug("Set {} tiles on the board", tiles.size());
   }
 
   public void setTile(int tileNumber, Tile tile) {
@@ -135,8 +111,7 @@ public class Board {
 
     Tile tile = getTile(position);
     if (tile.hasSnakeOrLadder()) {
-      logger.debug("Player landed on special tile at {}, moving to {}",
-              position, tile.getDestination());
+      logger.debug("Player landed on special tile at {}, moving to {}", position, tile.getDestination());
       return tile.getDestination();
     }
     return position;
@@ -144,27 +119,13 @@ public class Board {
 
   public boolean saveToJson(String filePath) {
     try (Writer writer = new FileWriter(filePath)) {
-      Gson gson = new GsonBuilder()
-              .setPrettyPrinting()
-              .create();
+      Gson gson = new GsonBuilder().setPrettyPrinting().create();
       gson.toJson(this, writer);
       logger.info("Successfully saved board to JSON: {}", filePath);
       return true;
     } catch (IOException e) {
       logger.error("Error saving board to JSON: {}", e.getMessage());
       return false;
-    }
-  }
-
-  public static Board loadFromJson(String filePath) {
-    try (Reader reader = new FileReader(filePath)) {
-      Gson gson = new GsonBuilder().create();
-      Board board = gson.fromJson(reader, Board.class);
-      logger.info("Successfully loaded board from JSON: {}", filePath);
-      return board;
-    } catch (IOException e) {
-      logger.error("Error loading board from JSON: {}", e.getMessage());
-      return null;
     }
   }
 
@@ -179,5 +140,4 @@ public class Board {
   public List<Snake> getSnakes() {
     return new ArrayList<>(snakes);
   }
-
 }

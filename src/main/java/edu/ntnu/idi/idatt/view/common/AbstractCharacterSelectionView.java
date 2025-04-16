@@ -256,7 +256,7 @@ public abstract class AbstractCharacterSelectionView {
   }
 
   private void getInactivePlayerBackground(VBox box) {
-    Image backgroundImage = new Image("images/salbackground.png");
+    Image backgroundImage = new Image("images/SALCharacterScreen.png");
     ImageView backgroundView = new ImageView(backgroundImage);
     backgroundView.setFitWidth(300);
     backgroundView.setFitHeight(270);
