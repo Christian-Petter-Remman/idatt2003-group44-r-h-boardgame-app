@@ -2,6 +2,7 @@ package edu.ntnu.idi.idatt.mainapp;
 
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
+import edu.ntnu.idi.idatt.filehandling.BoardJsonHandler;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.view.common.IntroScreenView;
 import javafx.application.Application;
@@ -18,9 +19,20 @@ public class Main extends Application {
   public void start(Stage primaryStage) {
     try {
       FileManager.ensureApplicationDirectoriesExist();
+
+      try {
+        BoardJsonHandler boardJsonHandler = new BoardJsonHandler();
+        boardJsonHandler.generateBoardFiles();
+      } catch (Exception e) {
+        logger.error("Error generating board files: {}", e.getMessage());
+      }
+
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      logger.error("Critical error during application initialization: {}", e.getMessage());
+      showAlert("Initialization Error", "Failed to initialize application directories");
+      throw new RuntimeException("Failed to initialize application", e);
     }
+
     try {
       IntroScreenView intro = new IntroScreenView(primaryStage);
       intro.prepareScene();
@@ -34,7 +46,7 @@ public class Main extends Application {
       Platform.runLater(() -> primaryStage.setFullScreen(true));
 
     } catch (Exception e) {
-      logger.error("Error during startup: {}", e.getMessage());
+      logger.error("Error during startup: {}", e.getMessage(), e);
       showAlert("Startup Error", "Could not start the game");
     }
   }
