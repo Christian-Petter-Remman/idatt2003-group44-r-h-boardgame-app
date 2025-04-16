@@ -209,10 +209,6 @@ public class BoardJsonHandler implements FileHandler<Board> {
     }
   }
 
-  /**
-   * Creates a map of all board definitions for Snakes and Ladders.
-   * @return Map with filenames to JSON content
-   */
   private Map<String, String> createBoardsMap() {
     Map<String, String> boards = new HashMap<>();
 
@@ -292,45 +288,44 @@ public class BoardJsonHandler implements FileHandler<Board> {
         {
           "size": 100,
           "ladders": [
-            {"start": 24, "end": 90},
-            {"start": 72, "end": 91},
-            {"start": 51, "end": 63},
-            {"start": 64, "end": 96},
-            {"start": 10, "end": 41},
-            {"start": 67, "end": 80}
-          ],
-          "snakes": [
-            {"start": 49, "end": 18},
-            {"start": 48, "end": 20},
-            {"start": 88, "end": 2},
-            {"start": 30, "end": 12},
-            {"start": 47, "end": 35},
-            {"start": 69, "end": 22}
-          ]
-        }""";
+              {"start": 3, "end": 51},
+              {"start": 15, "end": 67},
+              {"start": 29, "end": 74},
+              {"start": 43, "end": 92},
+              {"start": 64, "end": 85},
+              {"start": 71, "end": 91}
+              ],
+              "snakes": [
+              {"start": 99, "end": 41},
+              {"start": 87, "end": 36},
+              {"start": 75, "end": 28},
+              {"start": 56, "end": 8},
+              {"start": 48, "end": 16},
+              {"start": 25, "end": 2}
+              ]
+              };
+        """;
 
     String randomBoard2 = """
         {
           "size": 100,
           "ladders": [
-            {"start": 29, "end": 43},
-            {"start": 50, "end": 94},
-            {"start": 3, "end": 31},
-            {"start": 34, "end": 62},
-            {"start": 49, "end": 57},
-            {"start": 61, "end": 83},
-            {"start": 28, "end": 88}
+            {"start": 4, "end": 68},
+            {"start": 12, "end": 50},
+            {"start": 21, "end": 82},
+            {"start": 35, "end": 57},
+            {"start": 45, "end": 86},
+            {"start": 71, "end": 94},
+            {"start": 77, "end": 98}
           ],
           "snakes": [
-            {"start": 26, "end": 12},
-            {"start": 75, "end": 19},
-            {"start": 55, "end": 23},
-            {"start": 17, "end": 9},
-            {"start": 60, "end": 2},
-            {"start": 65, "end": 22},
-            {"start": 13, "end": 7},
-            {"start": 35, "end": 21},
-            {"start": 59, "end": 42}
+            {"start": 99, "end": 38},
+            {"start": 89, "end": 53},
+            {"start": 76, "end": 24},
+            {"start": 66, "end": 47},
+            {"start": 54, "end": 19},
+            {"start": 43, "end": 17},
+            {"start": 32, "end": 6}
           ]
         }""";
 
@@ -338,23 +333,23 @@ public class BoardJsonHandler implements FileHandler<Board> {
         {
           "size": 100,
           "ladders": [
-            {"start": 36, "end": 42},
-            {"start": 8, "end": 31},
-            {"start": 39, "end": 81},
-            {"start": 14, "end": 58},
-            {"start": 73, "end": 87},
-            {"start": 41, "end": 59},
-            {"start": 57, "end": 70}
+            {"start": 8, "end": 26},
+            {"start": 19, "end": 59},
+            {"start": 34, "end": 73},
+            {"start": 42, "end": 78},
+            {"start": 51, "end": 97},
+            {"start": 62, "end": 83},
+            {"start": 75, "end": 92}
           ],
           "snakes": [
-            {"start": 71, "end": 10},
-            {"start": 26, "end": 19},
-            {"start": 27, "end": 2},
-            {"start": 23, "end": 15},
-            {"start": 69, "end": 52},
-            {"start": 64, "end": 32},
-            {"start": 49, "end": 38},
-            {"start": 86, "end": 18}
+            {"start": 98, "end": 79},
+            {"start": 95, "end": 56},
+            {"start": 84, "end": 63},
+            {"start": 69, "end": 31},
+            {"start": 58, "end": 37},
+            {"start": 47, "end": 26},
+            {"start": 36, "end": 17},
+            {"start": 24, "end": 5}
           ]
         }""";
 
@@ -362,22 +357,22 @@ public class BoardJsonHandler implements FileHandler<Board> {
         {
           "size": 100,
           "ladders": [
-            {"start": 32, "end": 58},
-            {"start": 27, "end": 34},
-            {"start": 2, "end": 48},
-            {"start": 75, "end": 86},
-            {"start": 41, "end": 54},
-            {"start": 38, "end": 43},
-            {"start": 25, "end": 40},
-            {"start": 5, "end": 29}
+            {"start": 7, "end": 29},
+            {"start": 16, "end": 47},
+            {"start": 22, "end": 56},
+            {"start": 38, "end": 83},
+            {"start": 52, "end": 71},
+            {"start": 61, "end": 95},
+            {"start": 73, "end": 91},
+            {"start": 85, "end": 98}
           ],
           "snakes": [
-            {"start": 63, "end": 37},
-            {"start": 47, "end": 22},
-            {"start": 42, "end": 36},
-            {"start": 95, "end": 57},
-            {"start": 90, "end": 18},
-            {"start": 97, "end": 12}
+            {"start": 99, "end": 63},
+            {"start": 93, "end": 42},
+            {"start": 87, "end": 51},
+            {"start": 78, "end": 39},
+            {"start": 64, "end": 27},
+            {"start": 49, "end": 13}
           ]
         }""";
 
@@ -385,19 +380,19 @@ public class BoardJsonHandler implements FileHandler<Board> {
         {
           "size": 100,
           "ladders": [
-            {"start": 42, "end": 87},
-            {"start": 32, "end": 62},
-            {"start": 74, "end": 95},
-            {"start": 6, "end": 34},
-            {"start": 53, "end": 66}
+            {"start": 5, "end": 23},
+            {"start": 14, "end": 76},
+            {"start": 31, "end": 67},
+            {"start": 45, "end": 84},
+            {"start": 57, "end": 96}
           ],
           "snakes": [
-            {"start": 58, "end": 39},
-            {"start": 92, "end": 31},
-            {"start": 55, "end": 3},
-            {"start": 91, "end": 15},
-            {"start": 17, "end": 2},
-            {"start": 73, "end": 64}
+            {"start": 97, "end": 65},
+            {"start": 88, "end": 49},
+            {"start": 79, "end": 41},
+            {"start": 62, "end": 18},
+            {"start": 53, "end": 11},
+            {"start": 33, "end": 9}
           ]
         }""";
 
@@ -405,26 +400,25 @@ public class BoardJsonHandler implements FileHandler<Board> {
         {
           "size": 100,
           "ladders": [
-            {"start": 52, "end": 80},
-            {"start": 31, "end": 96},
-            {"start": 66, "end": 84},
-            {"start": 35, "end": 83},
-            {"start": 24, "end": 89},
-            {"start": 58, "end": 97},
-            {"start": 54, "end": 61},
-            {"start": 53, "end": 70},
-            {"start": 34, "end": 81}
+            {"start": 3, "end": 21},
+            {"start": 12, "end": 42},
+            {"start": 28, "end": 84},
+            {"start": 39, "end": 59},
+            {"start": 47, "end": 69},
+            {"start": 56, "end": 77},
+            {"start": 68, "end": 93},
+            {"start": 79, "end": 99}
           ],
           "snakes": [
-            {"start": 73, "end": 47},
-            {"start": 62, "end": 12},
-            {"start": 76, "end": 57},
-            {"start": 42, "end": 5},
-            {"start": 94, "end": 16},
-            {"start": 18, "end": 7},
-            {"start": 37, "end": 19},
-            {"start": 39, "end": 21},
-            {"start": 29, "end": 15}
+            {"start": 98, "end": 82},
+            {"start": 92, "end": 75},
+            {"start": 86, "end": 54},
+            {"start": 73, "end": 46},
+            {"start": 64, "end": 37},
+            {"start": 53, "end": 26},
+            {"start": 44, "end": 15},
+            {"start": 35, "end": 9},
+            {"start": 23, "end": 4}
           ]
         }""";
 
@@ -432,23 +426,22 @@ public class BoardJsonHandler implements FileHandler<Board> {
         {
           "size": 100,
           "ladders": [
-            {"start": 50, "end": 62},
-            {"start": 17, "end": 35},
-            {"start": 64, "end": 99},
-            {"start": 32, "end": 63},
-            {"start": 68, "end": 93},
-            {"start": 4, "end": 86},
-            {"start": 16, "end": 48},
-            {"start": 55, "end": 67},
-            {"start": 8, "end": 74}
+            {"start": 2, "end": 38},
+            {"start": 11, "end": 52},
+            {"start": 25, "end": 63},
+            {"start": 37, "end": 78},
+            {"start": 49, "end": 89},
+            {"start": 67, "end": 96},
+            {"start": 76, "end": 94},
+            {"start": 81, "end": 97}
           ],
           "snakes": [
-            {"start": 33, "end": 15},
-            {"start": 46, "end": 7},
-            {"start": 56, "end": 6},
-            {"start": 13, "end": 10},
-            {"start": 88, "end": 49},
-            {"start": 85, "end": 5}
+            {"start": 99, "end": 80},
+            {"start": 91, "end": 72},
+            {"start": 83, "end": 64},
+            {"start": 74, "end": 53},
+            {"start": 62, "end": 43},
+            {"start": 51, "end": 32}
           ]
         }""";
 
@@ -456,24 +449,24 @@ public class BoardJsonHandler implements FileHandler<Board> {
         {
           "size": 100,
           "ladders": [
-            {"start": 72, "end": 83},
-            {"start": 12, "end": 21},
-            {"start": 30, "end": 54},
-            {"start": 33, "end": 84},
-            {"start": 6, "end": 88},
-            {"start": 59, "end": 63},
-            {"start": 49, "end": 75},
-            {"start": 10, "end": 39}
+            {"start": 6, "end": 24},
+            {"start": 13, "end": 46},
+            {"start": 26, "end": 53},
+            {"start": 33, "end": 71},
+            {"start": 41, "end": 79},
+            {"start": 58, "end": 85},
+            {"start": 69, "end": 87},
+            {"start": 72, "end": 93}
           ],
           "snakes": [
+            {"start": 98, "end": 61},
+            {"start": 95, "end": 57},
             {"start": 89, "end": 44},
-            {"start": 96, "end": 70},
-            {"start": 29, "end": 20},
-            {"start": 91, "end": 22},
-            {"start": 51, "end": 8},
-            {"start": 61, "end": 48},
-            {"start": 37, "end": 28},
-            {"start": 62, "end": 16}
+            {"start": 82, "end": 39},
+            {"start": 65, "end": 27},
+            {"start": 54, "end": 18},
+            {"start": 36, "end": 8},
+            {"start": 23, "end": 5}
           ]
         }""";
 
@@ -491,5 +484,4 @@ public class BoardJsonHandler implements FileHandler<Board> {
 
     return boards;
   }
-
 }

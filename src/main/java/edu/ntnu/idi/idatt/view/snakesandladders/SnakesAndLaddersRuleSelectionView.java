@@ -18,7 +18,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -73,24 +72,19 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     try {
       Image backgroundImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(
           SnakesAndLaddersRuleSelectionView.BACKGROUND_IMAGE_PATH)));
+
       BackgroundImage background = new BackgroundImage(
           backgroundImage,
           BackgroundRepeat.NO_REPEAT,
           BackgroundRepeat.NO_REPEAT,
           BackgroundPosition.CENTER,
-          new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true)
+          new BackgroundSize(1.0, 1.0, true, true, false, false)
       );
 
       StackPane backgroundPane = new StackPane();
       backgroundPane.setBackground(new Background(background));
 
-      Rectangle overlay = new Rectangle();
-      overlay.setFill(Color.WHITE);
-      overlay.setOpacity(0.85);
-      overlay.widthProperty().bind(layout.widthProperty());
-      overlay.heightProperty().bind(layout.heightProperty());
-
-      backgroundPane.getChildren().add(overlay);
+      backgroundPane.setOpacity(0.3);
 
       layout.getChildren().addFirst(backgroundPane);
       GridPane.setRowSpan(backgroundPane, Integer.MAX_VALUE);
@@ -101,6 +95,8 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
       logger.error("Failed to load background image: {}", e.getMessage());
     }
   }
+
+
 
   private void setupTitleAndDescription() {
     layout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
@@ -270,6 +266,18 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     VBox contentBox = new VBox(20);
     contentBox.setMaxWidth(600);
     contentBox.setAlignment(Pos.CENTER);
+
+    contentBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.9); " +
+        "-fx-background-radius: 10; " +
+        "-fx-padding: 20;");
+
+    DropShadow shadow = new DropShadow();
+    shadow.setColor(Color.color(0, 0, 0, 0.3));
+    shadow.setRadius(10);
+    shadow.setOffsetX(0);
+    shadow.setOffsetY(2);
+    contentBox.setEffect(shadow);
+
     return contentBox;
   }
 
