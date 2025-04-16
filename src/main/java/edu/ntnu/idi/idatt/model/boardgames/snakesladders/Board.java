@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.LadderTile;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.SnakeTile;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Tile;
-import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,24 +47,6 @@ public class Board {
     setTile(start, new LadderTile(start, end));
   }
 
-  public void addRandomLadder() {
-    Random random = new Random();
-    int startRow = random.nextInt(8) + 1; // Rows 1-8 (avoiding row 0)
-    int startCol = random.nextInt(10);
-    int start = startRow * 10 + startCol + 1;
-
-    int endRow = random.nextInt(startRow); // Pick a row above the start row
-    int endCol = random.nextInt(10);
-    int end = endRow * 10 + endCol + 1;
-
-    if (end > start && !isOccupied(start) && !isOccupied(end)) {
-      addFullLadder(start, end);
-      logger.info("Added random ladder from {} to {}", start, end);
-    } else {
-      logger.warn("Failed to add a valid ladder");
-    }
-  }
-
   public void addSnake(int start, int end) {
     if (start <= end || start > size || end < 1) {
       throw new IllegalArgumentException("Invalid snake positions");
@@ -75,60 +56,9 @@ public class Board {
     setTile(start, new SnakeTile(start, end));
   }
 
-  public void addRandomSnake() {
-    Random random = new Random();
-    int startRow = random.nextInt(9); // Rows 0-8 (avoiding row 9)
-    int startCol = random.nextInt(10);
-    int start = startRow * 10 + startCol + 1;
-
-    int endRow = random.nextInt(9 - startRow) + startRow + 1; // Pick a row below the start row
-    int endCol = random.nextInt(10);
-    int end = endRow * 10 + endCol + 1;
-
-    if (end < start && !isOccupied(start) && !isOccupied(end)) {
-      addSnake(start, end);
-      logger.info("Added random snake from {} to {}", start, end);
-    } else {
-      logger.warn("Failed to add a valid snake");
-    }
-  }
-
-  private boolean isOccupied(int position) {
-    for (Ladder ladder : ladders) {
-      if (ladder.start() == position || ladder.end() == position) {
-        return true;
-      }
-    }
-    for (Snake snake : snakes) {
-      if (snake.start() == position || snake.end() == position) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  public void addRandomLadders(int count) {
-    int added = 0;
-    for (int i = 0; i < count && added < 15; i++) {
-      int beforeCount = ladders.size();
-      addRandomLadder();
-      if (ladders.size() > beforeCount) {
-        added++;
-      }
-    }
-    logger.info("Added {} of {} requested ladders", added, count);
-  }
-
-  public void addRandomSnakes(int count) {
-    int added = 0;
-    for (int i = 0; i < count && added < 15; i++) {
-      int beforeCount = snakes.size();
-      addRandomSnake();
-      if (snakes.size() > beforeCount) {
-        added++;
-      }
-    }
-    logger.info("Added {} of {} requested snakes", added, count);
+  public void addDefaultLaddersAndSnakes() {
+    addDefaultLadders();
+    addDefaultSnakes();
   }
 
   public void addDefaultLadders() {
@@ -155,11 +85,6 @@ public class Board {
     logger.info("Added default snakes to the board");
   }
 
-  public void addDefaultLaddersAndSnakes() {
-    addDefaultLadders();
-    addDefaultSnakes();
-  }
-
   public Tile getTile(int number) {
     if (number < 1 || number > size) {
       logger.warn("Attempted to get invalid tile number: {}", number);
@@ -170,11 +95,6 @@ public class Board {
 
   public List<Tile> getTiles() {
     return new ArrayList<>(tiles);
-  }
-
-  public void setTiles(List<Tile> tiles) {
-    this.tiles = new ArrayList<>(tiles);
-    logger.debug("Set {} tiles on the board", tiles.size());
   }
 
   public void setTile(int tileNumber, Tile tile) {
@@ -206,18 +126,6 @@ public class Board {
     } catch (IOException e) {
       logger.error("Error saving board to JSON: {}", e.getMessage());
       return false;
-    }
-  }
-
-  public static Board loadFromJson(String filePath) {
-    try (Reader reader = new FileReader(filePath)) {
-      Gson gson = new GsonBuilder().create();
-      Board board = gson.fromJson(reader, Board.class);
-      logger.info("Successfully loaded board from JSON: {}", filePath);
-      return board;
-    } catch (IOException e) {
-      logger.error("Error loading board from JSON: {}", e.getMessage());
-      return null;
     }
   }
 
