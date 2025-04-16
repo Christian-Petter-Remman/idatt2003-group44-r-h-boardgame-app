@@ -52,26 +52,21 @@ public class SnakesAndLaddersRuleSelectionController {
     validateInput(diceCount, ladderCount, penaltyCount);
 
     try {
-      // Load the base board for the selected difficulty
       currentGame = (SnakesAndLadders) factory.createBoardGameFromConfiguration(difficulty);
       currentGame.setDice(new Dice(diceCount));
 
-      // If custom counts are specified, adjust the board
       if (ladderCount != getDefaultLadderCount(difficulty) ||
-          penaltyCount != getDefaultPenaltyCount(difficulty)) {
+          penaltyCount != getDefaultSnakeCount(difficulty)) {
 
         logger.info("Using custom configuration with {} ladders and {} penalties",
             ladderCount, penaltyCount);
 
-        // Create a new board with the specified counts
         Board board = new Board();
         board.initializeEmptyBoard();
 
-        // Add the specified number of ladders and snakes
-        addRandomLadders(board, ladderCount);
-        addRandomSnakes(board, penaltyCount);
+        board.addRandomLadders(ladderCount);
+        board.addRandomSnakes(penaltyCount);
 
-        // Set the new board
         currentGame.setBoard(board);
       }
 
@@ -86,22 +81,6 @@ public class SnakesAndLaddersRuleSelectionController {
       logger.error("Failed to create game: {}", e.getMessage());
       throw new InvalidGameConfigurationException("Invalid game configuration: " + e.getMessage());
     }
-  }
-
-  private int getDefaultLadderCount(String difficulty) {
-    return switch (difficulty.toLowerCase()) {
-      case "easy" -> 10;
-      case "hard" -> 5;
-      default -> 8;
-    };
-  }
-
-  private int getDefaultPenaltyCount(String difficulty) {
-    return switch (difficulty.toLowerCase()) {
-      case "easy" -> 4;
-      case "hard" -> 10;
-      default -> 8;
-    };
   }
 
   public void validateInput(int diceCount, int ladderCount, int penaltyCount) {
@@ -119,36 +98,6 @@ public class SnakesAndLaddersRuleSelectionController {
     }
   }
 
-  private void adjustBoard(Board board, int ladderCount, int penaltyCount) {
-    board.initializeEmptyBoard();
-    addRandomLadders(board, ladderCount);
-    addRandomSnakes(board, penaltyCount);
-  }
-
-  private void addRandomLadders(Board board, int count) {
-    for (int i = 0; i < count; i++) {
-      try {
-        board.addRandomLadder();
-      } catch (IllegalStateException e) {
-        logger.warn("Could not add more ladders: {}", e.getMessage());
-        break;
-      }
-    }
-    logger.info("Added {} ladders", count);
-  }
-
-  private void addRandomSnakes(Board board, int count) {
-    for (int i = 0; i < count; i++) {
-      try {
-        board.addRandomSnake();
-      } catch (IllegalStateException e) {
-        logger.warn("Could not add more snakes: {}", e.getMessage());
-        break;
-      }
-    }
-    logger.info("Added {} snakes", count);
-  }
-
   private void addPlayers(List<Player> players) {
     if (players == null || players.isEmpty()) {
       throw new IllegalArgumentException("At least one player is required");
@@ -162,5 +111,25 @@ public class SnakesAndLaddersRuleSelectionController {
 
   public String getSelectedDifficulty() {
     return selectedDifficulty;
+  }
+
+  public void setSelectedDifficulty(String selectedDifficulty) {
+    this.selectedDifficulty = selectedDifficulty;
+  }
+
+  private int getDefaultLadderCount(String difficulty) {
+    return switch (difficulty.toLowerCase()) {
+      case "easy" -> 10;
+      case "hard" -> 5;
+      default -> 8;
+    };
+  }
+
+  private int getDefaultSnakeCount(String difficulty) {
+    return switch (difficulty.toLowerCase()) {
+      case "easy" -> 4;
+      case "hard" -> 10;
+      default -> 8;
+    };
   }
 }
