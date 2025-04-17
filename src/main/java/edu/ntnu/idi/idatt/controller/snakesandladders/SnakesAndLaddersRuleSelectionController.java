@@ -23,7 +23,7 @@ public class SnakesAndLaddersRuleSelectionController {
 
   private final List<DifficultyObserver> observers = new ArrayList<>();
   private final SnakesAndLaddersFactory factory;
-  private SnakesAndLadders currentGame;
+  private SnakesAndLadders currentGame = new SnakesAndLadders();
   private int currentLadderCount = 8;
   private int currentSnakeCount = 8;
   private int selectedRandomBoard = -1;
@@ -95,11 +95,11 @@ public class SnakesAndLaddersRuleSelectionController {
   public SnakesAndLadders startGame(String difficulty, int diceCount, List<Player> players)
       throws InvalidGameConfigurationException {
     validateDifficulty(difficulty);
-    validateInput(diceCount);
+    validateDice(diceCount);
 
     try {
       if ("random".equalsIgnoreCase(difficulty)) {
-        currentGame = (SnakesAndLadders) factory.createBoardGameFromConfiguration("random");
+        currentGame = (SnakesAndLadders) factory.createBoardGameFromConfiguration("random",SnakesAndLadders.class);
         currentGame.setDice(new Dice(diceCount));
 
         String boardPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/random" + selectedRandomBoard + ".json";
@@ -112,7 +112,7 @@ public class SnakesAndLaddersRuleSelectionController {
           logger.error("Failed to load a random board: {}", e.getMessage());
         }
       } else {
-        currentGame = (SnakesAndLadders) factory.createBoardGameFromConfiguration(difficulty);
+        currentGame = (SnakesAndLadders) factory.createBoardGameFromConfiguration(difficulty, SnakesAndLadders.class);
         currentGame.setDice(new Dice(diceCount));
       }
 
@@ -128,7 +128,7 @@ public class SnakesAndLaddersRuleSelectionController {
     }
   }
 
-  public void validateInput(int diceCount) {
+  public void validateDice(int diceCount) {
     if (diceCount <= 0) {
       throw new InvalidGameConfigurationException("Dice count must be larger than 0");
     }
