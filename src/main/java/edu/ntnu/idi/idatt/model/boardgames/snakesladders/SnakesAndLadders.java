@@ -100,8 +100,8 @@ public class SnakesAndLadders extends BoardGame {
   }
 
 
-  public void addPlayer(String name, String character) {
-    addPlayer(new SnakesAndLaddersPlayer(name,character));
+  public void addPlayer(String name, String character,int position) {
+    addPlayer(new SnakesAndLaddersPlayer(name,character,position));
   }
 
   public void advanceTurn() {
@@ -122,7 +122,8 @@ public class SnakesAndLadders extends BoardGame {
         if (parts.length >= 1) {
           String name = parts[0].trim();
           String character = parts[1].trim();
-          addPlayer(new SnakesAndLaddersPlayer(name,character));
+          int position = Integer.parseInt(parts[2].trim());
+          addPlayer(new SnakesAndLaddersPlayer(name,character,position));
           playersAdded++;
         }
       }

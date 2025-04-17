@@ -97,7 +97,6 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
   }
 
 
-
   private void setupTitleAndDescription() {
     layout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
 

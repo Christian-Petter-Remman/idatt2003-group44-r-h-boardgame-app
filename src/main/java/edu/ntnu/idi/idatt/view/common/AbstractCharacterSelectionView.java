@@ -1,5 +1,7 @@
 package edu.ntnu.idi.idatt.view.common;
 
+import edu.ntnu.idi.idatt.exceptions.CsvFormatException;
+import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.filehandling.PlayerCsvHandler;
 import edu.ntnu.idi.idatt.model.common.Player;
 import java.util.HashSet;
@@ -129,6 +131,7 @@ public abstract class AbstractCharacterSelectionView {
       List<Player> players = new ArrayList<>();
       players.add(createPlayer(player1Name, player1Character));
       players.add(createPlayer(player2Name, player2Character));
+      String customFileName = createCustomFileName(player1Name, player2Name);
 
       if (player3Character != null) {
         players.add(createPlayer(player3Name, player3Character));
@@ -138,14 +141,25 @@ public abstract class AbstractCharacterSelectionView {
       }
 
       try {
-        savePlayersToFile(players, createCustomFileName(player1Name, player2Name));
+        savePlayersToFile(players, customFileName);
       } catch (IOException ex) {
         throw new RuntimeException(ex);
       }
+      PlayerCsvHandler playerCsvHandler = new PlayerCsvHandler();
+      List<Player> playersFromFile;
+      try {
+        playersFromFile = getPlayersFromFile(playerCsvHandler.loadFromFile(customFileName));
+      } catch (IOException | FileReadException | CsvFormatException ex) {
+        throw new RuntimeException(ex);
+      }
 
-      onStart(players);
+      onStart(playersFromFile);
     });
     return startButton;
+  }
+
+  private List<Player> getPlayersFromFile(List<Player> players) throws IOException {
+    return players;
   }
 
   protected VBox createPlayerBox(String defaultName, Consumer<String> nameChangedCallback, Consumer<String> characterSelectedCallback) {
@@ -406,6 +420,7 @@ public abstract class AbstractCharacterSelectionView {
     String date = LocalDate.now().toString();
     return date + "_" + name1 + "_" + name2 + ".csv";
   }
+
 
   protected abstract Player createPlayer(String name, String character);
   protected abstract String getHeaderText();

@@ -147,8 +147,8 @@ public class FileManager {
         logger.info("No players loaded from CSV. Creating default players");
 
         try {
-          game.addPlayer("Player 1", "bowser");
-          game.addPlayer("Player 2", "peach");
+          game.addPlayer("Player 1", "bowser",0);
+          game.addPlayer("Player 2", "peach",0);
 
           if (!playersFile.getParentFile().exists()) {
             boolean created = playersFile.getParentFile().mkdirs();

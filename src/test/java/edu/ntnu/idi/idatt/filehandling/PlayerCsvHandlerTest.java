@@ -32,8 +32,8 @@ class PlayerCsvHandlerTest {
   @Test
   void testSaveAndLoadPlayers() throws IOException, FileReadException, CsvFormatException {
     List<Player> players = new ArrayList<>();
-    players.add(new SnakesAndLaddersPlayer("Anna", "bowser"));
-    players.add(new SnakesAndLaddersPlayer("Bob", "toad"));
+    players.add(new SnakesAndLaddersPlayer("Anna", "bowser",0));
+    players.add(new SnakesAndLaddersPlayer("Bob", "toad",0));
 
     handler.saveToFile(players, TEST_FILE);
     List<Player> loaded = handler.loadFromFile(TEST_FILE);

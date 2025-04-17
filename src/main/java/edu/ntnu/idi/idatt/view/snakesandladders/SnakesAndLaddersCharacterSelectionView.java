@@ -15,7 +15,6 @@ public class SnakesAndLaddersCharacterSelectionView extends AbstractCharacterSel
     super(stage);
   }
 
-
   @Override
   protected String getBackgroundStyle() {
     return "-fx-background-image: url('/images/snakesbackground.jpg');";
@@ -46,7 +45,7 @@ public class SnakesAndLaddersCharacterSelectionView extends AbstractCharacterSel
 
   @Override
   protected Player createPlayer(String name, String character) {
-    return new SnakesAndLaddersPlayer(name, character);
+    return new SnakesAndLaddersPlayer(name, character,0);
   }
 
   @Override

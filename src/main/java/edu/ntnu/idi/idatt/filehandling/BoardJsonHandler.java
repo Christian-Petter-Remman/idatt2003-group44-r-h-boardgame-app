@@ -41,7 +41,6 @@ public class BoardJsonHandler implements FileHandler<Board> {
     Board board = new Board();
     board.initializeEmptyBoard();
 
-    // Parse ladders
     if (jsonObject.has("ladders")) {
       JsonArray laddersArray = jsonObject.getAsJsonArray("ladders");
       for (JsonElement element : laddersArray) {
@@ -56,7 +55,6 @@ public class BoardJsonHandler implements FileHandler<Board> {
       }
     }
 
-    // Parse snakes
     if (jsonObject.has("snakes")) {
       JsonArray snakesArray = jsonObject.getAsJsonArray("snakes");
       for (JsonElement element : snakesArray) {
@@ -120,12 +118,10 @@ public class BoardJsonHandler implements FileHandler<Board> {
       throw new IOException("Security exception when accessing boards directory", e);
     }
 
-    // Check if default board already exists
     Path defaultBoardPath = dirPath.resolve("default.json");
     if (Files.exists(defaultBoardPath)) {
       logger.info("Default board file already exists, checking if all board files are present");
 
-      // Check if all required board files exist
       boolean allBoardsExist = true;
       String[] requiredBoards = {
           "default.json", "easy.json", "hard.json",
@@ -151,10 +147,8 @@ public class BoardJsonHandler implements FileHandler<Board> {
 
     logger.info("Generating Snakes and Ladders board files...");
 
-    // Define all boards
     Map<String, String> boards = createBoardsMap();
 
-    // Write all boards to files
     int existingFiles = 0;
     int createdFiles = 0;
     int failedFiles = 0;
@@ -166,19 +160,16 @@ public class BoardJsonHandler implements FileHandler<Board> {
       Path boardFilePath = dirPath.resolve(filename);
 
       try {
-        // Check if file already exists
         if (Files.exists(boardFilePath)) {
           logger.debug("Board file already exists, skipping: {}", filename);
           existingFiles++;
           continue;
         }
 
-        // Write board content to file
         try (FileWriter writer = new FileWriter(boardFilePath.toFile())) {
           writer.write(content);
         }
 
-        // Verify the file was created successfully
         if (!Files.exists(boardFilePath) || Files.size(boardFilePath) == 0) {
           logger.error("Failed to create board file or file is empty: {}", filename);
           failedFiles++;
@@ -196,7 +187,6 @@ public class BoardJsonHandler implements FileHandler<Board> {
       }
     }
 
-    // Log summary of operation
     if (failedFiles > 0) {
       logger.warn("Board file generation completed with issues: {} existing, {} created, {} failed",
           existingFiles, createdFiles, failedFiles);
