@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,7 +24,11 @@ public class BoardJsonHandler implements FileHandler<Board> {
   private static final String BOARDS_DIR = FileManager.SNAKES_LADDERS_BOARDS_DIR;
 
   public BoardJsonHandler() {
-    this.gson = new GsonBuilder().setPrettyPrinting().create();
+    this.gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .addSerializationExclusionStrategy(new RandomExclusionStrategy())
+            .addDeserializationExclusionStrategy(new RandomExclusionStrategy())
+            .create();
   }
 
   public Board loadBoardFromFile(String filePath) throws FileReadException, JsonParsingException {

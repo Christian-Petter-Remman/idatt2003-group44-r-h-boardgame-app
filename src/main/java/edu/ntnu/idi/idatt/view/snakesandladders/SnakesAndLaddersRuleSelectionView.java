@@ -28,6 +28,7 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -62,6 +63,7 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
   public SnakesAndLaddersRuleSelectionView(Stage primaryStage) {
     super(primaryStage);
     controller = new SnakesAndLaddersRuleSelectionController(new SnakesAndLaddersFactory());
+    this.boardJsonHandler = new BoardJsonHandler();
     controller.addObserver(this);
   }
 
@@ -375,10 +377,12 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     try {
       int diceCount = Integer.parseInt(diceField.getText());
 
-      String gameToStart  = controller.createGameFile(selectedDifficulty, baseName);
+      String gameToStart = controller.createGameFile(selectedDifficulty, baseName);
       SnakesAndLadders snakes = boardJsonHandler.loadGameFromFile(gameToStart, SnakesAndLadders::new);
 
-      String csvPath = gameToStart.replace("data/custom_boards/snakes_and_ladders","data/user-data/player-files/") + gameToStart.replace(".json", ".csv");
+      String baseFileName = new File(gameToStart).getName().replace(".json", ".csv");
+      String csvPath = "data/user-data/player-files/" + baseFileName;
+
       int playersLoaded = snakes.loadPlayersFromCsv(csvPath);
       logger.info("Loaded {} players from {}", playersLoaded, csvPath);
 
