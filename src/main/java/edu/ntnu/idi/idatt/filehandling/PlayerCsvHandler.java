@@ -16,7 +16,7 @@ public class PlayerCsvHandler implements FileHandler<List<Player>> {
     String directory = "data/user-data/player-files/";
     new File(directory).mkdirs();
 
-    String fullPath = directory + fileName;
+    String fullPath = fileName;
 
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(fullPath))) {
       for (Player player : players) {
@@ -30,7 +30,7 @@ public class PlayerCsvHandler implements FileHandler<List<Player>> {
   public List<Player> loadFromFile(String fileName) throws FileReadException, CsvFormatException {
     List<Player> players = new ArrayList<>();
     String basePath = "data/user-data/player-files/";
-    try (BufferedReader reader = new BufferedReader(new FileReader(basePath + fileName))) {
+    try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
       String line;
       int lineNumber = 0;
 

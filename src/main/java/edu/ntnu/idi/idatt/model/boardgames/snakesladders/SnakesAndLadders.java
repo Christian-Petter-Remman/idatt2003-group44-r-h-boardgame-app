@@ -25,6 +25,10 @@ public class SnakesAndLadders extends BoardGame {
     super();
     currentPlayerIndex = 0;
   }
+  public SnakesAndLadders(Board board) {
+    this();
+    this.board = board;
+  }
 
   @Override
   public void initialize (Board board) {

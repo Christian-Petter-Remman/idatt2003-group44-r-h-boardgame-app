@@ -14,9 +14,9 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
   private final BoardJsonHandler boardJsonHandler = new BoardJsonHandler();
 
   @Override
-  public BoardGame createBoardGame() {
+  public SnakesAndLadders createBoardGame(String fileName) {
     SnakesAndLadders game = new SnakesAndLadders();
-    game.setBoard(loadBoardFromFile("default.json"));
+    game.setBoard(loadBoardFromFile(fileName));
     game.initialize(game.getBoard());
     return game;
   }

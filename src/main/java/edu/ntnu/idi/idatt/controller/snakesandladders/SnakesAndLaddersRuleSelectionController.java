@@ -2,6 +2,7 @@ package edu.ntnu.idi.idatt.controller.snakesandladders;
 
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
+import edu.ntnu.idi.idatt.model.common.BoardGame;
 import edu.ntnu.idi.idatt.model.model_observers.DifficultyObserver;
 import edu.ntnu.idi.idatt.exceptions.*;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
@@ -11,19 +12,25 @@ import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.filehandling.BoardJsonHandler;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
+
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.UUID;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class SnakesAndLaddersRuleSelectionController {
   private static final Logger logger = LoggerFactory.getLogger(SnakesAndLaddersRuleSelectionController.class);
 
   private final List<DifficultyObserver> observers = new ArrayList<>();
   private final SnakesAndLaddersFactory factory;
-  private SnakesAndLadders currentGame = new SnakesAndLadders();
+  private SnakesAndLadders currentGame;
   private int currentLadderCount = 8;
   private int currentSnakeCount = 8;
   private int selectedRandomBoard = -1;
@@ -92,39 +99,40 @@ public class SnakesAndLaddersRuleSelectionController {
   }
 
 
-  public SnakesAndLadders startGame(String difficulty, int diceCount, List<Player> players)
-      throws InvalidGameConfigurationException {
+  public String createGameFile(String difficulty, String baseName) throws InvalidGameConfigurationException {
     validateDifficulty(difficulty);
-    validateDice(diceCount);
 
     try {
-      if ("random".equalsIgnoreCase(difficulty)) {
-        currentGame = (SnakesAndLadders) factory.createBoardGameFromConfiguration("random",SnakesAndLadders.class);
-        currentGame.setDice(new Dice(diceCount));
+      String filename;
+      String fullPath;
 
-        String boardPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/random" + selectedRandomBoard + ".json";
-        try {
-          Board board = boardJsonHandler.loadBoardFromFile(boardPath);
-          logger.info("Successfully loaded random board from {}", boardPath);
-          currentGame.setBoard(board);
-          currentGame.initialize(board);
-        } catch (Exception e) {
-          logger.error("Failed to load a random board: {}", e.getMessage());
-        }
+      if ("random".equalsIgnoreCase(difficulty)) {
+        currentGame = factory.createBoardGameFromConfiguration("random", SnakesAndLadders.class);
+        filename =  baseName+ ".json";
+        fullPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + filename;
+
+        boardJsonHandler.saveToFile(currentGame, fullPath);
+        logger.info("Random game loaded from predefined board: {}", filename);
       } else {
-        currentGame = (SnakesAndLadders) factory.createBoardGameFromConfiguration(difficulty, SnakesAndLadders.class);
-        currentGame.setDice(new Dice(diceCount));
+        currentGame = factory.createBoardGameFromConfiguration(difficulty, SnakesAndLadders.class);
+
+        filename = baseName + ".json";
+        fullPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + filename;
+
+        boardJsonHandler.saveToFile(currentGame, fullPath);
+
+        logger.info("Game created and saved to {} with difficulty: {}, ladders: {}, penalties: {}",
+                fullPath, difficulty, currentLadderCount, currentSnakeCount);
       }
 
-      addPlayers(players);
-
-      logger.info("Game created with difficulty: {}, dice: {}, ladders: {}, penalties: {}",
-          difficulty, diceCount, currentLadderCount, currentSnakeCount);
-      return currentGame;
+      return fullPath;
 
     } catch (IllegalArgumentException e) {
       logger.error("Failed to create game: {}", e.getMessage());
       throw new InvalidGameConfigurationException("Invalid game configuration: " + e.getMessage());
+    } catch (IOException e) {
+      logger.error("IO Error while saving game: {}", e.getMessage());
+      throw new RuntimeException("Failed to save game file", e);
     }
   }
 

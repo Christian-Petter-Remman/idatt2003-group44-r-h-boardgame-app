@@ -4,7 +4,7 @@ import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 
 public abstract class BoardGameFactory {
 
-  public abstract BoardGame createBoardGame();
+  public abstract BoardGame createBoardGame(String filename);
 
   public abstract String[] getAvailableConfigurations();
 

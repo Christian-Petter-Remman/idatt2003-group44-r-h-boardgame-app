@@ -35,6 +35,8 @@ public abstract class AbstractCharacterSelectionView {
   protected String player2Character;
   protected String player3Character;
   protected String player4Character;
+  protected abstract String getGamePrefix();
+  protected String baseName;
 
   VBox player1Box;
   VBox player2Box;
@@ -131,7 +133,11 @@ public abstract class AbstractCharacterSelectionView {
       List<Player> players = new ArrayList<>();
       players.add(createPlayer(player1Name, player1Character));
       players.add(createPlayer(player2Name, player2Character));
-      String customFileName = createCustomFileName(player1Name, player2Name);
+      baseName = getGamePrefix() + "_" +
+              LocalDate.now().toString().replace("-", "") + "_" +
+              System.currentTimeMillis();
+
+      String csvPath = "data/user-data/player-files/" + baseName + ".csv";
 
       if (player3Character != null) {
         players.add(createPlayer(player3Name, player3Character));
@@ -141,19 +147,19 @@ public abstract class AbstractCharacterSelectionView {
       }
 
       try {
-        savePlayersToFile(players, customFileName);
+        savePlayersToFile(players, csvPath);
       } catch (IOException ex) {
         throw new RuntimeException(ex);
       }
       PlayerCsvHandler playerCsvHandler = new PlayerCsvHandler();
       List<Player> playersFromFile;
       try {
-        playersFromFile = getPlayersFromFile(playerCsvHandler.loadFromFile(customFileName));
+        playersFromFile = getPlayersFromFile(playerCsvHandler.loadFromFile(csvPath));
       } catch (IOException | FileReadException | CsvFormatException ex) {
         throw new RuntimeException(ex);
       }
 
-      onStart(playersFromFile);
+      onStart(playersFromFile, baseName);
     });
     return startButton;
   }
@@ -425,6 +431,6 @@ public abstract class AbstractCharacterSelectionView {
   protected abstract Player createPlayer(String name, String character);
   protected abstract String getHeaderText();
   protected abstract String getGameTitle();
-  protected abstract void onStart(List<Player> players);
+  protected abstract void onStart(List<Player> players, String baseName);
   protected abstract void onBack();
 }

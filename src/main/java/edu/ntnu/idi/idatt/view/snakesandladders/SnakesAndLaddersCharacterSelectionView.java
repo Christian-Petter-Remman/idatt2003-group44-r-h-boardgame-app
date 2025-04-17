@@ -31,16 +31,22 @@ public class SnakesAndLaddersCharacterSelectionView extends AbstractCharacterSel
   }
 
   @Override
-  protected void onStart(List<Player> players) {
+  protected void onStart(List<Player> players, String name) {
     try {
     SnakesAndLaddersRuleSelectionView ruleSelectionView = new SnakesAndLaddersRuleSelectionView(stage);
       ruleSelectionView.setPlayers(players);
+      ruleSelectionView.setBaseName(baseName);
       ruleSelectionView.show();
 
     } catch (Exception e) {
       logger.error("Error loading Rule Selection Screen: {}", e.getMessage());
       showAlert("Error", "An error occurred while loading the Rule Selection Screen");
     }
+  }
+
+  @Override
+  protected String getGamePrefix() {
+    return "SNL";
   }
 
   @Override

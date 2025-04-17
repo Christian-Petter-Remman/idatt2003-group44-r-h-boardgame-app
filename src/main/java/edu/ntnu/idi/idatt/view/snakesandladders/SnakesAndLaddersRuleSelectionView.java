@@ -3,6 +3,10 @@ package edu.ntnu.idi.idatt.view.snakesandladders;
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
 import edu.ntnu.idi.idatt.controller.snakesandladders.SnakesAndLaddersRuleSelectionController;
+import edu.ntnu.idi.idatt.filehandling.BoardJsonHandler;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
+import edu.ntnu.idi.idatt.model.common.BoardGame;
+import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.model.model_observers.DifficultyObserver;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersFactory;
@@ -26,9 +30,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView implements DifficultyObserver {
   private static final Logger logger = LoggerFactory.getLogger(SnakesAndLaddersRuleSelectionView.class);
+  BoardJsonHandler boardJsonHandler;
 
   private final SnakesAndLaddersRuleSelectionController controller;
   private List<Player> players;
@@ -42,6 +48,7 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
   private RadioButton normalButton;
   private RadioButton hardButton;
   private Button randomButton;
+  private String baseName;
 
   private boolean uiInitialized = false;
 
@@ -56,6 +63,10 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     super(primaryStage);
     controller = new SnakesAndLaddersRuleSelectionController(new SnakesAndLaddersFactory());
     controller.addObserver(this);
+  }
+
+  public void setBaseName(String baseName) {
+    this.baseName = baseName;
   }
 
   @Override
@@ -364,12 +375,16 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     try {
       int diceCount = Integer.parseInt(diceField.getText());
 
-      SnakesAndLadders game = controller.startGame(
-          selectedDifficulty,
-          diceCount,
-          players);
+      String gameToStart  = controller.createGameFile(selectedDifficulty, baseName);
+      SnakesAndLadders snakes = boardJsonHandler.loadGameFromFile(gameToStart, SnakesAndLadders::new);
 
-      new GameScreenView(primaryStage, game).show();
+      String csvPath = gameToStart.replace("data/custom_boards/snakes_and_ladders","data/user-data/player-files/") + gameToStart.replace(".json", ".csv");
+      int playersLoaded = snakes.loadPlayersFromCsv(csvPath);
+      logger.info("Loaded {} players from {}", playersLoaded, csvPath);
+
+      snakes.setDice(new Dice(diceCount));
+
+      new GameScreenView(primaryStage, snakes).show();
 
     } catch (NumberFormatException e) {
       logger.error("Error with starting game: {}", e.getMessage());

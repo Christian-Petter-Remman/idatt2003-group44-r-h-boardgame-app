@@ -4,6 +4,7 @@ import com.google.gson.*;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
+import edu.ntnu.idi.idatt.model.common.BoardGame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public class BoardJsonHandler implements FileHandler<Board> {
   private static final Logger logger = LoggerFactory.getLogger(BoardJsonHandler.class);
@@ -36,6 +38,7 @@ public class BoardJsonHandler implements FileHandler<Board> {
       throw new JsonParsingException("Invalid JSON structure in board file: " + filePath, e);
     }
   }
+
 
   private Board parseBoard(JsonObject jsonObject) {
     Board board = new Board();
@@ -72,12 +75,22 @@ public class BoardJsonHandler implements FileHandler<Board> {
     return board;
   }
 
-  @Override
-  public void saveToFile(Board board, String fileName) throws IOException {
+  public <T extends BoardGame> T loadGameFromFile(String filePath, Function<Board, T> gameCreator)
+          throws FileReadException, JsonParsingException {
+    Board board = loadBoardFromFile(filePath);
+    return gameCreator.apply(board);
+  }
+
+  public <T extends BoardGame> void saveToFile(T game, String fileName) throws IOException {
     try (Writer writer = new FileWriter(fileName)) {
-      gson.toJson(board, writer);
-      logger.debug("Board saved to file: {}", fileName);
+      gson.toJson(game, writer);
+      logger.debug("Game saved to file: {}", fileName);
     }
+  }
+
+  @Override
+  public void saveToFile(Board object, String fileName) throws Exception {
+
   }
 
   @Override
