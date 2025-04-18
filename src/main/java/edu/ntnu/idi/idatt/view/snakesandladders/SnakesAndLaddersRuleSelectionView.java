@@ -380,15 +380,14 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
       String gameToStart = controller.GetBoardFile(selectedDifficulty);
       SnakesAndLadders snakes = boardJsonHandler.loadGameFromFile(gameToStart, SnakesAndLadders::new);
 
-      String baseFileName = new File(gameToStart).getName().replace(".json", ".csv");
-      String csvPath = "data/user-data/player-files/" + baseFileName;
+      String csvPath = "data/user-data/player-files/" + baseName + ".csv";
 
       int playersLoaded = snakes.loadPlayersFromCsv(csvPath);
       logger.info("Loaded {} players from {}", playersLoaded, csvPath);
 
       snakes.setDice(new Dice(diceCount));
 
-      new GameScreenView(primaryStage, snakes).show();
+      new GameScreenView(primaryStage, snakes, gameToStart,csvPath).show();
 
     } catch (NumberFormatException e) {
       logger.error("Error with starting game: {}", e.getMessage());
@@ -424,5 +423,9 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
 
     primaryStage.show();
     controller.setDifficulty(selectedDifficulty);
+  }
+
+  public String getDifficulty () {
+    return selectedDifficulty;
   }
 }
