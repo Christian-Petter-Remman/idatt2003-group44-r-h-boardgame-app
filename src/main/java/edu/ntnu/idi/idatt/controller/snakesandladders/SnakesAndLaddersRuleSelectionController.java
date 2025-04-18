@@ -51,7 +51,8 @@ public class SnakesAndLaddersRuleSelectionController {
     }
   }
 
-  public void setDifficulty(String difficulty) {
+  public String setDifficulty(String difficulty) {
+    String boardName = difficulty;
 
     switch (difficulty.toLowerCase()) {
       case "easy":
@@ -63,19 +64,21 @@ public class SnakesAndLaddersRuleSelectionController {
         currentSnakeCount = 10;
         break;
       case "random":
-        selectRandomBoard();
+        boardName = selectRandomBoard();
         break;
       default:
         currentLadderCount = 8;
         currentSnakeCount = 8;
         break;
     }
-
     notifyObservers(difficulty);
+    return boardName;
   }
 
-  private void selectRandomBoard() {
+  private String selectRandomBoard() {
     selectedRandomBoard = new Random().nextInt(8) + 1;
+    String boardName = "random"+ selectedRandomBoard;
+
 
     try {
       String boardPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/random" + selectedRandomBoard + ".json";
@@ -96,6 +99,7 @@ public class SnakesAndLaddersRuleSelectionController {
       logger.info("Falling back to default difficulty due to random board loading failure");
       notifyObservers("default");
     }
+    return boardName;
   }
 
   private String selectBoardFile(String difficulty) {
@@ -176,7 +180,15 @@ public class SnakesAndLaddersRuleSelectionController {
 
   private void validateDifficulty(String difficulty) throws InvalidGameConfigurationException {
     List<String> validDifficulties = new ArrayList<>(Arrays.asList(factory.getAvailableConfigurations()));
-    validDifficulties.add("random");
+    validDifficulties.add("random1");
+    validDifficulties.add("random2");
+    validDifficulties.add("random3");
+    validDifficulties.add("random4");
+    validDifficulties.add("random5");
+    validDifficulties.add("random6");
+    validDifficulties.add("random7");
+    validDifficulties.add("random8");
+
 
     if (!validDifficulties.contains(difficulty)) {
       throw new InvalidGameConfigurationException("Invalid difficulty level: " + difficulty);
