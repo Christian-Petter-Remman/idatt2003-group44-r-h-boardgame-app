@@ -13,9 +13,6 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -38,7 +35,6 @@ public class GameScreenView {
   private Label positionLabel;
   private Button rollButton;
   private ImageView imageView;
-  private Button saveButton;
 
   Label player1TurnLabel = new Label();
   Label player2TurnLabel = new Label();
@@ -141,7 +137,7 @@ public class GameScreenView {
       intro.prepareScene();
     });
 
-    saveButton = new Button("Save Game");
+    Button saveButton = new Button("Save Game");
     saveButton.setStyle("-fx-font-size: 12px;");
     saveButton.setOnAction(e -> saveGame());
 
