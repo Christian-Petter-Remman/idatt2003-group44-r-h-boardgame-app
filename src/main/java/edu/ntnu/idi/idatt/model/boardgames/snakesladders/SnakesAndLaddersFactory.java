@@ -14,9 +14,9 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
   private final BoardJsonHandler boardJsonHandler = new BoardJsonHandler();
 
   @Override
-  public BoardGame createBoardGame() {
+  public SnakesAndLadders createBoardGame(String fileName) {
     SnakesAndLadders game = new SnakesAndLadders();
-    game.setBoard(loadBoardFromFile("default.json"));
+    game.setBoard(loadBoardFromFile(fileName));
     game.initialize(game.getBoard());
     return game;
   }
@@ -27,8 +27,7 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
   }
 
   @Override
-  public BoardGame createBoardGameFromConfiguration(String configurationName) {
-    SnakesAndLadders game = new SnakesAndLadders();
+  public <T extends BoardGame> T createBoardGameFromConfiguration(String configurationName, Class<T> gameClass) {
     Board board;
 
     if ("random".equalsIgnoreCase(configurationName)) {
@@ -51,9 +50,15 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
       }
     }
 
-    game.setBoard(board);
-    game.initialize(game.getBoard());
-    return game;
+    try {
+      T gameInstance = gameClass.getDeclaredConstructor().newInstance();
+      gameInstance.setBoard(board);
+      gameInstance.initialize(board);
+      return gameInstance;
+    } catch (Exception e) {
+      logger.error("Could not instantiate game of type " + gameClass.getSimpleName(), e);
+      throw new RuntimeException("Failed to create game instance", e);
+    }
   }
 
   @Override

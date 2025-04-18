@@ -2,6 +2,7 @@ package edu.ntnu.idi.idatt.controller.snakesandladders;
 
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
+import edu.ntnu.idi.idatt.model.common.BoardGame;
 import edu.ntnu.idi.idatt.model.model_observers.DifficultyObserver;
 import edu.ntnu.idi.idatt.exceptions.*;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
@@ -11,12 +12,18 @@ import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.filehandling.BoardJsonHandler;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
+
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.UUID;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class SnakesAndLaddersRuleSelectionController {
   private static final Logger logger = LoggerFactory.getLogger(SnakesAndLaddersRuleSelectionController.class);
@@ -91,44 +98,77 @@ public class SnakesAndLaddersRuleSelectionController {
     }
   }
 
+  private String selectBoardFile(String difficulty) {
+    String fileName;
+    String fullPath;
 
-  public SnakesAndLadders startGame(String difficulty, int diceCount, List<Player> players)
-      throws InvalidGameConfigurationException {
+    fileName = difficulty + ".json";
+    fullPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + fileName;
+    return fullPath;
+  }
+
+  private String selectRandomBoardFile(String difficulty) {
+    Random rand = new Random();
+    String fileName;
+    String fullPath;
+    int randomBoard = rand.nextInt(8) + 1;
+    fileName = difficulty + randomBoard + ".json";
+    fullPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + fileName;
+    return fullPath;
+  }
+
+  public String GetBoardFile(String difficulty) {
     validateDifficulty(difficulty);
-    validateInput(diceCount);
+    String result;
+
+    if (difficulty.equals("random")) {
+      result = selectRandomBoardFile(difficulty);
+    }
+    else {
+      result = selectBoardFile(difficulty);
+    }
+    return result;
+  }
+
+
+  public String createGameFile(String difficulty, String baseName) throws InvalidGameConfigurationException {
+    validateDifficulty(difficulty);
 
     try {
-      if ("random".equalsIgnoreCase(difficulty)) {
-        currentGame = (SnakesAndLadders) factory.createBoardGameFromConfiguration("random");
-        currentGame.setDice(new Dice(diceCount));
+      String filename;
+      String fullPath;
 
-        String boardPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/random" + selectedRandomBoard + ".json";
-        try {
-          Board board = boardJsonHandler.loadBoardFromFile(boardPath);
-          logger.info("Successfully loaded random board from {}", boardPath);
-          currentGame.setBoard(board);
-          currentGame.initialize(board);
-        } catch (Exception e) {
-          logger.error("Failed to load a random board: {}", e.getMessage());
-        }
+      if ("random".equalsIgnoreCase(difficulty)) {
+        currentGame = factory.createBoardGameFromConfiguration("random", SnakesAndLadders.class);
+        filename =  baseName+ ".json";
+        fullPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + filename;
+
+        boardJsonHandler.saveToFile(currentGame, fullPath);
+        logger.info("Random game loaded from predefined board: {}", filename);
       } else {
-        currentGame = (SnakesAndLadders) factory.createBoardGameFromConfiguration(difficulty);
-        currentGame.setDice(new Dice(diceCount));
+        currentGame = factory.createBoardGameFromConfiguration(difficulty, SnakesAndLadders.class);
+
+        filename = baseName + ".json";
+        fullPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + filename;
+
+        boardJsonHandler.saveToFile(currentGame, fullPath);
+
+        logger.info("Game created and saved to {} with difficulty: {}, ladders: {}, penalties: {}",
+                fullPath, difficulty, currentLadderCount, currentSnakeCount);
       }
 
-      addPlayers(players);
-
-      logger.info("Game created with difficulty: {}, dice: {}, ladders: {}, penalties: {}",
-          difficulty, diceCount, currentLadderCount, currentSnakeCount);
-      return currentGame;
+      return fullPath;
 
     } catch (IllegalArgumentException e) {
       logger.error("Failed to create game: {}", e.getMessage());
       throw new InvalidGameConfigurationException("Invalid game configuration: " + e.getMessage());
+    } catch (IOException e) {
+      logger.error("IO Error while saving game: {}", e.getMessage());
+      throw new RuntimeException("Failed to save game file", e);
     }
   }
 
-  public void validateInput(int diceCount) {
+  public void validateDice(int diceCount) {
     if (diceCount <= 0) {
       throw new InvalidGameConfigurationException("Dice count must be larger than 0");
     }

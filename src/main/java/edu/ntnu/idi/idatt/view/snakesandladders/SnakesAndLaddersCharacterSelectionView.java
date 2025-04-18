@@ -15,7 +15,6 @@ public class SnakesAndLaddersCharacterSelectionView extends AbstractCharacterSel
     super(stage);
   }
 
-
   @Override
   protected String getBackgroundStyle() {
     return "-fx-background-image: url('/images/snakesbackground.jpg');";
@@ -32,10 +31,11 @@ public class SnakesAndLaddersCharacterSelectionView extends AbstractCharacterSel
   }
 
   @Override
-  protected void onStart(List<Player> players) {
+  protected void onStart(List<Player> players, String name) {
     try {
     SnakesAndLaddersRuleSelectionView ruleSelectionView = new SnakesAndLaddersRuleSelectionView(stage);
       ruleSelectionView.setPlayers(players);
+      ruleSelectionView.setBaseName(baseName);
       ruleSelectionView.show();
 
     } catch (Exception e) {
@@ -45,8 +45,13 @@ public class SnakesAndLaddersCharacterSelectionView extends AbstractCharacterSel
   }
 
   @Override
+  protected String getGamePrefix() {
+    return "SNL";
+  }
+
+  @Override
   protected Player createPlayer(String name, String character) {
-    return new SnakesAndLaddersPlayer(name, character);
+    return new SnakesAndLaddersPlayer(name, character,0);
   }
 
   @Override

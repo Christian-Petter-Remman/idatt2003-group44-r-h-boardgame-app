@@ -17,6 +17,7 @@ public abstract class BoardGame {
   public abstract void makeMove(Player player);
   public abstract boolean isValidMove(Player player, int move);
   public abstract boolean checkWinCondition();
+  public abstract void setBoard(Board board);
 
   public void addPlayer(Player player) {
     players.add(player);

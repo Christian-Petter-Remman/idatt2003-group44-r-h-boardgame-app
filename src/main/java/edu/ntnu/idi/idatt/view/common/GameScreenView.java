@@ -13,11 +13,23 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+
+import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
+import static edu.ntnu.idi.idatt.view.common.AbstractCharacterSelectionView.logger;
 
 public class GameScreenView {
   private final Stage stage;
   private final SnakesAndLadders game;
+  private final String boardFile;
+  private final String csvFileName;
 
   private BoardView boardView;
   private Label currentPlayerLabel;
@@ -26,15 +38,18 @@ public class GameScreenView {
   private Label positionLabel;
   private Button rollButton;
   private ImageView imageView;
+  private Button saveButton;
 
   Label player1TurnLabel = new Label();
   Label player2TurnLabel = new Label();
   Label player3TurnLabel = new Label();
   Label player4TurnLabel = new Label();
 
-  public GameScreenView(Stage stage, SnakesAndLadders game) {
+  public GameScreenView(Stage stage, SnakesAndLadders game, String boardFile, String csvFileName) {
     this.stage = stage;
     this.game = game;
+    this.boardFile = boardFile;
+    this.csvFileName = csvFileName;
   }
 
   public void show() {
@@ -126,6 +141,10 @@ public class GameScreenView {
       intro.prepareScene();
     });
 
+    saveButton = new Button("Save Game");
+    saveButton.setStyle("-fx-font-size: 12px;");
+    saveButton.setOnAction(e -> saveGame());
+
     List<Player> genericPlayers = game.getPlayers();
     boardView = new BoardView(game.getBoard(), genericPlayers);
 
@@ -137,7 +156,7 @@ public class GameScreenView {
     playerLabelBox.setAlignment(Pos.TOP_CENTER);
     playerLabelBox.setPadding(new Insets(150, 0, 0, 0));
 
-    HBox buttonBox = new HBox(20, backButton, rollButton);
+    HBox buttonBox = new HBox(20, backButton, rollButton, saveButton);
     buttonBox.setAlignment(Pos.BOTTOM_CENTER);
     buttonBox.setPadding(new Insets(10));
 
@@ -156,6 +175,25 @@ public class GameScreenView {
     stage.setScene(new Scene(root));
     stage.setTitle("Snakes and Ladders - Game");
     stage.show();
+  }
+
+  private void saveGame() {
+    String csvFilePath = csvFileName;
+
+    List<String> lines = new ArrayList<>();
+    lines.add("Board:" + boardFile); // Add the board name first
+
+    for (Player player : game.getPlayers()) {
+      lines.add(player.getName() + "," + player.getCharacter() + "," + player.getPosition());
+    }
+
+    try {
+      Files.write(Paths.get(csvFilePath), lines);
+      logger.info("Game saved to {}", csvFilePath);
+    } catch (IOException e) {
+      logger.error("Failed to save game: {}", e.getMessage());
+      showAlert("Save Error", "Failed to save game: " + e.getMessage());
+    }
   }
 
   private void handleRoll() {

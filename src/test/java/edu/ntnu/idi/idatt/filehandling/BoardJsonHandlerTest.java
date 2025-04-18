@@ -27,7 +27,7 @@ class BoardJsonHandlerTest {
   }
 
   @Test
-  void testSaveAndLoadBoard() throws IOException, FileReadException, JsonParsingException {
+  void testSaveAndLoadBoard() throws Exception {
     Board originalBoard = new Board();
     handler.saveToFile(originalBoard, TEST_FILE);
 

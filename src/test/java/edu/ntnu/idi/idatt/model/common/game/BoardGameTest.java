@@ -15,6 +15,12 @@ class BoardGameTest {
     @Override public void makeMove(Player p) {}
     @Override public boolean isValidMove(Player p, int roll) { return true; }
     @Override public boolean checkWinCondition() { return false; }
+
+    @Override
+    public void setBoard(Board board) {
+
+    }
+
     @Override public Board getBoard() { return null; }
   }
 

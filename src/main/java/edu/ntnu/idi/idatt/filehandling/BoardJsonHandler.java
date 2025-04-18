@@ -4,15 +4,18 @@ import com.google.gson.*;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
+import edu.ntnu.idi.idatt.model.common.BoardGame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public class BoardJsonHandler implements FileHandler<Board> {
   private static final Logger logger = LoggerFactory.getLogger(BoardJsonHandler.class);
@@ -21,7 +24,11 @@ public class BoardJsonHandler implements FileHandler<Board> {
   private static final String BOARDS_DIR = FileManager.SNAKES_LADDERS_BOARDS_DIR;
 
   public BoardJsonHandler() {
-    this.gson = new GsonBuilder().setPrettyPrinting().create();
+    this.gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .addSerializationExclusionStrategy(new RandomExclusionStrategy())
+            .addDeserializationExclusionStrategy(new RandomExclusionStrategy())
+            .create();
   }
 
   public Board loadBoardFromFile(String filePath) throws FileReadException, JsonParsingException {
@@ -37,11 +44,11 @@ public class BoardJsonHandler implements FileHandler<Board> {
     }
   }
 
+
   private Board parseBoard(JsonObject jsonObject) {
     Board board = new Board();
     board.initializeEmptyBoard();
 
-    // Parse ladders
     if (jsonObject.has("ladders")) {
       JsonArray laddersArray = jsonObject.getAsJsonArray("ladders");
       for (JsonElement element : laddersArray) {
@@ -56,7 +63,37 @@ public class BoardJsonHandler implements FileHandler<Board> {
       }
     }
 
-    // Parse snakes
+    if (jsonObject.has("snakes")) {
+      JsonArray snakesArray = jsonObject.getAsJsonArray("snakes");
+      for (JsonElement element : snakesArray) {
+        JsonObject snake = element.getAsJsonObject();
+        int start = snake.get("start").getAsInt();
+        int end = snake.get("end").getAsInt();
+        try {
+          board.addSnake(start, end);
+        } catch (IllegalArgumentException e) {
+          logger.warn("Skipping invalid snake from {} to {}: {}", start, end, e.getMessage());
+        }
+      }
+    }
+
+
+    // Load ladders
+    if (jsonObject.has("ladders")) {
+      JsonArray laddersArray = jsonObject.getAsJsonArray("ladders");
+      for (JsonElement element : laddersArray) {
+        JsonObject ladder = element.getAsJsonObject();
+        int start = ladder.get("start").getAsInt();
+        int end = ladder.get("end").getAsInt();
+        try {
+          board.addFullLadder(start, end);
+        } catch (IllegalArgumentException e) {
+          logger.warn("Skipping invalid ladder from {} to {}: {}", start, end, e.getMessage());
+        }
+      }
+    }
+
+    // Load snakes
     if (jsonObject.has("snakes")) {
       JsonArray snakesArray = jsonObject.getAsJsonArray("snakes");
       for (JsonElement element : snakesArray) {
@@ -74,12 +111,22 @@ public class BoardJsonHandler implements FileHandler<Board> {
     return board;
   }
 
-  @Override
-  public void saveToFile(Board board, String fileName) throws IOException {
+  public <T extends BoardGame> T loadGameFromFile(String filePath, Function<Board, T> gameCreator)
+          throws FileReadException, JsonParsingException {
+    Board board = loadBoardFromFile(filePath);
+    return gameCreator.apply(board);
+  }
+
+  public <T extends BoardGame> void saveToFile(T game, String fileName) throws IOException {
     try (Writer writer = new FileWriter(fileName)) {
-      gson.toJson(board, writer);
-      logger.debug("Board saved to file: {}", fileName);
+      gson.toJson(game, writer);
+      logger.debug("Game saved to file: {}", fileName);
     }
+  }
+
+  @Override
+  public void saveToFile(Board object, String fileName) throws Exception {
+
   }
 
   @Override
@@ -120,12 +167,10 @@ public class BoardJsonHandler implements FileHandler<Board> {
       throw new IOException("Security exception when accessing boards directory", e);
     }
 
-    // Check if default board already exists
     Path defaultBoardPath = dirPath.resolve("default.json");
     if (Files.exists(defaultBoardPath)) {
       logger.info("Default board file already exists, checking if all board files are present");
 
-      // Check if all required board files exist
       boolean allBoardsExist = true;
       String[] requiredBoards = {
           "default.json", "easy.json", "hard.json",
@@ -151,10 +196,8 @@ public class BoardJsonHandler implements FileHandler<Board> {
 
     logger.info("Generating Snakes and Ladders board files...");
 
-    // Define all boards
     Map<String, String> boards = createBoardsMap();
 
-    // Write all boards to files
     int existingFiles = 0;
     int createdFiles = 0;
     int failedFiles = 0;
@@ -166,19 +209,16 @@ public class BoardJsonHandler implements FileHandler<Board> {
       Path boardFilePath = dirPath.resolve(filename);
 
       try {
-        // Check if file already exists
         if (Files.exists(boardFilePath)) {
           logger.debug("Board file already exists, skipping: {}", filename);
           existingFiles++;
           continue;
         }
 
-        // Write board content to file
         try (FileWriter writer = new FileWriter(boardFilePath.toFile())) {
           writer.write(content);
         }
 
-        // Verify the file was created successfully
         if (!Files.exists(boardFilePath) || Files.size(boardFilePath) == 0) {
           logger.error("Failed to create board file or file is empty: {}", filename);
           failedFiles++;
@@ -196,7 +236,6 @@ public class BoardJsonHandler implements FileHandler<Board> {
       }
     }
 
-    // Log summary of operation
     if (failedFiles > 0) {
       logger.warn("Board file generation completed with issues: {} existing, {} created, {} failed",
           existingFiles, createdFiles, failedFiles);

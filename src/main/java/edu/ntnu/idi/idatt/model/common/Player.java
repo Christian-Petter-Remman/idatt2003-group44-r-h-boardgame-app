@@ -5,9 +5,9 @@ public abstract class Player {
   private int position;
   private String character;
 
-  public Player(String name, String character) {
+  public Player(String name, String character, int position) {
     this.name = name;
-    this.position = getStartPosition();
+    this.position = position;
     this.character = character;
   }
 
