@@ -46,65 +46,28 @@ public class BoardJsonHandler implements FileHandler<Board> {
 
 
   private Board parseBoard(JsonObject jsonObject) {
-    Board board = new Board();
-    board.initializeEmptyBoard();
+    int size = jsonObject.get("size").getAsInt();
+    Board board = new Board(size);
 
+    // Parse ladders
     if (jsonObject.has("ladders")) {
       JsonArray laddersArray = jsonObject.getAsJsonArray("ladders");
       for (JsonElement element : laddersArray) {
-        JsonObject ladder = element.getAsJsonObject();
-        int start = ladder.get("start").getAsInt();
-        int end = ladder.get("end").getAsInt();
-        try {
-          board.addFullLadder(start, end);
-        } catch (IllegalArgumentException e) {
-          logger.warn("Skipping invalid ladder from {} to {}: {}", start, end, e.getMessage());
-        }
+        JsonObject obj = element.getAsJsonObject();
+        int start = obj.get("start").getAsInt();
+        int end = obj.get("end").getAsInt();
+        board.addFullLadder(start, end);
       }
     }
 
+    // Parse snakes
     if (jsonObject.has("snakes")) {
       JsonArray snakesArray = jsonObject.getAsJsonArray("snakes");
       for (JsonElement element : snakesArray) {
-        JsonObject snake = element.getAsJsonObject();
-        int start = snake.get("start").getAsInt();
-        int end = snake.get("end").getAsInt();
-        try {
-          board.addSnake(start, end);
-        } catch (IllegalArgumentException e) {
-          logger.warn("Skipping invalid snake from {} to {}: {}", start, end, e.getMessage());
-        }
-      }
-    }
-
-
-    // Load ladders
-    if (jsonObject.has("ladders")) {
-      JsonArray laddersArray = jsonObject.getAsJsonArray("ladders");
-      for (JsonElement element : laddersArray) {
-        JsonObject ladder = element.getAsJsonObject();
-        int start = ladder.get("start").getAsInt();
-        int end = ladder.get("end").getAsInt();
-        try {
-          board.addFullLadder(start, end);
-        } catch (IllegalArgumentException e) {
-          logger.warn("Skipping invalid ladder from {} to {}: {}", start, end, e.getMessage());
-        }
-      }
-    }
-
-    // Load snakes
-    if (jsonObject.has("snakes")) {
-      JsonArray snakesArray = jsonObject.getAsJsonArray("snakes");
-      for (JsonElement element : snakesArray) {
-        JsonObject snake = element.getAsJsonObject();
-        int start = snake.get("start").getAsInt();
-        int end = snake.get("end").getAsInt();
-        try {
-          board.addSnake(start, end);
-        } catch (IllegalArgumentException e) {
-          logger.warn("Skipping invalid snake from {} to {}: {}", start, end, e.getMessage());
-        }
+        JsonObject obj = element.getAsJsonObject();
+        int start = obj.get("start").getAsInt();
+        int end = obj.get("end").getAsInt();
+        board.addSnake(start, end);
       }
     }
 

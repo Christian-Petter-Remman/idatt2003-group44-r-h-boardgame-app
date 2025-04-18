@@ -180,7 +180,15 @@ public class SnakesAndLaddersRuleSelectionController {
 
   private void validateDifficulty(String difficulty) throws InvalidGameConfigurationException {
     List<String> validDifficulties = new ArrayList<>(Arrays.asList(factory.getAvailableConfigurations()));
-    validDifficulties.add("random");
+    validDifficulties.add("random1");
+    validDifficulties.add("random2");
+    validDifficulties.add("random3");
+    validDifficulties.add("random4");
+    validDifficulties.add("random5");
+    validDifficulties.add("random6");
+    validDifficulties.add("random7");
+    validDifficulties.add("random8");
+
 
     if (!validDifficulties.contains(difficulty)) {
       throw new InvalidGameConfigurationException("Invalid difficulty level: " + difficulty);

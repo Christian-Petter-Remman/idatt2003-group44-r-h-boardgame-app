@@ -423,7 +423,4 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     controller.setDifficulty(selectedDifficulty);
   }
 
-  public String getDifficulty () {
-    return selectedDifficulty;
-  }
 }
