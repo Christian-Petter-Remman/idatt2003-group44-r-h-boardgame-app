@@ -50,28 +50,38 @@ public class IntroScreenView {
   }
 
   private HBox getHBox(Image image1) {
-    ImageView imageView1 = new ImageView(image1);
-    imageView1.setFitHeight(150);
-    imageView1.setFitWidth(200);
-    imageView1.setPreserveRatio(false);
-    imageView1.setOnMouseClicked(e -> startSnakesAndLadders());
+    VBox box1 = createGameBox(image1, () -> startSnakesAndLadders());
 
     Image image2 = new Image("images/black.png");
-    ImageView imageView2 = new ImageView(image2);
-    imageView2.setFitHeight(150);
-    imageView2.setFitWidth(200);
-    imageView2.setPreserveRatio(false);
+    VBox box2 = createGameBox(image2, () -> {
+      showAlert("Coming Soon", "This game will be available soon.");
+    });
 
     Image image3 = new Image("images/black.png");
-    ImageView imageView3 = new ImageView(image3);
-    imageView3.setFitHeight(150);
-    imageView3.setFitWidth(200);
-    imageView3.setPreserveRatio(false);
+    VBox box3 = createGameBox(image3, () -> {
+      showAlert("Coming Soon", "This game will be available soon.");
+    });
 
-    HBox imageBox = new HBox(20, imageView1, imageView2, imageView3);
+    HBox imageBox = new HBox(20, box1, box2, box3);
     imageBox.setAlignment(Pos.CENTER);
     imageBox.setPadding(new Insets(10));
     return imageBox;
+  }
+
+  private VBox createGameBox(Image image, Runnable onClickAction) {
+    ImageView imageView = new ImageView(image);
+    imageView.setFitHeight(150);
+    imageView.setFitWidth(200);
+    imageView.setPreserveRatio(false);
+    imageView.setOnMouseClicked(e -> onClickAction.run());
+
+    javafx.scene.control.Button loadButton = new javafx.scene.control.Button("Load Game");
+    loadButton.setOnAction(e -> onClickAction.run());
+    loadButton.setStyle("-fx-font-size: 14px; -fx-padding: 8 16;");
+
+    VBox gameBox = new VBox(10, imageView, loadButton);
+    gameBox.setAlignment(Pos.CENTER);
+    return gameBox;
   }
 
   public void startSnakesAndLadders() {

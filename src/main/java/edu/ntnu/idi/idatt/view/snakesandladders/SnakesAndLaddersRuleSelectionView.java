@@ -134,8 +134,7 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     difficultyGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue != null) {
         String difficulty = (String) newValue.getUserData();
-        selectedDifficulty = difficulty;
-        controller.setDifficulty(difficulty);
+        selectedDifficulty = controller.setDifficulty(difficulty);
         logger.info("Selected difficulty: {}", difficulty);
       }
     });
@@ -182,8 +181,7 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
             "-fx-padding: 8 15;"));
 
     btn.setOnAction(e -> {
-      selectedDifficulty = "random";
-      controller.setDifficulty("random");
+      selectedDifficulty = controller.setDifficulty("random");
 
       easyButton.setSelected(false);
       normalButton.setSelected(false);
