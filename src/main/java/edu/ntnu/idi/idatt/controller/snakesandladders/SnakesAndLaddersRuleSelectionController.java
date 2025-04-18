@@ -98,6 +98,38 @@ public class SnakesAndLaddersRuleSelectionController {
     }
   }
 
+  private String selectBoardFile(String difficulty) {
+    String fileName;
+    String fullPath;
+
+    fileName = difficulty + ".json";
+    fullPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + fileName;
+    return fullPath;
+  }
+
+  private String selectRandomBoardFile(String difficulty) {
+    Random rand = new Random();
+    String fileName;
+    String fullPath;
+    int randomBoard = rand.nextInt(8) + 1;
+    fileName = difficulty + randomBoard + ".json";
+    fullPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + fileName;
+    return fullPath;
+  }
+
+  public String GetBoardFile(String difficulty) {
+    validateDifficulty(difficulty);
+    String result;
+
+    if (difficulty.equals("random")) {
+      result = selectRandomBoardFile(difficulty);
+    }
+    else {
+      result = selectBoardFile(difficulty);
+    }
+    return result;
+  }
+
 
   public String createGameFile(String difficulty, String baseName) throws InvalidGameConfigurationException {
     validateDifficulty(difficulty);

@@ -377,7 +377,7 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     try {
       int diceCount = Integer.parseInt(diceField.getText());
 
-      String gameToStart = controller.createGameFile(selectedDifficulty, baseName);
+      String gameToStart = controller.GetBoardFile(selectedDifficulty);
       SnakesAndLadders snakes = boardJsonHandler.loadGameFromFile(gameToStart, SnakesAndLadders::new);
 
       String baseFileName = new File(gameToStart).getName().replace(".json", ".csv");
