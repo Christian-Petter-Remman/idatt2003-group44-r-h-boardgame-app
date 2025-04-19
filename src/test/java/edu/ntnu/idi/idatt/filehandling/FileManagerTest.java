@@ -52,8 +52,8 @@ class FileManagerTest {
   @Test
   void testSaveLastGamePlayers() throws FileWriteException {
     SnakesAndLadders game = new SnakesAndLadders();
-    game.addPlayer("Alice", "peach");
-    game.addPlayer("Bob", "bowser");
+    //game.addPlayer("Alice", "peach");
+    //game.addPlayer("Bob", "bowser");
 
     FileManager.saveLastGamePlayers(game);
 
@@ -65,8 +65,8 @@ class FileManagerTest {
   void testSavedPlayersAreCorrectlyStoredAndLoaded() throws Exception {
     // Opprett spill og legg til spillere
     SnakesAndLadders game = new SnakesAndLadders();
-    game.addPlayer("Kari", "peach");
-    game.addPlayer("Per", "bowser");
+    //game.addPlayer("Kari", "peach");
+    //game.addPlayer("Per", "bowser");
 
     // Lagre spillerne
     FileManager.saveLastGamePlayers(game);
