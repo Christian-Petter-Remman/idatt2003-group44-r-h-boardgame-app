@@ -1,34 +1,25 @@
 package edu.ntnu.idi.idatt.view.common;
 
-import edu.ntnu.idi.idatt.exceptions.FileReadException;
-import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
-import edu.ntnu.idi.idatt.filehandling.BoardJsonHandler;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-
-import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
 public class LoadScreenView {
 
   private final Stage stage;
   private final Logger logger = LoggerFactory.getLogger(LoadScreenView.class);
-  SnakesAndLadders snakeGame;
+  private final LoadController controller;
 
   public LoadScreenView(Stage stage) {
     this.stage = stage;
+    this.controller = new LoadController(stage);
   }
 
   public void show() {
@@ -88,44 +79,7 @@ public class LoadScreenView {
 
   private Button createLoadButton() {
     Button btn = new Button("Load");
-    btn.setOnAction(e -> handleLoad());
+    btn.setOnAction(e -> controller.handleLoad("data/user-data/player-files/SNL_20250418_1744983119000.csv"));
     return btn;
-  }
-
-  private void handleLoad() {
-    String csvPath = "data/user-data/player-files/SNL_20250418_1744983119000.csv";
-    BoardJsonHandler handler = new BoardJsonHandler();
-    String boardPath = extractBoardPathFromCsv(csvPath);
-
-    if (boardPath == null) {
-      showAlert("Error", "Failed to read board path from CSV.");
-      return;
-    }
-
-    try {
-      snakeGame = handler.loadGameFromFile(boardPath, SnakesAndLadders::new);
-      int players = snakeGame.loadPlayersFromCsv(csvPath);
-      logger.info("Loaded {} players from {}", players, csvPath);
-      new GameScreenView(stage, snakeGame, boardPath, csvPath).show();
-    } catch (FileReadException | JsonParsingException ex) {
-      logger.error("Failed to load game: {}", ex.getMessage());
-      showAlert("Load Error", "Could not load saved game: " + ex.getMessage());
-    } catch (IOException ex) {
-      throw new UncheckedIOException(ex);
-    }
-  }
-
-  public String extractBoardPathFromCsv(String csvPath) {
-    try (BufferedReader reader = new BufferedReader(new FileReader(csvPath))) {
-      String firstLine = reader.readLine();
-      if (firstLine != null && firstLine.startsWith("Board:")) {
-        return firstLine.replace("Board:", "").trim();
-      } else {
-        logger.warn("No board path found in CSV file: {}", csvPath);
-      }
-    } catch (IOException e) {
-      logger.error("Error reading CSV file {}: {}", csvPath, e.getMessage());
-    }
-    return null;
   }
 }
