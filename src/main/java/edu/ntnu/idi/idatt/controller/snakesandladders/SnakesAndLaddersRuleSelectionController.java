@@ -8,7 +8,7 @@ import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersFactory
 import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.RuleSelectionViewObserver;
-import edu.ntnu.idi.idatt.navigation.NavigationManager;
+import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.util.AlertUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +23,7 @@ public class SnakesAndLaddersRuleSelectionController {
   private final List<RuleSelectionViewObserver> observers = new ArrayList<>();
   private final SnakesAndLaddersFactory factory;
   private final BoardJsonHandler boardJsonHandler;
+  private NavigationHandler navigationHandler;
 
   private String selectedDifficulty = "default";
   private int diceCount = 1;
@@ -35,6 +36,10 @@ public class SnakesAndLaddersRuleSelectionController {
   public SnakesAndLaddersRuleSelectionController(SnakesAndLaddersFactory factory) {
     this.factory = factory;
     this.boardJsonHandler = new BoardJsonHandler();
+  }
+
+  public void setNavigationHandler(NavigationHandler navigationHandler) {
+    this.navigationHandler = navigationHandler;
   }
 
   public void registerViewObserver(RuleSelectionViewObserver observer) {
@@ -133,12 +138,22 @@ public class SnakesAndLaddersRuleSelectionController {
     return selectedRandomBoard;
   }
 
-  public void startGame() {
-    try {
-      validateGameSettings();
+  public String getBoardFile() {
+    if ("random".equals(selectedDifficulty)) {
+      return "data/custom_boards/snakes_and_ladders/random" + selectedRandomBoard + ".json";
+    } else {
+      return "data/custom_boards/snakes_and_ladders/" + selectedDifficulty + ".json";
+    }
+  }
 
+  public String getCsvFileName() {
+    return "data/user-data/player-files/" + baseName + ".csv";
+  }
+
+  public SnakesAndLadders createGame() {
+    try {
       String boardFile = getBoardFile();
-      String csvPath = "data/user-data/player-files/" + baseName + ".csv";
+      String csvPath = getCsvFileName();
 
       SnakesAndLadders game = boardJsonHandler.loadGameFromFile(boardFile, SnakesAndLadders::new);
 
@@ -146,23 +161,23 @@ public class SnakesAndLaddersRuleSelectionController {
       logger.info("Loaded {} players from {}", playersLoaded, csvPath);
 
       game.setDice(new Dice(diceCount));
+      return game;
+    } catch (Exception e) {
+      logger.error("Error creating game: {}", e.getMessage());
+      throw new RuntimeException("Failed to create game", e);
+    }
+  }
 
-
+  public void startGame() {
+    try {
+      validateGameSettings();
+      navigationHandler.navigateTo("GAME_SCREEN");
     } catch (NumberFormatException e) {
       logger.error("Error with starting game: {}", e.getMessage());
       AlertUtil.showAlert("Invalid Input", "Please enter a valid number for dice.");
     } catch (Exception e) {
       logger.error("Error starting game: {}", e.getMessage());
       AlertUtil.showAlert("Game Error", "An error occurred while starting the game: " + e.getMessage());
-    }
-  }
-
-
-  private String getBoardFile() {
-    if ("random".equals(selectedDifficulty)) {
-      return "data/custom_boards/snakes_and_ladders/random" + selectedRandomBoard + ".json";
-    } else {
-      return "data/custom_boards/snakes_and_ladders/" + selectedDifficulty + ".json";
     }
   }
 

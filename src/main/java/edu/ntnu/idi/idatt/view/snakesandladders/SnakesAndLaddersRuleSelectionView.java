@@ -1,19 +1,15 @@
 package edu.ntnu.idi.idatt.view.snakesandladders;
 
-import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
-
 import edu.ntnu.idi.idatt.controller.snakesandladders.SnakesAndLaddersRuleSelectionController;
-import edu.ntnu.idi.idatt.filehandling.BoardJsonHandler;
-import edu.ntnu.idi.idatt.model.common.Dice;
-import edu.ntnu.idi.idatt.model.model_observers.DifficultyObserver;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersFactory;
 import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.view.common.AbstractRuleSelectionView;
+import edu.ntnu.idi.idatt.model.model_observers.RuleSelectionViewObserver;
+import edu.ntnu.idi.idatt.navigation.NavigationHandler;
+import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.common.GameScreenView;
+import edu.ntnu.idi.idatt.view.common.IntroScreenView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -22,65 +18,75 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Objects;
 
-public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView implements DifficultyObserver {
+public class SnakesAndLaddersRuleSelectionView implements RuleSelectionViewObserver, NavigationHandler {
   private static final Logger logger = LoggerFactory.getLogger(SnakesAndLaddersRuleSelectionView.class);
-  BoardJsonHandler boardJsonHandler;
 
   private final SnakesAndLaddersRuleSelectionController controller;
-  private List<Player> players;
+  private final BorderPane root;
 
-  private String selectedDifficulty = "default";
-  private TextField diceField;
-  private Label laddersValueLabel;
-  private Label penaltyValueLabel;
-
+  private GridPane layout;
+  private Label titleLabel;
+  private Label descriptionLabel;
   private RadioButton easyButton;
   private RadioButton normalButton;
   private RadioButton hardButton;
   private Button randomButton;
-  private String baseName;
-
-  private boolean uiInitialized = false;
+  private TextField diceField;
+  private Label laddersValueLabel;
+  private Label penaltyValueLabel;
+  private Button startGameButton;
+  private Button backButton;
 
   private static final String SECONDARY_COLOR = "#2c3e50";
   private static final String BACKGROUND_COLOR = "#ecf0f1";
   private static final String RANDOM_BUTTON_COLOR = "#9b59b6";
   private static final String RANDOM_BUTTON_HOVER = "#8e44ad";
-
   private static final String BACKGROUND_IMAGE_PATH = "/images/SALGameBack.png";
 
-  public SnakesAndLaddersRuleSelectionView(Stage primaryStage) {
-    super(primaryStage);
-    controller = new SnakesAndLaddersRuleSelectionController(new SnakesAndLaddersFactory());
-    this.boardJsonHandler = new BoardJsonHandler();
-    controller.addObserver(this);
+  private boolean uiInitialized = false;
+
+  public SnakesAndLaddersRuleSelectionView(SnakesAndLaddersRuleSelectionController controller) {
+    this.controller = controller;
+    this.root = new BorderPane();
+    controller.registerViewObserver(this);
+    controller.setNavigationHandler(this);
   }
 
-  public void setBaseName(String baseName) {
-    this.baseName = baseName;
-  }
-
-  @Override
-  protected void initializeCustomComponents() {
+  public void show() {
+    initializeLayout();
     setupBackgroundImage();
     setupTitleAndDescription();
     setupDifficultyControls();
     setupGameSettingsControls();
+    setupButtons();
+    layoutComponents();
+    setupEventHandlers();
 
     uiInitialized = true;
+
+    controller.initializeDefaultSettings();
+
+    NavigationManager.getInstance().setRoot(root);
+  }
+
+  private void initializeLayout() {
+    layout = new GridPane();
+    layout.setHgap(20);
+    layout.setVgap(20);
+    layout.setPadding(new Insets(30, 40, 40, 40));
+    layout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
+    root.setCenter(layout);
   }
 
   private void setupBackgroundImage() {
     try {
-      Image backgroundImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(
-          SnakesAndLaddersRuleSelectionView.BACKGROUND_IMAGE_PATH)));
+      Image backgroundImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(BACKGROUND_IMAGE_PATH)));
 
       BackgroundImage background = new BackgroundImage(
           backgroundImage,
@@ -92,7 +98,6 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
 
       StackPane backgroundPane = new StackPane();
       backgroundPane.setBackground(new Background(background));
-
       backgroundPane.setOpacity(0.3);
 
       layout.getChildren().addFirst(backgroundPane);
@@ -105,13 +110,12 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     }
   }
 
-
   private void setupTitleAndDescription() {
-    layout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
-
+    titleLabel = new Label("Game Rules Configuration");
     titleLabel.setFont(Font.font("System", FontWeight.BOLD, 28));
     titleLabel.setTextFill(Color.web(SECONDARY_COLOR));
 
+    descriptionLabel = new Label("Customize your game settings below");
     descriptionLabel.setFont(Font.font("System", FontWeight.NORMAL, 16));
     descriptionLabel.setTextFill(Color.web(SECONDARY_COLOR));
   }
@@ -130,7 +134,6 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     difficultyGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue != null) {
         String difficulty = (String) newValue.getUserData();
-        selectedDifficulty = difficulty;
         controller.setDifficulty(difficulty);
         logger.info("Selected difficulty: {}", difficulty);
       }
@@ -177,17 +180,6 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
             "-fx-text-fill: white; " +
             "-fx-padding: 8 15;"));
 
-    btn.setOnAction(e -> {
-      selectedDifficulty = "random";
-      controller.setDifficulty("random");
-
-      easyButton.setSelected(false);
-      normalButton.setSelected(false);
-      hardButton.setSelected(false);
-
-      logger.info("Selected random board");
-    });
-
     return btn;
   }
 
@@ -203,51 +195,39 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     penaltyValueLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
   }
 
-  @Override
-  public void onDifficultyChanged(String difficulty) {
-    this.selectedDifficulty = difficulty;
-
-    if (!uiInitialized) {
-      logger.info("UI not yet initialized, skipping update");
-      return;
-    }
-
-    laddersValueLabel.setText(String.valueOf(controller.getCurrentLadderCount()));
-    penaltyValueLabel.setText(String.valueOf(controller.getCurrentSnakeCount()));
-
-    switch (difficulty.toLowerCase()) {
-      case "easy":
-        easyButton.setSelected(true);
-        break;
-      case "default":
-        normalButton.setSelected(true);
-        break;
-      case "hard":
-        hardButton.setSelected(true);
-        break;
-      case "random":
-        easyButton.setSelected(false);
-        normalButton.setSelected(false);
-        hardButton.setSelected(false);
-
-        if (controller.getSelectedRandomBoard() > 0) {
-          laddersValueLabel.setText(controller.getCurrentLadderCount() +
-              " (Board " + controller.getSelectedRandomBoard() + ")");
-          penaltyValueLabel.setText(controller.getCurrentSnakeCount() +
-              " (Board " + controller.getSelectedRandomBoard() + ")");
-        }
-        break;
-      default:
-        logger.warn("Invalid difficulty: {}", difficulty);
-        break;
-    }
+  private void setupButtons() {
+    startGameButton = createNavigationButton("Start Game", "#27ae60", "white");
+    backButton = createNavigationButton("Back", "#bdc3c7", "#2c3e50");
   }
 
-  @Override
-  protected void layoutCustomComponents() {
-    BorderPane mainContainer = createMainContainer();
+  private Button createNavigationButton(String text, String bgColor, String textColor) {
+    Button btn = new Button(text);
+    btn.setStyle("-fx-font-size: 14px; " +
+        "-fx-padding: 10 20; " +
+        "-fx-min-width: 120px; " +
+        "-fx-background-color: " + bgColor + "; " +
+        "-fx-text-fill: " + textColor + "; " +
+        "-fx-background-radius: 5px;");
+    return btn;
+  }
 
-    VBox contentBox = createContentBox();
+  private void layoutComponents() {
+    BorderPane mainContainer = new BorderPane();
+    mainContainer.setPadding(new Insets(20));
+
+    VBox contentBox = new VBox(20);
+    contentBox.setMaxWidth(600);
+    contentBox.setAlignment(Pos.CENTER);
+    contentBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.9); " +
+        "-fx-background-radius: 10; " +
+        "-fx-padding: 20;");
+
+    DropShadow shadow = new DropShadow();
+    shadow.setColor(Color.color(0, 0, 0, 0.3));
+    shadow.setRadius(10);
+    shadow.setOffsetX(0);
+    shadow.setOffsetY(2);
+    contentBox.setEffect(shadow);
 
     VBox difficultySection = createDifficultySection();
     VBox gameSettingsSection = createGameSettingsSection();
@@ -262,31 +242,6 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     GridPane.setVgrow(mainContainer, Priority.ALWAYS);
 
     centerTitleAndDescription();
-  }
-
-  private BorderPane createMainContainer() {
-    BorderPane mainContainer = new BorderPane();
-    mainContainer.setPadding(new Insets(20));
-    return mainContainer;
-  }
-
-  private VBox createContentBox() {
-    VBox contentBox = new VBox(20);
-    contentBox.setMaxWidth(600);
-    contentBox.setAlignment(Pos.CENTER);
-
-    contentBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.9); " +
-        "-fx-background-radius: 10; " +
-        "-fx-padding: 20;");
-
-    DropShadow shadow = new DropShadow();
-    shadow.setColor(Color.color(0, 0, 0, 0.3));
-    shadow.setRadius(10);
-    shadow.setOffsetX(0);
-    shadow.setOffsetY(2);
-    contentBox.setEffect(shadow);
-
-    return contentBox;
   }
 
   private VBox createDifficultySection() {
@@ -350,78 +305,121 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
     GridPane.setHgrow(descPane, Priority.ALWAYS);
   }
 
-  @Override
-  protected Button createNavigationButton(String text, String bgColor, String textColor) {
-    Button btn = new Button(text);
-    btn.setStyle("-fx-font-size: 14px; " +
-        "-fx-padding: 10 20; " +
-        "-fx-min-width: 120px; " +
-        "-fx-background-color: " + bgColor + "; " +
-        "-fx-text-fill: " + textColor + "; " +
-        "-fx-background-radius: 5px;");
-    return btn;
+  private void setupEventHandlers() {
+    startGameButton.setOnAction(e -> controller.startGame());
+    backButton.setOnAction(e -> navigateBack());
+
+    diceField.textProperty().addListener((observable, oldValue, newValue) -> {
+      try {
+        if (!newValue.isEmpty()) {
+          int diceCount = Integer.parseInt(newValue);
+          controller.setDiceCount(diceCount);
+        }
+      } catch (NumberFormatException ex) {
+        diceField.setText(oldValue);
+      }
+    });
+
+    randomButton.setOnAction(e -> controller.selectRandomBoard());
   }
 
   @Override
-  protected void setupEventHandlers() {
-    startGameButton.setOnAction(e -> onStart(players));
-    backButton.setOnAction(e -> onBack());
-  }
+  public void onDifficultyChanged(String difficulty) {
+    if (!uiInitialized) {
+      logger.info("UI not yet initialized, skipping update");
+      return;
+    }
 
-  @Override
-  protected void onStart(List<Player> players) {
-    try {
-      int diceCount = Integer.parseInt(diceField.getText());
-
-      String gameToStart = controller.GetBoardFile(selectedDifficulty);
-      SnakesAndLadders snakes = boardJsonHandler.loadGameFromFile(gameToStart, SnakesAndLadders::new);
-
-      String csvPath = "data/user-data/player-files/" + baseName + ".csv";
-
-      int playersLoaded = snakes.loadPlayersFromCsv(csvPath);
-      logger.info("Loaded {} players from {}", playersLoaded, csvPath);
-
-      snakes.setDice(new Dice(diceCount));
-
-      new GameScreenView(primaryStage, snakes, gameToStart,csvPath).show();
-
-    } catch (NumberFormatException e) {
-      logger.error("Error with starting game: {}", e.getMessage());
-      showAlert("Invalid Input", "Please enter a valid number for dice.");
-    } catch (Exception e) {
-      logger.error("Error starting game: {}", e.getMessage());
-      showAlert("Game Error", "An error occurred while starting the game: " + e.getMessage());
+    switch (difficulty.toLowerCase()) {
+      case "easy":
+        easyButton.setSelected(true);
+        break;
+      case "default":
+        normalButton.setSelected(true);
+        break;
+      case "hard":
+        hardButton.setSelected(true);
+        break;
+      case "random":
+        easyButton.setSelected(false);
+        normalButton.setSelected(false);
+        hardButton.setSelected(false);
+        break;
+      default:
+        logger.warn("Invalid difficulty: {}", difficulty);
+        break;
     }
   }
 
   @Override
-  protected void onBack() {
-    logger.info("Navigating back from rules screen");
-    primaryStage.close();
-  }
-
-  public void setPlayers(List<Player> players) {
-    this.players = players;
+  public void onLadderCountChanged(int count) {
+    if (uiInitialized) {
+      laddersValueLabel.setText(String.valueOf(count));
+    }
   }
 
   @Override
-  public void show() {
-    initializeCustomComponents();
-    layoutCustomComponents();
-    setupEventHandlers();
-
-    Scene scene = new Scene(layout, 800, 600);
-    primaryStage.setScene(scene);
-    primaryStage.setTitle("Game Rules Configuration");
-
-    layout.prefWidthProperty().bind(scene.widthProperty());
-    layout.prefHeightProperty().bind(scene.heightProperty());
-
-    primaryStage.show();
-    controller.setDifficulty(selectedDifficulty);
+  public void onSnakeCountChanged(int count) {
+    if (uiInitialized) {
+      penaltyValueLabel.setText(String.valueOf(count));
+    }
   }
 
-  public String getDifficulty () {
-    return selectedDifficulty;
+  @Override
+  public void onRandomBoardSelected(int boardNumber) {
+    if (uiInitialized && boardNumber > 0) {
+      laddersValueLabel.setText(controller.getLadderCount() + " (Board " + boardNumber + ")");
+      penaltyValueLabel.setText(controller.getSnakeCount() + " (Board " + boardNumber + ")");
+    }
+  }
+
+  @Override
+  public void onDiceCountChanged(int count) {
+    if (uiInitialized) {
+      diceField.setText(String.valueOf(count));
+    }
+  }
+
+  @Override
+  public void navigateTo(String destination) {
+    switch (destination) {
+      case "GAME_SCREEN":
+        SnakesAndLadders game = controller.createGame();
+        String boardFile = controller.getBoardFile();
+        String csvFileName = controller.getCsvFileName();
+
+        GameScreenView gameView = new GameScreenView(game, boardFile, csvFileName);
+        NavigationManager.getInstance().setRoot(gameView.getRoot());
+        logger.info("Navigated to Game Screen");
+        break;
+
+      case "INTRO_SCREEN":
+        IntroScreenView introView = new IntroScreenView();
+        NavigationManager.getInstance().setRoot(introView.getRoot());
+        logger.info("Navigated to Intro Screen");
+        break;
+
+      default:
+        logger.warn("Unknown destination: {}", destination);
+        break;
+    }
+  }
+
+  @Override
+  public void navigateBack() {
+    NavigationManager.getInstance().navigateBack();
+    logger.info("Navigated back");
+  }
+
+  public BorderPane getRoot() {
+    return root;
+  }
+
+  public void setPlayers(List<Player> players) {
+    controller.setPlayers(players);
+  }
+
+  public void setBaseName(String baseName) {
+    controller.setBaseName(baseName);
   }
 }
