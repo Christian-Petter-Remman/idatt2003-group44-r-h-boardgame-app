@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
@@ -24,6 +25,7 @@ public class LoadScreenView {
 
   private final Stage stage;
   private final Logger logger = LoggerFactory.getLogger(LoadScreenView.class);
+  SnakesAndLadders snakeGame;
 
   public LoadScreenView(Stage stage) {
     this.stage = stage;
@@ -31,60 +33,10 @@ public class LoadScreenView {
 
   public void show() {
     try {
-      Label title = new Label("Load Saved Game");
-      title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-
-      // Grid of 8 boxes (2 rows × 4 columns)
-      GridPane grid = new GridPane();
-      grid.setHgap(20);
-      grid.setVgap(20);
-      grid.setPadding(new Insets(20));
-      grid.setAlignment(Pos.CENTER);
-
-      for (int i = 0; i < 8; i++) {
-        VBox box = new VBox();
-        box.setPrefSize(150, 150);
-        box.setAlignment(Pos.CENTER);
-        box.setStyle("-fx-background-color: #ddd; -fx-border-color: #444;");
-
-        Label label = new Label("Save Slot " + (i + 1));
-        box.getChildren().add(label);
-
-        if (i == 0) {
-          Button loadButton = new Button("Load");
-          loadButton.setOnAction(e -> {
-            String csvPath = "data/user-data/player-files/SNL_20250418_1744983119000.csv";
-            BoardJsonHandler boardJsonHandler = new BoardJsonHandler();
-
-            String boardPath = extractBoardPathFromCsv(csvPath);
-            if (boardPath == null) {
-              showAlert("Error", "Failed to read board path from CSV.");
-              return;
-            }
-
-            SnakesAndLadders snakeGame;
-            try {
-              snakeGame = boardJsonHandler.loadGameFromFile(boardPath, SnakesAndLadders::new);
-              int playersLoaded = snakeGame.loadPlayersFromCsv(csvPath);
-              logger.info("Loaded {} players from {}", playersLoaded, csvPath);
-
-              new GameScreenView(stage, snakeGame,boardPath,csvPath).show();
-
-            } catch (FileReadException | JsonParsingException ex) {
-              logger.error("Failed to load game: {}", ex.getMessage());
-              showAlert("Load Error", "Could not load saved game: " + ex.getMessage());
-            } catch (IOException ex) {
-              throw new RuntimeException(ex);
-            }
-          });
-
-          box.getChildren().add(loadButton);
-        }
-
-        grid.add(box, i % 4, i / 4);
-      }
-
-      VBox layout = new VBox(20, title, grid);
+      VBox layout = new VBox(20,
+              createTitle(),
+              createGridOfSlots()
+      );
       layout.setAlignment(Pos.TOP_CENTER);
       layout.setPadding(new Insets(40));
 
@@ -97,6 +49,72 @@ public class LoadScreenView {
       logger.error("Failed to load LoadScreenView: {}", e.getMessage());
     }
   }
+
+  private Label createTitle() {
+    Label title = new Label("Load Saved Game");
+    title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+    return title;
+  }
+
+  private GridPane createGridOfSlots() {
+    GridPane grid = new GridPane();
+    grid.setHgap(20);
+    grid.setVgap(20);
+    grid.setPadding(new Insets(20));
+    grid.setAlignment(Pos.CENTER);
+
+    for (int i = 0; i < 8; i++) {
+      grid.add(createSlotBox(i), i % 4, i / 4);
+    }
+
+    return grid;
+  }
+
+  private VBox createSlotBox(int slotIndex) {
+    VBox box = new VBox();
+    box.setPrefSize(150, 150);
+    box.setAlignment(Pos.CENTER);
+    box.setStyle("-fx-background-color: #ddd; -fx-border-color: #444;");
+
+    Label label = new Label("Save Slot " + (slotIndex + 1));
+    box.getChildren().add(label);
+
+    if (slotIndex == 0) {
+      box.getChildren().add(createLoadButton());
+    }
+
+    return box;
+  }
+
+  private Button createLoadButton() {
+    Button btn = new Button("Load");
+    btn.setOnAction(e -> handleLoad());
+    return btn;
+  }
+
+  private void handleLoad() {
+    String csvPath = "data/user-data/player-files/SNL_20250418_1744983119000.csv";
+    BoardJsonHandler handler = new BoardJsonHandler();
+    String boardPath = extractBoardPathFromCsv(csvPath);
+
+    if (boardPath == null) {
+      showAlert("Error", "Failed to read board path from CSV.");
+      return;
+    }
+
+    try {
+      snakeGame = handler.loadGameFromFile(boardPath, SnakesAndLadders::new);
+      int players = snakeGame.loadPlayersFromCsv(csvPath);
+      logger.info("Loaded {} players from {}", players, csvPath);
+      new GameScreenView(stage, snakeGame, boardPath, csvPath).show();
+    } catch (FileReadException | JsonParsingException ex) {
+      logger.error("Failed to load game: {}", ex.getMessage());
+      showAlert("Load Error", "Could not load saved game: " + ex.getMessage());
+    } catch (IOException ex) {
+      throw new UncheckedIOException(ex);
+    }
+  }
+
   public String extractBoardPathFromCsv(String csvPath) {
     try (BufferedReader reader = new BufferedReader(new FileReader(csvPath))) {
       String firstLine = reader.readLine();
