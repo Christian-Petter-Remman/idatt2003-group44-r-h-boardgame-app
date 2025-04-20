@@ -1,9 +1,11 @@
 package edu.ntnu.idi.idatt.view.common;
 
+import edu.ntnu.idi.idatt.controller.common.BoardController;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Ladder;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Snake;
 import edu.ntnu.idi.idatt.model.common.Player;
+import edu.ntnu.idi.idatt.model.model_observers.BoardObserver;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -15,21 +17,28 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
-public class BoardView extends StackPane {
 
-  private final Board board;
-  private final List<Player> players;
+public class BoardView extends StackPane implements BoardObserver {
+  private static final Logger logger = LoggerFactory.getLogger(BoardView.class);
+
+  private final BoardController controller;
   private final GridPane boardGrid = new GridPane();
   private final Pane ladderSnakeOverlay = new Pane();
   private final int tileSize = 90;
 
   public BoardView(Board board, List<Player> players) {
-    this.board = board;
-    this.players = players;
+    this.controller = new BoardController(board, players);
+    controller.registerObserver(this);
 
+    initializeLayout();
+    render();
+  }
+
+  private void initializeLayout() {
     boardGrid.setHgap(2);
     boardGrid.setVgap(2);
     boardGrid.setAlignment(Pos.CENTER);
@@ -40,14 +49,16 @@ public class BoardView extends StackPane {
     ladderSnakeOverlay.setMouseTransparent(true);
 
     getChildren().addAll(boardGrid, ladderSnakeOverlay);
-    render();
   }
 
   public void render() {
+    controller.render();
+  }
+
+  private void renderBoardGrid() {
     boardGrid.getChildren().clear();
     boardGrid.getColumnConstraints().clear();
     boardGrid.getRowConstraints().clear();
-    ladderSnakeOverlay.getChildren().clear();
 
     int boardSize = 10;
 
@@ -66,46 +77,58 @@ public class BoardView extends StackPane {
       boardGrid.getRowConstraints().add(rowConst);
     }
 
+    // Create tiles
     for (int i = 0; i < 100; i++) {
       int tileNum = i + 1;
 
-      StackPane cell = new StackPane();
-      cell.setPrefSize(tileSize, tileSize);
-      cell.setMinSize(tileSize, tileSize);
-      cell.setMaxSize(tileSize, tileSize);
-
-      String color = getTileColor(tileNum);
-      cell.setStyle("-fx-border-color: black; -fx-background-color: " + color + ";");
-
-      Text tileNumber = new Text(String.valueOf(tileNum));
-      tileNumber.setStyle("-fx-fill: #ccc;");
-      cell.getChildren().add(tileNumber);
-
-      for (Player p : players) {
-        if (p.getPosition() == tileNum) {
-          String characterName = p.getCharacter();
-          Image image = new Image("PlayerIcons/" + characterName + ".png", 40, 40, true, true);
-          ImageView icon = new ImageView(image);
-          cell.getChildren().add(icon);
-        }
-      }
+      StackPane cell = createTile(tileNum);
 
       int row = 9 - i / 10;
       int col = (row % 2 == 0) ? i % 10 : 9 - (i % 10);
       boardGrid.add(cell, col, row);
     }
+  }
 
 
-    for (Ladder ladder : board.getLadders()) {
+  private StackPane createTile(int tileNum) {
+    StackPane cell = new StackPane();
+    cell.setPrefSize(tileSize, tileSize);
+    cell.setMinSize(tileSize, tileSize);
+    cell.setMaxSize(tileSize, tileSize);
+
+    String color = controller.getTileColor(tileNum);
+    cell.setStyle("-fx-border-color: black; -fx-background-color: " + color + ";");
+
+    Text tileNumber = new Text(String.valueOf(tileNum));
+    tileNumber.setStyle("-fx-fill: #555;");
+    cell.getChildren().add(tileNumber);
+
+    List<Player> playersOnTile = controller.getPlayersAtPosition(tileNum);
+    for (Player player : playersOnTile) {
+      String characterName = player.getCharacter();
+      if (characterName == null || characterName.isEmpty()) {
+        characterName = "default";
+      }
+      Image image = new Image("PlayerIcons/" + characterName + ".png", 40, 40, true, true);
+      ImageView icon = new ImageView(image);
+      cell.getChildren().add(icon);
+    }
+
+    return cell;
+  }
+
+  private void renderLaddersAndSnakes() {
+    ladderSnakeOverlay.getChildren().clear();
+
+    // Draw ladders
+    for (Ladder ladder : controller.getLadders()) {
       drawLadder(ladder.start(), ladder.end());
     }
 
-    for (Snake snake : board.getSnakes()) {
+    // Draw snakes
+    for (Snake snake : controller.getSnakes()) {
       drawSnake(snake.start(), snake.end());
     }
-
-    boardGrid.toBack();
-    ladderSnakeOverlay.toFront();
   }
 
   private void drawLadder(int start, int end) {
@@ -195,83 +218,36 @@ public class BoardView extends StackPane {
     ladderSnakeOverlay.getChildren().addAll(head, tail);
   }
 
+  private double[] getTileCenter(int tileNum) {
+    int i = tileNum - 1;
+    int row = 9 - i / 10;
+    int col = (row % 2 == 0) ? i % 10 : 9 - (i % 10);
 
-  private double[] getTileCenter(int tileNumber) {
-    int row = 9 - (tileNumber - 1) / 10;
-    int col = (row % 2 == 0) ? (tileNumber - 1) % 10 : 9 - (tileNumber - 1) % 10;
-
-    double gap = boardGrid.getHgap();
-    double x = col * (tileSize + gap) + tileSize / 2.0;
-    double y = row * (tileSize + gap) + tileSize / 2.0;
+    double x = col * tileSize + tileSize / 2.0;
+    double y = row * tileSize + tileSize / 2.0;
 
     return new double[]{x, y};
   }
 
-  private int[] getSnakeStart() {
-    List<Snake> snakes = board.getSnakes();
-    int[] starts = new int[snakes.size()];
 
-    for (int i = 0; i < snakes.size(); i++) {
-      starts[i] = snakes.get(i).start();
-    }
-    return starts;
+  @Override
+  public void onBoardRendered() {
+    renderBoardGrid();
+    renderLaddersAndSnakes();
+
+    boardGrid.toBack();
+    ladderSnakeOverlay.toFront();
   }
 
-  private int[] getSnakeEnd() {
-    List<Snake> snakes = board.getSnakes();
-    int[] ends = new int[snakes.size()];
-    for (int i = 0; i < snakes.size(); i++) {
-      ends[i] = snakes.get(i).end();
-    }
-    return ends;
+  @Override
+  public void onPlayerMoved(Player player, int fromPosition, int toPosition) {
+    // This could be used to animate player movement in the future
+    renderBoardGrid();
   }
 
-  private int[] getLadderStart() {
-    List<Ladder> ladders = board.getLadders();
-    int[] starts = new int[ladders.size()];
-    for (int i = 0; i < ladders.size(); i++) {
-      starts[i] = ladders.get(i).start();
-    }
-    return starts;
-  }
-
-  private int[] getLadderEnd() {
-    List<Ladder> ladders = board.getLadders();
-    int[] ends = new int[ladders.size()];
-    for (int i = 0; i < ladders.size(); i++) {
-      ends[i] = ladders.get(i).end();
-    }
-    return ends;
-  }
-
-  private boolean isIn(int tileNum, int[] positions) {
-    for (int pos : positions) {
-      if (tileNum == pos) return true;
-    }
-    return false;
-  }
-
-  private boolean isSnakeStart(int tileNum) {
-    return isIn(tileNum, getSnakeStart());
-  }
-
-  private boolean isSnakeEnd(int tileNum) {
-    return isIn(tileNum, getSnakeEnd());
-  }
-
-  private boolean isLadderStart(int tileNum) {
-    return isIn(tileNum, getLadderStart());
-  }
-
-  private boolean isLadderEnd(int tileNum) {
-    return isIn(tileNum, getLadderEnd());
-  }
-
-  private String getTileColor(int tileNum) {
-    if (isSnakeStart(tileNum)) return "red";
-    if (isSnakeEnd(tileNum)) return "pink";
-    if (isLadderStart(tileNum)) return "darkgreen";
-    if (isLadderEnd(tileNum)) return "lightgreen";
-    return "white";
+  @Override
+  public void onSpecialTileActivated(int tileNumber, int destination, boolean isLadder) {
+    // This could be used to highlight activated ladders/snakes in the future
+    logger.debug("Special tile activated: {} -> {}, isLadder: {}", tileNumber, destination, isLadder);
   }
 }
