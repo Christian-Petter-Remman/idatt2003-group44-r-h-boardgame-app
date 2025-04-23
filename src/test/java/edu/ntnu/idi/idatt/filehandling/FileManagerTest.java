@@ -9,6 +9,7 @@ import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.LadderTile;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.SnakeTile;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Tile;
+import java.io.IOException;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
@@ -26,7 +27,11 @@ class FileManagerTest {
 
   @Test
   void testEnsureApplicationDirectoriesExist() {
-    FileManager.ensureApplicationDirectoriesExist();
+    try {
+      FileManager.ensureApplicationDirectoriesExist();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
     assertTrue(new File(FileManager.DATA_DIR).exists());
     assertTrue(new File(FileManager.PLAYERS_DIR).exists());
   }
@@ -63,15 +68,11 @@ class FileManagerTest {
 
   @Test
   void testSavedPlayersAreCorrectlyStoredAndLoaded() throws Exception {
-    // Opprett spill og legg til spillere
     SnakesAndLadders game = new SnakesAndLadders();
     //game.addPlayer("Kari", "peach");
     //game.addPlayer("Per", "bowser");
 
-    // Lagre spillerne
     FileManager.saveLastGamePlayers(game);
-
-    // Lag nytt spill og last spillerne fra filen
     SnakesAndLadders loadedGame = new SnakesAndLadders();
     int loaded = loadedGame.loadPlayersFromCsv(FileManager.LAST_GAME_PLAYERS_FILE);
 
@@ -82,7 +83,6 @@ class FileManagerTest {
 
   @Test
   void testBoardIsSavedAndLoadedCorrectly() throws FileWriteException, FileReadException, JsonParsingException {
-    // Lag et brett og sett inn en stige og en slange
     Board board = new Board();
     board.setTile(5, new LadderTile(5, 15));
     board.setTile(10, new SnakeTile(10, 3));
