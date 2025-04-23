@@ -1,7 +1,7 @@
 package edu.ntnu.idi.idatt.view.snakesandladders;
 
-import edu.ntnu.idi.idatt.controller.snakesandladders.SnakesAndLaddersCharacterSelectionController;
-import edu.ntnu.idi.idatt.controller.snakesandladders.SnakesAndLaddersRuleSelectionController;
+import edu.ntnu.idi.idatt.controller.snakesandladders.SalCharacterSelectionController;
+import edu.ntnu.idi.idatt.controller.snakesandladders.SalRuleSelectionController;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersFactory;
 import edu.ntnu.idi.idatt.model.model_observers.CharacterSelectionObserver;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
@@ -23,7 +23,7 @@ public class SalCharacterSelectionView implements CharacterSelectionObserver, Na
   private static final Logger logger = LoggerFactory.getLogger(SalCharacterSelectionView.class);
 
   private final BorderPane root;
-  private final SnakesAndLaddersCharacterSelectionController controller;
+  private final SalCharacterSelectionController controller;
 
   private VBox player1Box;
   private VBox player2Box;
@@ -32,7 +32,7 @@ public class SalCharacterSelectionView implements CharacterSelectionObserver, Na
 
   public SalCharacterSelectionView() {
     this.root = new BorderPane();
-    this.controller = new SnakesAndLaddersCharacterSelectionController();
+    this.controller = new SalCharacterSelectionController();
     controller.registerObserver(this);
     controller.setNavigationHandler(this);
   }
@@ -377,8 +377,8 @@ public class SalCharacterSelectionView implements CharacterSelectionObserver, Na
   public void navigateTo(String destination) {
     switch (destination) {
       case "RULE_SELECTION" -> {
-        SnakesAndLaddersRuleSelectionController ruleController =
-            new SnakesAndLaddersRuleSelectionController(new SnakesAndLaddersFactory());
+        SalRuleSelectionController ruleController =
+            new SalRuleSelectionController(new SnakesAndLaddersFactory());
         SalRuleSelectionView ruleView =
             new SalRuleSelectionView(ruleController);
         ruleView.setPlayers(controller.getPlayers());

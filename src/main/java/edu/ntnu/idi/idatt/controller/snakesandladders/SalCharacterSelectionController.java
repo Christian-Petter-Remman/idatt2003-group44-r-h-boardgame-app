@@ -15,8 +15,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 
-public class SnakesAndLaddersCharacterSelectionController {
-  private static final Logger logger = LoggerFactory.getLogger(SnakesAndLaddersCharacterSelectionController.class);
+public class SalCharacterSelectionController {
+  private static final Logger logger = LoggerFactory.getLogger(SalCharacterSelectionController.class);
 
   private final List<CharacterSelectionObserver> observers = new ArrayList<>();
   private NavigationHandler navigationHandler;

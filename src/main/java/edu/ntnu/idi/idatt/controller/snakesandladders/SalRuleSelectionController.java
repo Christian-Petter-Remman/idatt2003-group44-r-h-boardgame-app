@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class SnakesAndLaddersRuleSelectionController {
-  private static final Logger logger = LoggerFactory.getLogger(SnakesAndLaddersRuleSelectionController.class);
+public class SalRuleSelectionController {
+  private static final Logger logger = LoggerFactory.getLogger(SalRuleSelectionController.class);
 
   private final List<SalRuleSelectionViewObserver> observers = new ArrayList<>();
   private final SnakesAndLaddersFactory factory;
@@ -33,7 +33,7 @@ public class SnakesAndLaddersRuleSelectionController {
   private String baseName;
   private List<Player> players;
 
-  public SnakesAndLaddersRuleSelectionController(SnakesAndLaddersFactory factory) {
+  public SalRuleSelectionController(SnakesAndLaddersFactory factory) {
     this.factory = factory;
     this.boardJsonHandler = new BoardJsonHandler();
   }
