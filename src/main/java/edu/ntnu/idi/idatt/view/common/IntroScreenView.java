@@ -3,7 +3,7 @@ package edu.ntnu.idi.idatt.view.common;
 import edu.ntnu.idi.idatt.controller.common.IntroScreenController;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
-import edu.ntnu.idi.idatt.view.snakesandladders.SnakesAndLaddersCharacterSelectionView;
+import edu.ntnu.idi.idatt.view.snakesandladders.SalCharacterSelectionView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -85,8 +85,8 @@ public class IntroScreenView implements NavigationHandler {
   public void navigateTo(String destination) {
     switch (destination) {
       case "CHARACTER_SELECTION":
-        SnakesAndLaddersCharacterSelectionView characterSelectionView =
-            new SnakesAndLaddersCharacterSelectionView();
+        SalCharacterSelectionView characterSelectionView =
+            new SalCharacterSelectionView();
         characterSelectionView.show();
         logger.info("Navigated to Character Selection Screen");
         break;

@@ -19,8 +19,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
-public class SnakesAndLaddersCharacterSelectionView implements CharacterSelectionObserver, NavigationHandler {
-  private static final Logger logger = LoggerFactory.getLogger(SnakesAndLaddersCharacterSelectionView.class);
+public class SalCharacterSelectionView implements CharacterSelectionObserver, NavigationHandler {
+  private static final Logger logger = LoggerFactory.getLogger(SalCharacterSelectionView.class);
 
   private final BorderPane root;
   private final SnakesAndLaddersCharacterSelectionController controller;
@@ -30,7 +30,7 @@ public class SnakesAndLaddersCharacterSelectionView implements CharacterSelectio
   private VBox player3Box;
   private VBox player4Box;
 
-  public SnakesAndLaddersCharacterSelectionView() {
+  public SalCharacterSelectionView() {
     this.root = new BorderPane();
     this.controller = new SnakesAndLaddersCharacterSelectionController();
     controller.registerObserver(this);
@@ -379,8 +379,8 @@ public class SnakesAndLaddersCharacterSelectionView implements CharacterSelectio
       case "RULE_SELECTION" -> {
         SnakesAndLaddersRuleSelectionController ruleController =
             new SnakesAndLaddersRuleSelectionController(new SnakesAndLaddersFactory());
-        SnakesAndLaddersRuleSelectionView ruleView =
-            new SnakesAndLaddersRuleSelectionView(ruleController);
+        SalRuleSelectionView ruleView =
+            new SalRuleSelectionView(ruleController);
         ruleView.setPlayers(controller.getPlayers());
         ruleView.setBaseName(controller.getBaseName());
         ruleView.show();

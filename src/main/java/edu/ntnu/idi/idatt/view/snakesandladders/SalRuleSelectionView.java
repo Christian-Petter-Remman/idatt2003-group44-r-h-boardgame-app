@@ -3,9 +3,10 @@ package edu.ntnu.idi.idatt.view.snakesandladders;
 import edu.ntnu.idi.idatt.controller.snakesandladders.SnakesAndLaddersRuleSelectionController;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.model.model_observers.RuleSelectionViewObserver;
+import edu.ntnu.idi.idatt.model.model_observers.SalRuleSelectionViewObserver;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
+import edu.ntnu.idi.idatt.view.common.AbstractRuleSelectionView;
 import edu.ntnu.idi.idatt.view.common.GameScreenView;
 import edu.ntnu.idi.idatt.view.common.IntroScreenView;
 import javafx.geometry.Insets;
@@ -24,8 +25,8 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Objects;
 
-public class SnakesAndLaddersRuleSelectionView implements RuleSelectionViewObserver, NavigationHandler {
-  private static final Logger logger = LoggerFactory.getLogger(SnakesAndLaddersRuleSelectionView.class);
+public class SalRuleSelectionView extends AbstractRuleSelectionView implements SalRuleSelectionViewObserver{
+  private static final Logger logger = LoggerFactory.getLogger(SalRuleSelectionView.class);
 
   private final SnakesAndLaddersRuleSelectionController controller;
   private final BorderPane root;
@@ -51,7 +52,7 @@ public class SnakesAndLaddersRuleSelectionView implements RuleSelectionViewObser
 
   private boolean uiInitialized = false;
 
-  public SnakesAndLaddersRuleSelectionView(SnakesAndLaddersRuleSelectionController controller) {
+  public SalRuleSelectionView(SnakesAndLaddersRuleSelectionController controller) {
     this.controller = controller;
     this.root = new BorderPane();
     controller.registerViewObserver(this);

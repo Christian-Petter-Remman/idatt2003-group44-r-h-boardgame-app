@@ -1,6 +1,6 @@
 package edu.ntnu.idi.idatt.model.model_observers;
 
-public interface RuleSelectionViewObserver {
+public interface SalRuleSelectionViewObserver {
   void onDifficultyChanged(String difficulty);
   void onLadderCountChanged(int count);
   void onSnakeCountChanged(int count);

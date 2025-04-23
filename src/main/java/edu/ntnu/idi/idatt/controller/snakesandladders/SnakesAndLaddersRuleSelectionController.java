@@ -7,7 +7,7 @@ import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersFactory;
 import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.model.model_observers.RuleSelectionViewObserver;
+import edu.ntnu.idi.idatt.model.model_observers.SalRuleSelectionViewObserver;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.util.AlertUtil;
 import org.slf4j.Logger;
@@ -20,7 +20,7 @@ import java.util.Random;
 public class SnakesAndLaddersRuleSelectionController {
   private static final Logger logger = LoggerFactory.getLogger(SnakesAndLaddersRuleSelectionController.class);
 
-  private final List<RuleSelectionViewObserver> observers = new ArrayList<>();
+  private final List<SalRuleSelectionViewObserver> observers = new ArrayList<>();
   private final SnakesAndLaddersFactory factory;
   private final BoardJsonHandler boardJsonHandler;
   private NavigationHandler navigationHandler;
@@ -42,7 +42,7 @@ public class SnakesAndLaddersRuleSelectionController {
     this.navigationHandler = navigationHandler;
   }
 
-  public void registerViewObserver(RuleSelectionViewObserver observer) {
+  public void registerViewObserver(SalRuleSelectionViewObserver observer) {
     observers.add(observer);
   }
 
@@ -193,31 +193,31 @@ public class SnakesAndLaddersRuleSelectionController {
 
   // Observer notification methods
   private void notifyDifficultyChanged(String difficulty) {
-    for (RuleSelectionViewObserver observer : observers) {
+    for (SalRuleSelectionViewObserver observer : observers) {
       observer.onDifficultyChanged(difficulty);
     }
   }
 
   private void notifyLadderCountChanged(int count) {
-    for (RuleSelectionViewObserver observer : observers) {
+    for (SalRuleSelectionViewObserver observer : observers) {
       observer.onLadderCountChanged(count);
     }
   }
 
   private void notifySnakeCountChanged(int count) {
-    for (RuleSelectionViewObserver observer : observers) {
+    for (SalRuleSelectionViewObserver observer : observers) {
       observer.onSnakeCountChanged(count);
     }
   }
 
   private void notifyRandomBoardSelected(int boardNumber) {
-    for (RuleSelectionViewObserver observer : observers) {
+    for (SalRuleSelectionViewObserver observer : observers) {
       observer.onRandomBoardSelected(boardNumber);
     }
   }
 
   private void notifyDiceCountChanged(int count) {
-    for (RuleSelectionViewObserver observer : observers) {
+    for (SalRuleSelectionViewObserver observer : observers) {
       observer.onDiceCountChanged(count);
     }
   }
