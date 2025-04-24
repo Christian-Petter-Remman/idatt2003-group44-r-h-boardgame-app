@@ -9,10 +9,12 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.UncheckedIOException;
+import java.io.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
@@ -65,5 +67,17 @@ public class LoadController {
       logger.error("Error reading CSV file {}: {}", csvPath, e.getMessage());
     }
     return null;
+  }
+
+  public static List<File> getLastNPlayerFiles(String directoryPath, int n) {
+    File folder = new File(directoryPath);
+    File[] files = folder.listFiles((dir, name) -> name.endsWith(".csv"));
+
+    if (files == null || files.length == 0) return Collections.emptyList();
+
+    return Arrays.stream(files)
+            .sorted(Comparator.comparingLong(File::lastModified).reversed())
+            .limit(n)
+            .collect(Collectors.toList());
   }
 }

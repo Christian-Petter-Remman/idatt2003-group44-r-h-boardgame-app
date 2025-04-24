@@ -11,6 +11,12 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.util.List;
+
+import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
+import static edu.ntnu.idi.idatt.view.common.LoadController.getLastNPlayerFiles;
+
 public class LoadScreenView {
 
   private final Stage stage;
@@ -54,14 +60,17 @@ public class LoadScreenView {
     grid.setPadding(new Insets(20));
     grid.setAlignment(Pos.CENTER);
 
-    for (int i = 0; i < 8; i++) {
-      grid.add(createSlotBox(i), i % 4, i / 4);
+    List<File> latestFiles = getLastNPlayerFiles("data/user-data/player-files/", 8);
+
+    for (int i = 0; i < latestFiles.size(); i++) {
+      File file = latestFiles.get(i);
+      grid.add(createSlotBox(i, file), i % 4, i / 4);
     }
 
     return grid;
   }
 
-  private VBox createSlotBox(int slotIndex) {
+  private VBox createSlotBox(int slotIndex, File file) {
     VBox box = new VBox();
     box.setPrefSize(150, 150);
     box.setAlignment(Pos.CENTER);
@@ -69,17 +78,13 @@ public class LoadScreenView {
 
     Label label = new Label("Save Slot " + (slotIndex + 1));
     box.getChildren().add(label);
-
-    if (slotIndex == 0) {
-      box.getChildren().add(createLoadButton());
-    }
+    box.getChildren().add(createLoadButton(file));
 
     return box;
   }
-
-  private Button createLoadButton() {
+  private Button createLoadButton(File file) {
     Button btn = new Button("Load");
-    btn.setOnAction(e -> controller.handleLoad("data/user-data/player-files/SNL_20250418_1744983119000.csv"));
+    btn.setOnAction(e -> controller.handleLoad(file.getPath()));
     return btn;
   }
-}
+  }
