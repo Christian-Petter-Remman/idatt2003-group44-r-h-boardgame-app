@@ -4,8 +4,6 @@ import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
 import edu.ntnu.idi.idatt.controller.snakesandladders.SnakesAndLaddersRuleSelectionController;
 import edu.ntnu.idi.idatt.filehandling.BoardJsonHandler;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
-import edu.ntnu.idi.idatt.model.common.BoardGame;
 import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.model.model_observers.DifficultyObserver;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
@@ -28,10 +26,8 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
 
 public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView implements DifficultyObserver {
   private static final Logger logger = LoggerFactory.getLogger(SnakesAndLaddersRuleSelectionView.class);
@@ -148,7 +144,7 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
   }
 
   private Button createRandomButton() {
-    Button btn = new Button("Random Board");
+    Button btn = new Button("Random SNLBoard");
 
     try {
       ImageView diceIcon = new ImageView(new Image(Objects.requireNonNull(
@@ -234,9 +230,9 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
 
         if (controller.getSelectedRandomBoard() > 0) {
           laddersValueLabel.setText(controller.getCurrentLadderCount() +
-              " (Board " + controller.getSelectedRandomBoard() + ")");
+              " (SNLBoard " + controller.getSelectedRandomBoard() + ")");
           penaltyValueLabel.setText(controller.getCurrentSnakeCount() +
-              " (Board " + controller.getSelectedRandomBoard() + ")");
+              " (SNLBoard " + controller.getSelectedRandomBoard() + ")");
         }
         break;
       default:
@@ -381,6 +377,7 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
       String csvPath = "data/user-data/player-files/" + baseName + ".csv";
 
       int playersLoaded = snakes.loadPlayersFromCsv(csvPath);
+
       logger.info("Loaded {} players from {}", playersLoaded, csvPath);
 
       snakes.setDice(new Dice(diceCount));

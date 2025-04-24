@@ -3,7 +3,7 @@ package edu.ntnu.idi.idatt.filehandling;
 import com.google.gson.*;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SNLBoard;
 import edu.ntnu.idi.idatt.model.common.BoardGame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public class BoardJsonHandler implements FileHandler<Board> {
+public class BoardJsonHandler implements FileHandler<SNLBoard> {
   private static final Logger logger = LoggerFactory.getLogger(BoardJsonHandler.class);
   private final Gson gson;
 
@@ -30,12 +30,12 @@ public class BoardJsonHandler implements FileHandler<Board> {
             .create();
   }
 
-  public Board loadBoardFromFile(String filePath) throws FileReadException, JsonParsingException {
+  public SNLBoard loadBoardFromFile(String filePath) throws FileReadException, JsonParsingException {
     try (Reader reader = new FileReader(filePath)) {
       JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
       return parseBoard(jsonObject);
     } catch (FileNotFoundException e) {
-      throw new FileReadException("Board file not found: " + filePath, e);
+      throw new FileReadException("SNLBoard file not found: " + filePath, e);
     } catch (IOException e) {
       throw new FileReadException("Error reading board file: " + filePath, e);
     } catch (JsonSyntaxException | IllegalStateException e) {
@@ -44,11 +44,10 @@ public class BoardJsonHandler implements FileHandler<Board> {
   }
 
 
-  private Board parseBoard(JsonObject jsonObject) {
+  private SNLBoard parseBoard(JsonObject jsonObject) {
     int size = jsonObject.get("size").getAsInt();
-    Board board = new Board(size);
+    SNLBoard board = new SNLBoard(size);
 
-    // Parse ladders
     if (jsonObject.has("ladders")) {
       JsonArray laddersArray = jsonObject.getAsJsonArray("ladders");
       for (JsonElement element : laddersArray) {
@@ -58,8 +57,6 @@ public class BoardJsonHandler implements FileHandler<Board> {
         board.addFullLadder(start, end);
       }
     }
-
-    // Parse snakes
     if (jsonObject.has("snakes")) {
       JsonArray snakesArray = jsonObject.getAsJsonArray("snakes");
       for (JsonElement element : snakesArray) {
@@ -73,9 +70,9 @@ public class BoardJsonHandler implements FileHandler<Board> {
     return board;
   }
 
-  public <T extends BoardGame> T loadGameFromFile(String filePath, Function<Board, T> gameCreator)
+  public <T extends BoardGame> T loadGameFromFile(String filePath, Function<SNLBoard, T> gameCreator)
           throws FileReadException, JsonParsingException {
-    Board board = loadBoardFromFile(filePath);
+    SNLBoard board = loadBoardFromFile(filePath);
     return gameCreator.apply(board);
   }
 
@@ -87,16 +84,16 @@ public class BoardJsonHandler implements FileHandler<Board> {
   }
 
   @Override
-  public void saveToFile(Board object, String fileName) throws Exception {
+  public void saveToFile(SNLBoard object, String fileName) throws Exception {
 
   }
 
   @Override
-  public Board loadFromFile(String fileName) throws FileReadException, JsonParsingException {
+  public SNLBoard loadFromFile(String fileName) throws FileReadException, JsonParsingException {
     try (Reader reader = new FileReader(fileName)) {
-      return gson.fromJson(reader, Board.class);
+      return gson.fromJson(reader, SNLBoard.class);
     } catch (FileNotFoundException e) {
-      throw new FileReadException("Board file not found: " + fileName, e);
+      throw new FileReadException("SNLBoard file not found: " + fileName, e);
     } catch (IOException e) {
       throw new FileReadException("Error reading board file: " + fileName, e);
     } catch (JsonSyntaxException | IllegalStateException e) {
@@ -142,7 +139,7 @@ public class BoardJsonHandler implements FileHandler<Board> {
 
       for (String boardName : requiredBoards) {
         if (!Files.exists(dirPath.resolve(boardName))) {
-          logger.warn("Board file missing: {}", boardName);
+          logger.warn("SNLBoard file missing: {}", boardName);
           allBoardsExist = false;
           break;
         }
@@ -172,7 +169,7 @@ public class BoardJsonHandler implements FileHandler<Board> {
 
       try {
         if (Files.exists(boardFilePath)) {
-          logger.debug("Board file already exists, skipping: {}", filename);
+          logger.debug("SNLBoard file already exists, skipping: {}", filename);
           existingFiles++;
           continue;
         }
@@ -199,11 +196,11 @@ public class BoardJsonHandler implements FileHandler<Board> {
     }
 
     if (failedFiles > 0) {
-      logger.warn("Board file generation completed with issues: {} existing, {} created, {} failed",
+      logger.warn("SNLBoard file generation completed with issues: {} existing, {} created, {} failed",
           existingFiles, createdFiles, failedFiles);
       throw new IOException("Failed to generate " + failedFiles + " board files");
     } else if (createdFiles > 0) {
-      logger.info("Board file generation completed successfully: {} existing, {} created",
+      logger.info("SNLBoard file generation completed successfully: {} existing, {} created",
           existingFiles, createdFiles);
     } else {
       logger.info("All board files already exist. No new files were created.");

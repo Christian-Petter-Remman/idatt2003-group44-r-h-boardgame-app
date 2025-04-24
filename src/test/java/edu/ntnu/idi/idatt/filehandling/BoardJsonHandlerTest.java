@@ -1,12 +1,10 @@
 package edu.ntnu.idi.idatt.filehandling;
 
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
-import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SNLBoard;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,13 +26,13 @@ class BoardJsonHandlerTest {
 
   @Test
   void testSaveAndLoadBoard() throws Exception {
-    Board originalBoard = new Board();
+    SNLBoard originalBoard = new SNLBoard();
     handler.saveToFile(originalBoard, TEST_FILE);
 
-    Board loadedBoard = handler.loadFromFile(TEST_FILE);
+    SNLBoard loadedBoard = handler.loadFromFile(TEST_FILE);
 
     assertNotNull(loadedBoard);
-    assertEquals(100, loadedBoard.getTiles().size(), "Board should have 100 tiles");
+    assertEquals(100, loadedBoard.getTiles().size(), "SNLBoard should have 100 tiles");
   }
 
   @Test
@@ -50,9 +48,9 @@ class BoardJsonHandlerTest {
     assertNotNull(url, "JSON file not found in BoardFiles folder");
 
     String path = Path.of(url.toURI()).toString();
-    Board loadedBoard = handler.loadFromFile(path);
+    SNLBoard loadedBoard = handler.loadFromFile(path);
 
-    assertNotNull(loadedBoard, "Board should not be null");
-    assertTrue(loadedBoard.getTiles().size() > 0, "Board should contain tiles");
+    assertNotNull(loadedBoard, "SNLBoard should not be null");
+    assertTrue(loadedBoard.getTiles().size() > 0, "SNLBoard should contain tiles");
   }
 }

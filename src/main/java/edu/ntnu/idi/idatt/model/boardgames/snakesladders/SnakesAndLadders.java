@@ -3,9 +3,8 @@ package edu.ntnu.idi.idatt.model.boardgames.snakesladders;
 import edu.ntnu.idi.idatt.model.common.BoardGame;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.common.Dice;
-import java.io.BufferedReader;
+
 import java.io.BufferedWriter;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 public class SnakesAndLadders extends BoardGame {
 
-  private Board board;
+  private SNLBoard board;
   private Dice dice;
   private int currentPlayerIndex;
   private static final Logger logger = LoggerFactory.getLogger(SnakesAndLadders.class);
@@ -27,13 +26,13 @@ public class SnakesAndLadders extends BoardGame {
     super();
     currentPlayerIndex = 0;
   }
-  public SnakesAndLadders(Board board) {
+  public SnakesAndLadders(SNLBoard board) {
     this();
     this.board = board;
   }
 
   @Override
-  public void initialize (Board board) {
+  public void initialize (SNLBoard board) {
     this.board = board;
     dice = new Dice(1);
   }
@@ -64,7 +63,7 @@ public class SnakesAndLadders extends BoardGame {
   }
 
   @Override
-  public Board getBoard() {
+  public SNLBoard getBoard() {
     return board;
   }
 
@@ -73,7 +72,7 @@ public class SnakesAndLadders extends BoardGame {
     return new ArrayList<>(players);
   }
 
-  public void setBoard(Board board) {
+  public void setBoard(SNLBoard board) {
     this.board = board;
     logger.debug("Set board to {}", board);
   }

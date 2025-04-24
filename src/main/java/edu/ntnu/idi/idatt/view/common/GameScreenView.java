@@ -178,7 +178,7 @@ public class GameScreenView {
     String csvFilePath = csvFileName;
 
     List<String> lines = new ArrayList<>();
-    lines.add("Board:" + boardFile); // Add the board name first
+    lines.add("SNLBoard:" + boardFile); // Add the board name first
 
     for (Player player : game.getPlayers()) {
       lines.add(player.getName() + "," + player.getCharacter() + "," + player.getPosition());

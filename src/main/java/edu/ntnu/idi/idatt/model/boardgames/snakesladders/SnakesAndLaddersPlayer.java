@@ -20,8 +20,8 @@ public class SnakesAndLaddersPlayer extends Player {
 
   @Override
   public <T> void move(int steps, T gameContext) {
-    if (!(gameContext instanceof Board board)) {
-      throw new IllegalArgumentException("Game context must be a Board for SnakesAndLaddersPlayer");
+    if (!(gameContext instanceof SNLBoard board)) {
+      throw new IllegalArgumentException("Game context must be a SNLBoard for SnakesAndLaddersPlayer");
     }
 
     int newPosition = getPosition() + steps;

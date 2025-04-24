@@ -2,7 +2,7 @@ package edu.ntnu.idi.idatt.filehandling;
 
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.FileWriteException;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SNLBoard;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,10 +68,10 @@ public class FileManager {
     logger.info("All application directories verified successfully");
   }
 
-  public static void saveDefaultBoard(Board board) throws FileWriteException {
+  public static void saveDefaultBoard(SNLBoard board) throws FileWriteException {
     if (board == null) {
       logger.error("Cannot save null board");
-      throw new IllegalArgumentException("Board cannot be null");
+      throw new IllegalArgumentException("SNLBoard cannot be null");
     }
 
     try {
@@ -92,8 +92,8 @@ public class FileManager {
 
       File boardFile = new File(DEFAULT_BOARD_FILE);
       if (!boardFile.exists() || boardFile.length() == 0) {
-        logger.error("Board file was not created properly: {}", DEFAULT_BOARD_FILE);
-        throw new FileWriteException("Board file was not created properly: " + DEFAULT_BOARD_FILE);
+        logger.error("SNLBoard file was not created properly: {}", DEFAULT_BOARD_FILE);
+        throw new FileWriteException("SNLBoard file was not created properly: " + DEFAULT_BOARD_FILE);
       }
 
       logger.info("Successfully saved default board to JSON: {}", DEFAULT_BOARD_FILE);

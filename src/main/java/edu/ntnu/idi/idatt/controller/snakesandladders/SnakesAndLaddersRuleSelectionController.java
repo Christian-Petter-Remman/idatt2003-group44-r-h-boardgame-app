@@ -2,13 +2,11 @@ package edu.ntnu.idi.idatt.controller.snakesandladders;
 
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
-import edu.ntnu.idi.idatt.model.common.BoardGame;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SNLBoard;
 import edu.ntnu.idi.idatt.model.model_observers.DifficultyObserver;
 import edu.ntnu.idi.idatt.exceptions.*;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersFactory;
-import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.filehandling.BoardJsonHandler;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
@@ -21,9 +19,6 @@ import java.util.List;
 import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.UUID;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class SnakesAndLaddersRuleSelectionController {
   private static final Logger logger = LoggerFactory.getLogger(SnakesAndLaddersRuleSelectionController.class);
@@ -82,7 +77,7 @@ public class SnakesAndLaddersRuleSelectionController {
 
     try {
       String boardPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/random" + selectedRandomBoard + ".json";
-      Board board = boardJsonHandler.loadBoardFromFile(boardPath);
+      SNLBoard board = boardJsonHandler.loadBoardFromFile(boardPath);
 
       currentLadderCount = board.getLadders().size();
       currentSnakeCount = board.getSnakes().size();

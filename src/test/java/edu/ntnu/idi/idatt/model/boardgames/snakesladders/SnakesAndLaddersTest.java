@@ -15,7 +15,7 @@ class SnakesAndLaddersTest {
     game = new SnakesAndLadders();
     game.addPlayer("A", "toad");
     game.addPlayer("B", "peach");
-    game.initialize(new Board());
+    game.initialize(new SNLBoard());
   }
 
   @Test
@@ -42,7 +42,7 @@ class SnakesAndLaddersTest {
   void testPlayerWinsWithExactRoll() {
     game = new SnakesAndLadders();
     game.addPlayer("Tester","bowser");
-    game.initialize(new Board());
+    game.initialize(new SNLBoard());
 
     Player p = game.getCurrentPlayer();
     p.setPosition(97);

@@ -58,8 +58,8 @@ public class LoadController {
   private String extractBoardPathFromCsv(String csvPath) {
     try (BufferedReader reader = new BufferedReader(new FileReader(csvPath))) {
       String firstLine = reader.readLine();
-      if (firstLine != null && firstLine.startsWith("Board:")) {
-        return firstLine.replace("Board:", "").trim();
+      if (firstLine != null && firstLine.startsWith("SNLBoard:")) {
+        return firstLine.replace("SNLBoard:", "").trim();
       } else {
         logger.warn("No board path found in CSV file: {}", csvPath);
       }

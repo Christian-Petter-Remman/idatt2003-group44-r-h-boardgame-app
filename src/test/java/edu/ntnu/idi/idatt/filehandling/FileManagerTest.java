@@ -4,10 +4,8 @@ import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.FileWriteException;
 import edu.ntnu.idi.idatt.exceptions.CsvFormatException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SNLBoard;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.LadderTile;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.SnakeTile;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Tile;
 import org.junit.jupiter.api.*;
 
@@ -33,7 +31,7 @@ class FileManagerTest {
 
   @Test
   void testSaveDefaultBoard() throws FileWriteException {
-    Board board = new Board();
+    SNLBoard board = new SNLBoard();
     FileManager.saveDefaultBoard(board);
     File savedFile = new File(FileManager.DEFAULT_BOARD_FILE);
     assertTrue(savedFile.exists(), "Default board file should be created");
@@ -83,13 +81,13 @@ class FileManagerTest {
   @Test
   void testBoardIsSavedAndLoadedCorrectly() throws FileWriteException, FileReadException, JsonParsingException {
     // Lag et brett og sett inn en stige og en slange
-    Board board = new Board();
+    SNLBoard board = new SNLBoard();
     board.setTile(5, new LadderTile(5, 15));
     board.setTile(10, new SnakeTile(10, 3));
 
     FileManager.saveDefaultBoard(board);
 
-    Board loaded = new BoardJsonHandler().loadFromFile(FileManager.DEFAULT_BOARD_FILE);
+    SNLBoard loaded = new BoardJsonHandler().loadFromFile(FileManager.DEFAULT_BOARD_FILE);
 
     assertNotNull(loaded, "Loaded board should not be null");
 

@@ -1,8 +1,8 @@
 package edu.ntnu.idi.idatt.view.common;
 
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Ladder;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Snake;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SNLBoard;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Ladder;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Snake;
 import edu.ntnu.idi.idatt.model.common.Player;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
@@ -20,13 +20,13 @@ import javafx.scene.text.Text;
 import java.util.List;
 public class BoardView extends StackPane {
 
-  private final Board board;
+  private final SNLBoard board;
   private final List<Player> players;
   private final GridPane boardGrid = new GridPane();
   private final Pane ladderSnakeOverlay = new Pane();
   private final int tileSize = 90;
 
-  public BoardView(Board board, List<Player> players) {
+  public BoardView(SNLBoard board, List<Player> players) {
     this.board = board;
     this.players = players;
 

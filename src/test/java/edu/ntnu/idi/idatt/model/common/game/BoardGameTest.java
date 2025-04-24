@@ -1,6 +1,6 @@
 package edu.ntnu.idi.idatt.model.common.game;
 
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SNLBoard;
 import edu.ntnu.idi.idatt.model.common.BoardGame;
 import edu.ntnu.idi.idatt.model.common.Player;
 import org.junit.jupiter.api.Test;
@@ -11,17 +11,17 @@ class BoardGameTest {
 
   // Enkel implementasjon for å teste det abstrakte
   static class DummyGame extends BoardGame {
-    @Override public void initialize(Board board) {}
+    @Override public void initialize(SNLBoard board) {}
     @Override public void makeMove(Player p) {}
     @Override public boolean isValidMove(Player p, int roll) { return true; }
     @Override public boolean checkWinCondition() { return false; }
 
     @Override
-    public void setBoard(Board board) {
+    public void setBoard(SNLBoard board) {
 
     }
 
-    @Override public Board getBoard() { return null; }
+    @Override public SNLBoard getBoard() { return null; }
   }
 
   /*

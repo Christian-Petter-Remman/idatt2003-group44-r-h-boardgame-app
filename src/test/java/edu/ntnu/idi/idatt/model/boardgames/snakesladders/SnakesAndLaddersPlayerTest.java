@@ -1,6 +1,5 @@
 package edu.ntnu.idi.idatt.model.boardgames.snakesladders;
 
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.LadderTile;
 import edu.ntnu.idi.idatt.model.common.Player;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +9,7 @@ public class SnakesAndLaddersPlayerTest {
 
   @Test
   public void testMoveWithCustomLadder() {
-    Board board = new Board();
+    SNLBoard board = new SNLBoard();
 
     board.setTile(4, new LadderTile(4, 12));
 
@@ -23,7 +22,7 @@ public class SnakesAndLaddersPlayerTest {
 
   @Test
   public void testMoveWithoutLadderNegative() {
-    Board board = new Board();
+    SNLBoard board = new SNLBoard();
     board.setTile(4, new LadderTile(4, 12));
     Player player = new SnakesAndLaddersPlayer("TestPlayer","bowser",0);
     player.move(4, board);
@@ -32,7 +31,7 @@ public class SnakesAndLaddersPlayerTest {
 
   @Test
   public void testMoveWithoutLadder() {
-    Board board = new Board();
+    SNLBoard board = new SNLBoard();
     Player player = new SnakesAndLaddersPlayer("TestPlayer", "bowser",0);
 
     player.move(3, board);

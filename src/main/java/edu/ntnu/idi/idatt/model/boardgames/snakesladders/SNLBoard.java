@@ -2,8 +2,8 @@ package edu.ntnu.idi.idatt.model.boardgames.snakesladders;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.LadderTile;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.SnakeTile;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Ladder;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Snake;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Tile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,20 +12,24 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Board {
-  private static final Logger logger = LoggerFactory.getLogger(Board.class);
+public class SNLBoard {
+  private static final Logger logger = LoggerFactory.getLogger(SNLBoard.class);
   private List<Tile> tiles;
   private final int size;
   private final List<Ladder> ladders = new ArrayList<>();
   private final List<Snake> snakes = new ArrayList<>();
 
-  public Board() {
+  public SNLBoard() {
     this(100);
   }
 
-  public Board(int size) {
+  public SNLBoard(int size) {
     this.size = size;
     initializeEmptyBoard();
+  }
+
+  public List<Tile> getTiles() {
+    return new ArrayList<>(tiles);
   }
 
   public void initializeEmptyBoard() {
@@ -44,7 +48,6 @@ public class Board {
     }
     Ladder ladder = new Ladder(start, end);
     ladders.add(ladder);
-    setTile(start, new LadderTile(start, end));
   }
 
   public void addSnake(int start, int end) {
@@ -53,36 +56,6 @@ public class Board {
     }
     Snake snake = new Snake(start, end);
     snakes.add(snake);
-    setTile(start, new SnakeTile(start, end));
-  }
-
-  public void addDefaultLaddersAndSnakes() {
-    addDefaultLadders();
-    addDefaultSnakes();
-  }
-
-  public void addDefaultLadders() {
-    addFullLadder(1, 38);
-    addFullLadder(4, 14);
-    addFullLadder(9, 31);
-    addFullLadder(21, 42);
-    addFullLadder(28, 84);
-    addFullLadder(51, 67);
-    addFullLadder(72, 91);
-    addFullLadder(80, 99);
-    logger.info("Added default ladders to the board");
-  }
-
-  public void addDefaultSnakes() {
-    addSnake(17, 7);
-    addSnake(54, 34);
-    addSnake(62, 19);
-    addSnake(64, 60);
-    addSnake(87, 36);
-    addSnake(93, 73);
-    addSnake(95, 75);
-    addSnake(99, 78);
-    logger.info("Added default snakes to the board");
   }
 
   public Tile getTile(int number) {
@@ -91,10 +64,6 @@ public class Board {
       throw new IllegalArgumentException("Invalid tile number: " + number);
     }
     return tiles.get(number - 1);
-  }
-
-  public List<Tile> getTiles() {
-    return new ArrayList<>(tiles);
   }
 
   public void setTile(int tileNumber, Tile tile) {
