@@ -2,19 +2,21 @@ package edu.ntnu.idi.idatt.view.snakesandladders;
 
 import edu.ntnu.idi.idatt.controller.snakesandladders.SalRuleSelectionController;
 import edu.ntnu.idi.idatt.model.model_observers.SalRuleSelectionViewObserver;
-import edu.ntnu.idi.idatt.view.common.AbstractRuleSelectionView;
+import edu.ntnu.idi.idatt.view.AbstractView;
+import java.util.Objects;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SalRuleSelectionView extends AbstractRuleSelectionView
+public class SalRuleSelectionView extends AbstractView
     implements SalRuleSelectionViewObserver {
 
   private static final Logger logger = LoggerFactory.getLogger(SalRuleSelectionView.class);
@@ -28,35 +30,108 @@ public class SalRuleSelectionView extends AbstractRuleSelectionView
   private TextField diceField;
   private Label laddersValueLabel;
   private Label snakesValueLabel;
+  private Button startGameButton;
+  private Button backButton;
 
   private static final String BACKGROUND_IMAGE_PATH = "/images/SALGameBack.png";
   private static final String RANDOM_BUTTON_COLOR = "#9b59b6";
 
   public SalRuleSelectionView(SalRuleSelectionController controller) {
-    super();
     this.controller = controller;
     controller.registerViewObserver(this);
   }
 
   @Override
-  protected String getBackgroundImagePath() {
-    return BACKGROUND_IMAGE_PATH;
+  protected void createUI() {
+    VBox mainContainer = new VBox(20);
+    mainContainer.setAlignment(Pos.CENTER);
+    mainContainer.setPadding(new Insets(30));
+
+    try {
+      Image backgroundImage = new Image(
+          Objects.requireNonNull(getClass().getResourceAsStream(BACKGROUND_IMAGE_PATH)));
+      BackgroundImage background = new BackgroundImage(
+          backgroundImage,
+          BackgroundRepeat.NO_REPEAT,
+          BackgroundRepeat.NO_REPEAT,
+          BackgroundPosition.CENTER,
+          new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true)
+      );
+      mainContainer.setBackground(new Background(background));
+    } catch (Exception e) {
+      logger.error("Failed to load background image: {}", e.getMessage());
+      mainContainer.setBackground(new Background(new BackgroundFill(Color.LIGHTBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
+    }
+
+    // Title
+    Text titleText = getTitleText();
+
+    // Description
+    Text descriptionText = getDescriptionText();
+
+    // Game settings section
+    VBox gameSettingsSection = getGameSettingsSection();
+
+    // Navigation buttons
+    HBox navigationBox = getNavigationBox();
+
+    // Add all components to main container
+    mainContainer.getChildren().addAll(
+        titleText,
+        descriptionText,
+        new Separator(),
+        gameSettingsSection,
+        new Separator(),
+        navigationBox
+    );
+
+    root = mainContainer;
+    setupEventHandlers();
   }
 
-  @Override
-  protected String getViewTitle() {
-    return "Snakes and Ladders - Game Rules";
+  private HBox getNavigationBox() {
+    HBox navigationBox = new HBox(20);
+    navigationBox.setAlignment(Pos.CENTER);
+
+    backButton = new Button("Back");
+    backButton.setPrefWidth(100);
+
+    startGameButton = new Button("Start Game");
+    startGameButton.setPrefWidth(100);
+    startGameButton.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white;");
+
+    navigationBox.getChildren().addAll(backButton, startGameButton);
+    return navigationBox;
   }
 
-  @Override
-  protected String getViewDescription() {
-    return "Customize your game settings before starting";
+  private VBox getGameSettingsSection() {
+    return createGameSettingsSection();
   }
 
-  @Override
-  protected void setupGameSpecificControls() {
-    setupDifficultyControls();
-    setupDiceControls();
+  private Text getDescriptionText() {
+    Text descriptionText = new Text("Customize your game settings before starting");
+    descriptionText.setFont(Font.font("System", FontWeight.NORMAL, 16));
+    return descriptionText;
+  }
+
+  private Text getTitleText() {
+    Text titleText = new Text("Snakes and Ladders - Game Rules");
+    titleText.setFont(Font.font("System", FontWeight.BOLD, 24));
+    return titleText;
+  }
+
+  private RadioButton createRadioButton(String text, String userData, ToggleGroup group) {
+    RadioButton button = new RadioButton(text);
+    button.setUserData(userData);
+    button.setToggleGroup(group);
+    return button;
+  }
+
+  private Button createStyledButton() {
+    Button button = new Button("Random Board");
+    button.setStyle(String.format("-fx-background-color: %s; -fx-text-fill: %s;",
+        SalRuleSelectionView.RANDOM_BUTTON_COLOR, "white"));
+    return button;
   }
 
   private void setupDifficultyControls() {
@@ -66,7 +141,7 @@ public class SalRuleSelectionView extends AbstractRuleSelectionView
     normalButton = createRadioButton("Normal", "default", difficultyGroup);
     hardButton = createRadioButton("Hard", "hard", difficultyGroup);
 
-    randomButton = createStyledButton("Random Board", RANDOM_BUTTON_COLOR, "white");
+    randomButton = createStyledButton();
     normalButton.setSelected(true);
 
     difficultyGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
@@ -98,8 +173,10 @@ public class SalRuleSelectionView extends AbstractRuleSelectionView
     });
   }
 
-  @Override
-  protected VBox createGameSettingsSection() {
+  private VBox createGameSettingsSection() {
+    setupDifficultyControls();
+    setupDiceControls();
+
     VBox gameSettingsSection = new VBox(20);
     Label difficultyLabel = new Label("Game Difficulty");
     difficultyLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
@@ -131,6 +208,7 @@ public class SalRuleSelectionView extends AbstractRuleSelectionView
     Label snakesLabel = new Label("Number of Snakes:");
     boardGrid.add(snakesLabel, 0, 1);
     boardGrid.add(snakesValueLabel, 1, 1);
+
     Label diceLabel = new Label("Game Settings");
     diceLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
 
@@ -142,6 +220,7 @@ public class SalRuleSelectionView extends AbstractRuleSelectionView
     Label diceCountLabel = new Label("Number of Dice:");
     diceGrid.add(diceCountLabel, 0, 0);
     diceGrid.add(diceField, 1, 0);
+
     gameSettingsSection.getChildren().addAll(
         difficultySection,
         new Separator(),
@@ -214,10 +293,5 @@ public class SalRuleSelectionView extends AbstractRuleSelectionView
   public void onDiceCountChanged(int count) {
     if (!uiInitialized) return;
     diceField.setText(String.valueOf(count));
-  }
-
-  public void show() {
-    super.show();
-    controller.displayRuleSelection(this);
   }
 }
