@@ -1,9 +1,6 @@
 package edu.ntnu.idi.idatt.view.common;
 
 import edu.ntnu.idi.idatt.controller.common.IntroScreenController;
-import edu.ntnu.idi.idatt.navigation.NavigationHandler;
-import edu.ntnu.idi.idatt.navigation.NavigationManager;
-import edu.ntnu.idi.idatt.view.snakesandladders.SalCharacterSelectionView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -16,7 +13,7 @@ import javafx.scene.text.Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class IntroScreenView implements NavigationHandler {
+public class IntroScreenView {
   private static final Logger logger = LoggerFactory.getLogger(IntroScreenView.class);
 
   private final BorderPane root;
@@ -25,7 +22,6 @@ public class IntroScreenView implements NavigationHandler {
   public IntroScreenView() {
     this.root = new BorderPane();
     this.controller = new IntroScreenController();
-    controller.setNavigationHandler(this);
 
     initializeUI();
   }
@@ -73,32 +69,13 @@ public class IntroScreenView implements NavigationHandler {
 
     return imageView;
   }
+
   public BorderPane getRoot() {
     return root;
   }
 
   public void show() {
-    NavigationManager.getInstance().setRoot(root);
-  }
-
-  @Override
-  public void navigateTo(String destination) {
-    switch (destination) {
-      case "CHARACTER_SELECTION":
-        SalCharacterSelectionView characterSelectionView =
-            new SalCharacterSelectionView();
-        characterSelectionView.show();
-        logger.info("Navigated to Character Selection Screen");
-        break;
-
-      default:
-        logger.warn("Unknown destination: {}", destination);
-        break;
-    }
-  }
-
-  @Override
-  public void navigateBack() {
-    logger.warn("Cannot navigate back from Intro Screen");
+    // The NavigationManager will be used by the controller to set the root
+    controller.displayIntroScreen(this);
   }
 }
