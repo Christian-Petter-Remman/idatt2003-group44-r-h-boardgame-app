@@ -10,17 +10,17 @@ import java.util.Stack;
 
 public class NavigationManager {
   private static final Logger logger = LoggerFactory.getLogger(NavigationManager.class);
-  private static NavigationManager instance;
+  private static NavigationManager navigator;
   private Stage primaryStage;
   private final Stack<Parent> navigationStack = new Stack<>();
 
   private NavigationManager() {}
 
   public static NavigationManager getInstance() {
-    if (instance == null) {
-      instance = new NavigationManager();
+    if (navigator == null) {
+      navigator = new NavigationManager();
     }
-    return instance;
+    return navigator;
   }
 
   public void initialize(Stage primaryStage) {

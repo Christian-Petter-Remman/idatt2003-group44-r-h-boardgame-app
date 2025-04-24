@@ -1,7 +1,5 @@
 package edu.ntnu.idi.idatt.view.common;
 
-import edu.ntnu.idi.idatt.navigation.NavigationHandler;
-import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -16,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
-public abstract class AbstractRuleSelectionView implements NavigationHandler {
+public abstract class AbstractRuleSelectionView {
   private static final Logger logger = LoggerFactory.getLogger(AbstractRuleSelectionView.class);
 
   protected final BorderPane root;
@@ -47,12 +45,8 @@ public abstract class AbstractRuleSelectionView implements NavigationHandler {
     setupEventHandlers();
 
     uiInitialized = true;
-
-    initializeDefaultSettings();
-
-    NavigationManager.getInstance().setRoot(root);
+    applyInitialUIState();
   }
-
 
   protected void initializeLayout() {
     layout = new GridPane();
@@ -167,10 +161,23 @@ public abstract class AbstractRuleSelectionView implements NavigationHandler {
     return buttonBox;
   }
 
-  @Override
-  public void navigateBack() {
-    NavigationManager.getInstance().navigateBack();
-    logger.info("Navigated back");
+  protected RadioButton createRadioButton(String text, String userData, ToggleGroup group) {
+    RadioButton button = new RadioButton(text);
+    button.setToggleGroup(group);
+    button.setUserData(userData);
+    return button;
+  }
+
+  protected Button createStyledButton(String text, String bgColor, String textColor) {
+    Button btn = new Button(text);
+    btn.setStyle("-fx-background-color: " + bgColor + "; -fx-text-fill: " + textColor + ";");
+    return btn;
+  }
+
+  protected Label createSectionHeader(String text) {
+    Label label = new Label(text);
+    label.setFont(Font.font("System", FontWeight.BOLD, 16));
+    return label;
   }
 
   public BorderPane getRoot() {
@@ -189,5 +196,5 @@ public abstract class AbstractRuleSelectionView implements NavigationHandler {
 
   protected abstract void setupEventHandlers();
 
-  protected abstract void initializeDefaultSettings();
+  protected abstract void applyInitialUIState();
 }
