@@ -1,14 +1,11 @@
 package edu.ntnu.idi.idatt.model.boardgames.snakesladders;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Ladder;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Snake;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Tile;
+import edu.ntnu.idi.idatt.model.util.ParseHandling;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +15,7 @@ public class SNLBoard {
   private final int size;
   private final List<Ladder> ladders = new ArrayList<>();
   private final List<Snake> snakes = new ArrayList<>();
+  ParseHandling parseHandling = new ParseHandling();
 
   public SNLBoard() {
     this(100);
@@ -28,8 +26,20 @@ public class SNLBoard {
     initializeEmptyBoard();
   }
 
+  public int getSize() {
+    return size;
+  }
+
   public List<Tile> getTiles() {
     return new ArrayList<>(tiles);
+  }
+
+  public List<Ladder> getLadders() {
+    return new ArrayList<>(ladders);
+  }
+
+  public List<Snake> getSnakes() {
+    return new ArrayList<>(snakes);
   }
 
   public void initializeEmptyBoard() {
@@ -86,27 +96,8 @@ public class SNLBoard {
     return position;
   }
 
-  public boolean saveToJson(String filePath) {
-    try (Writer writer = new FileWriter(filePath)) {
-      Gson gson = new GsonBuilder().setPrettyPrinting().create();
-      gson.toJson(this, writer);
-      logger.info("Successfully saved board to JSON: {}", filePath);
-      return true;
-    } catch (IOException e) {
-      logger.error("Error saving board to JSON: {}", e.getMessage());
-      return false;
-    }
+  public boolean saveSNLToJson(String filePath) {
+    return parseHandling.saveToJson(filePath);
   }
 
-  public int getSize() {
-    return size;
-  }
-
-  public List<Ladder> getLadders() {
-    return new ArrayList<>(ladders);
-  }
-
-  public List<Snake> getSnakes() {
-    return new ArrayList<>(snakes);
-  }
 }
