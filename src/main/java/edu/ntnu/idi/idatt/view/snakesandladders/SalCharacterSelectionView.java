@@ -99,7 +99,7 @@ public class SalCharacterSelectionView extends AbstractCharacterSelectionView im
 
     Image backgroundImage = new Image("images/SALCharacterScreen.png");
     ImageView backgroundView = new ImageView(backgroundImage);
-    backgroundView.setFitWidth(300);
+    backgroundView.setFitWidth(400);
     backgroundView.setFitHeight(270);
     backgroundView.setOpacity(0.3);
 

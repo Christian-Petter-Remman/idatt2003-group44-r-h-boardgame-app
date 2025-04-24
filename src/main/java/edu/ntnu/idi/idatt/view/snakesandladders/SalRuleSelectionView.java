@@ -59,6 +59,11 @@ public class SalRuleSelectionView extends AbstractRuleSelectionView
     setupDiceControls();
   }
 
+  public void show() {
+    super.show();
+    controller.displayRuleSelection(this);
+  }
+
   private void setupDifficultyControls() {
     ToggleGroup difficultyGroup = new ToggleGroup();
 
@@ -216,8 +221,4 @@ public class SalRuleSelectionView extends AbstractRuleSelectionView
     diceField.setText(String.valueOf(count));
   }
 
-  public void show() {
-    super.show();
-    controller.displayRuleSelection(this);
-  }
 }

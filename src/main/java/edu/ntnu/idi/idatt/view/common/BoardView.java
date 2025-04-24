@@ -113,19 +113,15 @@ public class BoardView extends StackPane implements BoardObserver {
       ImageView icon = new ImageView(image);
       cell.getChildren().add(icon);
     }
-
     return cell;
   }
 
   private void renderLaddersAndSnakes() {
     ladderSnakeOverlay.getChildren().clear();
 
-    // Draw ladders
     for (Ladder ladder : controller.getLadders()) {
       drawLadder(ladder.start(), ladder.end());
     }
-
-    // Draw snakes
     for (Snake snake : controller.getSnakes()) {
       drawSnake(snake.start(), snake.end());
     }

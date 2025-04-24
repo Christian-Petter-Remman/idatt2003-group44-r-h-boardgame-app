@@ -16,7 +16,7 @@ public class IntroScreenController implements NavigationHandler {
 
   public void startSnakesAndLadders() {
     try {
-      navigateTo("CHARACTER_SELECTION");
+      navigateTo("CHARACTER_SELECTION_SAL");
       logger.info("Navigating to Snakes and Ladders character selection");
     } catch (Exception e) {
       logger.error("Error starting Snakes and Ladders: {}", e.getMessage());
@@ -34,7 +34,7 @@ public class IntroScreenController implements NavigationHandler {
   @Override
   public void navigateTo(String destination) {
     switch (destination) {
-      case "CHARACTER_SELECTION":
+      case "CHARACTER_SELECTION_SAL":
         SalCharacterSelectionView characterSelectionView = new SalCharacterSelectionView();
         characterSelectionView.show();
         logger.info("Navigated to Character Selection Screen");
