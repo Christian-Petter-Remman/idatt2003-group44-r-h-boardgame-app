@@ -1,11 +1,8 @@
 package edu.ntnu.idi.idatt.view.snakesandladders;
 
 import edu.ntnu.idi.idatt.controller.snakesandladders.SalCharacterSelectionController;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersPlayer;
-import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.CharacterSelectionObserver;
-import edu.ntnu.idi.idatt.navigation.NavigationManager;
-import edu.ntnu.idi.idatt.view.common.AbstractCharacterSelectionView;
+import edu.ntnu.idi.idatt.view.AbstractView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -16,27 +13,120 @@ import javafx.scene.layout.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 
-public class SalCharacterSelectionView extends AbstractCharacterSelectionView implements CharacterSelectionObserver {
+public class SalCharacterSelectionView extends AbstractView implements CharacterSelectionObserver {
   private static final Logger logger = LoggerFactory.getLogger(SalCharacterSelectionView.class);
 
   private final SalCharacterSelectionController controller;
+  private VBox player1Box;
+  private VBox player2Box;
+  private VBox player3Box;
+  private VBox player4Box;
+  private boolean isPlayer3Active = false;
+  private boolean isPlayer4Active = false;
+  private Button startButton;
+  private Button backButton;
 
   public SalCharacterSelectionView() {
-    super();
     this.controller = new SalCharacterSelectionController();
     controller.registerObserver(this);
   }
 
   @Override
-  protected void displayView() {
-    NavigationManager.getInstance().setRoot(root);
+  protected void createUI() {
+    VBox mainContainer = new VBox(20);
+    mainContainer.setAlignment(Pos.CENTER);
+    mainContainer.setPadding(new Insets(30));
+
+    // Header
+    Label titleLabel = getTitleLabel();
+    Label headerLabel = getHeaderLabel();
+
+    // Player selection area
+    HBox topRow = new HBox(20);
+    topRow.setAlignment(Pos.CENTER);
+
+    createActivePlayers(topRow);
+
+    HBox bottomRow = new HBox(20);
+    bottomRow.setAlignment(Pos.CENTER);
+    createInactivePlayers(bottomRow);
+
+    // Navigation buttons
+    HBox navigationBox = getNavigationBox();
+
+    // Main container
+    setMainContainer(mainContainer, titleLabel, headerLabel, topRow, bottomRow, navigationBox);
+  }
+
+  private void setMainContainer(VBox mainContainer, Label titleLabel, Label headerLabel, HBox topRow,
+      HBox bottomRow, HBox navigationBox) {
+    mainContainer.getChildren().addAll(
+        titleLabel,
+        headerLabel,
+        new Separator(),
+        topRow,
+        bottomRow,
+        new Separator(),
+        navigationBox
+    );
+
+    root = mainContainer;
+  }
+
+  private HBox getNavigationBox() {
+    HBox navigationBox = new HBox(20);
+    navigationBox.setAlignment(Pos.CENTER);
+
+    backButton = new Button("Back");
+    backButton.setPrefWidth(100);
+
+    startButton = new Button("Start Game");
+    startButton.setPrefWidth(100);
+    startButton.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white;");
+
+    navigationBox.getChildren().addAll(backButton, startButton);
+    return navigationBox;
+  }
+
+  private void createInactivePlayers(HBox bottomRow) {
+    player3Box = createInactivePlayerBox(2, "Player 3");
+    player4Box = createInactivePlayerBox(3, "Player 4");
+    bottomRow.getChildren().addAll(player3Box, player4Box);
+  }
+
+  private void createActivePlayers(HBox topRow) {
+    player1Box = createActivePlayerBox(0, "Player 1");
+    player2Box = createActivePlayerBox(1, "Player 2");
+    topRow.getChildren().addAll(player1Box, player2Box);
+  }
+
+  private Label getHeaderLabel() {
+    Label headerLabel = new Label(getHeaderText());
+    headerLabel.setStyle("-fx-font-size: 18px;");
+    return headerLabel;
+  }
+
+  private Label getTitleLabel() {
+    Label titleLabel = new Label(getGameTitle());
+    titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+    return titleLabel;
   }
 
   @Override
+  protected void setupEventHandlers() {
+    startButton.setOnAction(e -> handleStartAction());
+    backButton.setOnAction(e -> handleBackAction());
+  }
+
+  @Override
+  protected void applyInitialUIState() {
+    // Initialize any default state
+    updateCharacterAvailability();
+  }
+
+
   protected VBox createPlayerBox(int playerIndex, String defaultName) {
     TextField nameField = new TextField(defaultName);
     nameField.setMaxWidth(150);
@@ -82,7 +172,6 @@ public class SalCharacterSelectionView extends AbstractCharacterSelectionView im
           button.setSelected(false);
         }
       } else {
-        // Character was deselected - add this method to controller
         controller.deselectCharacter(playerIndex);
       }
     });
@@ -90,7 +179,6 @@ public class SalCharacterSelectionView extends AbstractCharacterSelectionView im
     return button;
   }
 
-  @Override
   protected VBox createInactivePlayerBox(int playerIndex, String playerLabel) {
     VBox box = new VBox();
     box.setPrefSize(300, 270);
@@ -141,7 +229,6 @@ public class SalCharacterSelectionView extends AbstractCharacterSelectionView im
     return container;
   }
 
-  @Override
   protected void updateCharacterAvailability() {
     Set<String> selectedChars = controller.getSelectedCharacters();
     updateVBoxAvailability(player1Box, selectedChars);
@@ -173,22 +260,54 @@ public class SalCharacterSelectionView extends AbstractCharacterSelectionView im
     }
   }
 
-  @Override
+  private GridPane findGridPane(VBox box) {
+    for (Node child : box.getChildren()) {
+      if (child instanceof GridPane) {
+        return (GridPane) child;
+      } else if (child instanceof VBox) {
+        for (Node innerChild : ((VBox) child).getChildren()) {
+          if (innerChild instanceof GridPane) {
+            return (GridPane) innerChild;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  private String extractCharacterName(ToggleButton button) {
+    if (button.getGraphic() instanceof ImageView imageView) {
+      String url = imageView.getImage().getUrl();
+      String filename = url.substring(url.lastIndexOf("/") + 1);
+      return filename.substring(0, filename.lastIndexOf("."));
+    }
+    return "";
+  }
+
+  private void highlightSelectedButton(ToggleGroup group) {
+    for (Toggle toggle : group.getToggles()) {
+      if (toggle instanceof ToggleButton button) {
+        if (button.isSelected()) {
+          button.setStyle("-fx-background-color: #bde; -fx-padding: 5; -fx-border-color: #58a; -fx-border-radius: 10;");
+        } else {
+          button.setStyle("-fx-background-color: transparent; -fx-padding: 5; -fx-border-color: transparent; -fx-border-radius: 10;");
+        }
+      }
+    }
+  }
+
   protected void handleStartAction() {
     controller.startGame();
   }
 
-  @Override
   protected void handleBackAction() {
     controller.navigateBack();
   }
 
-  @Override
   protected String getHeaderText() {
     return "Choose your Characters";
   }
 
-  @Override
   protected String getGameTitle() {
     return "Snakes and Ladders";
   }
@@ -215,6 +334,7 @@ public class SalCharacterSelectionView extends AbstractCharacterSelectionView im
 
   @Override
   public void onPlayerNameChanged(int playerIndex, String newName) {
+    // Implementation needed if required
   }
 
   @Override
