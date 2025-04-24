@@ -1,11 +1,8 @@
 package edu.ntnu.idi.idatt.view.common;
 
 import edu.ntnu.idi.idatt.controller.common.GameScreenController;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
-import edu.ntnu.idi.idatt.navigation.NavigationHandler;
-import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -17,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class GameScreenView implements GameScreenObserver, NavigationHandler {
+public class GameScreenView implements GameScreenObserver {
   private static final Logger logger = LoggerFactory.getLogger(GameScreenView.class);
 
   private final GameScreenController controller;
@@ -35,26 +32,21 @@ public class GameScreenView implements GameScreenObserver, NavigationHandler {
   private Label player3TurnLabel;
   private Label player4TurnLabel;
 
-  public GameScreenView(SnakesAndLadders game, String boardFile, String csvFileName) {
-    this.controller = new GameScreenController(game, boardFile, csvFileName);
+  public GameScreenView(GameScreenController controller) {
+    this.controller = controller;
     this.root = new BorderPane();
-
     controller.registerObserver(this);
-    controller.setNavigationHandler(this);
-
     initialize();
   }
 
   private void initialize() {
-    SnakesAndLadders game = controller.getGame();
-
     player1TurnLabel = new Label();
     player2TurnLabel = new Label();
     player3TurnLabel = new Label();
     player4TurnLabel = new Label();
 
-    List<Player> players = game.getPlayers();
-    boardView = new BoardView(game.getBoard(), players);
+    List<Player> players = controller.getPlayers();
+    boardView = new BoardView(controller.getBoard(), players);
 
     currentPlayerLabel = new Label("Current turn: ");
     currentPlayerLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
@@ -63,7 +55,7 @@ public class GameScreenView implements GameScreenObserver, NavigationHandler {
     diceResultLabel = new Label("Roll result: -");
     positionLabel = new Label("Position: -");
 
-    String characterName = game.getCurrentPlayer().getCharacter();
+    String characterName = controller.getCurrentPlayer().getCharacter();
     if (characterName == null || characterName.isEmpty()) {
       characterName = "Unknown-Player";
     }
@@ -87,7 +79,7 @@ public class GameScreenView implements GameScreenObserver, NavigationHandler {
     playerLabel.setAlignment(Pos.CENTER);
     playerLabel.setMaxWidth(Double.MAX_VALUE);
 
-    GridPane playerGrid = createPlayerGrid(game.getPlayers(), game.getCharacterNames());
+    GridPane playerGrid = createPlayerGrid(controller.getPlayers(), controller.getCharacterNames());
 
     HBox topRightInfo = new HBox(60, currentPlayerLabel, currentPlayerImageView);
     topRightInfo.setAlignment(Pos.CENTER_LEFT);
@@ -114,7 +106,7 @@ public class GameScreenView implements GameScreenObserver, NavigationHandler {
     root.setCenter(mainContent);
 
     updatePlayerTurnLabels();
-    updateCurrentPlayerView(game.getCurrentPlayer());
+    updateCurrentPlayerView(controller.getCurrentPlayer());
   }
 
   private GridPane createPlayerGrid(List<Player> players, List<String> characterNames) {
@@ -166,7 +158,7 @@ public class GameScreenView implements GameScreenObserver, NavigationHandler {
   }
 
   private void updatePlayerTurnLabels() {
-    List<Player> players = controller.getGame().getPlayers();
+    List<Player> players = controller.getPlayers();
 
     if (players.size() >= 1) {
       player1TurnLabel.setText(String.valueOf(players.get(0).getPosition()));
@@ -198,7 +190,7 @@ public class GameScreenView implements GameScreenObserver, NavigationHandler {
   }
 
   public void show() {
-    NavigationManager.getInstance().setRoot(root);
+    controller.displayGameScreen(this);
   }
 
   public BorderPane getRoot() {
@@ -210,7 +202,7 @@ public class GameScreenView implements GameScreenObserver, NavigationHandler {
     boardView.render();
     updatePlayerTurnLabels();
 
-    if (player == controller.getGame().getCurrentPlayer()) {
+    if (player.equals(controller.getCurrentPlayer())) {
       positionLabel.setText("Position: " + newPosition);
     }
   }
@@ -244,26 +236,5 @@ public class GameScreenView implements GameScreenObserver, NavigationHandler {
     alert.setHeaderText("Game saved successfully");
     alert.setContentText("Game saved to: " + filePath);
     alert.showAndWait();
-  }
-
-  @Override
-  public void navigateTo(String destination) {
-    switch (destination) {
-      case "INTRO_SCREEN":
-        IntroScreenView introView = new IntroScreenView();
-        NavigationManager.getInstance().setRoot(introView.getRoot());
-        logger.info("Navigated to Intro Screen");
-        break;
-
-      default:
-        logger.warn("Unknown destination: {}", destination);
-        break;
-    }
-  }
-
-  @Override
-  public void navigateBack() {
-    NavigationManager.getInstance().navigateBack();
-    logger.info("Navigated back");
   }
 }

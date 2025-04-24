@@ -7,7 +7,10 @@ import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersPlayer;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.CharacterSelectionObserver;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
+import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.util.AlertUtil;
+import edu.ntnu.idi.idatt.view.snakesandladders.SalCharacterSelectionView;
+import edu.ntnu.idi.idatt.view.snakesandladders.SalRuleSelectionView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,11 +18,10 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 
-public class SalCharacterSelectionController {
+public class SalCharacterSelectionController implements NavigationHandler {
   private static final Logger logger = LoggerFactory.getLogger(SalCharacterSelectionController.class);
 
   private final List<CharacterSelectionObserver> observers = new ArrayList<>();
-  private NavigationHandler navigationHandler;
 
   private final List<String> availableCharacters = Arrays.asList(
       "bowser", "peach", "mario", "toad", "charmander", "fish", "luigi", "yoshi", "rock", "snoopdogg"
@@ -32,8 +34,8 @@ public class SalCharacterSelectionController {
 
   private String baseName;
 
-  public void setNavigationHandler(NavigationHandler navigationHandler) {
-    this.navigationHandler = navigationHandler;
+  public void displayCharacterSelection(SalCharacterSelectionView view) {
+    NavigationManager.getInstance().setRoot(view.getRoot());
   }
 
   public void registerObserver(CharacterSelectionObserver observer) {
@@ -113,23 +115,10 @@ public class SalCharacterSelectionController {
       String csvPath = "data/user-data/player-files/" + baseName + ".csv";
 
       savePlayersToFile(players, csvPath);
-
-      if (navigationHandler != null) {
-        navigationHandler.navigateTo("RULE_SELECTION");
-      } else {
-        logger.error("Navigation handler is not set");
-      }
+      navigateTo("RULE_SELECTION");
     } catch (Exception e) {
       logger.error("Error starting game: {}", e.getMessage());
       AlertUtil.showAlert("Error", "Failed to start the game: " + e.getMessage());
-    }
-  }
-
-  public void navigateBack() {
-    if (navigationHandler != null) {
-      navigationHandler.navigateBack();
-    } else {
-      logger.error("Navigation handler is not set");
     }
   }
 
@@ -201,4 +190,40 @@ public class SalCharacterSelectionController {
       observer.onPlayerActiveStatusChanged(playerIndex, isActive);
     }
   }
+
+  @Override
+  public void navigateTo(String destination) {
+    switch (destination) {
+      case "RULE_SELECTION" -> {
+        SalRuleSelectionController ruleController = new SalRuleSelectionController();
+        SalRuleSelectionView ruleView = new SalRuleSelectionView(ruleController);
+        ruleController.setPlayers(getPlayers());
+        ruleController.setBaseName(getBaseName());
+        ruleView.show();
+        logger.info("Navigated to Rule Selection Screen");
+      }
+      default -> logger.warn("Unknown destination: {}", destination);
+    }
+  }
+
+  @Override
+  public void navigateBack() {
+    NavigationManager.getInstance().navigateBack();
+    logger.info("Navigated back");
+  }
+
+  public void deselectCharacter(int playerIndex) {
+    if (playerIndex < 0 || playerIndex >= playerNames.length) {
+      logger.warn("Invalid player index: {}", playerIndex);
+      return;
+    }
+
+    if (playerCharacters[playerIndex] != null) {
+      selectedCharacters.remove(playerCharacters[playerIndex]);
+      playerCharacters[playerIndex] = null;
+      notifyAvailableCharactersChanged();
+      logger.info("Player {} deselected character", playerIndex + 1);
+    }
+  }
+
 }

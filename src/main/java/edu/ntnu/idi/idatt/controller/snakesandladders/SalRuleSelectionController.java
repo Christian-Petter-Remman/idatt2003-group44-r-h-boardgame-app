@@ -1,5 +1,6 @@
 package edu.ntnu.idi.idatt.controller.snakesandladders;
 
+import edu.ntnu.idi.idatt.controller.common.GameScreenController;
 import edu.ntnu.idi.idatt.exceptions.InvalidGameConfigurationException;
 import edu.ntnu.idi.idatt.filehandling.BoardJsonHandler;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
@@ -9,7 +10,10 @@ import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.SalRuleSelectionViewObserver;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
+import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.util.AlertUtil;
+import edu.ntnu.idi.idatt.view.common.GameScreenView;
+import edu.ntnu.idi.idatt.view.snakesandladders.SalRuleSelectionView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,13 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class SalRuleSelectionController {
+public class SalRuleSelectionController implements NavigationHandler {
   private static final Logger logger = LoggerFactory.getLogger(SalRuleSelectionController.class);
 
   private final List<SalRuleSelectionViewObserver> observers = new ArrayList<>();
   private final SnakesAndLaddersFactory factory;
   private final BoardJsonHandler boardJsonHandler;
-  private NavigationHandler navigationHandler;
 
   private String selectedDifficulty = "default";
   private int diceCount = 1;
@@ -33,13 +36,13 @@ public class SalRuleSelectionController {
   private String baseName;
   private List<Player> players;
 
-  public SalRuleSelectionController(SnakesAndLaddersFactory factory) {
-    this.factory = factory;
+  public SalRuleSelectionController() {
+    this.factory = new SnakesAndLaddersFactory();
     this.boardJsonHandler = new BoardJsonHandler();
   }
 
-  public void setNavigationHandler(NavigationHandler navigationHandler) {
-    this.navigationHandler = navigationHandler;
+  public void displayRuleSelection(SalRuleSelectionView view) {
+    NavigationManager.getInstance().setRoot(view.getRoot());
   }
 
   public void registerViewObserver(SalRuleSelectionViewObserver observer) {
@@ -171,7 +174,7 @@ public class SalRuleSelectionController {
   public void startGame() {
     try {
       validateGameSettings();
-      navigationHandler.navigateTo("GAME_SCREEN");
+      navigateTo("GAME_SCREEN");
     } catch (NumberFormatException e) {
       logger.error("Error with starting game: {}", e.getMessage());
       AlertUtil.showAlert("Invalid Input", "Please enter a valid number for dice.");
@@ -220,5 +223,31 @@ public class SalRuleSelectionController {
     for (SalRuleSelectionViewObserver observer : observers) {
       observer.onDiceCountChanged(count);
     }
+  }
+
+  @Override
+  public void navigateTo(String destination) {
+    switch (destination) {
+      case "GAME_SCREEN" -> {
+        SnakesAndLadders game = createGame();
+        String boardFile = getBoardFile();
+        String csvFileName = getCsvFileName();
+
+        GameScreenController gameScreenController = new GameScreenController(game, boardFile, csvFileName);
+        GameScreenView gameView = new GameScreenView(gameScreenController);
+        gameView.show();
+        logger.info("Navigated to Game Screen");
+      }
+      case "CHARACTER_SELECTION" -> {
+        navigateBack(); // Go back to character selection
+      }
+      default -> logger.warn("Unknown destination: {}", destination);
+    }
+  }
+
+  @Override
+  public void navigateBack() {
+    NavigationManager.getInstance().navigateBack();
+    logger.info("Navigated back");
   }
 }
