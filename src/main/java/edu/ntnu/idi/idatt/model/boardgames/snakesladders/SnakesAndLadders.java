@@ -8,6 +8,8 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,30 +114,26 @@ public class SnakesAndLadders extends BoardGame {
     currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
   }
 
-  public int loadPlayersFromCsv(String filePath) {
-    int playersAdded = 0;
+  public int loadPlayersFromCsv(String path) throws IOException {
+    List<String> lines = Files.readAllLines(Paths.get(path));
+    int count = 0;
 
-    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-      String line;
-      while ((line = reader.readLine()) != null) {
-        if ((line = line.trim()).isEmpty()) {
-          continue;
-        }
-
-        String[] parts = line.split(",");
-        if (parts.length >= 1) {
-          String name = parts[0].trim();
-          String character = parts[1].trim();
-          int position = Integer.parseInt(parts[2].trim());
-          addPlayer(new SnakesAndLaddersPlayer(name,character,position));
-          playersAdded++;
-        }
+    for (String line : lines) {
+      String[] parts = line.split(",");
+      if (parts.length != 3) {
+        continue; // Skip board name or malformed lines
       }
-    } catch (IOException e) {
-      logger.error("Error reading from CSV {}", e.getMessage());
+
+      String name = parts[0];
+      String character = parts[1];
+      int position = Integer.parseInt(parts[2]);
+
+      Player player = new SnakesAndLaddersPlayer(name, character,position);
+      this.addPlayer(player);
+      count++;
     }
 
-    return playersAdded;
+    return count;
   }
 
   public boolean savePlayersToCsv(String filePath) {
