@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.view.common;
+package edu.ntnu.idi.idatt.view.snakesandladders;
 
 import edu.ntnu.idi.idatt.controller.common.BoardController;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
@@ -6,6 +6,7 @@ import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Ladder;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Snake;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.BoardObserver;
+import edu.ntnu.idi.idatt.view.AbstractView;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -22,36 +23,66 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class BoardView extends StackPane implements BoardObserver {
-  private static final Logger logger = LoggerFactory.getLogger(BoardView.class);
+public class SalBoardView extends AbstractView implements BoardObserver {
+  private static final Logger logger = LoggerFactory.getLogger(SalBoardView.class);
 
   private final BoardController controller;
   private final GridPane boardGrid = new GridPane();
   private final Pane ladderSnakeOverlay = new Pane();
   private final int tileSize = 90;
+  private final Board board;
+  private final List<Player> players;
 
-  public BoardView(Board board, List<Player> players) {
+  public SalBoardView(Board board, List<Player> players) {
+    this.board = board;
+    this.players = players;
     this.controller = new BoardController(board, players);
     controller.registerObserver(this);
-
-    initializeLayout();
-    render();
   }
 
-  private void initializeLayout() {
+  @Override
+  protected void createUI() {
+    StackPane mainContainer = new StackPane();
+
+    // Initialize board grid
+    initializeBoardGrid();
+
+    // Initialize overlay for ladders and snakes
+    initializeSalOverlay();
+
+    mainContainer.getChildren().addAll(boardGrid, ladderSnakeOverlay);
+
+    // Create the board
+    renderBoardGrid();
+    renderLaddersAndSnakes();
+
+    // Set z-order
+    boardGrid.toBack();
+    ladderSnakeOverlay.toFront();
+
+    root = mainContainer;
+  }
+
+  private void initializeSalOverlay() {
+    ladderSnakeOverlay.setPickOnBounds(false);
+    ladderSnakeOverlay.setMouseTransparent(true);
+  }
+
+  private void initializeBoardGrid() {
     boardGrid.setHgap(2);
     boardGrid.setVgap(2);
     boardGrid.setAlignment(Pos.CENTER);
     boardGrid.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
     boardGrid.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-
-    ladderSnakeOverlay.setPickOnBounds(false);
-    ladderSnakeOverlay.setMouseTransparent(true);
-
-    getChildren().addAll(boardGrid, ladderSnakeOverlay);
   }
 
-  public void render() {
+  @Override
+  protected void setupEventHandlers() {
+    // No event handlers needed for this view as it's primarily for display
+  }
+
+  @Override
+  protected void applyInitialUIState() {
     controller.render();
   }
 
@@ -88,7 +119,6 @@ public class BoardView extends StackPane implements BoardObserver {
       boardGrid.add(cell, col, row);
     }
   }
-
 
   private StackPane createTile(int tileNum) {
     StackPane cell = new StackPane();
@@ -229,7 +259,6 @@ public class BoardView extends StackPane implements BoardObserver {
     return new double[]{x, y};
   }
 
-
   @Override
   public void onBoardRendered() {
     renderBoardGrid();
@@ -249,5 +278,9 @@ public class BoardView extends StackPane implements BoardObserver {
   public void onSpecialTileActivated(int tileNumber, int destination, boolean isLadder) {
     // This could be used to highlight activated ladders/snakes in the future
     logger.debug("Special tile activated: {} -> {}, isLadder: {}", tileNumber, destination, isLadder);
+  }
+
+  public void render() {
+    controller.render();
   }
 }

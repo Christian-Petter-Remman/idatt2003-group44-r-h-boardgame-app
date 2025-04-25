@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.view.common;
+package edu.ntnu.idi.idatt.controller.common;
 
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
