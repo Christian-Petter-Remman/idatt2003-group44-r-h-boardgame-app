@@ -11,12 +11,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 public class IntroScreenView extends AbstractView {
-  private static final Logger logger = LoggerFactory.getLogger(IntroScreenView.class);
-
   private final IntroScreenController controller;
 
   public IntroScreenView(IntroScreenController controller) {

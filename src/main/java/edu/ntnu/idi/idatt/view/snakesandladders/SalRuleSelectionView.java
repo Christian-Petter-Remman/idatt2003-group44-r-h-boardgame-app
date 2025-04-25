@@ -36,6 +36,7 @@ public class SalRuleSelectionView extends AbstractView
   private static final String BACKGROUND_IMAGE_PATH = "/images/SALGameBack.png";
   private static final String RANDOM_BUTTON_COLOR = "#9b59b6";
 
+
   public SalRuleSelectionView(SalRuleSelectionController controller) {
     this.controller = controller;
     controller.registerViewObserver(this);

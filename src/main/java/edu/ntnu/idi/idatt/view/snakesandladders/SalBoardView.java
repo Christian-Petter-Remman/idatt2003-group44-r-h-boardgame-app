@@ -17,13 +17,10 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class SalBoardView extends AbstractView implements BoardObserver {
-  private static final Logger logger = LoggerFactory.getLogger(SalBoardView.class);
 
   private final SalBoardController controller;
   private final GridPane boardGrid = new GridPane();

@@ -14,13 +14,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import java.util.List;
 
 public class GameScreenView extends AbstractView implements GameScreenObserver {
-  private static final Logger logger = LoggerFactory.getLogger(GameScreenView.class);
 
   private final GameScreenController controller;
 

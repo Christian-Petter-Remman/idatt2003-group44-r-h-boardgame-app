@@ -20,7 +20,6 @@ public class LoadScreenView extends AbstractView {
 
   private final LoadController controller;
 
-  private final Logger logger = LoggerFactory.getLogger(LoadScreenView.class);
   private Button backButton;
 
   public LoadScreenView(LoadController controller) {
@@ -61,7 +60,7 @@ public class LoadScreenView extends AbstractView {
 
   @Override
   protected void setupEventHandlers() {
-    //backButton.setOnAction(e -> controller.navigateBack());
+    backButton.setOnAction(e -> controller.navigateTo("CHARACTER_SELECTION_SCREEN"));
   }
 
   @Override
@@ -110,5 +109,4 @@ public class LoadScreenView extends AbstractView {
     btn.setOnAction(e -> controller.handleLoad(file.getPath()));
     return btn;
   }
-
 }

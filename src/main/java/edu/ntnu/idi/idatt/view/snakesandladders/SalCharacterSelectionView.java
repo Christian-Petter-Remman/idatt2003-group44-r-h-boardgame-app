@@ -10,14 +10,10 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
 public class SalCharacterSelectionView extends AbstractView implements CharacterSelectionObserver {
-  private static final Logger logger = LoggerFactory.getLogger(SalCharacterSelectionView.class);
-
   private final SalCharacterSelectionController controller;
 
   private VBox player1Box;
