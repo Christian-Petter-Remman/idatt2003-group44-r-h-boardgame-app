@@ -176,7 +176,7 @@ public class GameScreenView extends AbstractView implements GameScreenObserver {
   protected void applyInitialUIState() {
     updatePlayerTurnLabels();
     updateCurrentPlayerView(controller.getCurrentPlayer());
-    salBoardView.show();
+    //salBoardView.show(); TODO: FIX THIS HERE --- !!!!!!!!!!!!!!!!!!
   }
 
   private GridPane createPlayerGrid(List<Player> players, List<String> characterNames) {

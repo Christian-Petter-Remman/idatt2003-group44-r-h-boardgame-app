@@ -51,7 +51,7 @@ public class LoadController implements NavigationHandler {
       snakeGame.setDice(dice);
       logger.info("Loaded {} players from {}", players, csvPath);
 
-      new GameScreenView(new GameScreenController(snakeGame, boardPath, csvPath)).show();
+      new GameScreenView(new GameScreenController(snakeGame, boardPath, csvPath));
 
     } catch (FileReadException | JsonParsingException ex) {
       logger.error("Failed to load game: {}", ex.getMessage());

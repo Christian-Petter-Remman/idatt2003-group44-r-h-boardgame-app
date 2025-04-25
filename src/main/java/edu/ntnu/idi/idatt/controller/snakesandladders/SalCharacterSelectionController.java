@@ -37,8 +37,7 @@ public class SalCharacterSelectionController implements NavigationHandler {
 
   private String baseName;
 
-  public void displayCharacterSelection(SalCharacterSelectionView view) {
-    NavigationManager.getInstance().setRoot(view.getRoot());
+  public SalCharacterSelectionController() {
   }
 
   public void registerObserver(CharacterSelectionObserver observer) {

@@ -31,7 +31,6 @@ public abstract class AbstractView {
     }
   }
 
-
   protected abstract void createUI();
   protected abstract void setupEventHandlers();
   protected abstract void applyInitialUIState();

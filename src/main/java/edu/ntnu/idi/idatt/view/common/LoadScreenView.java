@@ -8,8 +8,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
@@ -60,7 +58,7 @@ public class LoadScreenView extends AbstractView {
 
   @Override
   protected void setupEventHandlers() {
-    backButton.setOnAction(e -> controller.navigateTo("CHARACTER_SELECTION_SCREEN"));
+    backButton.setOnAction(e -> controller.navigateBack());
   }
 
   @Override
