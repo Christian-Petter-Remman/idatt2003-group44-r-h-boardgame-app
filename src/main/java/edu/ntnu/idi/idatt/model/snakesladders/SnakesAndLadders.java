@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.ntnu.idi.idatt.model.stargame.StarBoard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +31,9 @@ public class SnakesAndLadders extends BoardGame {
     this();
     this.board = board;
   }
+
+  @Override
+  public void initialize (StarBoard board) {}
 
   @Override
   public void initialize (SNLBoard board) {
@@ -62,16 +66,11 @@ public class SnakesAndLadders extends BoardGame {
     return players.stream().anyMatch(Player::hasWon);
   }
 
-  @Override
   public SNLBoard getBoard() {
     return board;
   }
 
   @Override
-  public List<Player> getPlayers() {
-    return new ArrayList<>(players);
-  }
-
   public void setBoard(SNLBoard board) {
     this.board = board;
     logger.debug("Set board to {}", board);
@@ -120,7 +119,7 @@ public class SnakesAndLadders extends BoardGame {
     for (String line : lines) {
       String[] parts = line.split(",");
       if (parts.length != 3) {
-        continue; // Skip board name or malformed lines
+        continue;
       }
 
       String name = parts[0];
