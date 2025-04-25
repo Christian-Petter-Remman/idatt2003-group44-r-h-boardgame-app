@@ -2,9 +2,9 @@ package edu.ntnu.idi.idatt.model.snakesladders;
 
 import edu.ntnu.idi.idatt.model.common.Player;
 
-public class SnakesAndLaddersPlayer extends Player {
+public class SNLPlayer extends Player {
 
-  public SnakesAndLaddersPlayer(String name, String character, int position) {
+  public SNLPlayer(String name, String character, int position) {
     super(name,character,position);
   }
 

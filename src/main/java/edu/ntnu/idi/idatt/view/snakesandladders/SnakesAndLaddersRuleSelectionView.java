@@ -6,8 +6,8 @@ import edu.ntnu.idi.idatt.controller.snakesandladders.SnakesAndLaddersRuleSelect
 import edu.ntnu.idi.idatt.filehandling.SNLBoardJsonHandler;
 import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.model.model_observers.DifficultyObserver;
-import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLadders;
-import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLaddersFactory;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLGame;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLFactory;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.view.common.AbstractRuleSelectionView;
 import edu.ntnu.idi.idatt.view.common.GameScreenView;
@@ -58,7 +58,7 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
 
   public SnakesAndLaddersRuleSelectionView(Stage primaryStage) {
     super(primaryStage);
-    controller = new SnakesAndLaddersRuleSelectionController(new SnakesAndLaddersFactory());
+    controller = new SnakesAndLaddersRuleSelectionController(new SNLFactory());
     this.boardJsonHandler = new SNLBoardJsonHandler();
     controller.addObserver(this);
   }
@@ -372,7 +372,7 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
       int diceCount = Integer.parseInt(diceField.getText());
 
       String gameToStart = controller.GetBoardFile(selectedDifficulty);
-      SnakesAndLadders snakes = boardJsonHandler.loadGameFromFile(gameToStart, SnakesAndLadders::new);
+      SNLGame snakes = boardJsonHandler.loadGameFromFile(gameToStart, SNLGame::new);
 
       String csvPath = "data/user-data/player-files/" + baseName + ".csv";
 

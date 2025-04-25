@@ -2,7 +2,7 @@ package edu.ntnu.idi.idatt.view.common;
 
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
-import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLadders;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLGame;
 import edu.ntnu.idi.idatt.view.snakesandladders.SnakesAndLaddersCharacterSelectionView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -46,7 +46,7 @@ public class IntroScreenView {
     primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
   }
 
-  public void setGame(SnakesAndLadders game) {
+  public void setGame(SNLGame game) {
     // not needed right now
   }
 

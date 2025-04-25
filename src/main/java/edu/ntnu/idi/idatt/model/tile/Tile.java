@@ -5,8 +5,8 @@ package edu.ntnu.idi.idatt.model.tile;
  */
 public class Tile {
   private final int numberOfTile;
-  private final int destination;
-  private final boolean isSpecialTile;
+  private int destination;
+  private boolean isSpecialTile;
 
   /**
    * Constructor for a normal tile without ladders or snakes.
@@ -40,6 +40,10 @@ public class Tile {
     return isSpecialTile;
   }
 
+  public void setSpecialTile(boolean specialTile) {
+    this.isSpecialTile = specialTile;
+  }
+
   /**
    * Gets the destination tile of a ladder or snake.
    *
@@ -47,6 +51,10 @@ public class Tile {
    */
   public int getDestination() {
     return destination;
+  }
+
+  public void setDestination(int destination) {
+    this.destination = destination;
   }
 
   /**

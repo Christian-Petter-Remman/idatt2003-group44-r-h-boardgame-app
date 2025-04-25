@@ -2,7 +2,7 @@ package edu.ntnu.idi.idatt.filehandling;
 
 import edu.ntnu.idi.idatt.exceptions.CsvFormatException;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
-import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLaddersPlayer;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLPlayer;
 import edu.ntnu.idi.idatt.model.common.Player;
 import org.junit.jupiter.api.*;
 
@@ -32,8 +32,8 @@ class PlayerCsvHandlerTest {
   @Test
   void testSaveAndLoadPlayers() throws IOException, FileReadException, CsvFormatException {
     List<Player> players = new ArrayList<>();
-    players.add(new SnakesAndLaddersPlayer("Anna", "bowser",0));
-    players.add(new SnakesAndLaddersPlayer("Bob", "toad",0));
+    players.add(new SNLPlayer("Anna", "bowser",0));
+    players.add(new SNLPlayer("Bob", "toad",0));
 
     handler.saveToFile(players, TEST_FILE);
     List<Player> loaded = handler.loadFromFile(TEST_FILE);

@@ -58,6 +58,10 @@ public class SNLBoard {
     }
     Ladder ladder = new Ladder(start, end);
     ladders.add(ladder);
+
+    Tile startTile = getTile(start);
+    startTile.setDestination(end);
+    startTile.setSpecialTile(true);
   }
 
   public void addSnake(int start, int end) {
@@ -66,6 +70,10 @@ public class SNLBoard {
     }
     Snake snake = new Snake(start, end);
     snakes.add(snake);
+
+    Tile startTile = getTile(start);
+    startTile.setDestination(end);
+    startTile.setSpecialTile(true);
   }
 
   public Tile getTile(int number) {

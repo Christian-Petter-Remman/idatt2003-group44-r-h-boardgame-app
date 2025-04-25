@@ -6,13 +6,13 @@ import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SnakesAndLaddersTest {
+class SNLGameTest {
 
-  SnakesAndLadders game;
+  SNLGame game;
 
   @BeforeEach
   void setUp() {
-    game = new SnakesAndLadders();
+    game = new SNLGame();
     game.addPlayer("A", "toad",0);
     game.addPlayer("B", "peach",0);
     game.initialize(new SNLBoard());
@@ -40,7 +40,7 @@ class SnakesAndLaddersTest {
 
   @Test
   void testPlayerWinsWithExactRoll() {
-    game = new SnakesAndLadders();
+    game = new SNLGame();
     game.addPlayer("Tester","bowser",0);
     game.initialize(new SNLBoard());
 

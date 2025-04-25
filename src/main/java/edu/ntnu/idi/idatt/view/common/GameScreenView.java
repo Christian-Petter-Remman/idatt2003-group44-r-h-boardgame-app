@@ -1,6 +1,6 @@
 package edu.ntnu.idi.idatt.view.common;
 
-import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLadders;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLGame;
 import edu.ntnu.idi.idatt.model.common.Player;
 import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
@@ -24,7 +24,7 @@ import static edu.ntnu.idi.idatt.view.common.AbstractCharacterSelectionView.logg
 
 public class GameScreenView {
   private final Stage stage;
-  private final SnakesAndLadders game;
+  private final SNLGame game;
   private final String boardFile;
   private final String csvFileName;
 
@@ -42,7 +42,7 @@ public class GameScreenView {
   Label player3TurnLabel = new Label();
   Label player4TurnLabel = new Label();
 
-  public GameScreenView(Stage stage, SnakesAndLadders game, String boardFile, String csvFileName) {
+  public GameScreenView(Stage stage, SNLGame game, String boardFile, String csvFileName) {
     this.stage = stage;
     this.game = game;
     this.boardFile = boardFile;

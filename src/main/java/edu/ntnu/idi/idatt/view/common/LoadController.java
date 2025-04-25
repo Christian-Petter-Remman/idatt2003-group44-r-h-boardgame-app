@@ -3,7 +3,7 @@ package edu.ntnu.idi.idatt.view.common;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
 import edu.ntnu.idi.idatt.filehandling.SNLBoardJsonHandler;
-import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLadders;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLGame;
 import edu.ntnu.idi.idatt.model.common.Dice;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ public class LoadController {
     }
 
     try {
-      SnakesAndLadders snakeGame = handler.loadGameFromFile(boardPath, SnakesAndLadders::new);
+      SNLGame snakeGame = handler.loadGameFromFile(boardPath, SNLGame::new);
       int players = snakeGame.loadPlayersFromCsv(csvPath);
       Dice dice = new Dice(1);
       snakeGame.setDice(dice);

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SnakesAndLaddersPlayerTest {
+public class SNLGamePlayerTest {
 
   @Test
   public void testMoveWithCustomLadder() {
@@ -14,7 +14,7 @@ public class SnakesAndLaddersPlayerTest {
 
     board.setTile(4,new Tile(4,12));
 
-    Player player = new SnakesAndLaddersPlayer("TestPlayer", "bowser",0);
+    Player player = new SNLPlayer("TestPlayer", "bowser",0);
 
     player.move(4, board);
 
@@ -25,7 +25,7 @@ public class SnakesAndLaddersPlayerTest {
   public void testMoveWithoutLadderNegative() {
     SNLBoard board = new SNLBoard();
     board.setTile(4, new Tile(4, 12));
-    Player player = new SnakesAndLaddersPlayer("TestPlayer","bowser",0);
+    Player player = new SNLPlayer("TestPlayer","bowser",0);
     player.move(4, board);
     assertNotEquals(4, player.getPosition(), "Player should land on tile 12 via ladder");
   }
@@ -33,7 +33,7 @@ public class SnakesAndLaddersPlayerTest {
   @Test
   public void testMoveWithoutLadder() {
     SNLBoard board = new SNLBoard();
-    Player player = new SnakesAndLaddersPlayer("TestPlayer", "bowser",0);
+    Player player = new SNLPlayer("TestPlayer", "bowser",0);
 
     player.move(3, board);
 

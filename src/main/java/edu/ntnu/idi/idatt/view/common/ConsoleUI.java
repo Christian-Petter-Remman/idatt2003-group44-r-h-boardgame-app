@@ -1,15 +1,15 @@
 package edu.ntnu.idi.idatt.view.common;
 
-import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLadders;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLGame;
 import edu.ntnu.idi.idatt.model.common.Player;
 
 import java.util.Scanner;
 
 public class ConsoleUI {
   private final Scanner scanner;
-  private final SnakesAndLadders game;
+  private final SNLGame game;
 
-  public ConsoleUI(SnakesAndLadders game) {
+  public ConsoleUI(SNLGame game) {
     this.scanner = new Scanner(System.in);
     this.game = game;
   }

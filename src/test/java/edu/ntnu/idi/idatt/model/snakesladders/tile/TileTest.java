@@ -14,20 +14,4 @@ class TileTest {
     assertEquals(1, tile.getNumberOfTile());
     assertEquals(-1, tile.getDestination(), "Regular tiles should have -1 as destination");
   }
-
-  @Test
-  void testLadderTileBehavior() {
-    LadderTile ladder = new LadderTile(4, 22);
-    assertTrue(ladder.hasSnakeOrLadder());
-    assertEquals(4, ladder.getNumberOfTile());
-    assertEquals(22, ladder.getDestination());
-  }
-
-  @Test
-  void testSnakeTileBehavior() {
-    SnakeTile snake = new SnakeTile(17, 7);
-    assertTrue(snake.hasSnakeOrLadder());
-    assertEquals(17, snake.getNumberOfTile());
-    assertEquals(7, snake.getDestination());
-  }
 }

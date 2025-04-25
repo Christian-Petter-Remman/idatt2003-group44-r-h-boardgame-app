@@ -5,8 +5,8 @@ import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 import edu.ntnu.idi.idatt.model.snakesladders.SNLBoard;
 import edu.ntnu.idi.idatt.model.model_observers.DifficultyObserver;
 import edu.ntnu.idi.idatt.exceptions.*;
-import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLadders;
-import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLaddersFactory;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLGame;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLFactory;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.filehandling.SNLBoardJsonHandler;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
@@ -24,14 +24,14 @@ public class SnakesAndLaddersRuleSelectionController {
   private static final Logger logger = LoggerFactory.getLogger(SnakesAndLaddersRuleSelectionController.class);
 
   private final List<DifficultyObserver> observers = new ArrayList<>();
-  private final SnakesAndLaddersFactory factory;
-  private SnakesAndLadders currentGame;
+  private final SNLFactory factory;
+  private SNLGame currentGame;
   private int currentLadderCount = 8;
   private int currentSnakeCount = 8;
   private int selectedRandomBoard = -1;
   private final SNLBoardJsonHandler boardJsonHandler;
 
-  public SnakesAndLaddersRuleSelectionController(SnakesAndLaddersFactory factory) {
+  public SnakesAndLaddersRuleSelectionController(SNLFactory factory) {
     this.factory = factory;
     this.boardJsonHandler = new SNLBoardJsonHandler();
   }
@@ -137,14 +137,14 @@ public class SnakesAndLaddersRuleSelectionController {
       String fullPath;
 
       if ("random".equalsIgnoreCase(difficulty)) {
-        currentGame = factory.createBoardGameFromConfiguration("random", SnakesAndLadders.class);
+        currentGame = factory.createBoardGameFromConfiguration("random", SNLGame.class);
         filename =  baseName+ ".json";
         fullPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + filename;
 
         boardJsonHandler.saveToFile(currentGame, fullPath);
         logger.info("Random game loaded from predefined board: {}", filename);
       } else {
-        currentGame = factory.createBoardGameFromConfiguration(difficulty, SnakesAndLadders.class);
+        currentGame = factory.createBoardGameFromConfiguration(difficulty, SNLGame.class);
 
         filename = baseName + ".json";
         fullPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + filename;

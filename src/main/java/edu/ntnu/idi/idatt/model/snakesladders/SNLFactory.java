@@ -7,10 +7,10 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SnakesAndLaddersFactory extends BoardGameFactory {
+public class SNLFactory extends BoardGameFactory {
 
   private static final String BOARD_DIRECTORY = "data/custom_boards/snakes_and_ladders/";
-  private static final Logger logger = LoggerFactory.getLogger(SnakesAndLaddersFactory.class);
+  private static final Logger logger = LoggerFactory.getLogger(SNLFactory.class);
   private final SNLBoardJsonHandler boardJsonHandler = new SNLBoardJsonHandler();
 
 
@@ -50,11 +50,11 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
 
   @Override
   public boolean saveBoardGameConfiguration(BoardGame game, String configurationName) {
-    if (!(game instanceof SnakesAndLadders snakesAndLadders)) {
+    if (!(game instanceof SNLGame SNLGame)) {
       return false;
     }
 
-    SNLBoard board = snakesAndLadders.getBoard();
+    SNLBoard board = SNLGame.getBoard();
     return saveBoardToFile(board, configurationName);
   }
 

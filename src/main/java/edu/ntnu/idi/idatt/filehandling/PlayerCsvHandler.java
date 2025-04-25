@@ -2,7 +2,7 @@ package edu.ntnu.idi.idatt.filehandling;
 
 import edu.ntnu.idi.idatt.exceptions.CsvFormatException;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
-import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLaddersPlayer;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLPlayer;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.stargame.StarPlayer;
 
@@ -59,7 +59,7 @@ public class PlayerCsvHandler implements FileHandler<List<Player>> {
         String name = parts[0].trim();
         String character = parts[1].trim();
         int position = Integer.parseInt(parts[2].trim());
-        players.add(new SnakesAndLaddersPlayer(name, character, position));
+        players.add(new SNLPlayer(name, character, position));
       }
     } catch (FileNotFoundException e) {
       throw new FileReadException("Player CSV file not found: " + fileName, e);

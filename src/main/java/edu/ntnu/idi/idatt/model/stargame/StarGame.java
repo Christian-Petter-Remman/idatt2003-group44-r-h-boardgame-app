@@ -4,7 +4,6 @@ import edu.ntnu.idi.idatt.model.common.BoardGame;
 import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.snakesladders.SNLBoard;
-import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLaddersPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

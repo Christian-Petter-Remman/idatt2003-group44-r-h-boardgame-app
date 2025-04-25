@@ -4,8 +4,6 @@ import edu.ntnu.idi.idatt.model.common.BoardGame;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.common.Dice;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -16,18 +14,18 @@ import edu.ntnu.idi.idatt.model.stargame.StarBoard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SnakesAndLadders extends BoardGame {
+public class SNLGame extends BoardGame {
 
   private SNLBoard board;
   private Dice dice;
   private int currentPlayerIndex;
-  private static final Logger logger = LoggerFactory.getLogger(SnakesAndLadders.class);
+  private static final Logger logger = LoggerFactory.getLogger(SNLGame.class);
 
-  public SnakesAndLadders() {
+  public SNLGame() {
     super();
     currentPlayerIndex = 0;
   }
-  public SnakesAndLadders(SNLBoard board) {
+  public SNLGame(SNLBoard board) {
     this();
     this.board = board;
   }
@@ -43,7 +41,7 @@ public class SnakesAndLadders extends BoardGame {
 
   @Override
   public void makeMove(Player player) {
-    if (!(player instanceof SnakesAndLaddersPlayer)) {
+    if (!(player instanceof SNLPlayer)) {
       throw new IllegalArgumentException("Player must be a SnakesAndLaddersPlayer");
     }
     int roll = dice.roll();
@@ -109,7 +107,7 @@ public class SnakesAndLadders extends BoardGame {
 
 
   public void addPlayer(String name, String character,int position) {
-    addPlayer(new SnakesAndLaddersPlayer(name,character,position));
+    addPlayer(new SNLPlayer(name,character,position));
   }
 
   public void advanceTurn() {
@@ -130,7 +128,7 @@ public class SnakesAndLadders extends BoardGame {
       String character = parts[1];
       int position = Integer.parseInt(parts[2]);
 
-      Player player = new SnakesAndLaddersPlayer(name, character,position);
+      Player player = new SNLPlayer(name, character,position);
       this.addPlayer(player);
       count++;
     }

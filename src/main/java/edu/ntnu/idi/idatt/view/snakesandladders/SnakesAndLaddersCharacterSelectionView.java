@@ -2,7 +2,7 @@ package edu.ntnu.idi.idatt.view.snakesandladders;
 
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
-import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLaddersPlayer;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLPlayer;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.view.common.AbstractCharacterSelectionView;
 import javafx.stage.Stage;
@@ -51,7 +51,7 @@ public class SnakesAndLaddersCharacterSelectionView extends AbstractCharacterSel
 
   @Override
   protected Player createPlayer(String name, String character) {
-    return new SnakesAndLaddersPlayer(name, character,0);
+    return new SNLPlayer(name, character,0);
   }
 
   @Override
