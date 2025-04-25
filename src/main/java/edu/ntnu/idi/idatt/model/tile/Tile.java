@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile;
+package edu.ntnu.idi.idatt.model.tile;
 
 /**
  * Represents a single tile on the snakes and ladders game board.

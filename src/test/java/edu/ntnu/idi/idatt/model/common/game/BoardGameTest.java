@@ -1,6 +1,6 @@
 package edu.ntnu.idi.idatt.model.common.game;
 
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SNLBoard;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLBoard;
 import edu.ntnu.idi.idatt.model.common.BoardGame;
 import edu.ntnu.idi.idatt.model.common.Player;
 import org.junit.jupiter.api.Test;

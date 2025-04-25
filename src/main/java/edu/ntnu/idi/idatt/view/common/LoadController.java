@@ -3,7 +3,7 @@ package edu.ntnu.idi.idatt.view.common;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
 import edu.ntnu.idi.idatt.filehandling.BoardJsonHandler;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
+import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.common.Dice;
 import javafx.stage.Stage;
 import org.slf4j.Logger;

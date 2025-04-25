@@ -1,8 +1,8 @@
 package edu.ntnu.idi.idatt.view.common;
 
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SNLBoard;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Ladder;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Snake;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLBoard;
+import edu.ntnu.idi.idatt.model.tile.Ladder;
+import edu.ntnu.idi.idatt.model.tile.Snake;
 import edu.ntnu.idi.idatt.model.common.Player;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;

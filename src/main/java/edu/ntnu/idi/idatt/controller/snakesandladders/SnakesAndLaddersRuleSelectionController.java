@@ -2,11 +2,11 @@ package edu.ntnu.idi.idatt.controller.snakesandladders;
 
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SNLBoard;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLBoard;
 import edu.ntnu.idi.idatt.model.model_observers.DifficultyObserver;
 import edu.ntnu.idi.idatt.exceptions.*;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersFactory;
+import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLadders;
+import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLaddersFactory;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.filehandling.BoardJsonHandler;
 import edu.ntnu.idi.idatt.filehandling.FileManager;

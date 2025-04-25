@@ -1,7 +1,5 @@
 package edu.ntnu.idi.idatt.model.common;
 
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
-
 public abstract class BoardGameFactory {
 
   public abstract BoardGame createBoardGame(String filename);

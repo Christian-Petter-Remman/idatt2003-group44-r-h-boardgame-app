@@ -1,13 +1,8 @@
 package edu.ntnu.idi.idatt.filehandling;
 
-import edu.ntnu.idi.idatt.exceptions.FileReadException;
-import edu.ntnu.idi.idatt.exceptions.FileWriteException;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SNLBoard;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;

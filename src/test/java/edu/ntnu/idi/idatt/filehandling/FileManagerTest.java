@@ -1,12 +1,5 @@
 package edu.ntnu.idi.idatt.filehandling;
 
-import edu.ntnu.idi.idatt.exceptions.FileReadException;
-import edu.ntnu.idi.idatt.exceptions.FileWriteException;
-import edu.ntnu.idi.idatt.exceptions.CsvFormatException;
-import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SNLBoard;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Tile;
 import org.junit.jupiter.api.*;
 
 import java.io.File;

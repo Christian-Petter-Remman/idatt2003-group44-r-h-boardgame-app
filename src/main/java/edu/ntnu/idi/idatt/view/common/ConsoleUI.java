@@ -1,6 +1,6 @@
 package edu.ntnu.idi.idatt.view.common;
 
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
+import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.common.Player;
 
 import java.util.Scanner;

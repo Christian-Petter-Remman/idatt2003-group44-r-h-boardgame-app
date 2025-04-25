@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.model.boardgames.snakesladders;
+package edu.ntnu.idi.idatt.model.snakesladders;
 
 import edu.ntnu.idi.idatt.filehandling.*;
 import edu.ntnu.idi.idatt.model.common.BoardGameFactory;

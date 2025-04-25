@@ -3,7 +3,7 @@ package edu.ntnu.idi.idatt.filehandling;
 import com.google.gson.*;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SNLBoard;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLBoard;
 import edu.ntnu.idi.idatt.model.common.BoardGame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

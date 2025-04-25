@@ -1,6 +1,6 @@
 package edu.ntnu.idi.idatt.model.common;
 
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SNLBoard;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLBoard;
 
 import java.util.ArrayList;
 import java.util.List;

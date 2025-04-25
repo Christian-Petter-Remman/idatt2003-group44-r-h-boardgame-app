@@ -1,7 +1,7 @@
 package edu.ntnu.idi.idatt.model.stargame;
 
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SNLBoard;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.*;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLBoard;
+import edu.ntnu.idi.idatt.model.tile.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

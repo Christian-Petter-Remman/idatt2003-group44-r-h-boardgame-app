@@ -1,7 +1,7 @@
-package edu.ntnu.idi.idatt.model.boardgames.snakesladders;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Ladder;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Snake;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Tile;
+package edu.ntnu.idi.idatt.model.snakesladders;
+import edu.ntnu.idi.idatt.model.tile.Ladder;
+import edu.ntnu.idi.idatt.model.tile.Snake;
+import edu.ntnu.idi.idatt.model.tile.Tile;
 import edu.ntnu.idi.idatt.model.util.ParseHandling;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
