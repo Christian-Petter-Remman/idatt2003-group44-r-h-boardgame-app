@@ -27,10 +27,6 @@ public class NavigationManager {
     this.primaryStage = primaryStage;
   }
 
-  public Stage getPrimaryStage() {
-    return primaryStage;
-  }
-
   public void setRoot(Parent root) {
     if (primaryStage.getScene() == null) {
       Scene scene = new Scene(root);
@@ -39,8 +35,8 @@ public class NavigationManager {
     } else {
       Parent currentRoot = primaryStage.getScene().getRoot();
       navigationStack.push(currentRoot);
-
       primaryStage.getScene().setRoot(root);
+
       logger.info("Changed scene root and saved previous to stack");
     }
   }

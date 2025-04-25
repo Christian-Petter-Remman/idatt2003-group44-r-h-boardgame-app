@@ -1,6 +1,7 @@
 package edu.ntnu.idi.idatt.view.common;
 
 import edu.ntnu.idi.idatt.controller.common.GameScreenController;
+import edu.ntnu.idi.idatt.controller.snakesandladders.SalBoardController;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.view.AbstractView;
@@ -8,6 +9,7 @@ import edu.ntnu.idi.idatt.view.snakesandladders.SalBoardView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -69,7 +71,8 @@ public class GameScreenView extends AbstractView implements GameScreenObserver {
 
   private void createBoardView() {
     List<Player> players = controller.getPlayers();
-    salBoardView = new SalBoardView(controller.getBoard(), players);
+    SalBoardController boardController = new SalBoardController(controller.getGame().getBoard(), controller.getPlayers());
+    salBoardView = new SalBoardView(boardController);
   }
 
   private BorderPane createRightPanel() {
@@ -286,7 +289,7 @@ public class GameScreenView extends AbstractView implements GameScreenObserver {
 
   @Override
   public void onGameOver(Player winner) {
-    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    Alert alert = new Alert(AlertType.INFORMATION);
     alert.setTitle("Game Over");
     alert.setHeaderText("🎉 " + winner.getName() + " has won the game!");
     alert.setContentText("Final position: " + winner.getPosition());

@@ -19,6 +19,7 @@ public class SalCharacterSelectionView extends AbstractView implements Character
   private static final Logger logger = LoggerFactory.getLogger(SalCharacterSelectionView.class);
 
   private final SalCharacterSelectionController controller;
+
   private VBox player1Box;
   private VBox player2Box;
   private VBox player3Box;
@@ -28,8 +29,8 @@ public class SalCharacterSelectionView extends AbstractView implements Character
   private Button startButton;
   private Button backButton;
 
-  public SalCharacterSelectionView() {
-    this.controller = new SalCharacterSelectionController();
+  public SalCharacterSelectionView(SalCharacterSelectionController controller) {
+    this.controller = controller;
     controller.registerObserver(this);
   }
 

@@ -235,11 +235,8 @@ public class SalRuleSelectionController implements NavigationHandler {
 
         GameScreenController gameScreenController = new GameScreenController(game, boardFile, csvFileName);
         GameScreenView gameView = new GameScreenView(gameScreenController);
-        gameView.show();
+        NavigationManager.getInstance().setRoot(gameView.getRoot());
         logger.info("Navigated to Game Screen");
-      }
-      case "CHARACTER_SELECTION" -> {
-        navigateBack(); // Go back to character selection
       }
       default -> logger.warn("Unknown destination: {}", destination);
     }

@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.controller.common;
+package edu.ntnu.idi.idatt.controller.snakesandladders;
 
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Ladder;
@@ -13,15 +13,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BoardController {
-  private static final Logger logger = LoggerFactory.getLogger(BoardController.class);
+public class SalBoardController {
+  private static final Logger logger = LoggerFactory.getLogger(SalBoardController.class);
 
   private final Board board;
   private final List<Player> players;
   private final List<BoardObserver> observers = new ArrayList<>();
   private final Map<Integer, List<Player>> playerPositions = new HashMap<>();
 
-  public BoardController(Board board, List<Player> players) {
+  public SalBoardController(Board board, List<Player> players) {
     this.board = board;
     this.players = new ArrayList<>(players);
     updatePlayerPositions();

@@ -2,22 +2,17 @@ package edu.ntnu.idi.idatt.controller.common;
 
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
-import edu.ntnu.idi.idatt.view.common.IntroScreenView;
-import edu.ntnu.idi.idatt.view.snakesandladders.SalCharacterSelectionView;
+import edu.ntnu.idi.idatt.view.common.LoadScreenView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class IntroScreenController implements NavigationHandler {
   private static final Logger logger = LoggerFactory.getLogger(IntroScreenController.class);
 
-  public void displayIntroScreen(IntroScreenView view) {
-    NavigationManager.getInstance().setRoot(view.getRoot());
-  }
-
   public void startSnakesAndLadders() {
     try {
-      navigateTo("CHARACTER_SELECTION");
-      logger.info("Navigating to Snakes and Ladders character selection");
+      navigateTo("SAL_LOAD_SCREEN");
+      logger.info("Navigating to LOAD_SCREEN for Snakes and Ladders");
     } catch (Exception e) {
       logger.error("Error starting Snakes and Ladders: {}", e.getMessage());
     }
@@ -33,16 +28,13 @@ public class IntroScreenController implements NavigationHandler {
 
   @Override
   public void navigateTo(String destination) {
-    switch (destination) {
-      case "CHARACTER_SELECTION":
-        SalCharacterSelectionView characterSelectionView = new SalCharacterSelectionView();
-        characterSelectionView.show();
-        logger.info("Navigated to Character Selection Screen");
-        break;
-
-      default:
-        logger.warn("Unknown destination: {}", destination);
-        break;
+    if (destination.equals("SAL_LOAD_SCREEN")) {
+      LoadController loadController = new LoadController();
+      LoadScreenView loadScreenView = new LoadScreenView(loadController);
+      NavigationManager.getInstance().setRoot(loadScreenView.getRoot());
+      logger.info("Navigated to Load Screen");
+    } else {
+      logger.warn("Unknown destination: {}", destination);
     }
   }
 

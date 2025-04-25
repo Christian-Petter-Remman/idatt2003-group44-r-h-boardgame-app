@@ -19,12 +19,15 @@ import java.time.LocalDate;
 import java.util.*;
 
 public class SalCharacterSelectionController implements NavigationHandler {
-  private static final Logger logger = LoggerFactory.getLogger(SalCharacterSelectionController.class);
+
+  private static final Logger logger = LoggerFactory.getLogger(
+      SalCharacterSelectionController.class);
 
   private final List<CharacterSelectionObserver> observers = new ArrayList<>();
 
   private final List<String> availableCharacters = Arrays.asList(
-      "bowser", "peach", "mario", "toad", "charmander", "fish", "luigi", "yoshi", "rock", "snoopdogg"
+      "bowser", "peach", "mario", "toad", "charmander", "fish", "luigi", "yoshi", "rock",
+      "snoopdogg"
   );
 
   private final Set<String> selectedCharacters = new HashSet<>();
@@ -133,7 +136,8 @@ public class SalCharacterSelectionController implements NavigationHandler {
   private boolean validateSelections() {
     for (int i = 0; i < playerActive.length; i++) {
       if (playerActive[i] && (playerCharacters[i] == null || playerCharacters[i].isEmpty())) {
-        AlertUtil.showAlert("Invalid Selection", "Player " + (i + 1) + " needs to select a character.");
+        AlertUtil.showAlert("Invalid Selection",
+            "Player " + (i + 1) + " needs to select a character.");
         return false;
       }
     }
@@ -162,7 +166,8 @@ public class SalCharacterSelectionController implements NavigationHandler {
     logger.info("Saved {} players to file: {}", players.size(), fileName);
   }
 
-  public List<Player> loadPlayersFromFile(String fileName) throws IOException, FileReadException, CsvFormatException {
+  public List<Player> loadPlayersFromFile(String fileName)
+      throws IOException, FileReadException, CsvFormatException {
     PlayerCsvHandler playerCsvHandler = new PlayerCsvHandler();
     return playerCsvHandler.loadFromFile(fileName);
   }
@@ -191,27 +196,6 @@ public class SalCharacterSelectionController implements NavigationHandler {
     }
   }
 
-  @Override
-  public void navigateTo(String destination) {
-    switch (destination) {
-      case "RULE_SELECTION" -> {
-        SalRuleSelectionController ruleController = new SalRuleSelectionController();
-        SalRuleSelectionView ruleView = new SalRuleSelectionView(ruleController);
-        ruleController.setPlayers(getPlayers());
-        ruleController.setBaseName(getBaseName());
-        ruleView.show();
-        logger.info("Navigated to Rule Selection Screen");
-      }
-      default -> logger.warn("Unknown destination: {}", destination);
-    }
-  }
-
-  @Override
-  public void navigateBack() {
-    NavigationManager.getInstance().navigateBack();
-    logger.info("Navigated back");
-  }
-
   public void deselectCharacter(int playerIndex) {
     if (playerIndex < 0 || playerIndex >= playerNames.length) {
       logger.warn("Invalid player index: {}", playerIndex);
@@ -226,4 +210,25 @@ public class SalCharacterSelectionController implements NavigationHandler {
     }
   }
 
+  @Override
+  public void navigateTo(String destination) {
+    switch (destination) {
+      case "RULE_SELECTION" -> {
+        SalRuleSelectionController ruleController = new SalRuleSelectionController();
+        ruleController.setPlayers(getPlayers());
+        ruleController.setBaseName(getBaseName());
+        SalRuleSelectionView ruleView = new SalRuleSelectionView(ruleController);
+        NavigationManager.getInstance().setRoot(ruleView.getRoot());
+
+        logger.info("Navigated to Rule Selection Screen");
+      }
+      default -> logger.warn("Unknown destination: {}", destination);
+    }
+  }
+
+  @Override
+  public void navigateBack() {
+    NavigationManager.getInstance().navigateBack();
+    logger.info("Navigated back");
+  }
 }

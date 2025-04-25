@@ -1,7 +1,6 @@
 package edu.ntnu.idi.idatt.view.snakesandladders;
 
-import edu.ntnu.idi.idatt.controller.common.BoardController;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
+import edu.ntnu.idi.idatt.controller.snakesandladders.SalBoardController;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Ladder;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Snake;
 import edu.ntnu.idi.idatt.model.common.Player;
@@ -26,17 +25,13 @@ import java.util.List;
 public class SalBoardView extends AbstractView implements BoardObserver {
   private static final Logger logger = LoggerFactory.getLogger(SalBoardView.class);
 
-  private final BoardController controller;
+  private final SalBoardController controller;
   private final GridPane boardGrid = new GridPane();
   private final Pane ladderSnakeOverlay = new Pane();
   private final int tileSize = 90;
-  private final Board board;
-  private final List<Player> players;
 
-  public SalBoardView(Board board, List<Player> players) {
-    this.board = board;
-    this.players = players;
-    this.controller = new BoardController(board, players);
+  public SalBoardView(SalBoardController controller) {
+    this.controller = controller;
     controller.registerObserver(this);
   }
 

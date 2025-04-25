@@ -1,10 +1,17 @@
 package edu.ntnu.idi.idatt.controller.common;
 
+import edu.ntnu.idi.idatt.controller.snakesandladders.SalCharacterSelectionController;
+import edu.ntnu.idi.idatt.controller.snakesandladders.SalRuleSelectionController;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
 import edu.ntnu.idi.idatt.filehandling.BoardJsonHandler;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.common.Dice;
+import edu.ntnu.idi.idatt.navigation.NavigationHandler;
+import edu.ntnu.idi.idatt.navigation.NavigationManager;
+import edu.ntnu.idi.idatt.view.common.GameScreenView;
+import edu.ntnu.idi.idatt.view.common.IntroScreenView;
+import edu.ntnu.idi.idatt.view.snakesandladders.SalCharacterSelectionView;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,13 +25,10 @@ import java.util.stream.Collectors;
 
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
-public class LoadController {
+public class LoadController implements NavigationHandler {
 
-  private final Stage stage;
   private final Logger logger = LoggerFactory.getLogger(LoadController.class);
-
-  public LoadController(Stage stage) {
-    this.stage = stage;
+  public LoadController() {
   }
 
   /**
@@ -46,7 +50,9 @@ public class LoadController {
       Dice dice = new Dice(1);
       snakeGame.setDice(dice);
       logger.info("Loaded {} players from {}", players, csvPath);
-      //new GameScreenView(stage, snakeGame, boardPath, csvPath).show(); ---- TODO: Uncomment this line when GameScreenView is available
+
+      new GameScreenView(new GameScreenController(snakeGame, boardPath, csvPath)).show();
+
     } catch (FileReadException | JsonParsingException ex) {
       logger.error("Failed to load game: {}", ex.getMessage());
       showAlert("Load Error", "Could not load saved game: " + ex.getMessage());
@@ -79,5 +85,27 @@ public class LoadController {
             .sorted(Comparator.comparingLong(File::lastModified).reversed())
             .limit(n)
             .collect(Collectors.toList());
+  }
+
+  @Override
+  public void navigateTo(String destination) {  // TODO: Figure out how this method implements the navigationHandler since it loads from JSON and does not open a new screen
+    switch (destination) {
+      case "CHARACTER_SELECTION":
+        SalCharacterSelectionController characterSelectionController = new SalCharacterSelectionController();
+        SalCharacterSelectionView characterSelectionView = new SalCharacterSelectionView(characterSelectionController);
+        NavigationManager.getInstance().setRoot(characterSelectionView.getRoot());
+        logger.info("Navigated to Intro Screen");
+        break;
+
+      default:
+        logger.warn("Unknown destination: {}", destination);
+        break;
+    }
+  }
+
+  @Override
+  public void navigateBack() {
+    NavigationManager.getInstance().navigateBack();
+    logger.info("Navigated back to previous screen");
   }
 }

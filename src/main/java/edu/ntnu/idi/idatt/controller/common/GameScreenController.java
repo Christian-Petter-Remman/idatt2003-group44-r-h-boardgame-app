@@ -150,8 +150,6 @@ public class GameScreenController implements NavigationHandler {
   public void navigateTo(String destination) {
     switch (destination) {
       case "INTRO_SCREEN":
-        IntroScreenView introView = new IntroScreenView();
-        NavigationManager.getInstance().setRoot(introView.getRoot());
         logger.info("Navigated to Intro Screen");
         break;
 

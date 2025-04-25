@@ -19,8 +19,8 @@ public class IntroScreenView extends AbstractView {
 
   private final IntroScreenController controller;
 
-  public IntroScreenView() {
-    this.controller = new IntroScreenController();
+  public IntroScreenView(IntroScreenController controller) {
+    this.controller = controller;
   }
 
   @Override

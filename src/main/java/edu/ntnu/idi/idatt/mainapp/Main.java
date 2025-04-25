@@ -2,6 +2,7 @@ package edu.ntnu.idi.idatt.mainapp;
 
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
+import edu.ntnu.idi.idatt.controller.common.IntroScreenController;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.common.IntroScreenView;
@@ -29,7 +30,9 @@ public class Main extends Application {
       primaryStage.setTitle("BoardGame App");
       primaryStage.setFullScreenExitHint("");
 
-      IntroScreenView introView = new IntroScreenView();
+      IntroScreenController introController = new IntroScreenController();
+      IntroScreenView introView = new IntroScreenView(introController);
+
       navigationManager.setRoot(introView.getRoot());
 
       primaryStage.show();
