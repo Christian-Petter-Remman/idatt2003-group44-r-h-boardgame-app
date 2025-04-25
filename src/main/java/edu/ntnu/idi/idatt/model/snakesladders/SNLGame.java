@@ -1,46 +1,47 @@
-package edu.ntnu.idi.idatt.model.boardgames.snakesladders;
+package edu.ntnu.idi.idatt.model.snakesladders;
 
 import edu.ntnu.idi.idatt.model.common.BoardGame;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.common.Dice;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.ntnu.idi.idatt.model.stargame.StarBoard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SnakesAndLadders extends BoardGame {
+public class SNLGame extends BoardGame {
 
-  private Board board;
+  private SNLBoard board;
   private Dice dice;
   private int currentPlayerIndex;
-  private static final Logger logger = LoggerFactory.getLogger(SnakesAndLadders.class);
+  private static final Logger logger = LoggerFactory.getLogger(SNLGame.class);
 
-  public SnakesAndLadders() {
+  public SNLGame() {
     super();
     currentPlayerIndex = 0;
   }
-  public SnakesAndLadders(Board board) {
+  public SNLGame(SNLBoard board) {
     this();
     this.board = board;
   }
 
   @Override
-  public void initialize (Board board) {
+  public void initialize (StarBoard board) {}
+
+  @Override
+  public void initialize (SNLBoard board) {
     this.board = board;
     dice = new Dice(1);
   }
 
   @Override
   public void makeMove(Player player) {
-    if (!(player instanceof SnakesAndLaddersPlayer)) {
+    if (!(player instanceof SNLPlayer)) {
       throw new IllegalArgumentException("Player must be a SnakesAndLaddersPlayer");
     }
     int roll = dice.roll();
@@ -63,19 +64,18 @@ public class SnakesAndLadders extends BoardGame {
     return players.stream().anyMatch(Player::hasWon);
   }
 
-  @Override
-  public Board getBoard() {
+  public SNLBoard getBoard() {
     return board;
   }
 
   @Override
-  public List<Player> getPlayers() {
-    return new ArrayList<>(players);
-  }
-
-  public void setBoard(Board board) {
+  public void setBoard(SNLBoard board) {
     this.board = board;
     logger.debug("Set board to {}", board);
+  }
+
+  @Override
+  public void setBoard(StarBoard board) {
   }
 
   public Player getCurrentPlayer() {
@@ -107,7 +107,7 @@ public class SnakesAndLadders extends BoardGame {
 
 
   public void addPlayer(String name, String character,int position) {
-    addPlayer(new SnakesAndLaddersPlayer(name,character,position));
+    addPlayer(new SNLPlayer(name,character,position));
   }
 
   public void advanceTurn() {
@@ -121,32 +121,18 @@ public class SnakesAndLadders extends BoardGame {
     for (String line : lines) {
       String[] parts = line.split(",");
       if (parts.length != 3) {
-        continue; // Skip board name or malformed lines
+        continue;
       }
 
       String name = parts[0];
       String character = parts[1];
       int position = Integer.parseInt(parts[2]);
 
-      Player player = new SnakesAndLaddersPlayer(name, character,position);
+      Player player = new SNLPlayer(name, character,position);
       this.addPlayer(player);
       count++;
     }
 
     return count;
   }
-
-  public boolean savePlayersToCsv(String filePath) {
-    try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-      for (Player player : players) {
-        writer.write(player.getName() + ",Default");
-        writer.newLine();
-      }
-      return true;
-    } catch (IOException e) {
-      logger.error("Error saving players to CSV: {}", e.getMessage());
-      return false;
-    }
-  }
-
 }

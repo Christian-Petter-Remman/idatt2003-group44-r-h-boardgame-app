@@ -1,12 +1,12 @@
-package edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile;
+package edu.ntnu.idi.idatt.model.tile;
 
 /**
  * Represents a single tile on the snakes and ladders game board.
  */
 public class Tile {
   private final int numberOfTile;
-  private final int destination;
-  private final boolean isSpecialTile;
+  private int destination;
+  private boolean isSpecialTile;
 
   /**
    * Constructor for a normal tile without ladders or snakes.
@@ -36,8 +36,12 @@ public class Tile {
    *
    * @return true if this tile has a destination, false otherwise
    */
-  public boolean hasSnakeOrLadder() {
+  public boolean hasSpecialTile() {
     return isSpecialTile;
+  }
+
+  public void setSpecialTile(boolean specialTile) {
+    this.isSpecialTile = specialTile;
   }
 
   /**
@@ -47,6 +51,10 @@ public class Tile {
    */
   public int getDestination() {
     return destination;
+  }
+
+  public void setDestination(int destination) {
+    this.destination = destination;
   }
 
   /**
@@ -60,7 +68,7 @@ public class Tile {
 
   @Override
   public String toString() {
-    if (hasSnakeOrLadder()) {
+    if (hasSpecialTile()) {
       return "Tile " + numberOfTile + " -> " + destination;
     } else {
       return "Tile " + numberOfTile;

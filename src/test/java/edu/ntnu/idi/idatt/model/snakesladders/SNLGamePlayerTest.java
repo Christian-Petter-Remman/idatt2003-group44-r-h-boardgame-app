@@ -1,20 +1,20 @@
-package edu.ntnu.idi.idatt.model.boardgames.snakesladders;
+package edu.ntnu.idi.idatt.model.snakesladders;
 
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.LadderTile;
 import edu.ntnu.idi.idatt.model.common.Player;
+import edu.ntnu.idi.idatt.model.tile.Tile;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SnakesAndLaddersPlayerTest {
+public class SNLGamePlayerTest {
 
   @Test
   public void testMoveWithCustomLadder() {
-    Board board = new Board();
+    SNLBoard board = new SNLBoard();
 
-    board.setTile(4, new LadderTile(4, 12));
+    board.setTile(4,new Tile(4,12));
 
-    Player player = new SnakesAndLaddersPlayer("TestPlayer", "bowser",0);
+    Player player = new SNLPlayer("TestPlayer", "bowser",0);
 
     player.move(4, board);
 
@@ -23,17 +23,17 @@ public class SnakesAndLaddersPlayerTest {
 
   @Test
   public void testMoveWithoutLadderNegative() {
-    Board board = new Board();
-    board.setTile(4, new LadderTile(4, 12));
-    Player player = new SnakesAndLaddersPlayer("TestPlayer","bowser",0);
+    SNLBoard board = new SNLBoard();
+    board.setTile(4, new Tile(4, 12));
+    Player player = new SNLPlayer("TestPlayer","bowser",0);
     player.move(4, board);
     assertNotEquals(4, player.getPosition(), "Player should land on tile 12 via ladder");
   }
 
   @Test
   public void testMoveWithoutLadder() {
-    Board board = new Board();
-    Player player = new SnakesAndLaddersPlayer("TestPlayer", "bowser",0);
+    SNLBoard board = new SNLBoard();
+    Player player = new SNLPlayer("TestPlayer", "bowser",0);
 
     player.move(3, board);
 

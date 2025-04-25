@@ -1,6 +1,8 @@
 package edu.ntnu.idi.idatt.model.common;
 
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLBoard;
+import edu.ntnu.idi.idatt.model.stargame.StarBoard;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,11 +15,20 @@ public abstract class BoardGame {
     gameOver = false;
   }
 
-  public abstract void initialize(Board board);
   public abstract void makeMove(Player player);
+
   public abstract boolean isValidMove(Player player, int move);
+
   public abstract boolean checkWinCondition();
-  public abstract void setBoard(Board board);
+
+  public abstract void initialize(SNLBoard board);
+
+  public abstract void initialize(StarBoard board);
+
+  public abstract void setBoard(SNLBoard board);
+
+  public abstract void setBoard(StarBoard board);
+
 
   public void addPlayer(Player player) {
     players.add(player);
@@ -27,6 +38,7 @@ public abstract class BoardGame {
     return new ArrayList<>(players);
   }
 
+
   public boolean isGameOver() {
     return gameOver;
   }
@@ -35,5 +47,4 @@ public abstract class BoardGame {
     this.gameOver = gameOver;
   }
 
-  public abstract Board getBoard();
 }
