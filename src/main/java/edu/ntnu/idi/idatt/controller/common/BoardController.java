@@ -1,10 +1,10 @@
 package edu.ntnu.idi.idatt.controller.common;
 
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Ladder;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Snake;
+import edu.ntnu.idi.idatt.model.tile.Ladder;
+import edu.ntnu.idi.idatt.model.tile.Snake;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.BoardObserver;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLBoard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,12 +16,12 @@ import java.util.Map;
 public class BoardController {
   private static final Logger logger = LoggerFactory.getLogger(BoardController.class);
 
-  private final Board board;
+  private final SNLBoard board;
   private final List<Player> players;
   private final List<BoardObserver> observers = new ArrayList<>();
   private final Map<Integer, List<Player>> playerPositions = new HashMap<>();
 
-  public BoardController(Board board, List<Player> players) {
+  public BoardController(SNLBoard board, List<Player> players) {
     this.board = board;
     this.players = new ArrayList<>(players);
     updatePlayerPositions();
@@ -42,7 +42,7 @@ public class BoardController {
     }
   }
 
-  public Board getBoard() {
+  public SNLBoard getBoard() {
     return board;
   }
 

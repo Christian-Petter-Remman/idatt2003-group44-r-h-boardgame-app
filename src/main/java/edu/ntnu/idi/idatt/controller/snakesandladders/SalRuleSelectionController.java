@@ -2,13 +2,13 @@ package edu.ntnu.idi.idatt.controller.snakesandladders;
 
 import edu.ntnu.idi.idatt.controller.common.GameScreenController;
 import edu.ntnu.idi.idatt.exceptions.InvalidGameConfigurationException;
-import edu.ntnu.idi.idatt.filehandling.BoardJsonHandler;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersFactory;
+import edu.ntnu.idi.idatt.filehandling.SNLBoardJsonHandler;
 import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.SalRuleSelectionViewObserver;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLBoard;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLFactory;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLGame;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.util.AlertUtil;
@@ -25,8 +25,8 @@ public class SalRuleSelectionController implements NavigationHandler {
   private static final Logger logger = LoggerFactory.getLogger(SalRuleSelectionController.class);
 
   private final List<SalRuleSelectionViewObserver> observers = new ArrayList<>();
-  private final SnakesAndLaddersFactory factory;
-  private final BoardJsonHandler boardJsonHandler;
+  private final SNLFactory factory;
+  private final SNLBoardJsonHandler boardJsonHandler;
 
   private String selectedDifficulty = "default";
   private int diceCount = 1;
@@ -37,8 +37,8 @@ public class SalRuleSelectionController implements NavigationHandler {
   private List<Player> players;
 
   public SalRuleSelectionController() {
-    this.factory = new SnakesAndLaddersFactory();
-    this.boardJsonHandler = new BoardJsonHandler();
+    this.factory = new SNLFactory();
+    this.boardJsonHandler = new SNLBoardJsonHandler();
   }
 
   public void displayRuleSelection(SalRuleSelectionView view) {
@@ -86,7 +86,7 @@ public class SalRuleSelectionController implements NavigationHandler {
 
     try {
       String boardPath = "data/custom_boards/snakes_and_ladders/random" + selectedRandomBoard + ".json";
-      Board board = boardJsonHandler.loadBoardFromFile(boardPath);
+      SNLBoard board = boardJsonHandler.loadBoardFromFile(boardPath);
 
       ladderCount = board.getLadders().size();
       snakeCount = board.getSnakes().size();
@@ -153,12 +153,12 @@ public class SalRuleSelectionController implements NavigationHandler {
     return "data/user-data/player-files/" + baseName + ".csv";
   }
 
-  public SnakesAndLadders createGame() {
+  public SNLGame createGame() {
     try {
       String boardFile = getBoardFile();
       String csvPath = getCsvFileName();
 
-      SnakesAndLadders game = boardJsonHandler.loadGameFromFile(boardFile, SnakesAndLadders::new);
+      SNLGame game = boardJsonHandler.loadGameFromFile(boardFile, SNLGame::new);
 
       int playersLoaded = game.loadPlayersFromCsv(csvPath);
       logger.info("Loaded {} players from {}", playersLoaded, csvPath);
@@ -229,7 +229,7 @@ public class SalRuleSelectionController implements NavigationHandler {
   public void navigateTo(String destination) {
     switch (destination) {
       case "GAME_SCREEN" -> {
-        SnakesAndLadders game = createGame();
+        SNLGame game = createGame();
         String boardFile = getBoardFile();
         String csvFileName = getCsvFileName();
 

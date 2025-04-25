@@ -3,9 +3,9 @@ package edu.ntnu.idi.idatt.controller.snakesandladders;
 import edu.ntnu.idi.idatt.exceptions.CsvFormatException;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.filehandling.PlayerCsvHandler;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersPlayer;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.CharacterSelectionObserver;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLPlayer;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.util.AlertUtil;
@@ -145,7 +145,7 @@ public class SalCharacterSelectionController implements NavigationHandler {
 
     for (int i = 0; i < playerActive.length; i++) {
       if (playerActive[i] && playerCharacters[i] != null) {
-        players.add(new SnakesAndLaddersPlayer(playerNames[i], playerCharacters[i], 0));
+        players.add(new SNLPlayer(playerNames[i], playerCharacters[i], 0));
       }
     }
 

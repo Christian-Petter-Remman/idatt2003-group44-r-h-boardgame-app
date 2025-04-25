@@ -1,11 +1,11 @@
 package edu.ntnu.idi.idatt.view.common;
 
 import edu.ntnu.idi.idatt.controller.common.BoardController;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Ladder;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Snake;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.BoardObserver;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLBoard;
+import edu.ntnu.idi.idatt.model.tile.Ladder;
+import edu.ntnu.idi.idatt.model.tile.Snake;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -30,7 +30,7 @@ public class BoardView extends StackPane implements BoardObserver {
   private final Pane ladderSnakeOverlay = new Pane();
   private final int tileSize = 90;
 
-  public BoardView(Board board, List<Player> players) {
+  public BoardView(SNLBoard board, List<Player> players) {
     this.controller = new BoardController(board, players);
     controller.registerObserver(this);
 
@@ -77,7 +77,7 @@ public class BoardView extends StackPane implements BoardObserver {
       boardGrid.getRowConstraints().add(rowConst);
     }
 
-    // Create tiles
+
     for (int i = 0; i < 100; i++) {
       int tileNum = i + 1;
 

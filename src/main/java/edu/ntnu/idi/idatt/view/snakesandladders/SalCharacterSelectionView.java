@@ -1,8 +1,6 @@
 package edu.ntnu.idi.idatt.view.snakesandladders;
 
 import edu.ntnu.idi.idatt.controller.snakesandladders.SalCharacterSelectionController;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLaddersPlayer;
-import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.CharacterSelectionObserver;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.common.AbstractCharacterSelectionView;
@@ -15,9 +13,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 
 public class SalCharacterSelectionView extends AbstractCharacterSelectionView implements CharacterSelectionObserver {

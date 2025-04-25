@@ -1,9 +1,8 @@
 package edu.ntnu.idi.idatt.controller.common;
-
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLBoard;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLGame;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.util.AlertUtil;
@@ -23,12 +22,12 @@ import java.util.List;
 public class GameScreenController implements NavigationHandler {
   private static final Logger logger = LoggerFactory.getLogger(GameScreenController.class);
 
-  private final SnakesAndLadders game;
+  private final SNLGame game;
   private final String boardFile;
   private final String csvFileName;
   private final List<GameScreenObserver> observers = new ArrayList<>();
 
-  public GameScreenController(SnakesAndLadders game, String boardFile, String csvFileName) {
+  public GameScreenController(SNLGame game, String boardFile, String csvFileName) {
     this.game = game;
     this.boardFile = boardFile;
     this.csvFileName = csvFileName;
@@ -46,7 +45,7 @@ public class GameScreenController implements NavigationHandler {
     return game.getPlayers();
   }
 
-  public Board getBoard() {
+  public SNLBoard getBoard() {
     return game.getBoard();
   }
 
@@ -58,7 +57,7 @@ public class GameScreenController implements NavigationHandler {
     return game.getCharacterNames();
   }
 
-  public SnakesAndLadders getGame() {
+  public SNLGame getGame() {
     return game;
   }
 
