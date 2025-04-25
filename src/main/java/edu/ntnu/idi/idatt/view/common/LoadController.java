@@ -46,7 +46,7 @@ public class LoadController {
       Dice dice = new Dice(1);
       snakeGame.setDice(dice);
       logger.info("Loaded {} players from {}", players, csvPath);
-      new GameScreenView(stage, snakeGame, boardPath, csvPath).show();
+      //new GameScreenView(stage, snakeGame, boardPath, csvPath).show(); ---- TODO: Uncomment this line when GameScreenView is available
     } catch (FileReadException | JsonParsingException ex) {
       logger.error("Failed to load game: {}", ex.getMessage());
       showAlert("Load Error", "Could not load saved game: " + ex.getMessage());

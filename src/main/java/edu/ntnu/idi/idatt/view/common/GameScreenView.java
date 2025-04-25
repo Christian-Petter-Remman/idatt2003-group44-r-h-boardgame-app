@@ -1,55 +1,53 @@
 package edu.ntnu.idi.idatt.view.common;
 
-import edu.ntnu.idi.idatt.model.snakesladders.SNLGame;
+import edu.ntnu.idi.idatt.controller.common.GameScreenController;
 import edu.ntnu.idi.idatt.model.common.Player;
-import javafx.animation.PauseTransition;
+import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.stage.Stage;
-import javafx.util.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
-import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
-import static edu.ntnu.idi.idatt.view.common.AbstractCharacterSelectionView.logger;
+public class GameScreenView implements GameScreenObserver {
+  private static final Logger logger = LoggerFactory.getLogger(GameScreenView.class);
 
-public class GameScreenView {
-  private final Stage stage;
-  private final SNLGame game;
-  private final String boardFile;
-  private final String csvFileName;
+  private final GameScreenController controller;
+  private final BorderPane root;
 
   private BoardView boardView;
   private Label currentPlayerLabel;
-  private Image currentPlayerImage;
+  private ImageView currentPlayerImageView;
   private Label diceResultLabel;
   private Label positionLabel;
   private Button rollButton;
-  private ImageView imageView;
-  private Button saveButton;
 
-  Label player1TurnLabel = new Label();
-  Label player2TurnLabel = new Label();
-  Label player3TurnLabel = new Label();
-  Label player4TurnLabel = new Label();
+  private Label player1TurnLabel;
+  private Label player2TurnLabel;
+  private Label player3TurnLabel;
+  private Label player4TurnLabel;
 
-  public GameScreenView(Stage stage, SNLGame game, String boardFile, String csvFileName) {
-    this.stage = stage;
-    this.game = game;
-    this.boardFile = boardFile;
-    this.csvFileName = csvFileName;
+  public GameScreenView(GameScreenController controller) {
+    this.controller = controller;
+    this.root = new BorderPane();
+    controller.registerObserver(this);
+    initialize();
   }
 
-  public void show() {
+  private void initialize() {
+    player1TurnLabel = new Label();
+    player2TurnLabel = new Label();
+    player3TurnLabel = new Label();
+    player4TurnLabel = new Label();
+
+    List<Player> players = controller.getPlayers();
+    boardView = new BoardView(controller.getBoard(), players);
+
     currentPlayerLabel = new Label("Current turn: ");
     currentPlayerLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
     currentPlayerLabel.setMinWidth(150);
@@ -57,95 +55,33 @@ public class GameScreenView {
     diceResultLabel = new Label("Roll result: -");
     positionLabel = new Label("Position: -");
 
-    String characterName = game.getCurrentPlayer().getCharacter();
+    String characterName = controller.getCurrentPlayer().getCharacter();
     if (characterName == null || characterName.isEmpty()) {
       characterName = "Unknown-Player";
     }
-    currentPlayerImage = new Image("PlayerIcons/" + characterName + ".png", 150, 150, true, true);
-    imageView = new ImageView(currentPlayerImage);
+    Image currentPlayerImage = new Image("PlayerIcons/" + characterName + ".png", 150, 150, true, true);
+    currentPlayerImageView = new ImageView(currentPlayerImage);
+
+    rollButton = new Button("Roll Dice");
+    rollButton.setStyle("-fx-font-size: 12px;");
+    rollButton.setOnAction(e -> controller.handleRoll());
+
+    Button backButton = new Button("Back");
+    backButton.setStyle("-fx-font-size: 12px;");
+    backButton.setOnAction(e -> controller.navigateBack());
+
+    Button saveButton = new Button("Save Game");
+    saveButton.setStyle("-fx-font-size: 12px;");
+    saveButton.setOnAction(e -> controller.saveGame());
 
     Label playerLabel = new Label("Players");
     playerLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
     playerLabel.setAlignment(Pos.CENTER);
     playerLabel.setMaxWidth(Double.MAX_VALUE);
 
-    GridPane playerGrid = new GridPane();
-    playerGrid.setHgap(60);
-    playerGrid.setVgap(60);
-    playerGrid.setAlignment(Pos.CENTER);
+    GridPane playerGrid = createPlayerGrid(controller.getPlayers(), controller.getCharacterNames());
 
-    List<Player> players = game.getPlayers();
-    Player Player1 = players.get(0);
-    Player Player2 = players.get(1);
-    String Player1Position = String.valueOf(Player1.getPosition());
-    String Player2Position = String.valueOf(Player2.getPosition());
-
-    String player1Character =
-        !game.getCharacterNames().isEmpty() ? game.getCharacterNames().getFirst() : "default";
-    Image player1Image = new Image("PlayerIcons/" + player1Character + ".png", 75, 75, true, true);
-    ImageView player1ImageView = new ImageView(player1Image);
-    Label player1Label = new Label(game.getPlayers().getFirst().getName());
-    player1TurnLabel.setText(Player1Position);
-    VBox player1Box = new VBox(5, player1ImageView, player1Label, player1TurnLabel);
-    player1Box.setAlignment(Pos.CENTER);
-    playerGrid.add(player1Box, 0, 0);
-
-    String player2Character = game.getCharacterNames().size() > 1 ? game.getCharacterNames().get(1) : "default";
-    Image player2Image = new Image("PlayerIcons/" + player2Character + ".png", 75, 75, true, true);
-    ImageView player2ImageView = new ImageView(player2Image);
-    Label player2Label = new Label(game.getPlayers().get(1).getName());
-    player2TurnLabel.setText(Player2Position);
-    VBox player2Box = new VBox(5, player2ImageView, player2Label, player2TurnLabel);
-    player2Box.setAlignment(Pos.CENTER);
-    playerGrid.add(player2Box, 1, 0);
-
-    if (game.getCharacterNames().size() >= 3) {
-      String player3Character = game.getCharacterNames().get(2);
-      Image player3Image = new Image("PlayerIcons/" + player3Character + ".png", 75, 75, true,
-          true);
-      ImageView player3ImageView = new ImageView(player3Image);
-      Label player3Label = new Label(game.getPlayers().get(2).getName());
-      Player Player3 = players.get(2);
-      String Player3Position = String.valueOf(Player3.getPosition());
-      player3TurnLabel.setText(Player3Position);
-      VBox player3Box = new VBox(5, player3ImageView, player3Label, player3TurnLabel);
-      player3Box.setAlignment(Pos.CENTER);
-      playerGrid.add(player3Box, 0, 1);
-    }
-
-    if (game.getCharacterNames().size() >= 4) {
-      String player4Character = game.getCharacterNames().get(3);
-      Image player4Image = new Image("PlayerIcons/" + player4Character + ".png", 75, 75, true,
-          true);
-      ImageView player4ImageView = new ImageView(player4Image);
-      Label player4Label = new Label(game.getPlayers().get(3).getName());
-      Player Player4 = players.get(3);
-      String Player4Position = String.valueOf(Player4.getPosition());
-      player4TurnLabel.setText(Player4Position);
-      VBox player4Box = new VBox(5, player4ImageView, player4Label, player4TurnLabel);
-      player4Box.setAlignment(Pos.CENTER);
-      playerGrid.add(player4Box, 1, 1);
-    }
-
-    rollButton = new Button("Roll Dice");
-    rollButton.setStyle("-fx-font-size: 12px;");
-    rollButton.setOnAction(e -> handleRoll());
-
-    Button backButton = new Button("Back");
-    backButton.setStyle("-fx-font-size: 12px;");
-    backButton.setOnAction(e -> {
-      IntroScreenView intro = new IntroScreenView(stage);
-      intro.prepareScene();
-    });
-
-    saveButton = new Button("Save Game");
-    saveButton.setStyle("-fx-font-size: 12px;");
-    saveButton.setOnAction(e -> saveGame());
-
-    List<Player> genericPlayers = game.getPlayers();
-    boardView = new BoardView(game.getBoard(), genericPlayers);
-
-    HBox topRightInfo = new HBox(60, currentPlayerLabel, imageView);
+    HBox topRightInfo = new HBox(60, currentPlayerLabel, currentPlayerImageView);
     topRightInfo.setAlignment(Pos.CENTER_LEFT);
     topRightInfo.setPadding(new Insets(20, 10, 0, 10));
 
@@ -163,91 +99,85 @@ public class GameScreenView {
     rightColumn.setBottom(buttonBox);
     rightColumn.setPrefWidth(300);
 
-    HBox root = new HBox(40, boardView, rightColumn);
-    root.setAlignment(Pos.CENTER_LEFT);
-    root.setPadding(new Insets(20));
+    HBox mainContent = new HBox(40, boardView, rightColumn);
+    mainContent.setAlignment(Pos.CENTER_LEFT);
+    mainContent.setPadding(new Insets(20));
 
-    updateView();
+    root.setCenter(mainContent);
 
-    stage.setScene(new Scene(root));
-    stage.setTitle("Snakes and Ladders - Game");
-    stage.show();
+    updatePlayerTurnLabels();
+    updateCurrentPlayerView(controller.getCurrentPlayer());
   }
 
-  private void saveGame() {
-    String csvFilePath = csvFileName;
+  private GridPane createPlayerGrid(List<Player> players, List<String> characterNames) {
+    GridPane playerGrid = new GridPane();
+    playerGrid.setHgap(60);
+    playerGrid.setVgap(60);
+    playerGrid.setAlignment(Pos.CENTER);
 
-    List<String> lines = new ArrayList<>();
-    lines.add("SNLBoard:" + boardFile); // Add the board name first
-
-    for (Player player : game.getPlayers()) {
-      lines.add(player.getName() + "," + player.getCharacter() + "," + player.getPosition());
+    if (players.size() >= 1) {
+      Player player1 = players.get(0);
+      String player1Character = !characterNames.isEmpty() ? characterNames.get(0) : "default";
+      VBox player1Box = createPlayerBox(player1, player1Character, player1TurnLabel);
+      playerGrid.add(player1Box, 0, 0);
     }
 
-    try {
-      Files.write(Paths.get(csvFilePath), lines);
-      logger.info("Game saved to {}", csvFilePath);
-    } catch (IOException e) {
-      logger.error("Failed to save game: {}", e.getMessage());
-      showAlert("Save Error", "Failed to save game: " + e.getMessage());
+    if (players.size() >= 2) {
+      Player player2 = players.get(1);
+      String player2Character = characterNames.size() > 1 ? characterNames.get(1) : "default";
+      VBox player2Box = createPlayerBox(player2, player2Character, player2TurnLabel);
+      playerGrid.add(player2Box, 1, 0);
+    }
+
+    if (players.size() >= 3) {
+      Player player3 = players.get(2);
+      String player3Character = characterNames.size() > 2 ? characterNames.get(2) : "default";
+      VBox player3Box = createPlayerBox(player3, player3Character, player3TurnLabel);
+      playerGrid.add(player3Box, 0, 1);
+    }
+
+    if (players.size() >= 4) {
+      Player player4 = players.get(3);
+      String player4Character = characterNames.size() > 3 ? characterNames.get(3) : "default";
+      VBox player4Box = createPlayerBox(player4, player4Character, player4TurnLabel);
+      playerGrid.add(player4Box, 1, 1);
+    }
+
+    return playerGrid;
+  }
+
+  private VBox createPlayerBox(Player player, String characterName, Label positionLabel) {
+    Image playerImage = new Image("PlayerIcons/" + characterName + ".png", 75, 75, true, true);
+    ImageView playerImageView = new ImageView(playerImage);
+    Label playerNameLabel = new Label(player.getName());
+    positionLabel.setText(String.valueOf(player.getPosition()));
+
+    VBox playerBox = new VBox(5, playerImageView, playerNameLabel, positionLabel);
+    playerBox.setAlignment(Pos.CENTER);
+    return playerBox;
+  }
+
+  private void updatePlayerTurnLabels() {
+    List<Player> players = controller.getPlayers();
+
+    if (players.size() >= 1) {
+      player1TurnLabel.setText(String.valueOf(players.get(0).getPosition()));
+    }
+
+    if (players.size() >= 2) {
+      player2TurnLabel.setText(String.valueOf(players.get(1).getPosition()));
+    }
+
+    if (players.size() >= 3) {
+      player3TurnLabel.setText(String.valueOf(players.get(2).getPosition()));
+    }
+
+    if (players.size() >= 4) {
+      player4TurnLabel.setText(String.valueOf(players.get(3).getPosition()));
     }
   }
 
-  private void handleRoll() {
-    Player currentPlayer = game.getCurrentPlayer();
-
-    String characterName = currentPlayer.getCharacter();
-    if (characterName == null || characterName.isEmpty()) {
-      characterName = "default";
-    }
-    currentPlayerImage = new Image("PlayerIcons/" + characterName + ".png", 150, 150, true, true);
-    imageView.setImage(currentPlayerImage);
-
-    int roll = game.rollDice();
-    int tentative = currentPlayer.getPosition() + roll;
-
-    if (tentative > 100) {
-      diceResultLabel.setText("Roll result: " + roll + " (invalid move)");
-      return;
-    }
-
-    diceResultLabel.setText("Roll result: " + roll);
-    positionLabel.setText("Position: " + tentative);
-    currentPlayer.setPosition(tentative);
-    boardView.render();
-    rollButton.setDisable(true);
-    PauseTransition pause = getPauseTransition(tentative, currentPlayer);
-    pause.play();
-  }
-
-  private PauseTransition getPauseTransition(int tentative, Player currentPlayer) {
-    PauseTransition pause = new PauseTransition(Duration.seconds(1));
-    pause.setOnFinished(event -> {
-      int finalPos = game.getBoard().getFinalPosition(tentative);
-
-      if (finalPos != tentative) {
-        currentPlayer.setPosition(finalPos);
-        boardView.render();
-      }
-
-      currentPlayer.setPosition(finalPos);
-      positionLabel.setText("Position: " + finalPos);
-
-      updatePositionLabel();
-
-      if (currentPlayer.hasWon()) {
-        showWinner(currentPlayer);
-      } else {
-        game.advanceTurn();
-        updateView();
-        rollButton.setDisable(false);
-      }
-    });
-    return pause;
-  }
-
-  private void updateView() {
-    Player currentPlayer = game.getCurrentPlayer();
+  private void updateCurrentPlayerView(Player currentPlayer) {
     currentPlayerLabel.setText("Current turn: " + currentPlayer.getName());
     positionLabel.setText("Position: " + currentPlayer.getPosition());
 
@@ -255,11 +185,42 @@ public class GameScreenView {
     if (characterName == null || characterName.isEmpty()) {
       characterName = "default";
     }
-    currentPlayerImage = new Image("PlayerIcons/" + characterName + ".png", 150, 150, true, true);
-    imageView.setImage(currentPlayerImage);
+    Image currentPlayerImage = new Image("PlayerIcons/" + characterName + ".png", 150, 150, true, true);
+    currentPlayerImageView.setImage(currentPlayerImage);
   }
 
-  private void showWinner(Player winner) {
+  public void show() {
+    controller.displayGameScreen(this);
+  }
+
+  public BorderPane getRoot() {
+    return root;
+  }
+
+  @Override
+  public void onPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
+    boardView.render();
+    updatePlayerTurnLabels();
+
+    if (player.equals(controller.getCurrentPlayer())) {
+      positionLabel.setText("Position: " + newPosition);
+    }
+  }
+
+  @Override
+  public void onDiceRolled(int result) {
+    diceResultLabel.setText("Roll result: " + result);
+    rollButton.setDisable(true);
+  }
+
+  @Override
+  public void onPlayerTurnChanged(Player currentPlayer) {
+    updateCurrentPlayerView(currentPlayer);
+    rollButton.setDisable(false);
+  }
+
+  @Override
+  public void onGameOver(Player winner) {
     Alert alert = new Alert(Alert.AlertType.INFORMATION);
     alert.setTitle("Game Over");
     alert.setHeaderText("🎉 " + winner.getName() + " has won the game!");
@@ -268,27 +229,12 @@ public class GameScreenView {
     rollButton.setDisable(true);
   }
 
-  private void updatePositionLabel() {
-    List<Player> players = game.getPlayers();
-
-    if (!players.isEmpty()) {
-      Player player1 = players.getFirst();
-      player1TurnLabel.setText(String.valueOf(player1.getPosition()));
-    }
-
-    if (players.size() >= 2) {
-      Player player2 = players.get(1);
-      player2TurnLabel.setText(String.valueOf(player2.getPosition()));
-    }
-
-    if (players.size() >= 3) {
-      Player player3 = players.get(2);
-      player3TurnLabel.setText(String.valueOf(player3.getPosition()));
-    }
-
-    if (players.size() >= 4) {
-      Player player4 = players.get(3);
-      player4TurnLabel.setText(String.valueOf(player4.getPosition()));
-    }
+  @Override
+  public void onGameSaved(String filePath) {
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.setTitle("Game Saved");
+    alert.setHeaderText("Game saved successfully");
+    alert.setContentText("Game saved to: " + filePath);
+    alert.showAndWait();
   }
 }
