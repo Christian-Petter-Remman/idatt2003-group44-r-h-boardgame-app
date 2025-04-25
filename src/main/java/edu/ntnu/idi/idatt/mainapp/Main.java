@@ -2,8 +2,9 @@ package edu.ntnu.idi.idatt.mainapp;
 
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
-import edu.ntnu.idi.idatt.filehandling.BoardJsonHandler;
+import edu.ntnu.idi.idatt.filehandling.SNLBoardJsonHandler;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
+import edu.ntnu.idi.idatt.filehandling.StarBoardJsonHandler;
 import edu.ntnu.idi.idatt.view.common.IntroScreenView;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -21,8 +22,10 @@ public class Main extends Application {
       FileManager.ensureApplicationDirectoriesExist();
 
       try {
-        BoardJsonHandler boardJsonHandler = new BoardJsonHandler();
+        SNLBoardJsonHandler boardJsonHandler = new SNLBoardJsonHandler();
+        StarBoardJsonHandler starBoardJsonHandler = new StarBoardJsonHandler();
         boardJsonHandler.generateBoardFiles();
+        starBoardJsonHandler.generateBoardFiles();
       } catch (Exception e) {
         logger.error("Error generating board files: {}", e.getMessage());
       }

@@ -8,7 +8,7 @@ import edu.ntnu.idi.idatt.exceptions.*;
 import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLaddersFactory;
 import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.filehandling.BoardJsonHandler;
+import edu.ntnu.idi.idatt.filehandling.SNLBoardJsonHandler;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 
 
@@ -29,11 +29,11 @@ public class SnakesAndLaddersRuleSelectionController {
   private int currentLadderCount = 8;
   private int currentSnakeCount = 8;
   private int selectedRandomBoard = -1;
-  private final BoardJsonHandler boardJsonHandler;
+  private final SNLBoardJsonHandler boardJsonHandler;
 
   public SnakesAndLaddersRuleSelectionController(SnakesAndLaddersFactory factory) {
     this.factory = factory;
-    this.boardJsonHandler = new BoardJsonHandler();
+    this.boardJsonHandler = new SNLBoardJsonHandler();
   }
 
   public void addObserver(DifficultyObserver observer) {
@@ -128,7 +128,6 @@ public class SnakesAndLaddersRuleSelectionController {
     }
     return result;
   }
-
 
   public String createGameFile(String difficulty, String baseName) throws InvalidGameConfigurationException {
     validateDifficulty(difficulty);

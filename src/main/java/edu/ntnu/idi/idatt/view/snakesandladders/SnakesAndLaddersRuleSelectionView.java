@@ -3,7 +3,7 @@ package edu.ntnu.idi.idatt.view.snakesandladders;
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
 import edu.ntnu.idi.idatt.controller.snakesandladders.SnakesAndLaddersRuleSelectionController;
-import edu.ntnu.idi.idatt.filehandling.BoardJsonHandler;
+import edu.ntnu.idi.idatt.filehandling.SNLBoardJsonHandler;
 import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.model.model_observers.DifficultyObserver;
 import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLadders;
@@ -31,7 +31,7 @@ import java.util.Objects;
 
 public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView implements DifficultyObserver {
   private static final Logger logger = LoggerFactory.getLogger(SnakesAndLaddersRuleSelectionView.class);
-  BoardJsonHandler boardJsonHandler;
+  SNLBoardJsonHandler boardJsonHandler;
 
   private final SnakesAndLaddersRuleSelectionController controller;
   private List<Player> players;
@@ -59,7 +59,7 @@ public class SnakesAndLaddersRuleSelectionView extends AbstractRuleSelectionView
   public SnakesAndLaddersRuleSelectionView(Stage primaryStage) {
     super(primaryStage);
     controller = new SnakesAndLaddersRuleSelectionController(new SnakesAndLaddersFactory());
-    this.boardJsonHandler = new BoardJsonHandler();
+    this.boardJsonHandler = new SNLBoardJsonHandler();
     controller.addObserver(this);
   }
 

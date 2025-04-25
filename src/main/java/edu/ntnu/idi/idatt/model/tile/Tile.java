@@ -36,7 +36,7 @@ public class Tile {
    *
    * @return true if this tile has a destination, false otherwise
    */
-  public boolean hasSnakeOrLadder() {
+  public boolean hasSpecialTile() {
     return isSpecialTile;
   }
 
@@ -60,7 +60,7 @@ public class Tile {
 
   @Override
   public String toString() {
-    if (hasSnakeOrLadder()) {
+    if (hasSpecialTile()) {
       return "Tile " + numberOfTile + " -> " + destination;
     } else {
       return "Tile " + numberOfTile;

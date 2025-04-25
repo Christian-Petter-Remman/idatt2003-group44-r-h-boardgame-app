@@ -2,7 +2,7 @@ package edu.ntnu.idi.idatt.model.common;
 
 public abstract class BoardGameFactory {
 
-  public abstract BoardGame createBoardGame(String filename);
+
 
   public abstract String[] getAvailableConfigurations();
 

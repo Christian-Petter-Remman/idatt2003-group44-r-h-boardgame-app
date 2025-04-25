@@ -27,6 +27,8 @@ public abstract class BoardGame {
 
   public abstract void setBoard(SNLBoard board);
 
+  public abstract void setBoard(StarBoard board);
+
 
   public void addPlayer(Player player) {
     players.add(player);
@@ -35,6 +37,7 @@ public abstract class BoardGame {
   public List<Player> getPlayers() {
     return new ArrayList<>(players);
   }
+
 
   public boolean isGameOver() {
     return gameOver;

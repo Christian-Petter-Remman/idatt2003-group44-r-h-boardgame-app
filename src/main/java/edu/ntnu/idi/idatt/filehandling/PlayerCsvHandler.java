@@ -4,6 +4,7 @@ import edu.ntnu.idi.idatt.exceptions.CsvFormatException;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLaddersPlayer;
 import edu.ntnu.idi.idatt.model.common.Player;
+import edu.ntnu.idi.idatt.model.stargame.StarPlayer;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -21,6 +22,20 @@ public class PlayerCsvHandler implements FileHandler<List<Player>> {
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(fullPath))) {
       for (Player player : players) {
         writer.write(player.getName() + "," + player.getCharacter()+","+player.getStartPosition());
+        writer.newLine();
+      }
+    }
+  }
+
+  public void saveStarPlayerToFile(List<StarPlayer> players, String fileName) throws IOException {
+    String directory = "data/user-data/star-players/";
+    new File(directory).mkdirs();
+
+    String fullPath = fileName;
+
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(fullPath))) {
+      for (StarPlayer player : players) {
+        writer.write(player.getName() + "," + player.getCharacter()+","+player.getStartPosition()+","+player.getScore());
         writer.newLine();
       }
     }

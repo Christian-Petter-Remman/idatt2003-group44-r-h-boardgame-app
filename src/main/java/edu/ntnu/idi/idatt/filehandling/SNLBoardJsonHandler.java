@@ -16,13 +16,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public class BoardJsonHandler implements FileHandler<SNLBoard> {
-  private static final Logger logger = LoggerFactory.getLogger(BoardJsonHandler.class);
+public class SNLBoardJsonHandler implements FileHandler <SNLBoard> {
+  private static final Logger logger = LoggerFactory.getLogger(SNLBoardJsonHandler.class);
   private final Gson gson;
 
   private static final String BOARDS_DIR = FileManager.SNAKES_LADDERS_BOARDS_DIR;
 
-  public BoardJsonHandler() {
+  public SNLBoardJsonHandler() {
     this.gson = new GsonBuilder()
             .setPrettyPrinting()
             .addSerializationExclusionStrategy(new RandomExclusionStrategy())

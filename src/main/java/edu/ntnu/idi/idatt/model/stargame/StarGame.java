@@ -107,8 +107,8 @@ public class StarGame extends BoardGame {
             .orElse(null);
   }
 
-  public void addPlayer(String name, String character,int position) {
-    addPlayer(new SnakesAndLaddersPlayer(name,character,position));
+  public void addPlayer(String name, String character,int position,int points) {
+    addPlayer(new StarPlayer(name,character,position,points));
   }
 
   public void advanceTurn() {
@@ -128,8 +128,9 @@ public class StarGame extends BoardGame {
       String name = parts[0];
       String character = parts[1];
       int position = Integer.parseInt(parts[2]);
+      int points = Integer.parseInt(parts[3]);
 
-      Player player = new SnakesAndLaddersPlayer(name, character,position);
+      Player player = new StarPlayer(name, character,position,points);
       this.addPlayer(player);
       count++;
     }

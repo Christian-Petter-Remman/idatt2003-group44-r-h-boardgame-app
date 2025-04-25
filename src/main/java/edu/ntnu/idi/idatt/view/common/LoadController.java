@@ -2,7 +2,7 @@ package edu.ntnu.idi.idatt.view.common;
 
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
-import edu.ntnu.idi.idatt.filehandling.BoardJsonHandler;
+import edu.ntnu.idi.idatt.filehandling.SNLBoardJsonHandler;
 import edu.ntnu.idi.idatt.model.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.common.Dice;
 import javafx.stage.Stage;
@@ -32,7 +32,7 @@ public class LoadController {
    * Opens the game screen if successful, otherwise shows an alert.
    */
   public void handleLoad(String csvPath) {
-    BoardJsonHandler handler = new BoardJsonHandler();
+    SNLBoardJsonHandler handler = new SNLBoardJsonHandler();
     String boardPath = extractBoardPathFromCsv(csvPath);
 
     if (boardPath == null) {

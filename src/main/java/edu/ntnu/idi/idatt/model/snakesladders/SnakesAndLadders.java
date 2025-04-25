@@ -76,6 +76,10 @@ public class SnakesAndLadders extends BoardGame {
     logger.debug("Set board to {}", board);
   }
 
+  @Override
+  public void setBoard(StarBoard board) {
+  }
+
   public Player getCurrentPlayer() {
     return players.get(currentPlayerIndex);
   }
@@ -133,18 +137,4 @@ public class SnakesAndLadders extends BoardGame {
 
     return count;
   }
-
-  public boolean savePlayersToCsv(String filePath) {
-    try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-      for (Player player : players) {
-        writer.write(player.getName() + ",Default");
-        writer.newLine();
-      }
-      return true;
-    } catch (IOException e) {
-      logger.error("Error saving players to CSV: {}", e.getMessage());
-      return false;
-    }
-  }
-
 }

@@ -10,7 +10,7 @@ class TileTest {
   @Test
   void testRegularTileHasNoSnakeOrLadder() {
     Tile tile = new Tile(1);
-    assertFalse(tile.hasSnakeOrLadder());
+    assertFalse(tile.hasSpecialTile());
     assertEquals(1, tile.getNumberOfTile());
     assertEquals(-1, tile.getDestination(), "Regular tiles should have -1 as destination");
   }

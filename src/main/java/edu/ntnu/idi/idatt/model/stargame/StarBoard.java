@@ -74,7 +74,7 @@ public class StarBoard {
       return position;
     }
     Tile tile = getStarTile(position);
-    if (tile.hasSnakeOrLadder()) {
+    if (tile.hasSpecialTile()) {
       logger.debug("Player landed on special tile at {}, moving to {}", position, tile.getDestination());
       return tile.getDestination();
     }

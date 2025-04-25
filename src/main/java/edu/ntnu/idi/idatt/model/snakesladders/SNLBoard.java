@@ -89,7 +89,7 @@ public class SNLBoard {
     }
 
     Tile tile = getTile(position);
-    if (tile.hasSnakeOrLadder()) {
+    if (tile.hasSpecialTile()) {
       logger.debug("Player landed on special tile at {}, moving to {}", position, tile.getDestination());
       return tile.getDestination();
     }

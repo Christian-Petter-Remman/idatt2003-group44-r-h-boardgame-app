@@ -9,14 +9,14 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class BoardJsonHandlerTest {
+class SNLBoardJsonHandlerTest {
 
   private static final String TEST_FILE = "test_board.json";
-  private BoardJsonHandler handler;
+  private SNLBoardJsonHandler handler;
 
   @BeforeEach
   void setUp() {
-    handler = new BoardJsonHandler();
+    handler = new SNLBoardJsonHandler();
   }
 
   @AfterEach

@@ -18,6 +18,7 @@ public class FileManager {
   public static final String SAVED_GAMES_DIR = "data/saved_games";
   public static final String CUSTOM_BOARDS_DIR = "data/custom_boards";
   public static final String SNAKES_LADDERS_BOARDS_DIR = "data/custom_boards/snakes_and_ladders";
+  public static final String STAR_GAME_DIR = "data/custom_boards/star_game";
 
   public static final String DEFAULT_PLAYERS_FILE = "data/players/default_players.csv";
   public static final String LAST_GAME_PLAYERS_FILE = "data/players/last_game_players.csv";
@@ -31,7 +32,8 @@ public class FileManager {
             PLAYERS_DIR,
             SAVED_GAMES_DIR,
             CUSTOM_BOARDS_DIR,
-            SNAKES_LADDERS_BOARDS_DIR
+            SNAKES_LADDERS_BOARDS_DIR,
+            STAR_GAME_DIR
     };
 
     for (String dirPath : directories) {
