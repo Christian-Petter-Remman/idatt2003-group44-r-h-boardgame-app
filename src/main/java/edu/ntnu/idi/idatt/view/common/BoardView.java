@@ -237,13 +237,11 @@ public class BoardView extends StackPane implements BoardObserver {
 
   @Override
   public void onPlayerMoved(Player player, int fromPosition, int toPosition) {
-    // This could be used to animate player movement in the future
     renderBoardGrid();
   }
 
   @Override
   public void onSpecialTileActivated(int tileNumber, int destination, boolean isLadder) {
-    // This could be used to highlight activated ladders/snakes in the future
     logger.debug("Special tile activated: {} -> {}, isLadder: {}", tileNumber, destination, isLadder);
   }
 }

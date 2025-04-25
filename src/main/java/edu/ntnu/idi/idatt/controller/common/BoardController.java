@@ -90,11 +90,31 @@ public class BoardController {
   }
 
   public String getTileColor(int tileNum) {
-    if (tileNum % 2 == 0) {
-      return "#f0f0f0"; // Light color
-    } else {
-      return "#d0d0d0"; // Darker color
-    }
+    if (isSnakeStart(tileNum)) return "red";
+    if (isSnakeEnd(tileNum)) return "pink";
+    if (isLadderStart(tileNum)) return "darkgreen";
+    if (isLadderEnd(tileNum)) return "lightgreen";
+    return "white";
+  }
+
+  private boolean isSnakeStart(int tileNum) {
+    return board.getSnakes().stream()
+            .anyMatch(snake -> snake.start() == tileNum);
+  }
+
+  private boolean isSnakeEnd(int tileNum) {
+    return board.getSnakes().stream()
+            .anyMatch(snake -> snake.end() == tileNum);
+  }
+
+  private boolean isLadderStart(int tileNum) {
+    return board.getLadders().stream()
+            .anyMatch(ladder -> ladder.start() == tileNum);
+  }
+
+  private boolean isLadderEnd(int tileNum) {
+    return board.getLadders().stream()
+            .anyMatch(ladder -> ladder.end() == tileNum);
   }
 
   private void notifyBoardRendered() {
