@@ -1,5 +1,7 @@
 package edu.ntnu.idi.idatt.controller.common;
 
+import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
+
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.common.LoadScreenView;
@@ -15,6 +17,7 @@ public class IntroScreenController implements NavigationHandler {
       logger.info("Navigating to LOAD_SCREEN for Snakes and Ladders");
     } catch (Exception e) {
       logger.error("Error starting Snakes and Ladders: {}", e.getMessage());
+      showAlert("Error", "Could not start the game");
     }
   }
 
@@ -34,7 +37,9 @@ public class IntroScreenController implements NavigationHandler {
       NavigationManager.getInstance().setRoot(loadScreenView.getRoot());
       logger.info("Navigated to Load Screen");
     } else {
-      logger.warn("Unknown destination: {}", destination);
+
+      throw new RuntimeException("Unknown destination: " + destination);
+
     }
   }
 

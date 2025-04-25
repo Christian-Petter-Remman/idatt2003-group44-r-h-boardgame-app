@@ -8,7 +8,6 @@ import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.common.IntroScreenView;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 
 import org.slf4j.Logger;
@@ -31,10 +30,14 @@ public class Main extends Application {
       primaryStage.setFullScreenExitHint("");
 
       IntroScreenController introController = new IntroScreenController();
+
+      logger.info("Initializing IntroScreenController: {}", introController);
+
       IntroScreenView introView = new IntroScreenView(introController);
 
-      navigationManager.setRoot(introView.getRoot());
+      logger.info("Initializing IntroScreenView: {}", introView);
 
+      navigationManager.setRoot(introView.getRoot());
       primaryStage.show();
       Platform.runLater(() -> primaryStage.setFullScreen(true));
 

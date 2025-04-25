@@ -107,7 +107,7 @@ public class LoadScreenView extends AbstractView {
 
   private Button createLoadButton(File file) {
     Button btn = new Button("Load");
-    //btn.setOnAction(e -> controller.handleLoad(file.getPath()));
+    btn.setOnAction(e -> controller.handleLoad(file.getPath()));
     return btn;
   }
 

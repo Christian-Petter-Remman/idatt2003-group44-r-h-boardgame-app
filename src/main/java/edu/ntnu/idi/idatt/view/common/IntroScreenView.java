@@ -75,6 +75,7 @@ public class IntroScreenView extends AbstractView {
     imageView.setPreserveRatio(false);
 
     if (gameType != null) {
+      logger.info("Game type: {}", gameType);
       imageView.setOnMouseClicked(e -> controller.startGame(gameType));
       imageView.setStyle("-fx-cursor: hand;");
     }
