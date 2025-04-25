@@ -28,7 +28,6 @@ public class Main extends Application {
 
       primaryStage.setTitle("BoardGame App");
       primaryStage.setFullScreenExitHint("");
-      primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
 
       IntroScreenView introView = new IntroScreenView();
       navigationManager.setRoot(introView.getRoot());
