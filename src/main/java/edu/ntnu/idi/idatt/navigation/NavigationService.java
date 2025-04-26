@@ -1,5 +1,6 @@
 package edu.ntnu.idi.idatt.navigation;
 
+import edu.ntnu.idi.idatt.navigation.NavigationManager.NavigationTarget;
 import java.util.Map;
 
 public interface NavigationService {

@@ -1,7 +1,5 @@
 package edu.ntnu.idi.idatt.controller.common;
 
-import edu.ntnu.idi.idatt.controller.snakesandladders.SalCharacterSelectionController;
-import edu.ntnu.idi.idatt.controller.snakesandladders.SalRuleSelectionController;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
 import edu.ntnu.idi.idatt.filehandling.BoardJsonHandler;
@@ -10,9 +8,6 @@ import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.common.GameScreenView;
-import edu.ntnu.idi.idatt.view.common.IntroScreenView;
-import edu.ntnu.idi.idatt.view.snakesandladders.SalCharacterSelectionView;
-import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,9 +86,6 @@ public class LoadController implements NavigationHandler {
   public void navigateTo(String destination) {  // TODO: Figure out how this method implements the navigationHandler since it loads from JSON and does not open a new screen
     switch (destination) {
       case "CHARACTER_SELECTION":
-        SalCharacterSelectionController characterSelectionController = new SalCharacterSelectionController();
-        SalCharacterSelectionView characterSelectionView = new SalCharacterSelectionView(characterSelectionController);
-        NavigationManager.getInstance().setRoot(characterSelectionView.getRoot());
         logger.info("Navigated to Intro Screen");
         break;
 

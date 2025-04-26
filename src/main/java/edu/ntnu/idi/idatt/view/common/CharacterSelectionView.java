@@ -1,6 +1,5 @@
-package edu.ntnu.idi.idatt.view.snakesandladders;
+package edu.ntnu.idi.idatt.view.common;
 
-import edu.ntnu.idi.idatt.controller.snakesandladders.SalCharacterSelectionController;
 import edu.ntnu.idi.idatt.model.common.screens.CharacterController;
 import edu.ntnu.idi.idatt.model.common.screens.CharacterSelectionModel;
 import edu.ntnu.idi.idatt.view.AbstractView;
@@ -9,7 +8,6 @@ import java.util.stream.IntStream;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
 import javafx.collections.SetChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -24,7 +22,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class SalCharacterSelectionView extends AbstractView {
+public class CharacterSelectionView extends AbstractView {
   private final CharacterController controller;
   private final CharacterSelectionModel model;
 
@@ -32,7 +30,7 @@ public class SalCharacterSelectionView extends AbstractView {
   private final CheckBox[] activeCheckboxes = new CheckBox[4];
   private Button startButton;
 
-  public SalCharacterSelectionView(CharacterController controller, CharacterSelectionModel model) {
+  public CharacterSelectionView(CharacterController controller, CharacterSelectionModel model) {
     this.controller = controller;
     this.model = model;
     initializeModelBindings();

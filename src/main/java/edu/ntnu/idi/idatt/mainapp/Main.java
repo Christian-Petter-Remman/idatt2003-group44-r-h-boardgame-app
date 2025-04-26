@@ -23,27 +23,20 @@ public class Main extends Application {
     try {
       FileManager.ensureApplicationDirectoriesExist();
 
-      NavigationManager navigationManager = NavigationManager.getInstance();
-      navigationManager.initialize(primaryStage);
+      NavigationManager.getInstance().initialize(primaryStage);
+      NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.INTRO_SCREEN);
 
       primaryStage.setTitle("BoardGame App");
       primaryStage.setFullScreenExitHint("");
-
-      IntroScreenController introController = new IntroScreenController();
-
-      logger.info("Initializing IntroScreenController: {}", introController);
-
-      IntroScreenView introView = new IntroScreenView();
-
-      logger.info("Initializing IntroScreenView: {}", introView);
-
-      navigationManager.setRoot(introView.getRoot());
+      primaryStage.setFullScreen(true);
       primaryStage.show();
-      Platform.runLater(() -> primaryStage.setFullScreen(true));
 
     } catch (Exception e) {
       logger.error("Error during startup: {}", e.getMessage(), e);
       showAlert("Startup Error", "Could not start the game");
     }
+  }
+  public static void main(String[] args) {
+    launch(args);
   }
 }
