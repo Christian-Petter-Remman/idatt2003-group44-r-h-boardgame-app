@@ -37,6 +37,7 @@ public class IntroScreenController implements NavigationHandler {
       case "SAL_CHARACTER_SELECTION_SCREEN" -> {
         SalCharacterSelectionController characterSelectionController = new SalCharacterSelectionController();
         SalCharacterSelectionView characterSelectionView = new SalCharacterSelectionView(characterSelectionController);
+        characterSelectionView.createUI();
 
         if (characterSelectionView.getRoot() == null) {
           logger.error("Character Selection View root is null");
