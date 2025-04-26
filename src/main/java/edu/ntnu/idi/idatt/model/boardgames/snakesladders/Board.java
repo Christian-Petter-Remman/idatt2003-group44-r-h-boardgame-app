@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.LadderTile;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.SnakeTile;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Tile;
+import edu.ntnu.idi.idatt.observers.ModelObserver;
+import edu.ntnu.idi.idatt.observers.ObservableModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,12 +14,13 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Board {
+public class Board implements ObservableModel {
   private static final Logger logger = LoggerFactory.getLogger(Board.class);
   private List<Tile> tiles;
   private final int size;
   private final List<Ladder> ladders = new ArrayList<>();
   private final List<Snake> snakes = new ArrayList<>();
+  private final List<ModelObserver> observers = new ArrayList<>();
 
   public Board() {
     this(100);
@@ -45,6 +48,7 @@ public class Board {
     Ladder ladder = new Ladder(start, end);
     ladders.add(ladder);
     setTile(start, new LadderTile(start, end));
+    notifyObservers("LADDER_ADDED", ladder);
   }
 
   public void addSnake(int start, int end) {
@@ -54,6 +58,7 @@ public class Board {
     Snake snake = new Snake(start, end);
     snakes.add(snake);
     setTile(start, new SnakeTile(start, end));
+    notifyObservers("SNAKE_ADDED", snake);
   }
 
   public void addDefaultLaddersAndSnakes() {
@@ -139,5 +144,20 @@ public class Board {
 
   public List<Snake> getSnakes() {
     return new ArrayList<>(snakes);
+  }
+
+  @Override
+  public void addObserver(ModelObserver observer) {
+    observers.add(observer);
+  }
+
+  @Override
+  public void notifyObservers(String eventType, Object data) {
+    new ArrayList<>(observers).forEach(obs -> obs.update(eventType, data));
+  }
+
+  @Override
+  public void removeObserver(ModelObserver observer) {
+    observers.remove(observer);
   }
 }

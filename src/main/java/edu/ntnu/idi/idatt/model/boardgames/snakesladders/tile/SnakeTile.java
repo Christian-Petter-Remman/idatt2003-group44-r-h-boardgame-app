@@ -1,5 +1,7 @@
 package edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile;
 
+import edu.ntnu.idi.idatt.model.common.Player;
+
 /**
  * Represents a snake tile in the Snakes and Ladders game.
  * When a player lands on this tile, they move to a lower-numbered tile.
@@ -20,11 +22,12 @@ public class SnakeTile extends Tile {
     }
   }
 
-  public int getStartDestination() {
-    return getDestination();
+  @Override
+  public void onPlayerLanded(Player player) {
+    int oldPosition = player.getPosition();
+    player.setPosition(getDestination());
+    notifyObservers("SNAKE_USED", new SnakeEvent(player, oldPosition, getDestination()));
   }
 
-  public int getEndDestination() {
-    return getNumberOfTile();
-  }
+  public record SnakeEvent(Player player, int from, int to) {}
 }
