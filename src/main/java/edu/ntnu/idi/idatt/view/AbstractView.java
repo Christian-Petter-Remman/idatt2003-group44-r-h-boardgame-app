@@ -1,7 +1,5 @@
 package edu.ntnu.idi.idatt.view;
 
-import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
-
 import javafx.scene.Parent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +25,6 @@ public abstract class AbstractView {
     } catch (Exception e) {
       logger.error("Failed to initialize UI: {}", e.getMessage());
       uiInitialized = false;
-      showAlert("Critical Error", "Failed to initialize UI. Please restart the application.");
     }
   }
 
@@ -35,11 +32,8 @@ public abstract class AbstractView {
   protected abstract void setupEventHandlers();
   protected abstract void applyInitialUIState();
 
+
   public Parent getRoot() {
     return root;
-  }
-
-  public void show() {
-    applyInitialUIState();
   }
 }

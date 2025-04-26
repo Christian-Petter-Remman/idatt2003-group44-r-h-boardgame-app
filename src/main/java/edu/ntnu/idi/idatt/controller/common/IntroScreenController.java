@@ -37,8 +37,14 @@ public class IntroScreenController implements NavigationHandler {
       case "SAL_CHARACTER_SELECTION_SCREEN" -> {
         SalCharacterSelectionController characterSelectionController = new SalCharacterSelectionController();
         SalCharacterSelectionView characterSelectionView = new SalCharacterSelectionView(characterSelectionController);
-        NavigationManager.getInstance().setRoot(characterSelectionView.getRoot());
-        logger.info("Navigated to Character Selection Screen");
+
+        if (characterSelectionView.getRoot() == null) {
+          logger.error("Character Selection View root is null");
+          showAlert("Error", "Character Selection View failed to load, because it is null.");
+        } else {
+          NavigationManager.getInstance().setRoot(characterSelectionView.getRoot());
+          logger.info("Navigated to Character Selection Screen");
+        }
       }
       case "SAL_LOAD_SCREEN" -> {
         LoadController loadController = new LoadController();
