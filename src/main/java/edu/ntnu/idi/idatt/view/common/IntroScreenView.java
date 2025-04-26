@@ -13,12 +13,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 
-public class IntroScreenView extends AbstractView {
-  private final IntroScreenController controller;
+public class IntroScreenView extends AbstractView implements IntroView {
+  private Runnable startGameListener;
+  private Runnable loadGameListener;
 
-  public IntroScreenView(IntroScreenController controller) {
-    this.controller = controller;
-  }
+  public IntroScreenView() {}
 
   @Override
   protected void createUI() {
@@ -73,11 +72,20 @@ public class IntroScreenView extends AbstractView {
 
     if (gameType != null) {
       logger.info("Game type: {}", gameType);
-      imageView.setOnMouseClicked(e -> controller.startGame(gameType));
+      imageView.setOnMouseClicked(e -> {startGameListener.run();});
       imageView.setStyle("-fx-cursor: hand;");
     }
 
     return imageView;
   }
 
+  @Override
+  public void setStartGameListener(Runnable listener) {
+    this.startGameListener = listener;
+  }
+
+  @Override
+  public void setLoadGameListener(Runnable listener) {
+    this.loadGameListener = listener;
+  }
 }

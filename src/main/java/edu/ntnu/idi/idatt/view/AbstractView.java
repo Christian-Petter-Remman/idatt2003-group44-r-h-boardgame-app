@@ -4,9 +4,8 @@ import javafx.scene.Parent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractView {
+public abstract class AbstractView<T> {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
-
   protected boolean uiInitialized = false;
   protected Parent root;
 
@@ -14,7 +13,7 @@ public abstract class AbstractView {
     initializeUI();
   }
 
-  private void initializeUI(){
+  protected void initializeUI(){
     try {
       createUI();
       setupEventHandlers();
@@ -23,7 +22,7 @@ public abstract class AbstractView {
       logger.info("UI initialized successfully.");
 
     } catch (Exception e) {
-      logger.error("Failed to initialize UI: {}", e.getMessage());
+      logger.error("Failed to initialize UI: ",  e);
       uiInitialized = false;
     }
   }

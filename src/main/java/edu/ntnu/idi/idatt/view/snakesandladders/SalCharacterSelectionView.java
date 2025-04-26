@@ -1,14 +1,19 @@
 package edu.ntnu.idi.idatt.view.snakesandladders;
 
 import edu.ntnu.idi.idatt.controller.snakesandladders.SalCharacterSelectionController;
-import edu.ntnu.idi.idatt.model.model_observers.CharacterSelectionObserver;
+import edu.ntnu.idi.idatt.model.common.screens.CharacterController;
+import edu.ntnu.idi.idatt.model.common.screens.CharacterSelectionModel;
 import edu.ntnu.idi.idatt.view.AbstractView;
-import java.util.Set;
+import java.util.List;
+import java.util.stream.IntStream;
 import javafx.application.Platform;
+import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.collections.SetChangeListener;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -19,96 +24,75 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class SalCharacterSelectionView extends AbstractView implements CharacterSelectionObserver {
-  private final SalCharacterSelectionController controller;
-  private final VBox[] playerBoxes = new VBox[4];
-  private Button startButton, backButton;
+public class SalCharacterSelectionView extends AbstractView {
+  private final CharacterController controller;
+  private final CharacterSelectionModel model;
 
-  public SalCharacterSelectionView(SalCharacterSelectionController controller) {
+  private final ToggleButton[][] characterButtons = new ToggleButton[4][10];
+  private final CheckBox[] activeCheckboxes = new CheckBox[4];
+  private Button startButton;
+
+  public SalCharacterSelectionView(CharacterController controller, CharacterSelectionModel model) {
     this.controller = controller;
+    this.model = model;
+    initializeModelBindings();
   }
 
-  // Main UI construction
   @Override
   protected void createUI() {
     VBox mainContainer = new VBox(20);
-    mainContainer.setAlignment(Pos.CENTER);
-    mainContainer.setPadding(new Insets(30));
+    mainContainer.setPadding(new Insets(20));
 
-    // Assemble main components
+    GridPane playerGrid = new GridPane();
+    playerGrid.setHgap(20);
+    playerGrid.setVgap(20);
+
+    for (int i = 0; i < 4; i++) {
+      VBox playerBox = createPlayerBox(i);
+      playerGrid.add(playerBox, i % 2, i / 2);
+    }
+
+    startButton = new Button("Start Game");
+    startButton.setDisable(true);
+
     mainContainer.getChildren().addAll(
-        createTitle(),
-        createSubtitle(),
-        createPlayerGrid(),
-        createControlButtons()
+        new Label("Select Characters"),
+        playerGrid,
+        startButton
     );
 
     root = mainContainer;
   }
 
-  // Creates title label
-  private Label createTitle() {
-    Label title = new Label("Snakes and Ladders");
-    title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-    return title;
-  }
-
-  // Creates subtitle label
-  private Label createSubtitle() {
-    Label subtitle = new Label("Choose Your Characters");
-    subtitle.setStyle("-fx-font-size: 18px;");
-    return subtitle;
-  }
-
-  // Creates grid of player selection boxes
-  private GridPane createPlayerGrid() {
-    GridPane grid = new GridPane();
-    grid.setHgap(20);
-    grid.setVgap(20);
-
-    for (int i = 0; i < 4; i++) {
-      playerBoxes[i] = createPlayerBox(i);
-      grid.add(playerBoxes[i], i % 2, i / 2);
-    }
-
-    return grid;
-  }
-
-  // Creates individual player container
   private VBox createPlayerBox(int playerIndex) {
     VBox box = new VBox(10);
     box.setPadding(new Insets(15));
-    box.setStyle("-fx-background-color: #eee;");
+    box.setStyle("-fx-background-color: #f0f0f0;");
 
-    // Player name field
+    HBox header = new HBox(10);
+    activeCheckboxes[playerIndex] = new CheckBox("Active");
+
+    activeCheckboxes[playerIndex].selectedProperty().addListener((obs, oldVal, newVal) -> {
+      controller.setPlayerActive(playerIndex, newVal);
+    });
+
     TextField nameField = new TextField("Player " + (playerIndex + 1));
-    nameField.textProperty().addListener((obs, old, newVal) ->
-        controller.setPlayerName(playerIndex, newVal));
+    header.getChildren().addAll(activeCheckboxes[playerIndex], nameField);
 
-    // Character selection grid
-    GridPane characterGrid = createCharacterGrid(playerIndex);
+    GridPane characterGrid = new GridPane();
+    characterGrid.setHgap(10);
+    characterGrid.setVgap(10);
 
-    box.getChildren().addAll(nameField, characterGrid);
+    List<String> characters = model.getAvailableCharacters();
+    for (int i = 0; i < characters.size(); i++) {
+      ToggleButton btn = createCharacterButton(characters.get(i), playerIndex);
+      characterGrid.add(btn, i % 4, i / 4);
+    }
+
+    box.getChildren().addAll(header, characterGrid);
     return box;
   }
 
-  // Creates character selection buttons grid
-  private GridPane createCharacterGrid(int playerIndex) {
-    GridPane grid = new GridPane();
-    grid.setHgap(10);
-    grid.setVgap(10);
-
-    int col = 0, row = 0;
-    for (String character : controller.getAvailableCharacters()) {
-      ToggleButton btn = createCharacterButton(character, playerIndex);
-      grid.add(btn, col++, row);
-      if (col > 4) { col = 0; row++; }
-    }
-
-    return grid;
-  }
-
-  // Creates individual character button
   private ToggleButton createCharacterButton(String character, int playerIndex) {
     Image img = new Image("characters/" + character + ".png");
     ImageView imgView = new ImageView(img);
@@ -117,92 +101,87 @@ public class SalCharacterSelectionView extends AbstractView implements Character
 
     ToggleButton btn = new ToggleButton("", imgView);
     btn.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+
     btn.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
       if (isSelected) {
         controller.selectCharacter(playerIndex, character);
       } else {
-        controller.deselectCharacter(playerIndex);
+        controller.selectCharacter(playerIndex, null);
       }
     });
-
+    btn.setUserData(character);
     return btn;
   }
 
-  // Creates control buttons container
-  private HBox createControlButtons() {
-    HBox container = new HBox(20);
-    container.setAlignment(Pos.CENTER);
+  private void initializeModelBindings() {
+    // Bind active players to checkboxes
+    for (int i = 0; i < 4; i++) {
+      int index = i;
+      model.getActivePlayers().addListener((Observable observable) -> {
+        boolean active = model.getActivePlayers().get(index);
+        Platform.runLater(() -> {
+          activeCheckboxes[index].setSelected(active);
+        });
+      });
+      activeCheckboxes[i].selectedProperty().addListener((obs, oldVal, newVal) -> {
+        model.getActivePlayers().set(index, newVal);
+      });
+    }
 
-    backButton = new Button("Back");
-    startButton = new Button("Start Game");
-    startButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+    // Bind character selections to button states
+    model.getSelectedCharacters().addListener((SetChangeListener.Change<? extends String> change) -> {
+      Platform.runLater(() -> {
+        for (int p = 0; p < 4; p++) {
+          for (ToggleButton btn : characterButtons[p]) {
+            String character = (String) btn.getUserData();
+            boolean selected = model.getSelectedCharacters().contains(character);
+            btn.setSelected(selected);
+            btn.setStyle(selected ? "-fx-border-color: blue; -fx-border-width: 2px;" : "");
+          }
+        }
+      });
+    });
 
-    container.getChildren().addAll(backButton, startButton);
-    return container;
+    // Bind start button state
+    startButton.disableProperty().bind(Bindings.createBooleanBinding(
+        () -> !IntStream.range(0, 4)
+            .filter(i -> model.getActivePlayers().get(i))
+            .allMatch(i -> model.getSelectedCharacters().stream()
+                .anyMatch(c -> getPlayerForCharacter(c) == i)),
+        model.getActivePlayers(), model.getSelectedCharacters()
+    ));
   }
 
   @Override
   protected void setupEventHandlers() {
-    backButton.setOnAction(e -> controller.navigateBack());
     startButton.setOnAction(e -> controller.startGame());
   }
 
+  private int getPlayerForCharacter(String character) {
+    return model.getCharacterOwners().getOrDefault(character, -1);
+  }
+
+
   @Override
   protected void applyInitialUIState() {
-    controller.registerObserver(this);
-    updateAllCharacterAvailability();
-  }
-
-  // Updates UI when character availability changes
-  private void updateAllCharacterAvailability() {
-    Set<String> selected = controller.getSelectedCharacters();
-    for (VBox box : playerBoxes) {
-      updateBoxAvailability(box, selected);
+    // Initialize checkbox states from model
+    for (int i = 0; i < 4; i++) {
+      activeCheckboxes[i].setSelected(model.getActivePlayers().get(i));
     }
-  }
 
-  // Updates availability for a single player box
-  private void updateBoxAvailability(VBox box, Set<String> selected) {
-    for (Node node : box.getChildren()) {
-      if (node instanceof GridPane grid) {
-        updateGridAvailability(grid, selected);
+    // Initialize character button states
+    model.getSelectedCharacters().forEach(character -> {
+      for (int p = 0; p < 4; p++) {
+        for (ToggleButton btn : characterButtons[p]) {
+          if (btn.getUserData().equals(character)) {
+            btn.setSelected(true);
+            btn.setStyle("-fx-border-color: blue; -fx-border-width: 2px;");
+          }
+        }
       }
-    }
+    });
   }
 
-  // Updates buttons in a character grid
-  private void updateGridAvailability(GridPane grid, Set<String> selected) {
-    for (Node node : grid.getChildren()) {
-      if (node instanceof ToggleButton btn) {
-        String character = getCharacterFromButton(btn);
-        boolean available = !selected.contains(character) || btn.isSelected();
-        btn.setDisable(!available);
-        btn.setOpacity(available ? 1.0 : 0.4);
-      }
-    }
-  }
 
-  // Extracts character name from button
-  private String getCharacterFromButton(ToggleButton btn) {
-    ImageView img = (ImageView) btn.getGraphic();
-    String path = img.getImage().getUrl();
-    return path.substring(path.lastIndexOf('/') + 1, path.lastIndexOf('.'));
-  }
 
-  // Interface implementation
-  @Override
-  public void onCharacterSelected(int playerIndex, String characterName) {
-    Platform.runLater(this::updateAllCharacterAvailability);
-  }
-
-  @Override
-  public void onAvailableCharactersChanged(Set<String> available, Set<String> selected) {
-    Platform.runLater(this::updateAllCharacterAvailability);
-  }
-
-  @Override
-  public void onPlayerActiveStatusChanged(int playerIndex, boolean isActive) {
-    Platform.runLater(() ->
-        playerBoxes[playerIndex].setDisable(!isActive));
-  }
 }

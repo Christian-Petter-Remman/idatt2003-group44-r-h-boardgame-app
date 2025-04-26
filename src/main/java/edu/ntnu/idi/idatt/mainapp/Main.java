@@ -33,7 +33,7 @@ public class Main extends Application {
 
       logger.info("Initializing IntroScreenController: {}", introController);
 
-      IntroScreenView introView = new IntroScreenView(introController);
+      IntroScreenView introView = new IntroScreenView();
 
       logger.info("Initializing IntroScreenView: {}", introView);
 

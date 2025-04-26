@@ -1,58 +1,52 @@
 package edu.ntnu.idi.idatt.navigation;
 
-import edu.ntnu.idi.idatt.controller.common.IntroScreenController;
-import edu.ntnu.idi.idatt.view.common.IntroScreenView;
+import edu.ntnu.idi.idatt.model.common.screens.CharacterController;
+import edu.ntnu.idi.idatt.model.common.screens.CharacterSelectionController;
+import edu.ntnu.idi.idatt.model.common.screens.CharacterSelectionModel;
+import edu.ntnu.idi.idatt.view.snakesandladders.SalCharacterSelectionView;
+import java.util.Stack;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Stack;
 
 public class NavigationManager {
-  private static final Logger logger = LoggerFactory.getLogger(NavigationManager.class);
-  private static NavigationManager navigator;
+  private static NavigationManager instance;
   private Stage primaryStage;
-  private final Stack<Parent> navigationStack = new Stack<>();
+  private final Stack<Parent> screenStack = new Stack<>();
 
+  // Private constructor to prevent direct instantiation
   private NavigationManager() {}
 
-  public static NavigationManager getInstance() {
-    if (navigator == null) {
-      navigator = new NavigationManager();
-    }
-    return navigator;
+  public static void initialize(Stage primaryStage) {
+    instance = new NavigationManager();
+    instance.primaryStage = primaryStage;
   }
 
-  public void initialize(Stage primaryStage) {
-    this.primaryStage = primaryStage;
+  public static NavigationManager getInstance() {
+    return instance;
   }
 
   public void setRoot(Parent root) {
     if (primaryStage.getScene() == null) {
-      Scene scene = new Scene(root);
-      primaryStage.setScene(scene);
-      logger.info("Created new scene with root");
+      primaryStage.setScene(new Scene(root));
     } else {
-      navigationStack.push(primaryStage.getScene().getRoot());
+      screenStack.push(primaryStage.getScene().getRoot());
       primaryStage.getScene().setRoot(root);
-      logger.info("Changed scene root and saved previous to stack");
     }
-    primaryStage.show();
   }
 
   public void navigateBack() {
-    if (!navigationStack.isEmpty()) {
-      Parent previousRoot = navigationStack.pop();
-      primaryStage.getScene().setRoot(previousRoot);
-      logger.info("Navigated back to previous screen");
-    } else {
-      logger.warn("Cannot navigate back - navigation stack is empty - Returning to main menu");
-      IntroScreenController introController = new IntroScreenController();
-      IntroScreenView introScreenView = new IntroScreenView(introController);
-      primaryStage.getScene().setRoot(introScreenView.getRoot());
-      logger.info("Navigated back to Main Screen");
+    if (!screenStack.isEmpty()) {
+      primaryStage.getScene().setRoot(screenStack.pop());
     }
   }
+
+  // In NavigationManager:
+  public void navigateToCharacterSelection() {
+    CharacterSelectionModel model = new CharacterSelectionModel();
+    CharacterController controller = new CharacterSelectionController(model);
+    SalCharacterSelectionView view = new SalCharacterSelectionView(controller, model);
+    setRoot(view.getRoot());
+  }
+
 }
