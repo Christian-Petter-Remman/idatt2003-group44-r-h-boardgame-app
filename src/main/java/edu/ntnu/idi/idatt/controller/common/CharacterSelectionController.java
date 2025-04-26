@@ -1,5 +1,7 @@
-package edu.ntnu.idi.idatt.model.common.screens;
+package edu.ntnu.idi.idatt.controller.common;
 
+import edu.ntnu.idi.idatt.model.common.screens.CharacterController;
+import edu.ntnu.idi.idatt.model.common.screens.CharacterSelectionModel;
 import java.util.stream.IntStream;
 
 public class CharacterSelectionController implements CharacterController {
