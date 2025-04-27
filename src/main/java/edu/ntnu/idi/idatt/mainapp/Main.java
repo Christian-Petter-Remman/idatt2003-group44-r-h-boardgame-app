@@ -25,10 +25,6 @@ public class Main extends Application {
 
       NavigationManager.getInstance().initialize(primaryStage);
       NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.INTRO_SCREEN);
-
-      primaryStage.setTitle("BoardGame App");
-      primaryStage.setFullScreenExitHint("");
-      primaryStage.setFullScreen(true);
       primaryStage.show();
 
     } catch (Exception e) {

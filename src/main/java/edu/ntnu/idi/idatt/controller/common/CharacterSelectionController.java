@@ -1,18 +1,21 @@
 package edu.ntnu.idi.idatt.controller.common;
 
-import edu.ntnu.idi.idatt.model.common.screens.CharacterController;
-import edu.ntnu.idi.idatt.model.common.screens.CharacterSelectionModel;
+import edu.ntnu.idi.idatt.model.common.CharacterSelectionModel;
+import java.util.Arrays;
 import java.util.stream.IntStream;
 
 public class CharacterSelectionController implements CharacterController {
   private final CharacterSelectionModel model;
+  private final String[] playerCharacters = new String[4];
 
   public CharacterSelectionController(CharacterSelectionModel model) {
     this.model = model;
+    Arrays.fill(playerCharacters, null);
   }
 
   @Override
   public void selectCharacter(int playerIndex, String character) {
+    playerCharacters[playerIndex] = character;
     if (!validatePlayerIndex(playerIndex)) return;
 
     // Remove previous selection
@@ -57,16 +60,17 @@ public class CharacterSelectionController implements CharacterController {
     }
   }
 
-  private boolean validatePlayerIndex(int index) {
-    return index >= 0 && index < model.getActivePlayers().size();
-  }
-
-  private boolean validateSelections() {
+  public boolean validateSelections() {
     return IntStream.range(0, model.getActivePlayers().size())
         .filter(i -> model.getActivePlayers().get(i))
         .allMatch(i -> model.getSelectedCharacters().stream()
             .anyMatch(c -> getPlayerForCharacter(c) == i));
   }
+
+  private boolean validatePlayerIndex(int index) {
+    return index >= 0 && index < model.getActivePlayers().size();
+  }
+
 
   private int getPlayerForCharacter(String character) {
     // Implementation to track character-player association

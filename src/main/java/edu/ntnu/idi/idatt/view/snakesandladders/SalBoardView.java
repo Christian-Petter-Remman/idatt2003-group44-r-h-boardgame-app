@@ -131,7 +131,7 @@ public class SalBoardView extends AbstractView implements BoardObserver {
       if (characterName == null || characterName.isEmpty()) {
         characterName = "default";
       }
-      Image image = new Image("PlayerIcons/" + characterName + ".png", 40, 40, true, true);
+      Image image = new Image("player_icons/" + characterName + ".png", 40, 40, true, true);
       ImageView icon = new ImageView(image);
       cell.getChildren().add(icon);
     }

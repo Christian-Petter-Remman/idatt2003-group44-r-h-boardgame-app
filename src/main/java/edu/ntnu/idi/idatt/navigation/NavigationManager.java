@@ -1,9 +1,18 @@
 package edu.ntnu.idi.idatt.navigation;
 
 import edu.ntnu.idi.idatt.controller.common.CharacterSelectionController;
-import edu.ntnu.idi.idatt.model.common.screens.CharacterSelectionModel;
+import edu.ntnu.idi.idatt.controller.common.IntroScreenController;
+import edu.ntnu.idi.idatt.controller.common.LoadController;
+import edu.ntnu.idi.idatt.controller.snakesandladders.SalBoardController;
+import edu.ntnu.idi.idatt.controller.snakesandladders.SalRuleSelectionController;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
+import edu.ntnu.idi.idatt.model.common.CharacterSelectionModel;
+import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.view.common.IntroScreenView;
 import edu.ntnu.idi.idatt.view.common.CharacterSelectionView;
+import edu.ntnu.idi.idatt.view.common.LoadScreenView;
+import edu.ntnu.idi.idatt.view.snakesandladders.SalBoardView;
+import edu.ntnu.idi.idatt.view.snakesandladders.SalRuleSelectionView;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -21,8 +30,8 @@ public class NavigationManager {
     INTRO_SCREEN,
     LOAD_SCREEN,
     CHARACTER_SELECTION,
-    RULE_SELECTION,
-    GAME_SCREEN
+    SAL_RULE_SELECTION,
+    SAL_GAME_SCREEN
   }
 
   private NavigationManager() {}
@@ -37,6 +46,8 @@ public class NavigationManager {
   public void initialize(Stage primaryStage) {
     this.primaryStage = primaryStage;
     primaryStage.setTitle("Board Game App");
+    primaryStage.setFullScreenExitHint("");
+    primaryStage.setFullScreen(true);
   }
 
   // Base navigation methods
@@ -44,21 +55,19 @@ public class NavigationManager {
     switch (target) {
       case INTRO_SCREEN -> showIntroScreen();
       case CHARACTER_SELECTION -> navigateToCharacterSelection();
-      case LOAD_SCREEN -> {
-        logger.info("Navigated to Load Screen");
-      }
-      case RULE_SELECTION -> navigateToRuleSelection();
-      case GAME_SCREEN -> {
-        logger.info("Navigated to Game Screen");
-      }
+      case LOAD_SCREEN -> navigateToLoadScreen();
+      case SAL_RULE_SELECTION -> navigateToSalRuleSelection();
+      case SAL_GAME_SCREEN -> navigateToSalGameScreen();
       // Add other cases as needed
       default -> logger.warn("Unhandled navigation target: {}", target);
     }
   }
 
   // Dedicated navigation methods
+  // Common screens
   public void showIntroScreen() {
-    IntroScreenView view = new IntroScreenView();
+    IntroScreenController controller = new IntroScreenController();
+    IntroScreenView view = controller.getView();
     setRoot(view.getRoot());
     logger.info("Navigated to Intro Screen");
   }
@@ -71,9 +80,23 @@ public class NavigationManager {
     logger.info("Navigated to Character Selection Screen");
   }
 
-  public void navigateToRuleSelection() {
-    // Implementation for rule selection
+  public void navigateToLoadScreen() {
+    LoadController controller = new LoadController();
+    LoadScreenView view = new LoadScreenView(controller);
+    setRoot(view.getRoot());
+    logger.info("Navigated to Load Screen");
+  }
+
+  // Snakes and Ladders specific screens
+  public void navigateToSalRuleSelection() {
+    SalRuleSelectionController controller = new SalRuleSelectionController();
+    SalRuleSelectionView view = new SalRuleSelectionView(controller);
+    setRoot(view.getRoot());
     logger.info("Navigated to Rule Selection Screen");
+  }
+
+  public void navigateToSalGameScreen() {
+    logger.info("Sal Game Screen - not implemented yet");
   }
 
   // Core navigation functionality

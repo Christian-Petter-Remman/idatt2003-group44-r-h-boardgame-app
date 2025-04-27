@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.model.common.screens;
+package edu.ntnu.idi.idatt.model.common;
 
 import java.util.HashMap;
 import java.util.Map;

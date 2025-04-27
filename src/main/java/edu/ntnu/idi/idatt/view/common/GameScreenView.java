@@ -108,7 +108,7 @@ public class GameScreenView extends AbstractView implements GameScreenObserver {
     if (characterName == null || characterName.isEmpty()) {
       characterName = "Unknown-Player";
     }
-    Image currentPlayerImage = new Image("PlayerIcons/" + characterName + ".png", 150, 150, true, true);
+    Image currentPlayerImage = new Image("player_icons/" + characterName + ".png", 150, 150, true, true);
     currentPlayerImageView = new ImageView(currentPlayerImage);
 
     // Combine elements in a hbox
@@ -221,7 +221,7 @@ public class GameScreenView extends AbstractView implements GameScreenObserver {
   }
 
   private VBox createPlayerBox(Player player, String characterName, Label positionLabel) {
-    Image playerImage = new Image("PlayerIcons/" + characterName + ".png", 75, 75, true, true);
+    Image playerImage = new Image("player_icons/" + characterName + ".png", 75, 75, true, true);
     ImageView playerImageView = new ImageView(playerImage);
     Label playerNameLabel = new Label(player.getName());
     positionLabel.setText(String.valueOf(player.getPosition()));
@@ -259,7 +259,7 @@ public class GameScreenView extends AbstractView implements GameScreenObserver {
     if (characterName == null || characterName.isEmpty()) {
       characterName = "default";
     }
-    Image currentPlayerImage = new Image("PlayerIcons/" + characterName + ".png", 150, 150, true, true);
+    Image currentPlayerImage = new Image("player_icons/" + characterName + ".png", 150, 150, true, true);
     currentPlayerImageView.setImage(currentPlayerImage);
   }
 
@@ -291,7 +291,7 @@ public class GameScreenView extends AbstractView implements GameScreenObserver {
     alert.setTitle("Game Over");
     alert.setHeaderText("🎉 " + winner.getName() + " has won the game!");
     alert.setContentText("Final position: " + winner.getPosition());
-    alert.setGraphic(new ImageView(new Image("PlayerIcons/" + winner.getCharacter() + ".png", 100, 100, true, true)));
+    alert.setGraphic(new ImageView(new Image("player_icons/" + winner.getCharacter() + ".png", 100, 100, true, true)));
 
     alert.initOwner(root.getScene().getWindow());
     alert.initModality(Modality.APPLICATION_MODAL);

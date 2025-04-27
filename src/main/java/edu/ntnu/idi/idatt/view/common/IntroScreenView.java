@@ -1,6 +1,5 @@
 package edu.ntnu.idi.idatt.view.common;
 
-import edu.ntnu.idi.idatt.controller.common.IntroScreenController;
 import edu.ntnu.idi.idatt.view.AbstractView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -72,7 +71,14 @@ public class IntroScreenView extends AbstractView implements IntroView {
 
     if (gameType != null) {
       logger.info("Game type: {}", gameType);
-      imageView.setOnMouseClicked(e -> {startGameListener.run();});
+      imageView.setOnMouseClicked(e -> {
+        if (startGameListener != null) {
+          startGameListener.run();
+          logger.info("Start game listener executed for game type: {}", gameType);
+        } else {
+          logger.warn("Start game listener is not set");
+        }
+      });
       imageView.setStyle("-fx-cursor: hand;");
     }
 
@@ -82,6 +88,7 @@ public class IntroScreenView extends AbstractView implements IntroView {
   @Override
   public void setStartGameListener(Runnable listener) {
     this.startGameListener = listener;
+    logger.info("Start game listener set");
   }
 
   @Override
