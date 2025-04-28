@@ -1,7 +1,7 @@
 package edu.ntnu.idi.idatt.controller.common;
 
-import edu.ntnu.idi.idatt.model.tile.Ladder;
-import edu.ntnu.idi.idatt.model.tile.Snake;
+import edu.ntnu.idi.idatt.model.snakesladders.Ladder;
+import edu.ntnu.idi.idatt.model.snakesladders.Snake;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.BoardObserver;
 import edu.ntnu.idi.idatt.model.snakesladders.SNLBoard;

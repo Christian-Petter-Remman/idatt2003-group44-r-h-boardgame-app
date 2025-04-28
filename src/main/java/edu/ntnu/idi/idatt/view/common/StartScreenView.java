@@ -42,21 +42,21 @@ public class StartScreenView {
     backgroundImage.setSmooth(true);
 
 
-    cowImage = createClickableImage("/HomeScreen/cow.jpg", 200, 200);
+    cowImage = createClickableImage("/HomeScreen/cow.png", 200, 200);
     pigImage = createClickableImage("/HomeScreen/pig.png", 100, 100);
     sheepImage = createClickableImage("/HomeScreen/sheep.png", 100, 100);
-    duckImage = createClickableImage("/HomeScreen/duck.png", 100, 100);
+//    duckImage = createClickableImage("/HomeScreen/duck.png", 100, 100);
     starImage = createClickableImage("/HomeScreen/star.png", 80, 80);
-    moleImage = createClickableImage("/HomeScreen/Mole.jpg", 80, 80);
-    paintImage = createClickableImage("/HomeScreen/Paint.jpg", 80, 80);
-    SNLImage = createClickableImage("/HomeScreen/snake.jpg", 80, 80);
+    moleImage = createClickableImage("/HomeScreen/mole.png", 80, 80);
+    paintImage = createClickableImage("/HomeScreen/paint.png", 80, 80);
+    SNLImage = createClickableImage("/HomeScreen/snake.png", 80, 80);
 
 
     positionIcons();
     setupHandlers();
 
     // Add everything to root
-    root.getChildren().addAll(backgroundImage, cowImage, pigImage, sheepImage, duckImage, starImage, moleImage, paintImage, SNLImage);
+    root.getChildren().addAll(backgroundImage, cowImage, pigImage, sheepImage, starImage, moleImage, paintImage, SNLImage);
   }
 
   private void positionIcons() {
@@ -69,8 +69,8 @@ public class StartScreenView {
     sheepImage.setTranslateX(100);
     sheepImage.setTranslateY(200);
 
-    duckImage.setTranslateX(350);
-    duckImage.setTranslateY(300);
+//    duckImage.setTranslateX(350);
+//    duckImage.setTranslateY(300);
 
     starImage.setTranslateX(0);
     starImage.setTranslateY(-250);
@@ -89,7 +89,7 @@ public class StartScreenView {
     cowImage.setOnMouseClicked(this::onCowClicked);
     pigImage.setOnMouseClicked(this::onPigClicked);
     sheepImage.setOnMouseClicked(this::onSheepClicked);
-    duckImage.setOnMouseClicked(this::onDuckClicked);
+
     starImage.setOnMouseClicked(this::onStarClicked);
     moleImage.setOnMouseClicked(this::onMoleClicked);
     paintImage.setOnMouseClicked(this::onPaintClicked);

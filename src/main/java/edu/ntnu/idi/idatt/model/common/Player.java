@@ -2,43 +2,50 @@ package edu.ntnu.idi.idatt.model.common;
 
 public abstract class Player {
   private final String name;
-  private int position;
-  private String character;
+  private int position = 1;
+  private String characterIcon;
+  private int points;
 
-  public Player(String name, String character, int position) {
+  public Player(String name, String characterIcon) {
     this.name = name;
-    this.position = position;
-    this.character = character;
-  }
-
-  public void setCharacter(String character) {
-    this.character = character;
-  }
-
-  public String getCharacter() {
-    return character;
+    this.characterIcon = characterIcon;
   }
 
   public String getName() {
     return name;
   }
 
-  public int getPosition() {
-    return position;
-  }
-
   public void setPosition(int position) {
     this.position = position;
   }
 
-  public abstract int getStartPosition();
+  public int getPosition() {
+    return position;
+  }
 
-  public abstract boolean hasWon();
+  public void move(int steps, AbstractBoard board) {
+    int newPosition = position + steps;
+    if (newPosition > board.getSize()) {
+      newPosition = board.getSize();
+    }
+    position = newPosition;
+    board.getTile(position).onPlayerLanded(this, board);
+  }
 
-  public abstract <T> void move(int steps, T gameContext);
+  public void setCharacter(String character) {
+    this.characterIcon = character;
+  }
 
-  @Override
-  public String toString() {
-    return name + "at position " + position;
+  public String getCharacterIcon() {
+    return characterIcon;
+  }
+
+  public int getPoints() {
+    return points;
+  }
+
+  public void addPoints(int points) {
+    this.points += points;
   }
 }
+
