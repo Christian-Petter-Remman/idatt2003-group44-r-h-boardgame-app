@@ -5,19 +5,18 @@ import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionMan
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionObserver;
 import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
+import java.util.Objects;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.Parent;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.scene.layout.VBox;
 
 public class CharacterSelectionScreen implements CharacterSelectionObserver {
-  private CharacterSelectionManager manager;
-  private CharacterSelectionHandler handler;
+  private final CharacterSelectionManager manager;
 
   private GridPane mainLayout;
-  private List<PlayerSelectionPanel> playerPanels = new ArrayList<>();
+  private final List<PlayerSelectionPanel> playerPanels = new ArrayList<>();
 
   public CharacterSelectionScreen(CharacterSelectionManager manager) {
     this.manager = manager;
@@ -30,6 +29,8 @@ public class CharacterSelectionScreen implements CharacterSelectionObserver {
     mainLayout.setHgap(20);
     mainLayout.setVgap(20);
 
+    mainLayout.getStylesheets().add(
+        Objects.requireNonNull(getClass().getResource("/css/CharacterSelectionStyleSheet.css")).toExternalForm());
     // Create player panels
     for (int i = 0; i < 4; i++) {
       PlayerData player = manager.getPlayers().get(i);
@@ -53,7 +54,6 @@ public class CharacterSelectionScreen implements CharacterSelectionObserver {
   }
 
   public void setHandler(CharacterSelectionHandler handler) {
-    this.handler = handler;
 
     // Set up event handlers
     for (int i = 0; i < playerPanels.size(); i++) {
@@ -62,19 +62,13 @@ public class CharacterSelectionScreen implements CharacterSelectionObserver {
 
       // Set up character selection handlers
       for (CharacterPortrait portrait : panel.getCharacterPortraits()) {
-        portrait.getImageView().setOnMouseClicked(event -> {
-          handler.handleCharacterSelection(playerId, portrait.getCharacter());
-        });
+        portrait.getImageView().setOnMouseClicked(event -> handler.handleCharacterSelection(playerId, portrait.getCharacter()));
       }
 
       // Set up add/remove player handlers
-      panel.getAddButton().setOnMouseClicked(event -> {
-        handler.activatePlayer(playerId);
-      });
+      panel.getAddButton().setOnMouseClicked(event -> handler.activatePlayer(playerId));
 
-      panel.getRemoveButton().setOnMouseClicked(event -> {
-        handler.deactivatePlayer(playerId);
-      });
+      panel.getRemoveButton().setOnMouseClicked(event -> handler.deactivatePlayer(playerId));
     }
   }
 

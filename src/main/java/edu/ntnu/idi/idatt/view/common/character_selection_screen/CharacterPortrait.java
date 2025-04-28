@@ -20,7 +20,7 @@ public class CharacterPortrait {
 
   private void createView() {
     container = new StackPane();
-    container.getStyleClass().add("css/CharacterSelectionStyleSheet.css/character-container");
+    container.getStyleClass().add("character-container");
 
     InputStream iconStream = getClass().getResourceAsStream(character.getImagePath());
     if (iconStream == null) {

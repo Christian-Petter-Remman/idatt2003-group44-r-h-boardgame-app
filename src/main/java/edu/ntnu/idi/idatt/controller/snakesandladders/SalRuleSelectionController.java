@@ -5,6 +5,10 @@ import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.rule_selection.SalRuleSelectionModel;
 
+/**
+ * Controller for the Snakes and Ladders rule selection screen.
+ * Handles user interactions and updates the model accordingly.
+ */
 public class SalRuleSelectionController {
 
   private final SalRuleSelectionModel model;

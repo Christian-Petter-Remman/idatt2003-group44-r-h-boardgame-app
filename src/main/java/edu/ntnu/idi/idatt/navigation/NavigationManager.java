@@ -92,7 +92,8 @@ public class NavigationManager {
 
       try {
         SalRuleSelectionModel model = new SalRuleSelectionModel();
-        SalRuleSelectionView view = new SalRuleSelectionView(model);
+        SalRuleSelectionController controller = new SalRuleSelectionController(model);
+        SalRuleSelectionView view = new SalRuleSelectionView(model, controller);
         if (view == null) {
           logger.error("THE RULE SELECTION SCREEN IS NULL");
           return;
