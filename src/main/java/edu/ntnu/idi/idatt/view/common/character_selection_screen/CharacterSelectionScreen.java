@@ -4,10 +4,12 @@ import edu.ntnu.idi.idatt.controller.common.CharacterSelectionHandler;
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionObserver;
 import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
+import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.Parent;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.layout.VBox;
 
 public class CharacterSelectionScreen implements CharacterSelectionObserver {
   private CharacterSelectionManager manager;
@@ -36,6 +38,9 @@ public class CharacterSelectionScreen implements CharacterSelectionObserver {
       // Add to layout (2x2 grid)
       mainLayout.add(panel.getView(), i % 2, i / 2);
     }
+    Button continueButton = new Button("Continue");
+    continueButton.setOnAction(event -> handler.continueToNextScreen());
+    mainLayout.getChildren().add(continueButton);
   }
 
   @Override

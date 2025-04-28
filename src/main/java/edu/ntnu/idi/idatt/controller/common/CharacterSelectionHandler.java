@@ -5,6 +5,7 @@ import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionData;
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
 import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
+import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.common.character_selection_screen.CharacterSelectionScreen;
 
 import org.slf4j.Logger;
@@ -40,6 +41,7 @@ public class CharacterSelectionHandler {
 
   // Navigation methods
   public void continueToNextScreen() {
+    NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.SAL_RULE_SELECTION);
     // TODO: Validate all active players have selected characters
     if (manager.areAllActivePlayersReady()) {
       // TODO: Navigate to next screen using your existing navigation system
