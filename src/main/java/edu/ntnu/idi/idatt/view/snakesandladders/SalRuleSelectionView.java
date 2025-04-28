@@ -1,6 +1,7 @@
 package edu.ntnu.idi.idatt.view.snakesandladders;
 
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.rule_selection.SalRuleSelectionModel;
+import edu.ntnu.idi.idatt.view.AbstractView;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
@@ -12,7 +13,7 @@ import java.util.Map;
  * View for the Snakes and Ladders rule selection screen.
  * Allows the user to select a board and number of dice.
  */
-public class SalRuleSelectionView extends VBox implements SalRuleSelectionModel.Observer {
+public class SalRuleSelectionView extends AbstractView implements SalRuleSelectionModel.Observer {
 
   private final SalRuleSelectionModel model;
   private Parent root;
@@ -28,8 +29,10 @@ public class SalRuleSelectionView extends VBox implements SalRuleSelectionModel.
     this.model = model;
     model.addObserver(this);
 
-    setSpacing(24);
-    setPadding(new Insets(32, 32, 32, 32));
+    VBox layout = new VBox();
+
+    layout.setSpacing(24);
+    layout.setPadding(new Insets(32, 32, 32, 32));
 
     // Board selection
     Label boardLabel = new Label("Select Board:");
@@ -51,7 +54,7 @@ public class SalRuleSelectionView extends VBox implements SalRuleSelectionModel.
 
     HBox diceBox = new HBox(16, oneDieRadio, twoDiceRadio);
 
-    getChildren().addAll(boardLabel, boardBox, diceLabel, diceBox);
+    layout.getChildren().addAll(boardLabel, boardBox, diceLabel, diceBox);
 
     // Initial selection from model
     updateBoardSelection();
@@ -106,7 +109,15 @@ public class SalRuleSelectionView extends VBox implements SalRuleSelectionModel.
     return diceToggleGroup;
   }
 
-  public Parent getRoot() {
-    return root;
+  @Override
+  protected void createUI() {
+  }
+
+  @Override
+  protected void setupEventHandlers() {
+  }
+
+  @Override
+  protected void applyInitialUIState() {
   }
 }

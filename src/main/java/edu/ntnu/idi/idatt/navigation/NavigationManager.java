@@ -88,10 +88,19 @@ public class NavigationManager {
 
   // Snakes and Ladders specific screens
   public void navigateToSalRuleSelection() {
-    SalRuleSelectionModel model = new SalRuleSelectionModel();
-    SalRuleSelectionController controller = new SalRuleSelectionController(model);
-    SalRuleSelectionView view = new SalRuleSelectionView(model);
-    
+    logger.info("This code is loaded");
+
+      try {
+        SalRuleSelectionModel model = new SalRuleSelectionModel();
+        SalRuleSelectionView view = new SalRuleSelectionView(model);
+        if (view == null) {
+          logger.error("THE RULE SELECTION SCREEN IS NULL");
+          return;
+        }
+        setRoot(view.getRoot());
+      } catch (Exception e) {
+        logger.error("The RuleSelection module could not be loaded");
+      }
     logger.info("Navigated to Rule Selection Screen");
   }
 

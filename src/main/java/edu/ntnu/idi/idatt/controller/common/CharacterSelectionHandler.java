@@ -41,11 +41,10 @@ public class CharacterSelectionHandler {
 
   // Navigation methods
   public void continueToNextScreen() {
-    NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.SAL_RULE_SELECTION);
     // TODO: Validate all active players have selected characters
     if (manager.areAllActivePlayersReady()) {
       // TODO: Navigate to next screen using your existing navigation system
-      logger.warn("Not implemented yet");
+      NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.SAL_RULE_SELECTION);
     } else {
       showAlert("Error", "All active players must select a character before continuing.");
     }
