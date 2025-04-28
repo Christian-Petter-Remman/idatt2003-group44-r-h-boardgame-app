@@ -20,5 +20,9 @@ public abstract class AbstractBoard {
     return tile;
   }
 
+  public void addTile(Tile tile) {
+    tiles.put(tile.getNumber(), tile);
+  }
+
   public abstract int getSize();
 }

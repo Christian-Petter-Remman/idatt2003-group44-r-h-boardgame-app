@@ -4,13 +4,21 @@ import edu.ntnu.idi.idatt.model.common.AbstractBoard;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.common.TileAttribute;
 
-public class Bridge implements TileAttribute {
+public class Star implements TileAttribute {
   private final int start;
   private final int end;
 
-  public Bridge(int start, int end) {
+  public Star(int start, int end) {
     this.start = start;
     this.end = end;
+  }
+
+  public int getStart() {
+    return start;
+  }
+
+  public int getEnd() {
+    return end;
   }
 
   @Override
@@ -18,6 +26,5 @@ public class Bridge implements TileAttribute {
     player.setPosition(end);
   }
 
-  public int getStart() { return start; }
-  public int getEnd() { return end; }
+
 }

@@ -72,50 +72,35 @@ public class BoardController {
     logger.debug("Board rendered");
   }
 
-  public void movePlayer(Player player, int toPosition) {
-    int fromPosition = player.getPosition();
-    player.setPosition(toPosition);
-    updatePlayerPositions();
-    notifyPlayerMoved(player, fromPosition, toPosition);
 
-    int finalPosition = board.getFinalPosition(toPosition);
-    if (finalPosition != toPosition) {
-      boolean isLadder = finalPosition > toPosition;
-      notifySpecialTileActivated(toPosition, finalPosition, isLadder);
+//
+//  public String getTileColor(int tileNum) {
+//    if (isSnakeStart(tileNum)) return "red";
+//    if (isSnakeEnd(tileNum)) return "pink";
+//    if (isLadderStart(tileNum)) return "darkgreen";
+//    if (isLadderEnd(tileNum)) return "lightgreen";
+//    return "white";
+//  }
 
-      player.setPosition(finalPosition);
-      updatePlayerPositions();
-      notifyPlayerMoved(player, toPosition, finalPosition);
-    }
-  }
-
-  public String getTileColor(int tileNum) {
-    if (isSnakeStart(tileNum)) return "red";
-    if (isSnakeEnd(tileNum)) return "pink";
-    if (isLadderStart(tileNum)) return "darkgreen";
-    if (isLadderEnd(tileNum)) return "lightgreen";
-    return "white";
-  }
-
-  private boolean isSnakeStart(int tileNum) {
-    return board.getSnakes().stream()
-            .anyMatch(snake -> snake.start() == tileNum);
-  }
-
-  private boolean isSnakeEnd(int tileNum) {
-    return board.getSnakes().stream()
-            .anyMatch(snake -> snake.end() == tileNum);
-  }
-
-  private boolean isLadderStart(int tileNum) {
-    return board.getLadders().stream()
-            .anyMatch(ladder -> ladder.start() == tileNum);
-  }
-
-  private boolean isLadderEnd(int tileNum) {
-    return board.getLadders().stream()
-            .anyMatch(ladder -> ladder.end() == tileNum);
-  }
+//  private boolean isSnakeStart(int tileNum) {
+//    return board.getSnakes().stream()
+//            .anyMatch(snake -> snake.start() == tileNum);
+//  }
+//
+//  private boolean isSnakeEnd(int tileNum) {
+//    return board.getSnakes().stream()
+//            .anyMatch(snake -> snake.end() == tileNum);
+//  }
+//
+//  private boolean isLadderStart(int tileNum) {
+//    return board.getLadders().stream()
+//            .anyMatch(ladder -> ladder.start() == tileNum);
+//  }
+//
+//  private boolean isLadderEnd(int tileNum) {
+//    return board.getLadders().stream()
+//            .anyMatch(ladder -> ladder.end() == tileNum);
+//  }
 
   private void notifyBoardRendered() {
     for (BoardObserver observer : observers) {

@@ -6,15 +6,37 @@ import edu.ntnu.idi.idatt.model.common.TileAttribute;
 
 public class Path implements TileAttribute {
   private final String direction;
+  private final int start;
+  private final int endStatic;
+  private final int endDynamic;
 
-  public Path(String direction) {
+
+  public Path(int start, String direction, int endStatic, int endDynamic) {
+    this.start = start;
     this.direction = direction;
+    this.endStatic = endStatic;
+    this.endDynamic = endDynamic;
   }
+
+  public String getDirection() {
+    return direction;
+  }
+
+  public int getStart() {
+    return start;
+  }
+
+  public int getEndStatic() {
+    return endStatic;
+  }
+  public int getEndDynamic() {
+    return endDynamic;
+  }
+
 
   @Override
   public void onLand(Player player, AbstractBoard board) {
     // TODO: Define behavior for "Path" if needed (move player? bonus?)
   }
-
-  public String getDirection() { return direction; }
 }
+

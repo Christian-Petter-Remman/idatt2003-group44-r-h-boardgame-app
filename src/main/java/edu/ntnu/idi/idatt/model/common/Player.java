@@ -5,6 +5,8 @@ public abstract class Player {
   private int position = 1;
   private String characterIcon;
   private int points;
+  private int jailTurnsLeft = 0;
+  private boolean jailed = false;
 
   public Player(String name, String characterIcon) {
     this.name = name;
@@ -40,6 +42,34 @@ public abstract class Player {
     return characterIcon;
   }
 
+  public boolean isJailed() {
+    return jailed;
+  }
+
+  public void setJailed(int turns) {
+    this.jailed = true;
+    this.jailTurnsLeft = turns;
+    this.position = -1;
+  }
+
+  public void decreaseJailTurns() {
+    if (jailTurnsLeft > 0) {
+      jailTurnsLeft--;
+    }
+    if (jailTurnsLeft == 0) {
+      jailed = false;
+    }
+  }
+
+  public int getJailTurnsLeft() {
+    return jailTurnsLeft;
+  }
+
+  public void releaseFromJail() {
+    this.jailed = false;
+    this.jailTurnsLeft = 0;
+  }
+
   public int getPoints() {
     return points;
   }
@@ -47,5 +77,7 @@ public abstract class Player {
   public void addPoints(int points) {
     this.points += points;
   }
+
+  public abstract boolean hasWon();
 }
 
