@@ -23,6 +23,11 @@ public class SalRuleSelectionView extends AbstractView implements SalRuleSelecti
   private final RadioButton oneDieRadio = new RadioButton("1 Die");
   private final RadioButton twoDiceRadio = new RadioButton("2 Dice");
 
+
+  // PLACEHOLDER
+
+  private Button continueButton = new Button("Continue");
+
   public SalRuleSelectionView(SalRuleSelectionModel model, SalRuleSelectionController controller) {
     this.model = model;
     this.controller = controller;
@@ -53,6 +58,9 @@ public class SalRuleSelectionView extends AbstractView implements SalRuleSelecti
     HBox diceBox = new HBox(16, oneDieRadio, twoDiceRadio);
 
     layout.getChildren().addAll(boardLabel, boardBox, diceLabel, diceBox);
+
+    continueButton.setOnAction(e -> controller.onContinuePressed());
+    layout.getChildren().add(continueButton);
 
     this.root = layout;
 
@@ -110,7 +118,7 @@ public class SalRuleSelectionView extends AbstractView implements SalRuleSelecti
   }
 
   @Override
-  protected void createUI() { }
+  protected void createUI() {}
 
   @Override
   protected void setupEventHandlers() { }

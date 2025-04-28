@@ -1,15 +1,20 @@
 package edu.ntnu.idi.idatt.navigation;
 
 import edu.ntnu.idi.idatt.controller.common.CharacterSelectionHandler;
+import edu.ntnu.idi.idatt.controller.common.GameScreenController;
 import edu.ntnu.idi.idatt.controller.common.IntroScreenController;
 import edu.ntnu.idi.idatt.controller.common.LoadController;
+import edu.ntnu.idi.idatt.controller.snakesandladders.SalBoardController;
 import edu.ntnu.idi.idatt.controller.snakesandladders.SalRuleSelectionController;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.rule_selection.SalRuleSelectionModel;
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
+import edu.ntnu.idi.idatt.view.common.GameScreenView;
 import edu.ntnu.idi.idatt.view.common.IntroScreenView;
 import edu.ntnu.idi.idatt.view.common.character_selection_screen.CharacterSelectionScreen;
 import edu.ntnu.idi.idatt.view.common.LoadScreenView;
 
+import edu.ntnu.idi.idatt.view.snakesandladders.SalBoardView;
 import edu.ntnu.idi.idatt.view.snakesandladders.SalRuleSelectionView;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -106,8 +111,20 @@ public class NavigationManager {
   }
 
   public void navigateToSalGameScreen() {
-    logger.info("Sal Game Screen - not implemented yet");
+    // 1. Create new game model
+    SnakesAndLadders game = new SnakesAndLadders();
+
+    // 2. Create controller for game
+    GameScreenController controller = new GameScreenController(game, "defaultBoard.json", "saveFile.csv");
+
+    // 3. Create view for game
+    GameScreenView view = new GameScreenView(controller);
+
+    // 4. Set root to the new view
+    setRoot(view.getRoot());
+
   }
+
 
   // Core navigation functionality
   public void setRoot(Parent root) { // TODO: Consider changing access modifier to private

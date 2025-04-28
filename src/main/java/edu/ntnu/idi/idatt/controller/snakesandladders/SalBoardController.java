@@ -27,31 +27,15 @@ public class SalBoardController {
     updatePlayerPositions();
   }
 
+  //Observer Registration
   public void registerObserver(BoardObserver observer) {
     observers.add(observer);
   }
 
-  private void updatePlayerPositions() {
-    playerPositions.clear();
-    for (Player player : players) {
-      int position = player.getPosition();
-      if (!playerPositions.containsKey(position)) {
-        playerPositions.put(position, new ArrayList<>());
-      }
-      playerPositions.get(position).add(player);
-    }
-  }
+  //Board Queries
 
   public Board getBoard() {
     return board;
-  }
-
-  public List<Player> getPlayers() {
-    return new ArrayList<>(players);
-  }
-
-  public List<Player> getPlayersAtPosition(int position) {
-    return playerPositions.getOrDefault(position, new ArrayList<>());
   }
 
   public List<Ladder> getLadders() {
@@ -66,15 +50,22 @@ public class SalBoardController {
     return board.getSize();
   }
 
-  public void render() {
-    updatePlayerPositions();
-    notifyBoardRendered();
-    logger.debug("Board rendered");
+  //Player Queries
+
+  public List<Player> getPlayers() {
+    return new ArrayList<>(players);
   }
+
+  public List<Player> getPlayersAtPosition(int position) {
+    return playerPositions.getOrDefault(position, new ArrayList<>());
+  }
+
+  //Actions
 
   public void movePlayer(Player player, int toPosition) {
     int fromPosition = player.getPosition();
     player.setPosition(toPosition);
+
     updatePlayerPositions();
     notifyPlayerMoved(player, fromPosition, toPosition);
 
@@ -89,13 +80,28 @@ public class SalBoardController {
     }
   }
 
+  public void render() {
+    updatePlayerPositions();
+    notifyBoardRendered();
+    logger.debug("Board rendered and updated.");
+  }
+
+
   public String getTileColor(int tileNum) {
-    if (tileNum % 2 == 0) {
-      return "#f0f0f0"; // Light color
-    } else {
-      return "#d0d0d0"; // Darker color
+    return (tileNum % 2 == 0) ? "#f0f0f0" : "#d0d0d0";
+  }
+
+  //Internal Helpers
+
+  private void updatePlayerPositions() {
+    playerPositions.clear();
+    for (Player player : players) {
+      int position = player.getPosition();
+      playerPositions.computeIfAbsent(position, k -> new ArrayList<>()).add(player);
     }
   }
+
+  //Notify Observers
 
   private void notifyBoardRendered() {
     for (BoardObserver observer : observers) {

@@ -4,6 +4,8 @@ import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.rule_selection.SalRuleSelectionModel;
+import edu.ntnu.idi.idatt.navigation.NavigationManager;
+import edu.ntnu.idi.idatt.navigation.NavigationManager.NavigationTarget;
 
 /**
  * Controller for the Snakes and Ladders rule selection screen.
@@ -32,4 +34,10 @@ public class SalRuleSelectionController {
   public int getSelectedDiceCount() {
     return model.getDiceCount();
   }
+
+  public void onContinuePressed() {
+    // Placeholder logic for now, later you can load board/dice selections
+    NavigationManager.getInstance().navigateTo(NavigationTarget.SAL_GAME_SCREEN);
+  }
+
 }
