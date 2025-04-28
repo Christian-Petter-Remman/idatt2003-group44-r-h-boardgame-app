@@ -1,17 +1,13 @@
 package edu.ntnu.idi.idatt.navigation;
 
-import edu.ntnu.idi.idatt.controller.common.CharacterSelectionController;
+import edu.ntnu.idi.idatt.controller.common.CharacterSelectionHandler;
 import edu.ntnu.idi.idatt.controller.common.IntroScreenController;
 import edu.ntnu.idi.idatt.controller.common.LoadController;
-import edu.ntnu.idi.idatt.controller.snakesandladders.SalBoardController;
 import edu.ntnu.idi.idatt.controller.snakesandladders.SalRuleSelectionController;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
-import edu.ntnu.idi.idatt.model.common.CharacterSelectionModel;
-import edu.ntnu.idi.idatt.model.common.Dice;
+import edu.ntnu.idi.idatt.model.common.character_selection_screen.CharacterSelectionManager;
 import edu.ntnu.idi.idatt.view.common.IntroScreenView;
-import edu.ntnu.idi.idatt.view.common.CharacterSelectionView;
+import edu.ntnu.idi.idatt.view.common.character_selection_screen.CharacterSelectionScreen;
 import edu.ntnu.idi.idatt.view.common.LoadScreenView;
-import edu.ntnu.idi.idatt.view.snakesandladders.SalBoardView;
 import edu.ntnu.idi.idatt.view.snakesandladders.SalRuleSelectionView;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -73,10 +69,11 @@ public class NavigationManager {
   }
 
   public void navigateToCharacterSelection() {
-    CharacterSelectionModel model = new CharacterSelectionModel();
-    CharacterSelectionController controller = new CharacterSelectionController(model);
-    CharacterSelectionView view = new CharacterSelectionView(controller, model);
-    setRoot(view.getRoot());
+    CharacterSelectionManager model = new CharacterSelectionManager();
+    CharacterSelectionScreen view = new CharacterSelectionScreen(model);
+    CharacterSelectionHandler handler = new CharacterSelectionHandler(model, view);
+    view.setHandler(handler);
+    setRoot(view.getView());
     logger.info("Navigated to Character Selection Screen");
   }
 

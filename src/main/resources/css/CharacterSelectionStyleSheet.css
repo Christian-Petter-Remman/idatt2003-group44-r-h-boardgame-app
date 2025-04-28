@@ -1,0 +1,38 @@
+.player-slot {
+  -fx-background-color: #d3d3d3;
+  -fx-padding: 10px;
+  -fx-border-color: #a9a9a9;
+  -fx-border-width: 1px;
+  -fx-border-radius: 5px;
+}
+
+.player-label {
+  -fx-font-size: 18px;
+  -fx-font-weight: bold;
+  -fx-font-family: "Monospace";
+}
+
+.characters-box {
+  -fx-spacing: 10px;
+  -fx-padding: 10px;
+  -fx-alignment: center;
+}
+
+.character-container {
+  -fx-border-width: 2px;
+  -fx-border-radius: 5px;
+  -fx-padding: 5px;
+}
+
+.add-player-pane {
+  -fx-background-color: rgba(200, 200, 200, 0.5);
+  -fx-min-height: 150px;
+  -fx-min-width: 200px;
+  -fx-alignment: center;
+}
+
+.remove-button {
+  -fx-background-color: #ff6666;
+  -fx-text-fill: white;
+  -fx-font-family: "Monospace";
+}

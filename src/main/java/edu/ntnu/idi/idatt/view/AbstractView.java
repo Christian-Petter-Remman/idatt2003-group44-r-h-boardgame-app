@@ -4,7 +4,7 @@ import javafx.scene.Parent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractView<T> {
+public abstract class AbstractView {
   protected final Logger logger = LoggerFactory.getLogger(getClass());
   protected boolean uiInitialized = false;
   protected Parent root;
