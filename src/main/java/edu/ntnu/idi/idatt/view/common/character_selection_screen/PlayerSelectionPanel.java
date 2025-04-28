@@ -1,7 +1,7 @@
 package edu.ntnu.idi.idatt.view.common.character_selection_screen;
 
-import edu.ntnu.idi.idatt.model.common.character_selection_screen.CharacterSelectionData;
-import edu.ntnu.idi.idatt.model.common.character_selection_screen.PlayerData;
+import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionData;
+import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;

@@ -1,9 +1,9 @@
 package edu.ntnu.idi.idatt.view.common.character_selection_screen;
 
 import edu.ntnu.idi.idatt.controller.common.CharacterSelectionHandler;
-import edu.ntnu.idi.idatt.model.common.character_selection_screen.CharacterSelectionManager;
-import edu.ntnu.idi.idatt.model.common.character_selection_screen.CharacterSelectionObserver;
-import edu.ntnu.idi.idatt.model.common.character_selection_screen.PlayerData;
+import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
+import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionObserver;
+import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
 import javafx.scene.layout.GridPane;
 import javafx.scene.Parent;
 import java.util.ArrayList;

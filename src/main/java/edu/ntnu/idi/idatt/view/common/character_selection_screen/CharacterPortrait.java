@@ -1,6 +1,6 @@
 package edu.ntnu.idi.idatt.view.common.character_selection_screen;
 
-import edu.ntnu.idi.idatt.model.common.character_selection_screen.CharacterSelectionData;
+import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionData;
 import java.io.InputStream;
 import java.util.Objects;
 import javafx.scene.image.Image;

@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.model.common.character_selection_screen;
+package edu.ntnu.idi.idatt.model.common.character_selection;
 
 public class PlayerData {
   private int id;
