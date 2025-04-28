@@ -11,16 +11,16 @@ public class CharacterSelectionManager implements Observable {
 
   public CharacterSelectionManager() {
     // Initialize characters
-    availableCharacters.add(new CharacterSelectionData("Bowser", "player_icons/bowser.png", false, null));
-    availableCharacters.add(new CharacterSelectionData("Charmander", "player_icons/charmander.png", false, null));
-    availableCharacters.add(new CharacterSelectionData("Fish", "player_icons/fish.png", false, null));
-    availableCharacters.add(new CharacterSelectionData("Luigi", "player_icons/luigi.png", false, null));
-    availableCharacters.add(new CharacterSelectionData("Mario", "player_icons/mario.png", false, null));
-    availableCharacters.add(new CharacterSelectionData("Peach", "player_icons/peach.png", false, null));
-    availableCharacters.add(new CharacterSelectionData("The Rock", "player_icons/rock.png", false, null));
-    availableCharacters.add(new CharacterSelectionData("Snoop Dogg", "player_icons/snoopdogg.png", false, null));
-    availableCharacters.add(new CharacterSelectionData("Toad", "player_icons/toad.png", false, null));
-    availableCharacters.add(new CharacterSelectionData("Yoshi", "player_icons/yoshi.png", false, null));
+    availableCharacters.add(new CharacterSelectionData("Bowser", "/player_icons/bowser.png", false, null));
+    availableCharacters.add(new CharacterSelectionData("Charmander", "/player_icons/charmander.png", false, null));
+    availableCharacters.add(new CharacterSelectionData("Fish", "/player_icons/fish.png", false, null));
+    availableCharacters.add(new CharacterSelectionData("Luigi", "/player_icons/luigi.png", false, null));
+    availableCharacters.add(new CharacterSelectionData("Mario", "/player_icons/mario.png", false, null));
+    availableCharacters.add(new CharacterSelectionData("Peach", "/player_icons/peach.png", false, null));
+    availableCharacters.add(new CharacterSelectionData("The Rock", "/player_icons/rock.png", false, null));
+    availableCharacters.add(new CharacterSelectionData("Snoop Dogg", "/player_icons/snoopdogg.png", false, null));
+    availableCharacters.add(new CharacterSelectionData("Toad", "/player_icons/toad.png", false, null));
+    availableCharacters.add(new CharacterSelectionData("Yoshi", "/player_icons/yoshi.png", false, null));
 
     // Initialize players (1-4)
     players = new ArrayList<>();

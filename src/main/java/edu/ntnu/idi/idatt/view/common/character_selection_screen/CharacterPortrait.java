@@ -29,7 +29,7 @@ public class CharacterPortrait {
     imageView = new ImageView(new Image(iconStream));
     imageView.setFitWidth(80);
     imageView.setFitHeight(80);
-    imageView.setPickOnBounds(true); // Enable click events on transparent areas
+    imageView.setPickOnBounds(true);
 
     Objects.requireNonNull(container).getChildren().add(imageView);
   }
