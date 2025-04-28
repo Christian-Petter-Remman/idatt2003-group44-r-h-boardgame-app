@@ -26,12 +26,6 @@ public class StarBoard extends AbstractBoard {
     initializeBoard();
   }
 
-  public void initializeBoard() {
-    for (int i = 1; i <= getSize(); i++) {
-      addTile(new Tile(1));
-    }
-  }
-
   public Star addStar() {
     int start = new Random().nextInt(getSize());
     Star star = new Star(start, start);

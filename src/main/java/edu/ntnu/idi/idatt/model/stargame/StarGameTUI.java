@@ -55,7 +55,7 @@ StarGameTUI {
       }
     }
 
-    System.out.println("\n🏆 Winner: " + game.getWinner().getName() + "!");
+    System.out.println("\n Winner: " + game.getWinner().getName() + "!");
   }
 
   private void handlePathDecision() {

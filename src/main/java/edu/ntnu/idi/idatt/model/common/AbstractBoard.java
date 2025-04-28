@@ -12,6 +12,12 @@ public abstract class AbstractBoard {
     }
   }
 
+  public void initializeBoard() {
+    for (int i = 1; i <= getSize(); i++) {
+      addTile(new Tile(1));
+    }
+  }
+
   public Tile getTile(int number) {
     Tile tile = tiles.get(number);
     if (tile == null) {

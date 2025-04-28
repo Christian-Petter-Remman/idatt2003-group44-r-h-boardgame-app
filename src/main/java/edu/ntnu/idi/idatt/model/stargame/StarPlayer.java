@@ -30,21 +30,14 @@ public class StarPlayer extends Player {
     this.points = points;
   }
 
+  public void addPoints(int pointsToAdd) {
+    this.points += pointsToAdd;
+  }
+
   @Override
   public boolean hasWon() {
     return points >= 5;
   }
 
-  @Override
-  public void move(int roll, AbstractBoard board) {
-    int tentativePosition = position + roll;
-    if (tentativePosition <= board.getSize()) {
-      this.position = tentativePosition;
-      board.getTile(tentativePosition).onPlayerLanded(this, board);
-    }
-  }
-
-  public void addPoints(int pointsToAdd) {
-    this.points += pointsToAdd;
-  }
+  //Move tilbake??
 }
