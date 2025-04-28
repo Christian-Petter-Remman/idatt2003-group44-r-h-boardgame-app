@@ -212,13 +212,6 @@ public class StarGame extends BoardGame {
     return pendingPathDecision;
   }
 
-  public Player getWinner() {
-    return players.stream()
-            .filter(Player::hasWon)
-            .findFirst()
-            .orElse(null);
-  }
-
   public List<StarPlayer> getStarPlayers() {
     List<StarPlayer> result = new ArrayList<>();
     for (Player p : players) {

@@ -9,10 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class
-StarGameTUI {
+public class StarGameTUI {
   private StarGame game;
-  private Scanner scanner;
+  private final Scanner scanner;
 
   public StarGameTUI() {
     scanner = new Scanner(System.in);

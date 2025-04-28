@@ -22,6 +22,13 @@ public abstract class BoardGame {
     this.currentPlayerIndex = 0;
   }
 
+  public Player getWinner() {
+    return players.stream()
+            .filter(Player::hasWon)
+            .findFirst()
+            .orElse(null);
+  }
+
   public void initializePlayer(List<Player> players) {
     this.players = players;
     this.currentPlayerIndex = 0;
@@ -31,6 +38,10 @@ public abstract class BoardGame {
     this.players.add(player);
   }
 
+  public List<Player> getPlayers() {
+    return players;
+  }
+
   public Player getCurrentPlayer() {
     return players.get(currentPlayerIndex);
   }
@@ -38,8 +49,12 @@ public abstract class BoardGame {
   public void nextTurn() {
     currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
   }
+  public AbstractBoard getBoard() {
+    return board;
+  }
 
-  // Observer pattern methods (we will improve later)
+  //=========== OBSERVERS ============
+
   public void registerObserver(GameObserver observer) {
     observers.add(observer);
   }
@@ -71,7 +86,5 @@ public abstract class BoardGame {
       observer.onScoreChanged(player, score);
     }
   }
-  public AbstractBoard getBoard() {
-    return board;
-  }
+
 }
