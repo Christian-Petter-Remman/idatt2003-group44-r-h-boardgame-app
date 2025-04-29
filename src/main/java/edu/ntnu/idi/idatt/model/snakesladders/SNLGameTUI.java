@@ -48,7 +48,7 @@ public class SNLGameTUI {
         System.out.println(player.getName() + " -> Position: " + player.getPosition());
 
         if (((SNLPlayer) player).hasWon()) {
-          System.out.println("\n🏆 " + player.getName() + " has won the game!");
+          System.out.println( player.getName() + " has won the game!");
           gameRunning = false;
           break;
         }

@@ -71,8 +71,8 @@ public class SNLGame extends BoardGame {
     }
 
     // Check if won
-    if (player.hasWon()) {
-      logger.info("🏆 {} has won the game!", player.getName());
+    if (((SNLPlayer) player).hasWon()) {
+      logger.info(" {} has won the game!", player.getName());
       gameOver = true;
       notifyWinnerObservers(player);
     } else {

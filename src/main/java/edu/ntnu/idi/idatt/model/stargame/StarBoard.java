@@ -46,7 +46,10 @@ public class StarBoard extends AbstractBoard {
   }
 
   public void removeStar(Star star) {
+    Tile tile = getTile(star.getStart());
+    tile.getAttributes().remove(star);
     stars.remove(star);
+    logger.info("Star removed from tile {}", star.getStart());
   }
 
   public void addBridge(int start, int end) {

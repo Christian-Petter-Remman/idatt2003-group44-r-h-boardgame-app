@@ -20,7 +20,7 @@ public class SNLPlayer extends Player {
 
   @Override
   public boolean hasWon() {
-    return position > 100;
+    return position >= 100;
   }
 }
 
