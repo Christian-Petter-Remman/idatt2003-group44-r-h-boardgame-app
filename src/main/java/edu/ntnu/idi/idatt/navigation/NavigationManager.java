@@ -15,6 +15,7 @@ import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
 import edu.ntnu.idi.idatt.view.common.game.LoadScreenView;
 
 
+import edu.ntnu.idi.idatt.view.paint.PaintCanvasView;
 import edu.ntnu.idi.idatt.view.snl.SNLRuleSelectionView;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -34,7 +35,9 @@ public class NavigationManager {
     LOAD_SCREEN,
     CHARACTER_SELECTION,
     SAL_RULE_SELECTION,
-    SAL_GAME_SCREEN
+    SAL_GAME_SCREEN,
+
+    PAINT_CANVAS_SCREEN
   }
 
   private NavigationManager() {}
@@ -61,7 +64,10 @@ public class NavigationManager {
       case LOAD_SCREEN -> navigateToLoadScreen();
       case SAL_RULE_SELECTION -> navigateToSalRuleSelection();
       case SAL_GAME_SCREEN -> navigateToSalGameScreen();
-      // Add other cases as needed
+
+      case PAINT_CANVAS_SCREEN -> navigateToPaintCanvas();
+
+        // Add other cases as needed
       default -> logger.warn("Unhandled navigation target: {}", target);
     }
   }
@@ -123,6 +129,11 @@ public class NavigationManager {
     // 4. Set root to the new view
     setRoot(view.getRoot());
 
+  }
+
+  public void navigateToPaintCanvas() {
+    PaintCanvasView view = new PaintCanvasView();
+    setRoot(view.getRoot());
   }
 
   // Core navigation functionality

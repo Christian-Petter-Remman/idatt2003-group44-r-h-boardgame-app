@@ -5,7 +5,9 @@ import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationManager.NavigationTarget;
+import edu.ntnu.idi.idatt.view.paint.PaintCanvasView;
 import javafx.application.Application;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
 import org.slf4j.Logger;
@@ -13,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 
 public class Main extends Application {
+
   private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
   @Override
@@ -21,15 +24,19 @@ public class Main extends Application {
     try {
       FileManager.ensureApplicationDirectoriesExist();
 
-      NavigationManager.getInstance().initialize(primaryStage);
-      NavigationManager.getInstance().navigateTo(NavigationTarget.INTRO_SCREEN);
-      primaryStage.show();
+//      NavigationManager.getInstance().initialize(primaryStage);
+//      NavigationManager.getInstance().navigateTo(NavigationTarget.INTRO_SCREEN);
+//      primaryStage.show();
 
+      NavigationManager.getInstance().initialize(primaryStage);
+      NavigationManager.getInstance().navigateTo(NavigationTarget.PAINT_CANVAS_SCREEN);
+      primaryStage.show();
     } catch (Exception e) {
       logger.error("Error during startup: {}", e.getMessage(), e);
       showAlert("Startup Error", "Could not start the game");
     }
   }
+
   public static void main(String[] args) {
     launch(args);
   }
