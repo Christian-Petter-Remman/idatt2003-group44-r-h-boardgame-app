@@ -5,6 +5,7 @@ import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
 import edu.ntnu.idi.idatt.controller.common.IntroScreenController;
 import edu.ntnu.idi.idatt.controller.snl.SNLLoadController;
 import edu.ntnu.idi.idatt.controller.snl.SNLRuleSelectionController;
+import edu.ntnu.idi.idatt.model.paint.PaintModel;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import edu.ntnu.idi.idatt.model.snl.SNLGame;
 import edu.ntnu.idi.idatt.model.snl.SNLRuleSelectionModel;
@@ -15,9 +16,12 @@ import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
 import edu.ntnu.idi.idatt.view.common.game.LoadScreenView;
 
 
+import edu.ntnu.idi.idatt.view.paint.PaintCanvasView;
 import edu.ntnu.idi.idatt.view.snl.SNLRuleSelectionView;
+import java.util.Objects;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import java.util.Stack;
 import org.slf4j.Logger;
@@ -34,7 +38,9 @@ public class NavigationManager {
     LOAD_SCREEN,
     CHARACTER_SELECTION,
     SAL_RULE_SELECTION,
-    SAL_GAME_SCREEN
+    SAL_GAME_SCREEN,
+
+    PAINT_CANVAS_SCREEN
   }
 
   private NavigationManager() {}
@@ -61,7 +67,10 @@ public class NavigationManager {
       case LOAD_SCREEN -> navigateToLoadScreen();
       case SAL_RULE_SELECTION -> navigateToSalRuleSelection();
       case SAL_GAME_SCREEN -> navigateToSalGameScreen();
-      // Add other cases as needed
+
+      case PAINT_CANVAS_SCREEN -> navigateToPaintCanvas();
+
+        // Add other cases as needed
       default -> logger.warn("Unhandled navigation target: {}", target);
     }
   }
@@ -99,10 +108,6 @@ public class NavigationManager {
         SNLRuleSelectionModel model = new SNLRuleSelectionModel();
         SNLRuleSelectionController controller = new SNLRuleSelectionController(model);
         SNLRuleSelectionView view = new SNLRuleSelectionView(model, controller);
-        if (view == null) {
-          logger.error("THE RULE SELECTION SCREEN IS NULL");
-          return;
-        }
         setRoot(view.getRoot());
       } catch (Exception e) {
         logger.error("The RuleSelection module could not be loaded");
@@ -125,6 +130,12 @@ public class NavigationManager {
 
   }
 
+  public void navigateToPaintCanvas() {
+    PaintModel model = new PaintModel();
+    PaintCanvasView view = new PaintCanvasView(model);
+    setRoot(view.getRoot());
+  }
+
   // Core navigation functionality
   public void setRoot(Parent root) { // TODO: Consider changing access modifier to private
     if (primaryStage.getScene() == null) {
@@ -145,5 +156,10 @@ public class NavigationManager {
     } else {
       logger.warn("Navigation stack empty - can't go back");
     }
+  }
+
+  public void setLogo(String path) {
+    primaryStage.getIcons().add(new Image(
+        Objects.requireNonNull(getClass().getResourceAsStream(path))));
   }
 }
