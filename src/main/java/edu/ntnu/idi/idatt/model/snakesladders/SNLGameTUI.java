@@ -1,10 +1,6 @@
 package edu.ntnu.idi.idatt.model.snakesladders;
 
 import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.model.stargame.StarBoard;
-import edu.ntnu.idi.idatt.model.stargame.StarGame;
-import edu.ntnu.idi.idatt.model.stargame.StarGameTUI;
-import edu.ntnu.idi.idatt.model.stargame.StarPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +43,7 @@ public class SNLGameTUI {
       for (Player player : game.getPlayers()) {
         System.out.println(player.getName() + " -> Position: " + player.getPosition());
 
-        if (player.getPosition() >= game.getBoard().getSize()) {
+        if (((SNLPlayer) player).hasWon()) {
           System.out.println("\n🏆 " + player.getName() + " has won the game!");
           gameRunning = false;
           break;

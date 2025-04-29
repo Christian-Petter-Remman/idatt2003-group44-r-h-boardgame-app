@@ -19,7 +19,7 @@ public class SNLGame extends BoardGame {
 
   public void initialize(SNLBoard board) {
     this.board = board;
-    this.dice = new Dice(1);
+    this.dice = new Dice(2);
     this.currentPlayerIndex = 0;
     logger.info("Game initialized with board and dice");
   }
