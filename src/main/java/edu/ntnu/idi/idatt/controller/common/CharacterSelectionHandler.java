@@ -40,9 +40,7 @@ public class CharacterSelectionHandler implements NavigationHandler {
 
   @Override
   public void navigateTo(String destination) {
-    NavigationManager.getInstance().navigateTo(
-        NavigationManager.NavigationTarget.valueOf(destination)
-    );
+    NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.valueOf(destination));
   }
 
   @Override

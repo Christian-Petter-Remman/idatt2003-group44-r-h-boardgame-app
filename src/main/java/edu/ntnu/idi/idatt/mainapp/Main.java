@@ -5,6 +5,7 @@ import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 import edu.ntnu.idi.idatt.controller.common.IntroScreenController;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
+import edu.ntnu.idi.idatt.navigation.NavigationManager.NavigationTarget;
 import edu.ntnu.idi.idatt.view.common.IntroScreenView;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -24,7 +25,7 @@ public class Main extends Application {
       FileManager.ensureApplicationDirectoriesExist();
 
       NavigationManager.getInstance().initialize(primaryStage);
-      NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.INTRO_SCREEN);
+      NavigationManager.getInstance().navigateTo(NavigationTarget.SAL_RULE_SELECTION);
       primaryStage.show();
 
     } catch (Exception e) {

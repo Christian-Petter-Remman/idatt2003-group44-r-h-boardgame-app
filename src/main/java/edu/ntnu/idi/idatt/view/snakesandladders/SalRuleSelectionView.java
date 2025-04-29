@@ -1,133 +1,151 @@
 package edu.ntnu.idi.idatt.view.snakesandladders;
 
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.rule_selection.SalRuleSelectionModel;
 import edu.ntnu.idi.idatt.controller.snakesandladders.SalRuleSelectionController;
+import edu.ntnu.idi.idatt.exceptions.FileReadException;
+import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.rule_selection.SalRuleSelectionModel;
 import edu.ntnu.idi.idatt.view.AbstractView;
 import javafx.geometry.Insets;
-import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import java.util.HashMap;
-import java.util.Map;
+import javafx.scene.paint.Color;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
 
 public class SalRuleSelectionView extends AbstractView implements SalRuleSelectionModel.Observer {
 
   private final SalRuleSelectionModel model;
   private final SalRuleSelectionController controller;
-  private Parent root;
 
-  private final ToggleGroup boardToggleGroup = new ToggleGroup();
-  private final ToggleGroup diceToggleGroup = new ToggleGroup();
-  private final Map<String, RadioButton> boardRadioButtons = new HashMap<>();
+  private ToggleGroup difficultyGroup;
+  private RadioButton easyRadio, defaultRadio, hardRadio;
 
-  private final RadioButton oneDieRadio = new RadioButton("1 Die");
-  private final RadioButton twoDiceRadio = new RadioButton("2 Dice");
-
-
-  // PLACEHOLDER
-
-  private Button continueButton = new Button("Continue");
+  private Label countLabel;
+  private Button backBtn, continueBtn, randomBtn;
 
   public SalRuleSelectionView(SalRuleSelectionModel model, SalRuleSelectionController controller) {
     this.model = model;
     this.controller = controller;
     model.addObserver(this);
 
-    VBox layout = new VBox();
-    layout.setSpacing(24);
-    layout.setPadding(new Insets(32, 32, 32, 32));
+    // load stylesheet
+    root.getStylesheets().add(
+        Objects.requireNonNull(getClass().getResource("/css/SalRuleSelectionStyles.css"))
+            .toExternalForm()
+    );
+  }
 
-    // Board selection
-    Label boardLabel = new Label("Select Board:");
-    VBox boardBox = new VBox(8);
+  @Override
+  protected void createUI() {
+    // Background
+    ImageView bg = new ImageView(new Image("/images/snakesbackground.jpg"));
+    bg.setFitWidth(800);
+    bg.setFitHeight(600);
+    bg.setPreserveRatio(true);
 
-    for (String boardFile : model.getAvailableBoards()) {
-      String displayName = SalRuleSelectionModel.getDisplayName(boardFile);
-      RadioButton rb = new RadioButton(displayName);
-      rb.setToggleGroup(boardToggleGroup);
-      rb.setUserData(boardFile);
-      boardBox.getChildren().add(rb);
-      boardRadioButtons.put(boardFile, rb);
-    }
+    // Card container
+    VBox card = new VBox(20);
+    card.setAlignment(Pos.TOP_CENTER);
+    card.setPadding(new Insets(20));
+    card.setMaxWidth(300);
+    card.setBackground(new Background(
+        new BackgroundFill(Color.gray(0.2, 0.8), new CornerRadii(12), Insets.EMPTY)
+    ));
 
-    // Dice selection
-    Label diceLabel = new Label("Select Number of Dice:");
-    oneDieRadio.setToggleGroup(diceToggleGroup);
-    twoDiceRadio.setToggleGroup(diceToggleGroup);
+    // Title
+    Label title = new Label("Rule Selection");
+    title.getStyleClass().add("rs-title");
 
-    HBox diceBox = new HBox(16, oneDieRadio, twoDiceRadio);
+    // Difficulty radios
+    difficultyGroup = new ToggleGroup();
+    easyRadio    = new RadioButton("Easy");    easyRadio.setUserData("easy.json");
+    defaultRadio = new RadioButton("Default"); defaultRadio.setUserData("default.json");
+    hardRadio    = new RadioButton("Hard");    hardRadio.setUserData("hard.json");
+    easyRadio.getStyleClass().add("rs-diff-rb");
+    defaultRadio.getStyleClass().add("rs-diff-rb");
+    hardRadio.getStyleClass().add("rs-diff-rb");
+    easyRadio.setToggleGroup(difficultyGroup);
+    defaultRadio.setToggleGroup(difficultyGroup);
+    hardRadio.setToggleGroup(difficultyGroup);
+    HBox diffBox = new HBox(10, easyRadio, defaultRadio, hardRadio);
+    diffBox.setAlignment(Pos.CENTER);
 
-    layout.getChildren().addAll(boardLabel, boardBox, diceLabel, diceBox);
-
-    continueButton.setOnAction(e -> controller.onContinuePressed());
-    layout.getChildren().add(continueButton);
-
-    this.root = layout;
-
-    // Initial selection
-    updateBoardSelection();
-    updateDiceSelection();
-
-    // UI listeners using controller now
-    boardToggleGroup.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
-      if (newToggle != null) {
-        String selectedFile = (String) newToggle.getUserData();
-        if (!selectedFile.equals(model.getSelectedBoardFile())) {
-          controller.onBoardSelected(selectedFile);
-        }
+    // Random button
+    randomBtn = new Button("Random");
+    randomBtn.getStyleClass().add("rs-random");
+    ImageView q = new ImageView(new Image("/images/question_mark_icon.png"));
+    q.setFitWidth(18); q.setFitHeight(18);
+    randomBtn.setGraphic(q);
+    randomBtn.setOnAction(e -> {
+      List<String> r = model.getAvailableBoards().stream()
+          .filter(f -> f.toLowerCase().startsWith("random"))
+          .toList();
+      if (!r.isEmpty()) {
+        model.setSelectedBoardFile(r.get(new Random().nextInt(r.size())));
       }
     });
 
-    diceToggleGroup.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
-      if (newToggle != null) {
-        int dice = newToggle == twoDiceRadio ? 2 : 1;
-        if (dice != model.getDiceCount()) {
-          controller.onDiceCountSelected(dice);
-        }
+    // Count label
+    countLabel = new Label();
+    countLabel.getStyleClass().add("rs-count");
+
+    // Nav buttons
+    backBtn     = new Button("Back");     backBtn.getStyleClass().add("rs-nav");
+    continueBtn = new Button("Continue"); continueBtn.getStyleClass().add("rs-nav");
+    HBox nav = new HBox();
+    Region spacer = new Region();
+    HBox.setHgrow(spacer, Priority.ALWAYS);
+    nav.getChildren().addAll(backBtn, spacer, continueBtn);
+    nav.setAlignment(Pos.CENTER);
+
+    // Assemble card
+    card.getChildren().addAll(title, diffBox, randomBtn, countLabel, nav);
+
+    // Root
+    StackPane container = new StackPane(bg, card);
+    StackPane.setAlignment(card, Pos.CENTER);
+    root = container;
+  }
+
+  @Override
+  protected void setupEventHandlers() {
+    difficultyGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
+      if (newVal != null) {
+        model.setSelectedBoardFile(newVal.getUserData().toString());
       }
     });
+    backBtn.setOnAction(e -> controller.onBackPressed());
+    continueBtn.setOnAction(e -> controller.onContinuePressed());
+  }
+
+  @Override
+  protected void applyInitialUIState() {
+    String sel = model.getSelectedBoardFile();
+    if ("easy.json".equals(sel))       easyRadio.setSelected(true);
+    else if ("hard.json".equals(sel))  hardRadio.setSelected(true);
+    else                               defaultRadio.setSelected(true);
+
+    onRuleSelectionChanged();
   }
 
   @Override
   public void onRuleSelectionChanged() {
-    updateBoardSelection();
-    updateDiceSelection();
-  }
-
-  private void updateBoardSelection() {
-    String selected = model.getSelectedBoardFile();
-    if (selected != null && boardRadioButtons.containsKey(selected)) {
-      boardRadioButtons.get(selected).setSelected(true);
+    try {
+      Board b = controller.loadSelectedBoardForGame();
+      countLabel.setText("Snakes: " + b.getSnakes().size() +
+          "    Ladders: " + b.getLadders().size());
+    } catch (FileReadException | JsonParsingException ex) {
+      countLabel.setText("Snakes: ?    Ladders: ?");
+      logger.error("Failed to load counts", ex);
     }
-  }
-
-  private void updateDiceSelection() {
-    if (model.getDiceCount() == 2) {
-      twoDiceRadio.setSelected(true);
-    } else {
-      oneDieRadio.setSelected(true);
-    }
-  }
-
-  public ToggleGroup getBoardToggleGroup() {
-    return boardToggleGroup;
-  }
-
-  public ToggleGroup getDiceToggleGroup() {
-    return diceToggleGroup;
-  }
-
-  @Override
-  protected void createUI() {}
-
-  @Override
-  protected void setupEventHandlers() { }
-
-  @Override
-  protected void applyInitialUIState() { }
-
-  @Override
-  public Parent getRoot() {
-    return root;
   }
 }

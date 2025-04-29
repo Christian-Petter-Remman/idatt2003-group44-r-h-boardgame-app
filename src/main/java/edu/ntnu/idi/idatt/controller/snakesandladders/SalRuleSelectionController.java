@@ -36,8 +36,11 @@ public class SalRuleSelectionController {
   }
 
   public void onContinuePressed() {
-    // Placeholder logic for now, later you can load board/dice selections
     NavigationManager.getInstance().navigateTo(NavigationTarget.SAL_GAME_SCREEN);
+  }
+
+  public void onBackPressed() {
+    NavigationManager.getInstance().navigateBack();
   }
 
 }
