@@ -1,0 +1,53 @@
+/* ----------------  MAIN PLAYER BOX  ---------------- */
+.player-slot {
+  -fx-background-color: #ffffff;
+  -fx-border-color: #b0b0b0;
+  -fx-border-width: 1;
+  -fx-background-radius: 12;
+  -fx-border-radius: 12;
+}
+
+.inactive-player {
+  -fx-background-color: rgba(200,200,200,0.45);
+}
+
+.inactive-player:hover {
+  -fx-border-color: #0066ff;
+  -fx-border-width: 2;
+}
+
+/* ----------------  PORTRAITS  ---------------- */
+.character-container {
+  -fx-padding: 3;
+  -fx-cursor: hand;
+}
+
+.selected-character {
+  -fx-border-color: #0066ff;
+  -fx-border-width: 3;
+  -fx-border-radius: 4;
+}
+
+.disabled-character {
+  -fx-opacity: 0.35;
+  -fx-cursor: default;
+}
+
+/* ----------------  BUTTONS  ---------------- */
+.button {
+  -fx-background-color: #0275d8;
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+  -fx-background-radius: 6;
+}
+
+.remove-button {
+  -fx-background-color: #d9534f;
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+  -fx-background-radius: 8;
+}
+
+.player-name-field {
+  -fx-background-radius: 6;
+}

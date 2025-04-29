@@ -125,7 +125,6 @@ public class NavigationManager {
 
   }
 
-
   // Core navigation functionality
   public void setRoot(Parent root) { // TODO: Consider changing access modifier to private
     if (primaryStage.getScene() == null) {

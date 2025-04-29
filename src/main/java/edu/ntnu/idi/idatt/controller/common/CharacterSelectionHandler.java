@@ -1,25 +1,22 @@
 package edu.ntnu.idi.idatt.controller.common;
 
-import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
-
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionData;
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
 import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
+import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.common.character_selection_screen.CharacterSelectionScreen;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CharacterSelectionHandler {
-  private CharacterSelectionManager manager;
-  private CharacterSelectionScreen screen;
+public class CharacterSelectionHandler implements NavigationHandler {
+  private final CharacterSelectionManager manager;
 
   private static final Logger logger = LoggerFactory.getLogger(CharacterSelectionHandler.class);
 
   public CharacterSelectionHandler(CharacterSelectionManager manager, CharacterSelectionScreen screen) {
     this.manager = manager;
-    this.screen = screen;
     screen.setHandler(this);
   }
 
@@ -40,13 +37,16 @@ public class CharacterSelectionHandler {
   }
 
   // Navigation methods
-  public void continueToNextScreen() {
-    // TODO: Validate all active players have selected characters
-    if (manager.areAllActivePlayersReady()) {
-      // TODO: Navigate to next screen using your existing navigation system
-      NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.SAL_RULE_SELECTION);
-    } else {
-      showAlert("Error", "All active players must select a character before continuing.");
-    }
+
+  @Override
+  public void navigateTo(String destination) {
+    NavigationManager.getInstance().navigateTo(
+        NavigationManager.NavigationTarget.valueOf(destination)
+    );
+  }
+
+  @Override
+  public void navigateBack() {
+    NavigationManager.getInstance().navigateBack();
   }
 }
