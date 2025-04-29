@@ -23,7 +23,7 @@ public class CharacterSelectionController implements NavigationHandler {
   public void handleCharacterSelection(int playerId, CharacterSelectionData character) {
     PlayerData player = manager.getPlayerById(playerId);
     if (player != null && player.isActive() &&
-        (!character.isSelected() || character.getSelectedBy() == player)) {
+            (!character.isSelected() || character.getSelectedBy() == player)) {
       manager.selectCharacter(player, character);
     }
   }
@@ -35,8 +35,6 @@ public class CharacterSelectionController implements NavigationHandler {
   public void deactivatePlayer(int playerId) {
     manager.deactivatePlayer(playerId);
   }
-
-  // Navigation methods
 
   @Override
   public void navigateTo(String destination) {

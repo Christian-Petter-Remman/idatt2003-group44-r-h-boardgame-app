@@ -1,22 +1,24 @@
 package edu.ntnu.idi.idatt.controller.snl;
 
-import edu.ntnu.idi.idatt.exceptions.FileReadException;
-import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
-import edu.ntnu.idi.idatt.model.common.AbstractBoard;
+
+import edu.ntnu.idi.idatt.model.model_observers.CsvExportObserver;
 import edu.ntnu.idi.idatt.model.snl.SNLRuleSelectionModel;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationManager.NavigationTarget;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Controller for the Snakes and Ladders rule selection screen.
- * Handles user interactions and updates the model accordingly.
- */
 public class SNLRuleSelectionController {
 
   private final SNLRuleSelectionModel model;
+  private final List<CsvExportObserver> observers = new ArrayList<>();
 
   public SNLRuleSelectionController(SNLRuleSelectionModel model) {
     this.model = model;
+  }
+
+  public void addObserver(CsvExportObserver observer) {
+    observers.add(observer);
   }
 
   public void onBoardSelected(String boardFile) {
@@ -32,11 +34,13 @@ public class SNLRuleSelectionController {
   }
 
   public void onContinuePressed() {
+    for (CsvExportObserver observer : observers) {
+      observer.onExportRequested();
+    }
     NavigationManager.getInstance().navigateTo(NavigationTarget.SAL_GAME_SCREEN);
   }
 
   public void onBackPressed() {
     NavigationManager.getInstance().navigateBack();
   }
-
 }

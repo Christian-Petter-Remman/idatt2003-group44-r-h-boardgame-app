@@ -5,6 +5,7 @@ import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
 import edu.ntnu.idi.idatt.controller.common.IntroScreenController;
 import edu.ntnu.idi.idatt.controller.snl.SNLLoadController;
 import edu.ntnu.idi.idatt.controller.snl.SNLRuleSelectionController;
+import edu.ntnu.idi.idatt.filehandling.GameStateCsvExporter;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import edu.ntnu.idi.idatt.model.snl.SNLGame;
 import edu.ntnu.idi.idatt.model.snl.SNLRuleSelectionModel;
@@ -61,6 +62,7 @@ public class NavigationManager {
       case LOAD_SCREEN -> navigateToLoadScreen();
       case SAL_RULE_SELECTION -> navigateToSalRuleSelection();
       case SAL_GAME_SCREEN -> navigateToSalGameScreen();
+
       // Add other cases as needed
       default -> logger.warn("Unhandled navigation target: {}", target);
     }
@@ -98,6 +100,8 @@ public class NavigationManager {
       try {
         SNLRuleSelectionModel model = new SNLRuleSelectionModel();
         SNLRuleSelectionController controller = new SNLRuleSelectionController(model);
+        GameStateCsvExporter exporter = new GameStateCsvExporter(model);
+        controller.addObserver(exporter);
         SNLRuleSelectionView view = new SNLRuleSelectionView(model, controller);
         if (view == null) {
           logger.error("THE RULE SELECTION SCREEN IS NULL");

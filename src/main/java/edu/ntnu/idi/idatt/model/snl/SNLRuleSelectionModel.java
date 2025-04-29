@@ -25,13 +25,11 @@ public class SNLRuleSelectionModel {
 
   public SNLRuleSelectionModel() {
     this.availableBoards = loadAvailableBoards();
-    // Default selection
     if (!availableBoards.isEmpty()) {
       this.selectedBoardFile = availableBoards.getFirst();
     }
   }
 
-  // Scans the boards directory for all .json files
   private List<String> loadAvailableBoards() {
     List<String> boards = new ArrayList<>();
     File dir = new File(FileManager.SNAKES_LADDERS_BOARDS_DIR);
