@@ -52,6 +52,10 @@
   -fx-font-weight: bold;
   -fx-background-radius: 8;
 }
+.remove-button:hover {
+  -fx-background-color: #c9302c;
+  -fx-cursor: hand;
+}
 
 .player-name-field {
   -fx-background-radius: 6;
