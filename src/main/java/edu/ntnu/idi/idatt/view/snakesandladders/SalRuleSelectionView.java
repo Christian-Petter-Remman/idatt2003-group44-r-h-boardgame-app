@@ -37,29 +37,35 @@ public class SalRuleSelectionView extends AbstractView implements SalRuleSelecti
     this.controller = controller;
     model.addObserver(this);
 
-    // load stylesheet
+    // Load stylesheet
     root.getStylesheets().add(
-        Objects.requireNonNull(getClass().getResource("/css/SalRuleSelectionStyles.css"))
-            .toExternalForm()
+        Objects.requireNonNull(getClass().getResource("/css/SalRuleSelectionStyles.css")).toExternalForm()
     );
   }
 
   @Override
   protected void createUI() {
-    // Background
+    // Background: fixed size, faded
     ImageView bg = new ImageView(new Image("/images/snakesbackground.jpg"));
     bg.setFitWidth(800);
     bg.setFitHeight(600);
     bg.setPreserveRatio(true);
+    bg.setOpacity(0.3);
 
-    // Card container
+    // Card container: centered, limited width, margins
     VBox card = new VBox(20);
-    card.setAlignment(Pos.TOP_CENTER);
-    card.setPadding(new Insets(20));
-    card.setMaxWidth(300);
+    card.setAlignment(Pos.CENTER);
+    card.setPadding(new Insets(30));
+    card.setMaxWidth(380);
     card.setBackground(new Background(
         new BackgroundFill(Color.gray(0.2, 0.8), new CornerRadii(12), Insets.EMPTY)
     ));
+
+    // Spacers for vertical centering
+    Region topSpacer = new Region();
+    Region bottomSpacer = new Region();
+    VBox.setVgrow(topSpacer, Priority.ALWAYS);
+    VBox.setVgrow(bottomSpacer, Priority.ALWAYS);
 
     // Title
     Label title = new Label("Rule Selection");
@@ -89,30 +95,42 @@ public class SalRuleSelectionView extends AbstractView implements SalRuleSelecti
       List<String> r = model.getAvailableBoards().stream()
           .filter(f -> f.toLowerCase().startsWith("random"))
           .toList();
-      if (!r.isEmpty()) {
-        model.setSelectedBoardFile(r.get(new Random().nextInt(r.size())));
-      }
+      if (!r.isEmpty()) model.setSelectedBoardFile(r.get(new Random().nextInt(r.size())));
     });
+
+    // Game Modifiers label
+    Label modTitle = new Label("Game Modifiers");
+    modTitle.getStyleClass().add("rs-mod-title");
 
     // Count label
     countLabel = new Label();
     countLabel.getStyleClass().add("rs-count");
 
-    // Nav buttons
+    // Navigation buttons
     backBtn     = new Button("Back");     backBtn.getStyleClass().add("rs-nav");
     continueBtn = new Button("Continue"); continueBtn.getStyleClass().add("rs-nav");
     HBox nav = new HBox();
-    Region spacer = new Region();
-    HBox.setHgrow(spacer, Priority.ALWAYS);
-    nav.getChildren().addAll(backBtn, spacer, continueBtn);
+    Region navSpacer = new Region();
+    HBox.setHgrow(navSpacer, Priority.ALWAYS);
+    nav.getChildren().addAll(backBtn, navSpacer, continueBtn);
     nav.setAlignment(Pos.CENTER);
 
     // Assemble card
-    card.getChildren().addAll(title, diffBox, randomBtn, countLabel, nav);
+    card.getChildren().addAll(
+        topSpacer,
+        title,
+        diffBox,
+        randomBtn,
+        modTitle,
+        countLabel,
+        nav,
+        bottomSpacer
+    );
 
-    // Root
+    // Root container
     StackPane container = new StackPane(bg, card);
     StackPane.setAlignment(card, Pos.CENTER);
+    StackPane.setMargin(card, new Insets(20));
     root = container;
   }
 
@@ -132,8 +150,7 @@ public class SalRuleSelectionView extends AbstractView implements SalRuleSelecti
     String sel = model.getSelectedBoardFile();
     if ("easy.json".equals(sel))       easyRadio.setSelected(true);
     else if ("hard.json".equals(sel))  hardRadio.setSelected(true);
-    else                               defaultRadio.setSelected(true);
-
+    else                                 defaultRadio.setSelected(true);
     onRuleSelectionChanged();
   }
 
@@ -141,8 +158,10 @@ public class SalRuleSelectionView extends AbstractView implements SalRuleSelecti
   public void onRuleSelectionChanged() {
     try {
       Board b = controller.loadSelectedBoardForGame();
-      countLabel.setText("Snakes: " + b.getSnakes().size() +
-          "    Ladders: " + b.getLadders().size());
+      countLabel.setText(
+          "Snakes: " + b.getSnakes().size() +
+              "    Ladders: " + b.getLadders().size()
+      );
     } catch (FileReadException | JsonParsingException ex) {
       countLabel.setText("Snakes: ?    Ladders: ?");
       logger.error("Failed to load counts", ex);
