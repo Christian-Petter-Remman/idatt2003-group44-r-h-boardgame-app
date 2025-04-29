@@ -95,8 +95,6 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
     private final StackPane node = new StackPane();
     private final VBox  activeBox = new VBox(10);
     private final HBox  row1 = new HBox(10), row2 = new HBox(10);
-    private final ImageView inactiveBg = new ImageView(
-        new Image("/images/SALCharacterScreen.png"));
     private final ImageView plusIcon   = new ImageView(
         new Image("/images/plus_icon.png"));
     private final Button removeBtn = new Button("X");
@@ -113,15 +111,13 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
       plusIcon.setFitWidth(60); plusIcon.setFitHeight(60);
       plusIcon.setStyle("-fx-cursor:hand;");
 
-      inactiveBg.setFitWidth(300); inactiveBg.setFitHeight(250);
-      inactiveBg.setOpacity(0.6);
-
       removeBtn.getStyleClass().add("remove-button");
 
       TextField name = new TextField("Player " + p.getId());
       name.setFont(Font.font(16));
       name.getStyleClass().add("player-name-field");
       activeBox.setAlignment(Pos.CENTER);
+      activeBox.setPadding(new Insets(10));
       activeBox.getChildren().addAll(name,row1,row2);
 
       manager.getAvailableCharacters().forEach(c -> {
@@ -131,7 +127,9 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
         else                            row2.getChildren().add(port);
       });
 
-      syncWithModel();
+      // Initial build of UI based on active state
+      rebuildOuter();
+      applyStylesAndListeners();
     }
 
     void setHandler(CharacterSelectionHandler h){ this.handler = h; }

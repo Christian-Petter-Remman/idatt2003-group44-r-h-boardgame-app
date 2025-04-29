@@ -41,6 +41,11 @@
   -fx-background-radius: 6;
 }
 
+.button:hover {
+  -fx-background-color: #0056b3;
+  -fx-cursor: hand;
+}
+
 .remove-button {
   -fx-background-color: #d9534f;
   -fx-text-fill: white;
