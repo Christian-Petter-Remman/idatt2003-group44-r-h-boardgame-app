@@ -5,9 +5,7 @@ import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationManager.NavigationTarget;
-import edu.ntnu.idi.idatt.view.paint.PaintCanvasView;
 import javafx.application.Application;
-import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
 import org.slf4j.Logger;
@@ -25,15 +23,10 @@ public class Main extends Application {
     try {
       FileManager.ensureApplicationDirectoriesExist();
 
-//      NavigationManager.getInstance().initialize(primaryStage);
-//      NavigationManager.getInstance().navigateTo(NavigationTarget.INTRO_SCREEN);
-//      primaryStage.show();
-
-      navigationManager.initialize(primaryStage);
-      navigationManager.navigateTo(NavigationTarget.PAINT_CANVAS_SCREEN);
+      NavigationManager.getInstance().initialize(primaryStage);
+      NavigationManager.getInstance().navigateTo(NavigationTarget.START_SCREEN);
 
       navigationManager.setLogo("/images/logo.png");
-
       primaryStage.show();
     } catch (Exception e) {
       logger.error("Error during startup: {}", e.getMessage(), e);

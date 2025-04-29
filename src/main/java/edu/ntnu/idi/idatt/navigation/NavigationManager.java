@@ -16,6 +16,7 @@ import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
 import edu.ntnu.idi.idatt.view.common.game.LoadScreenView;
 
 
+import edu.ntnu.idi.idatt.view.common.intro.StartScreenView;
 import edu.ntnu.idi.idatt.view.paint.PaintCanvasView;
 import edu.ntnu.idi.idatt.view.snl.SNLRuleSelectionView;
 import java.util.Objects;
@@ -34,7 +35,7 @@ public class NavigationManager {
   private final Stack<Parent> navigationStack = new Stack<>();
 
   public enum NavigationTarget {
-    INTRO_SCREEN,
+    START_SCREEN,
     LOAD_SCREEN,
     CHARACTER_SELECTION,
     SAL_RULE_SELECTION,
@@ -62,7 +63,7 @@ public class NavigationManager {
   // Base navigation methods
   public void navigateTo(NavigationTarget target) {
     switch (target) {
-      case INTRO_SCREEN -> showIntroScreen();
+      case START_SCREEN -> showStartScreen();
       case CHARACTER_SELECTION -> navigateToCharacterSelection();
       case LOAD_SCREEN -> navigateToLoadScreen();
       case SAL_RULE_SELECTION -> navigateToSalRuleSelection();
@@ -77,9 +78,8 @@ public class NavigationManager {
 
   // Dedicated navigation methods
   // Common screens
-  public void showIntroScreen() {
-    IntroScreenController controller = new IntroScreenController();
-    IntroScreenView view = controller.getView();
+  public void showStartScreen() {
+    StartScreenView view = new StartScreenView();
     setRoot(view.getRoot());
     logger.info("Navigated to Intro Screen");
   }
