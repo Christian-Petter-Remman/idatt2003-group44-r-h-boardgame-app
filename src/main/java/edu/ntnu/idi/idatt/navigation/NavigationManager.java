@@ -4,7 +4,6 @@ import edu.ntnu.idi.idatt.controller.common.CharacterSelectionHandler;
 import edu.ntnu.idi.idatt.controller.common.GameScreenController;
 import edu.ntnu.idi.idatt.controller.common.IntroScreenController;
 import edu.ntnu.idi.idatt.controller.common.LoadController;
-import edu.ntnu.idi.idatt.controller.snakesandladders.SalBoardController;
 import edu.ntnu.idi.idatt.controller.snakesandladders.SalRuleSelectionController;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
 import edu.ntnu.idi.idatt.model.boardgames.snakesladders.rule_selection.SalRuleSelectionModel;
@@ -14,7 +13,7 @@ import edu.ntnu.idi.idatt.view.common.IntroScreenView;
 import edu.ntnu.idi.idatt.view.common.character_selection_screen.CharacterSelectionScreen;
 import edu.ntnu.idi.idatt.view.common.LoadScreenView;
 
-import edu.ntnu.idi.idatt.view.snakesandladders.SalBoardView;
+
 import edu.ntnu.idi.idatt.view.snakesandladders.SalRuleSelectionView;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -124,7 +123,6 @@ public class NavigationManager {
     setRoot(view.getRoot());
 
   }
-
 
   // Core navigation functionality
   public void setRoot(Parent root) { // TODO: Consider changing access modifier to private
