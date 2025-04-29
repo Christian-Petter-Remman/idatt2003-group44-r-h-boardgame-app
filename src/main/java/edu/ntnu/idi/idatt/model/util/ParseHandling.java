@@ -2,7 +2,7 @@ package edu.ntnu.idi.idatt.model.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import edu.ntnu.idi.idatt.model.snakesladders.SNLBoard;
+import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

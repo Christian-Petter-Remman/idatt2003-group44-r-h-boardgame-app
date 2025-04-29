@@ -17,6 +17,10 @@ public abstract class Player {
     return name;
   }
 
+  public String getCharacter() {
+    return characterIcon;
+  }
+
   public void setPosition(int position) {
     this.position = position;
   }
@@ -79,5 +83,7 @@ public abstract class Player {
   }
 
   public abstract boolean hasWon();
+
+  public abstract int getStartPosition();
 }
 

@@ -27,8 +27,8 @@
 //    StarBoard board;
 //
 //    if ("random".equalsIgnoreCase(configurationName)) {
-//      board = new StarBoard();
-//      board.initializeEmptyBoard();
+//      board = new StarBoard(130);
+//      board.initializeBoard();
 //      logger.info("Created empty board for random configuration");
 //    } else {
 //      board = loadBoardFromFile(configurationName + ".json");
@@ -42,7 +42,7 @@
 //    try {
 //      T gameInstance = gameClass.getDeclaredConstructor().newInstance();
 //      gameInstance.setBoard(board);
-//      gameInstance.initialize(board);
+//      gameInstance.initializeBoard(board);
 //      return gameInstance;
 //    } catch (Exception e) {
 //      logger.error("Could not instantiate game of type " + gameClass.getSimpleName(), e);

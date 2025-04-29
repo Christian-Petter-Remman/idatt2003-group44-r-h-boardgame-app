@@ -1,20 +1,21 @@
 package edu.ntnu.idi.idatt.navigation;
 
-import edu.ntnu.idi.idatt.controller.common.CharacterSelectionHandler;
-import edu.ntnu.idi.idatt.controller.common.GameScreenController;
+import edu.ntnu.idi.idatt.controller.common.CharacterSelectionController;
+import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
 import edu.ntnu.idi.idatt.controller.common.IntroScreenController;
-import edu.ntnu.idi.idatt.controller.common.LoadController;
-import edu.ntnu.idi.idatt.controller.snakesandladders.SalRuleSelectionController;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.rule_selection.SalRuleSelectionModel;
+import edu.ntnu.idi.idatt.controller.snl.SNLLoadController;
+import edu.ntnu.idi.idatt.controller.snl.SNLRuleSelectionController;
+import edu.ntnu.idi.idatt.model.snl.SNLBoard;
+import edu.ntnu.idi.idatt.model.snl.SNLGame;
+import edu.ntnu.idi.idatt.model.snl.SNLRuleSelectionModel;
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
-import edu.ntnu.idi.idatt.view.common.GameScreenView;
-import edu.ntnu.idi.idatt.view.common.IntroScreenView;
-import edu.ntnu.idi.idatt.view.common.character_selection_screen.CharacterSelectionScreen;
-import edu.ntnu.idi.idatt.view.common.LoadScreenView;
+import edu.ntnu.idi.idatt.view.common.game.GameScreenView;
+import edu.ntnu.idi.idatt.view.common.intro.IntroScreenView;
+import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
+import edu.ntnu.idi.idatt.view.common.game.LoadScreenView;
 
 
-import edu.ntnu.idi.idatt.view.snakesandladders.SalRuleSelectionView;
+import edu.ntnu.idi.idatt.view.snl.SNLRuleSelectionView;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -77,14 +78,14 @@ public class NavigationManager {
   public void navigateToCharacterSelection() {
     CharacterSelectionManager model = new CharacterSelectionManager();
     CharacterSelectionScreen view = new CharacterSelectionScreen(model);
-    CharacterSelectionHandler handler = new CharacterSelectionHandler(model, view);
+    CharacterSelectionController handler = new CharacterSelectionController(model, view);
     view.setHandler(handler);
     setRoot(view.getView());
     logger.info("Navigated to Character Selection Screen");
   }
 
   public void navigateToLoadScreen() {
-    LoadController controller = new LoadController();
+    SNLLoadController controller = new SNLLoadController();
     LoadScreenView view = new LoadScreenView(controller);
     setRoot(view.getRoot());
     logger.info("Navigated to Load Screen");
@@ -95,9 +96,9 @@ public class NavigationManager {
     logger.info("This code is loaded");
 
       try {
-        SalRuleSelectionModel model = new SalRuleSelectionModel();
-        SalRuleSelectionController controller = new SalRuleSelectionController(model);
-        SalRuleSelectionView view = new SalRuleSelectionView(model, controller);
+        SNLRuleSelectionModel model = new SNLRuleSelectionModel();
+        SNLRuleSelectionController controller = new SNLRuleSelectionController(model);
+        SNLRuleSelectionView view = new SNLRuleSelectionView(model, controller);
         if (view == null) {
           logger.error("THE RULE SELECTION SCREEN IS NULL");
           return;
@@ -111,10 +112,10 @@ public class NavigationManager {
 
   public void navigateToSalGameScreen() {
     // 1. Create new game model
-    SnakesAndLadders game = new SnakesAndLadders();
+    SNLGame game = new SNLGame(new SNLBoard(100));
 
     // 2. Create controller for game
-    GameScreenController controller = new GameScreenController(game, "defaultBoard.json", "saveFile.csv");
+    SNLGameScreenController controller = new SNLGameScreenController(game, "defaultBoard.json", "saveFile.csv");
 
     // 3. Create view for game
     GameScreenView view = new GameScreenView(controller);

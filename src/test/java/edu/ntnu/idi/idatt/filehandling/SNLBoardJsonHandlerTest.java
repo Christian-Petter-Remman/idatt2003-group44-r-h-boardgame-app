@@ -1,7 +1,7 @@
 package edu.ntnu.idi.idatt.filehandling;
 
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
-import edu.ntnu.idi.idatt.model.snakesladders.SNLBoard;
+import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
