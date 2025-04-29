@@ -3,7 +3,7 @@ package edu.ntnu.idi.idatt.model.paint;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PaintCanvasManager {
+public class PaintModel {
 
   public interface Observer {
 

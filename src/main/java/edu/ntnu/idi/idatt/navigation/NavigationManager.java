@@ -5,6 +5,7 @@ import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
 import edu.ntnu.idi.idatt.controller.common.IntroScreenController;
 import edu.ntnu.idi.idatt.controller.snl.SNLLoadController;
 import edu.ntnu.idi.idatt.controller.snl.SNLRuleSelectionController;
+import edu.ntnu.idi.idatt.model.paint.PaintModel;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import edu.ntnu.idi.idatt.model.snl.SNLGame;
 import edu.ntnu.idi.idatt.model.snl.SNLRuleSelectionModel;
@@ -132,7 +133,8 @@ public class NavigationManager {
   }
 
   public void navigateToPaintCanvas() {
-    PaintCanvasView view = new PaintCanvasView();
+    PaintModel model = new PaintModel();
+    PaintCanvasView view = new PaintCanvasView(model);
     setRoot(view.getRoot());
   }
 
