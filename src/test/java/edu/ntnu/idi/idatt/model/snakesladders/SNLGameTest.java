@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.model.boardgames.snakesladders;
+package edu.ntnu.idi.idatt.model.snakesladders;
 
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.testutil.FixedDice;
@@ -6,16 +6,16 @@ import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SnakesAndLaddersTest {
+class SNLGameTest {
 
-  SnakesAndLadders game;
+  SNLGame game;
 
   @BeforeEach
   void setUp() {
-    game = new SnakesAndLadders();
-    //game.addPlayer("A", "toad");
-    //game.addPlayer("B", "peach");
-    //game.initialize(new Board());
+    game = new SNLGame();
+    game.addPlayer("A", "toad",0);
+    game.addPlayer("B", "peach",0);
+    game.initialize(new SNLBoard());
   }
 
   @Test
@@ -40,9 +40,9 @@ class SnakesAndLaddersTest {
 
   @Test
   void testPlayerWinsWithExactRoll() {
-    //game = new SnakesAndLadders();
-    //game.addPlayer("Tester","bowser");
-    //game.initialize(new Board());
+    game = new SNLGame();
+    game.addPlayer("Tester","bowser",0);
+    game.initialize(new SNLBoard());
 
     Player p = game.getCurrentPlayer();
     p.setPosition(97);

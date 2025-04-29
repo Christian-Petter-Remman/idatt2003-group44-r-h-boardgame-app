@@ -2,8 +2,8 @@ package edu.ntnu.idi.idatt.controller.common;
 
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
-import edu.ntnu.idi.idatt.filehandling.BoardJsonHandler;
-import edu.ntnu.idi.idatt.model.boardgames.snakesladders.SnakesAndLadders;
+import edu.ntnu.idi.idatt.filehandling.SNLBoardJsonHandler;
+import edu.ntnu.idi.idatt.model.snakesladders.SNLGame;
 import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
@@ -31,7 +31,7 @@ public class LoadController implements NavigationHandler {
    * Opens the game screen if successful, otherwise shows an alert.
    */
   public void handleLoad(String csvPath) {
-    BoardJsonHandler handler = new BoardJsonHandler();
+    SNLBoardJsonHandler handler = new SNLBoardJsonHandler();
     String boardPath = extractBoardPathFromCsv(csvPath);
 
     if (boardPath == null) {
@@ -40,7 +40,7 @@ public class LoadController implements NavigationHandler {
     }
 
     try {
-      SnakesAndLadders snakeGame = handler.loadGameFromFile(boardPath, SnakesAndLadders::new);
+      SNLGame snakeGame = handler.loadGameFromFile(boardPath, SNLGame::new);
       int players = snakeGame.loadPlayersFromCsv(csvPath);
       Dice dice = new Dice(1);
       snakeGame.setDice(dice);
@@ -59,8 +59,8 @@ public class LoadController implements NavigationHandler {
   private String extractBoardPathFromCsv(String csvPath) {
     try (BufferedReader reader = new BufferedReader(new FileReader(csvPath))) {
       String firstLine = reader.readLine();
-      if (firstLine != null && firstLine.startsWith("Board:")) {
-        return firstLine.replace("Board:", "").trim();
+      if (firstLine != null && firstLine.startsWith("SNLBoard:")) {
+        return firstLine.replace("SNLBoard:", "").trim();
       } else {
         logger.warn("No board path found in CSV file: {}", csvPath);
       }

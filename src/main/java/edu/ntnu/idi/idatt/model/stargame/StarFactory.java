@@ -1,25 +1,19 @@
-package edu.ntnu.idi.idatt.model.boardgames.snakesladders;
+package edu.ntnu.idi.idatt.model.stargame;
 
-import edu.ntnu.idi.idatt.filehandling.*;
-import edu.ntnu.idi.idatt.model.common.BoardGameFactory;
+import edu.ntnu.idi.idatt.filehandling.StarBoardJsonHandler;
 import edu.ntnu.idi.idatt.model.common.BoardGame;
-import java.io.File;
+import edu.ntnu.idi.idatt.model.common.BoardGameFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SnakesAndLaddersFactory extends BoardGameFactory {
+import java.io.File;
 
-  private static final String BOARD_DIRECTORY = "data/custom_boards/snakes_and_ladders/";
-  private static final Logger logger = LoggerFactory.getLogger(SnakesAndLaddersFactory.class);
-  private final BoardJsonHandler boardJsonHandler = new BoardJsonHandler();
+public class StarFactory extends BoardGameFactory {
 
-  @Override
-  public SnakesAndLadders createBoardGame(String fileName) {
-    SnakesAndLadders game = new SnakesAndLadders();
-    game.setBoard(loadBoardFromFile(fileName));
-    game.initialize(game.getBoard());
-    return game;
-  }
+  private static final String BOARD_DIRECTORY = "data/custom_boards/stargame/";
+  private static final Logger logger = LoggerFactory.getLogger(edu.ntnu.idi.idatt.model.stargame.StarFactory.class);
+  private final StarBoardJsonHandler boardJsonHandler = new StarBoardJsonHandler();
+
 
   @Override
   public String[] getAvailableConfigurations() {
@@ -28,10 +22,10 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
 
   @Override
   public <T extends BoardGame> T createBoardGameFromConfiguration(String configurationName, Class<T> gameClass) {
-    Board board;
+    StarBoard board;
 
     if ("random".equalsIgnoreCase(configurationName)) {
-      board = new Board();
+      board = new StarBoard();
       board.initializeEmptyBoard();
       logger.info("Created empty board for random configuration");
     } else {
@@ -40,13 +34,6 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
       if (board == null) {
         logger.warn("Failed to load board for configuration: {}, using default", configurationName);
         board = loadBoardFromFile("default.json");
-
-        if (board == null) {
-          logger.error("Failed to load default board, creating basic board");
-          board = new Board();
-          board.initializeEmptyBoard();
-          board.addDefaultLaddersAndSnakes();
-        }
       }
     }
 
@@ -63,25 +50,25 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
 
   @Override
   public boolean saveBoardGameConfiguration(BoardGame game, String configurationName) {
-    if (!(game instanceof SnakesAndLadders snakesAndLadders)) {
+    if (!(game instanceof StarGame starGame)) {
       return false;
     }
 
-    Board board = snakesAndLadders.getBoard();
+    StarBoard board = starGame.getBoard();
     return saveBoardToFile(board, configurationName);
   }
 
-  private Board loadBoardFromFile(String fileName) {
+  private StarBoard loadBoardFromFile(String fileName) {
     String filePath = BOARD_DIRECTORY + fileName;
     File file = new File(filePath);
 
     if (!file.exists()) {
-      logger.debug("Board file does not exist: {}", filePath);
+      logger.debug("SNLBoard file does not exist: {}", filePath);
       return null;
     }
 
     try {
-      Board board = boardJsonHandler.loadFromFile(filePath);
+      StarBoard board = boardJsonHandler.loadFromFile(filePath);
       logger.info("Successfully loaded board from: {}", filePath);
       return board;
     } catch (Exception e) {
@@ -90,7 +77,7 @@ public class SnakesAndLaddersFactory extends BoardGameFactory {
     }
   }
 
-  private boolean saveBoardToFile(Board board, String fileName) {
+  private boolean saveBoardToFile(StarBoard board, String fileName) {
     String filePath = BOARD_DIRECTORY + File.separator + fileName;
     try {
       boardJsonHandler.saveToFile(board, filePath);
