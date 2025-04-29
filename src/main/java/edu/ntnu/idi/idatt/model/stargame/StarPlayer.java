@@ -1,42 +1,43 @@
 package edu.ntnu.idi.idatt.model.stargame;
 
+import edu.ntnu.idi.idatt.model.common.AbstractBoard;
 import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.model.snakesladders.SNLBoard;
 
 public class StarPlayer extends Player {
 
-  private int score;
+  private int position;
+  private int points;
 
-  public StarPlayer(String name, String character, int position, int score) {
-    super(name,character,position);
-    this.score = score;
+  public StarPlayer(String name, String character, int position, int points) {
+    super(name, character);
+    this.position = position;
+    this.points = points;
   }
 
-  public int getScore() {
-    return score;
-  }
-  public void setScore(int score) {
-    this.score = score;
+  public int getPosition() {
+    return position;
   }
 
-  @Override
-  public int getStartPosition() {
-    return 0;
+  public void setPosition(int position) {
+    this.position = position;
+  }
+
+  public int getPoints() {
+    return points;
+  }
+
+  public void setPoints(int points) {
+    this.points = points;
+  }
+
+  public void addPoints(int pointsToAdd) {
+    this.points += pointsToAdd;
   }
 
   @Override
   public boolean hasWon() {
-    return false;
+    return points >= 5;
   }
 
-  @Override
-  public <T> void move(int steps, T gameContext) {
-    if (!(gameContext instanceof StarBoard board)) {
-      throw new IllegalArgumentException("Game context must be a StarBoard for Starplayer");
-    }
-    int newPosition = getPosition() + steps;
-    if (newPosition > 100) return;
-    setPosition(board.getFinalStarPosition(newPosition));
-  }
+  //Move tilbake??
 }
-

@@ -1,68 +1,83 @@
 package edu.ntnu.idi.idatt.model.common;
 
-import edu.ntnu.idi.idatt.observers.ModelObserver;
-import edu.ntnu.idi.idatt.observers.ObservableModel;
-import java.util.ArrayList;
-import java.util.List;
-
-public abstract class Player implements ObservableModel {
+public abstract class Player {
   private final String name;
-  private int position;
-  private String character;
+  private int position = 1;
+  private String characterIcon;
+  private int points;
+  private int jailTurnsLeft = 0;
+  private boolean jailed = false;
 
-  private final List<ModelObserver> observers = new ArrayList<>();
-
-  public Player(String name, String character, int position) {
+  public Player(String name, String characterIcon) {
     this.name = name;
-    this.position = position;
-    this.character = character;
-  }
-
-  public void setCharacter(String character) {
-    this.character = character;
-  }
-
-  public String getCharacter() {
-    return character;
+    this.characterIcon = characterIcon;
   }
 
   public String getName() {
     return name;
   }
 
+  public void setPosition(int position) {
+    this.position = position;
+  }
+
   public int getPosition() {
     return position;
   }
 
-  public void setPosition(int position) {
-    int oldPosition = this.position;
-    this.position = position;
-    notifyObservers("PLAYER_MOVED", new PositionChange(oldPosition, position));
+  public void move(int steps, AbstractBoard board) {
+    int newPosition = position + steps;
+    if (newPosition > board.getSize()) {
+      newPosition = board.getSize();
+    }
+    position = newPosition;
+    board.getTile(position).onPlayerLanded(this, board);
   }
 
-  public abstract int getStartPosition();
+  public void setCharacter(String character) {
+    this.characterIcon = character;
+  }
+
+  public String getCharacterIcon() {
+    return characterIcon;
+  }
+
+  public boolean isJailed() {
+    return jailed;
+  }
+
+  public void setJailed(int turns) {
+    this.jailed = true;
+    this.jailTurnsLeft = turns;
+    this.position = -1;
+  }
+
+  public void decreaseJailTurns() {
+    if (jailTurnsLeft > 0) {
+      jailTurnsLeft--;
+    }
+    if (jailTurnsLeft == 0) {
+      jailed = false;
+    }
+  }
+
+  public int getJailTurnsLeft() {
+    return jailTurnsLeft;
+  }
+
+  public void releaseFromJail() {
+    this.jailed = false;
+    this.jailTurnsLeft = 0;
+  }
+
+  public int getPoints() {
+    return points;
+  }
+
+  public void addPoints(int points) {
+    this.points += points;
+  }
 
   public abstract boolean hasWon();
-
-  public abstract <T> void move(int steps, T gameContext);
-
-  @Override
-  public String toString() {
-    return name + "at position " + position;
-  }
-
-  @Override
-  public void addObserver(ModelObserver observer) {
-    observers.add(observer);
-  }
-  @Override
-  public void removeObserver(ModelObserver observer) {
-    observers.remove(observer);
-  }
-  @Override
-  public void notifyObservers(String eventType, Object data) {
-    observers.forEach(obs -> obs.update(eventType, data));
-  }
-
-  public record PositionChange(int oldPosition, int newPosition) {}
 }
+

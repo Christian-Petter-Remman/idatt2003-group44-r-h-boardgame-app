@@ -25,6 +25,7 @@ public class Dice {
     return rolls;
   }
 
+
   public int roll() {
     return dice.stream()
         .mapToInt(Die::roll)

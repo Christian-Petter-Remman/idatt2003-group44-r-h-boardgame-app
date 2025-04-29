@@ -54,7 +54,7 @@ public class SNLBoardJsonHandler implements FileHandler <SNLBoard> {
         JsonObject obj = element.getAsJsonObject();
         int start = obj.get("start").getAsInt();
         int end = obj.get("end").getAsInt();
-        board.addFullLadder(start, end);
+        board.addLadder(start, end);
       }
     }
     if (jsonObject.has("snakes")) {

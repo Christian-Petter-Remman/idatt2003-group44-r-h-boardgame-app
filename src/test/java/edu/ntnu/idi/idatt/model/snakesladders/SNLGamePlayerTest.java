@@ -1,7 +1,7 @@
 package edu.ntnu.idi.idatt.model.snakesladders;
 
 import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.model.tile.Tile;
+import edu.ntnu.idi.idatt.model.common.Tile;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

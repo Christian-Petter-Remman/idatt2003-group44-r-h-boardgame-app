@@ -1,6 +1,6 @@
 package edu.ntnu.idi.idatt.model.snakesladders.tile;
 
-import edu.ntnu.idi.idatt.model.tile.Tile;
+import edu.ntnu.idi.idatt.model.common.Tile;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
