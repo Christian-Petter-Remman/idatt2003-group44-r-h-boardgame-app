@@ -1,11 +1,13 @@
-package edu.ntnu.idi.idatt.view.common;
+package edu.ntnu.idi.idatt.controller.common;
 
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
 import edu.ntnu.idi.idatt.filehandling.SNLBoardJsonHandler;
 import edu.ntnu.idi.idatt.model.snakesladders.SNLGame;
 import edu.ntnu.idi.idatt.model.common.Dice;
-import javafx.stage.Stage;
+import edu.ntnu.idi.idatt.navigation.NavigationHandler;
+import edu.ntnu.idi.idatt.navigation.NavigationManager;
+import edu.ntnu.idi.idatt.view.common.GameScreenView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,13 +20,10 @@ import java.util.stream.Collectors;
 
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
-public class LoadController {
+public class LoadController implements NavigationHandler {
 
-  private final Stage stage;
   private final Logger logger = LoggerFactory.getLogger(LoadController.class);
-
-  public LoadController(Stage stage) {
-    this.stage = stage;
+  public LoadController() {
   }
 
   /**
@@ -46,7 +45,9 @@ public class LoadController {
       Dice dice = new Dice(1);
       snakeGame.setDice(dice);
       logger.info("Loaded {} players from {}", players, csvPath);
-      //new GameScreenView(stage, snakeGame, boardPath, csvPath).show(); ---- TODO: Uncomment this line when GameScreenView is available
+
+      new GameScreenView(new GameScreenController(snakeGame, boardPath, csvPath));
+
     } catch (FileReadException | JsonParsingException ex) {
       logger.error("Failed to load game: {}", ex.getMessage());
       showAlert("Load Error", "Could not load saved game: " + ex.getMessage());
@@ -79,5 +80,24 @@ public class LoadController {
             .sorted(Comparator.comparingLong(File::lastModified).reversed())
             .limit(n)
             .collect(Collectors.toList());
+  }
+
+  @Override
+  public void navigateTo(String destination) {  // TODO: Figure out how this method implements the navigationHandler since it loads from JSON and does not open a new screen
+    switch (destination) {
+      case "CHARACTER_SELECTION":
+        logger.info("Navigated to Intro Screen");
+        break;
+
+      default:
+        logger.warn("Unknown destination: {}", destination);
+        break;
+    }
+  }
+
+  @Override
+  public void navigateBack() {
+    NavigationManager.getInstance().navigateBack();
+    logger.info("Navigated back to previous screen");
   }
 }

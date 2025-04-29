@@ -4,10 +4,8 @@ import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
-import edu.ntnu.idi.idatt.view.common.IntroScreenView;
+import edu.ntnu.idi.idatt.navigation.NavigationManager.NavigationTarget;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 
 import org.slf4j.Logger;
@@ -23,22 +21,16 @@ public class Main extends Application {
     try {
       FileManager.ensureApplicationDirectoriesExist();
 
-      NavigationManager navigationManager = NavigationManager.getInstance();
-      navigationManager.initialize(primaryStage);
-
-      primaryStage.setTitle("BoardGame App");
-      primaryStage.setFullScreenExitHint("");
-      primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-
-      IntroScreenView introView = new IntroScreenView();
-      navigationManager.setRoot(introView.getRoot());
-
+      NavigationManager.getInstance().initialize(primaryStage);
+      NavigationManager.getInstance().navigateTo(NavigationTarget.INTRO_SCREEN);
       primaryStage.show();
-      Platform.runLater(() -> primaryStage.setFullScreen(true));
 
     } catch (Exception e) {
       logger.error("Error during startup: {}", e.getMessage(), e);
       showAlert("Startup Error", "Could not start the game");
     }
+  }
+  public static void main(String[] args) {
+    launch(args);
   }
 }

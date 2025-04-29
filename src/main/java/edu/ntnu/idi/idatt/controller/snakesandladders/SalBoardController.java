@@ -1,10 +1,10 @@
-package edu.ntnu.idi.idatt.controller.common;
+package edu.ntnu.idi.idatt.controller.snakesandladders;
 
-import edu.ntnu.idi.idatt.model.tile.Ladder;
-import edu.ntnu.idi.idatt.model.tile.Snake;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Board;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Ladder;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.Snake;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.BoardObserver;
-import edu.ntnu.idi.idatt.model.snakesladders.SNLBoard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,45 +13,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BoardController {
-  private static final Logger logger = LoggerFactory.getLogger(BoardController.class);
+public class SalBoardController {
+  private static final Logger logger = LoggerFactory.getLogger(SalBoardController.class);
 
-  private final SNLBoard board;
+  private final Board board;
   private final List<Player> players;
   private final List<BoardObserver> observers = new ArrayList<>();
   private final Map<Integer, List<Player>> playerPositions = new HashMap<>();
 
-  public BoardController(SNLBoard board, List<Player> players) {
+  public SalBoardController(Board board, List<Player> players) {
     this.board = board;
     this.players = new ArrayList<>(players);
     updatePlayerPositions();
   }
 
+  //Observer Registration
   public void registerObserver(BoardObserver observer) {
     observers.add(observer);
   }
 
-  private void updatePlayerPositions() {
-    playerPositions.clear();
-    for (Player player : players) {
-      int position = player.getPosition();
-      if (!playerPositions.containsKey(position)) {
-        playerPositions.put(position, new ArrayList<>());
-      }
-      playerPositions.get(position).add(player);
-    }
-  }
+  //Board Queries
 
-  public SNLBoard getBoard() {
+  public Board getBoard() {
     return board;
-  }
-
-  public List<Player> getPlayers() {
-    return new ArrayList<>(players);
-  }
-
-  public List<Player> getPlayersAtPosition(int position) {
-    return playerPositions.getOrDefault(position, new ArrayList<>());
   }
 
   public List<Ladder> getLadders() {
@@ -66,15 +50,22 @@ public class BoardController {
     return board.getSize();
   }
 
-  public void render() {
-    updatePlayerPositions();
-    notifyBoardRendered();
-    logger.debug("Board rendered");
+  //Player Queries
+
+  public List<Player> getPlayers() {
+    return new ArrayList<>(players);
   }
+
+  public List<Player> getPlayersAtPosition(int position) {
+    return playerPositions.getOrDefault(position, new ArrayList<>());
+  }
+
+  //Actions
 
   public void movePlayer(Player player, int toPosition) {
     int fromPosition = player.getPosition();
     player.setPosition(toPosition);
+
     updatePlayerPositions();
     notifyPlayerMoved(player, fromPosition, toPosition);
 
@@ -89,33 +80,28 @@ public class BoardController {
     }
   }
 
+  public void render() {
+    updatePlayerPositions();
+    notifyBoardRendered();
+    logger.debug("Board rendered and updated.");
+  }
+
+
   public String getTileColor(int tileNum) {
-    if (isSnakeStart(tileNum)) return "red";
-    if (isSnakeEnd(tileNum)) return "pink";
-    if (isLadderStart(tileNum)) return "darkgreen";
-    if (isLadderEnd(tileNum)) return "lightgreen";
-    return "white";
+    return (tileNum % 2 == 0) ? "#f0f0f0" : "#d0d0d0";
   }
 
-  private boolean isSnakeStart(int tileNum) {
-    return board.getSnakes().stream()
-            .anyMatch(snake -> snake.start() == tileNum);
+  //Internal Helpers
+
+  private void updatePlayerPositions() {
+    playerPositions.clear();
+    for (Player player : players) {
+      int position = player.getPosition();
+      playerPositions.computeIfAbsent(position, k -> new ArrayList<>()).add(player);
+    }
   }
 
-  private boolean isSnakeEnd(int tileNum) {
-    return board.getSnakes().stream()
-            .anyMatch(snake -> snake.end() == tileNum);
-  }
-
-  private boolean isLadderStart(int tileNum) {
-    return board.getLadders().stream()
-            .anyMatch(ladder -> ladder.start() == tileNum);
-  }
-
-  private boolean isLadderEnd(int tileNum) {
-    return board.getLadders().stream()
-            .anyMatch(ladder -> ladder.end() == tileNum);
-  }
+  //Notify Observers
 
   private void notifyBoardRendered() {
     for (BoardObserver observer : observers) {

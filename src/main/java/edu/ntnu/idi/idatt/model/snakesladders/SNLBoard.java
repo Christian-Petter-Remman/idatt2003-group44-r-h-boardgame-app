@@ -1,45 +1,34 @@
-package edu.ntnu.idi.idatt.model.snakesladders;
-import edu.ntnu.idi.idatt.model.tile.Ladder;
-import edu.ntnu.idi.idatt.model.tile.Snake;
-import edu.ntnu.idi.idatt.model.tile.Tile;
-import edu.ntnu.idi.idatt.model.util.ParseHandling;
+package edu.ntnu.idi.idatt.model.boardgames.snakesladders;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.LadderTile;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.SnakeTile;
+import edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile.Tile;
+import edu.ntnu.idi.idatt.observers.ModelObserver;
+import edu.ntnu.idi.idatt.observers.ObservableModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SNLBoard {
-  private static final Logger logger = LoggerFactory.getLogger(SNLBoard.class);
+public class Board implements ObservableModel {
+  private static final Logger logger = LoggerFactory.getLogger(Board.class);
   private List<Tile> tiles;
   private final int size;
   private final List<Ladder> ladders = new ArrayList<>();
   private final List<Snake> snakes = new ArrayList<>();
-  ParseHandling parseHandling = new ParseHandling();
+  private final List<ModelObserver> observers = new ArrayList<>();
 
-  public SNLBoard() {
+  public Board() {
     this(100);
   }
 
-  public SNLBoard(int size) {
+  public Board(int size) {
     this.size = size;
     initializeEmptyBoard();
-  }
-
-  public int getSize() {
-    return size;
-  }
-
-  public List<Tile> getTiles() {
-    return new ArrayList<>(tiles);
-  }
-
-  public List<Ladder> getLadders() {
-    return new ArrayList<>(ladders);
-  }
-
-  public List<Snake> getSnakes() {
-    return new ArrayList<>(snakes);
   }
 
   public void initializeEmptyBoard() {
@@ -58,10 +47,8 @@ public class SNLBoard {
     }
     Ladder ladder = new Ladder(start, end);
     ladders.add(ladder);
-
-    Tile startTile = getTile(start);
-    startTile.setDestination(end);
-    startTile.setSpecialTile(true);
+    setTile(start, new LadderTile(start, end));
+    notifyObservers("LADDER_ADDED", ladder);
   }
 
   public void addSnake(int start, int end) {
@@ -70,10 +57,37 @@ public class SNLBoard {
     }
     Snake snake = new Snake(start, end);
     snakes.add(snake);
+    setTile(start, new SnakeTile(start, end));
+    notifyObservers("SNAKE_ADDED", snake);
+  }
 
-    Tile startTile = getTile(start);
-    startTile.setDestination(end);
-    startTile.setSpecialTile(true);
+  public void addDefaultLaddersAndSnakes() {
+    addDefaultLadders();
+    addDefaultSnakes();
+  }
+
+  public void addDefaultLadders() {
+    addFullLadder(1, 38);
+    addFullLadder(4, 14);
+    addFullLadder(9, 31);
+    addFullLadder(21, 42);
+    addFullLadder(28, 84);
+    addFullLadder(51, 67);
+    addFullLadder(72, 91);
+    addFullLadder(80, 99);
+    logger.info("Added default ladders to the board");
+  }
+
+  public void addDefaultSnakes() {
+    addSnake(17, 7);
+    addSnake(54, 34);
+    addSnake(62, 19);
+    addSnake(64, 60);
+    addSnake(87, 36);
+    addSnake(93, 73);
+    addSnake(95, 75);
+    addSnake(99, 78);
+    logger.info("Added default snakes to the board");
   }
 
   public Tile getTile(int number) {
@@ -82,6 +96,10 @@ public class SNLBoard {
       throw new IllegalArgumentException("Invalid tile number: " + number);
     }
     return tiles.get(number - 1);
+  }
+
+  public List<Tile> getTiles() {
+    return new ArrayList<>(tiles);
   }
 
   public void setTile(int tileNumber, Tile tile) {
@@ -97,15 +115,49 @@ public class SNLBoard {
     }
 
     Tile tile = getTile(position);
-    if (tile.hasSpecialTile()) {
+    if (tile.hasSnakeOrLadder()) {
       logger.debug("Player landed on special tile at {}, moving to {}", position, tile.getDestination());
       return tile.getDestination();
     }
     return position;
   }
 
-  public boolean saveSNLToJson(String filePath) {
-    return parseHandling.saveToJson(filePath);
+  public boolean saveToJson(String filePath) {
+    try (Writer writer = new FileWriter(filePath)) {
+      Gson gson = new GsonBuilder().setPrettyPrinting().create();
+      gson.toJson(this, writer);
+      logger.info("Successfully saved board to JSON: {}", filePath);
+      return true;
+    } catch (IOException e) {
+      logger.error("Error saving board to JSON: {}", e.getMessage());
+      return false;
+    }
   }
 
+  public int getSize() {
+    return size;
+  }
+
+  public List<Ladder> getLadders() {
+    return new ArrayList<>(ladders);
+  }
+
+  public List<Snake> getSnakes() {
+    return new ArrayList<>(snakes);
+  }
+
+  @Override
+  public void addObserver(ModelObserver observer) {
+    observers.add(observer);
+  }
+
+  @Override
+  public void notifyObservers(String eventType, Object data) {
+    new ArrayList<>(observers).forEach(obs -> obs.update(eventType, data));
+  }
+
+  @Override
+  public void removeObserver(ModelObserver observer) {
+    observers.remove(observer);
+  }
 }

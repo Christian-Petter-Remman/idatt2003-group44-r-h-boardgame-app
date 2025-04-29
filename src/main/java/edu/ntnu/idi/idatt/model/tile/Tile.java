@@ -1,74 +1,67 @@
-package edu.ntnu.idi.idatt.model.tile;
+package edu.ntnu.idi.idatt.model.boardgames.snakesladders.tile;
 
-/**
- * Represents a single tile on the snakes and ladders game board.
- */
-public class Tile {
+import edu.ntnu.idi.idatt.model.common.Player;
+import edu.ntnu.idi.idatt.observers.ModelObserver;
+import edu.ntnu.idi.idatt.observers.ObservableModel;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Tile implements ObservableModel {
+
   private final int numberOfTile;
-  private int destination;
-  private boolean isSpecialTile;
+  private final int destination;
+  private final boolean isSpecialTile;
 
-  /**
-   * Constructor for a normal tile without ladders or snakes.
-   *
-   * @param numberOfTile the number of this tile on the board
-   */
+  // Observer list
+  private final List<ModelObserver> observers = new ArrayList<>();
+
   public Tile(int numberOfTile) {
     this.numberOfTile = numberOfTile;
     this.destination = -1;
     this.isSpecialTile = false;
   }
 
-  /**
-   * Constructor for a tile with a ladder or snake.
-   *
-   * @param numberOfTile the number of this tile on the board
-   * @param destination the tile number to which the player is moved (ladder/snake)
-   */
   public Tile(int numberOfTile, int destination) {
     this.numberOfTile = numberOfTile;
     this.destination = destination;
     this.isSpecialTile = true;
   }
 
-  /**
-   * Checks if the tile has a ladder or a snake.
-   *
-   * @return true if this tile has a destination, false otherwise
-   */
-  public boolean hasSpecialTile() {
-    return isSpecialTile;
+  // ObservableModel implementation
+  @Override
+  public void addObserver(ModelObserver observer) {
+    observers.add(observer);
   }
 
-  public void setSpecialTile(boolean specialTile) {
-    this.isSpecialTile = specialTile;
+  @Override
+  public void removeObserver(ModelObserver observer) {
+    observers.remove(observer);
   }
 
-  /**
-   * Gets the destination tile of a ladder or snake.
-   *
-   * @return the destination tile number, or -1 if none
-   */
+  @Override
+  public void notifyObservers(String eventType, Object data) {
+    new ArrayList<>(observers).forEach(obs -> obs.update(eventType, data));
+  }
+
+  public void onPlayerLanded(Player player) {
+    notifyObservers("PLAYER_LANDED", player);
+  }
+
+  public int getNumberOfTile() {
+    return numberOfTile;
+  }
+
   public int getDestination() {
     return destination;
   }
 
-  public void setDestination(int destination) {
-    this.destination = destination;
-  }
-
-  /**
-   * Gets the number of this tile.
-   *
-   * @return the tile number
-   */
-  public  int getNumberOfTile() {
-    return numberOfTile;
+  public boolean hasSnakeOrLadder() {
+    return isSpecialTile;
   }
 
   @Override
   public String toString() {
-    if (hasSpecialTile()) {
+    if (hasSnakeOrLadder()) {
       return "Tile " + numberOfTile + " -> " + destination;
     } else {
       return "Tile " + numberOfTile;

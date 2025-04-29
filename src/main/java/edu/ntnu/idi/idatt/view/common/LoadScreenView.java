@@ -1,50 +1,69 @@
 package edu.ntnu.idi.idatt.view.common;
 
+import edu.ntnu.idi.idatt.controller.common.LoadController;
+import edu.ntnu.idi.idatt.view.AbstractView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
 
-import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
-import static edu.ntnu.idi.idatt.view.common.LoadController.getLastNPlayerFiles;
+import static edu.ntnu.idi.idatt.controller.common.LoadController.getLastNPlayerFiles;
 
-public class LoadScreenView {
+public class LoadScreenView extends AbstractView {
 
-  private final Stage stage;
-  private final Logger logger = LoggerFactory.getLogger(LoadScreenView.class);
   private final LoadController controller;
 
-  public LoadScreenView(Stage stage) {
-    this.stage = stage;
-    this.controller = new LoadController(stage);
+  private Button backButton;
+
+  public LoadScreenView(LoadController controller) {
+    this.controller = controller;
   }
 
-  public void show() {
+  @Override
+  protected void createUI() {
     try {
-      VBox layout = new VBox(20,
-              createTitle(),
-              createGridOfSlots()
+      VBox mainContainer = new VBox(20);
+      mainContainer.setAlignment(Pos.TOP_CENTER);
+      mainContainer.setPadding(new Insets(40));
+
+      // Create title
+      Label title = createTitle();
+
+      // Create grid of save slots
+      GridPane grid = createGridOfSlots();
+
+      // Create back button
+      backButton = new Button("Back");
+      backButton.setPrefWidth(100);
+
+      // Add components to main container
+      mainContainer.getChildren().addAll(
+          title,
+          grid,
+          backButton
       );
-      layout.setAlignment(Pos.TOP_CENTER);
-      layout.setPadding(new Insets(40));
 
-      Scene scene = new Scene(layout, 800, 600);
-      stage.setScene(scene);
-      stage.setTitle("Load Game");
+      root = mainContainer;
 
-      logger.info("Load screen displayed successfully.");
+      logger.info("Load screen UI created successfully.");
     } catch (Exception e) {
-      logger.error("Failed to load LoadScreenView: {}", e.getMessage());
+      logger.error("Failed to create LoadScreenView UI: {}", e.getMessage());
     }
+  }
+
+  @Override
+  protected void setupEventHandlers() {
+    backButton.setOnAction(e -> controller.navigateBack());
+  }
+
+  @Override
+  protected void applyInitialUIState() {
+    // No initial state to apply
   }
 
   private Label createTitle() {
@@ -82,9 +101,10 @@ public class LoadScreenView {
 
     return box;
   }
+
   private Button createLoadButton(File file) {
     Button btn = new Button("Load");
     btn.setOnAction(e -> controller.handleLoad(file.getPath()));
     return btn;
   }
-  }
+}

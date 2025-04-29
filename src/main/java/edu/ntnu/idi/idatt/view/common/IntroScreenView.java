@@ -1,6 +1,6 @@
 package edu.ntnu.idi.idatt.view.common;
 
-import edu.ntnu.idi.idatt.controller.common.IntroScreenController;
+import edu.ntnu.idi.idatt.view.AbstractView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -10,23 +10,18 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class IntroScreenView {
-  private static final Logger logger = LoggerFactory.getLogger(IntroScreenView.class);
 
-  private final BorderPane root;
-  private final IntroScreenController controller;
+public class IntroScreenView extends AbstractView implements IntroView {
+  private Runnable startGameListener;
+  private Runnable loadGameListener;
 
-  public IntroScreenView() {
-    this.root = new BorderPane();
-    this.controller = new IntroScreenController();
+  public IntroScreenView() {}
 
-    initializeUI();
-  }
+  @Override
+  protected void createUI() {
+    BorderPane mainContainer = new BorderPane();
 
-  private void initializeUI() {
     Label titleLabel = new Label("The BoardGame App");
     titleLabel.setFont(Font.font("Century Gothic", 32));
     titleLabel.setAlignment(Pos.CENTER);
@@ -37,7 +32,19 @@ public class IntroScreenView {
     content.setAlignment(Pos.CENTER);
     content.setPadding(new Insets(10));
 
-    root.setCenter(content);
+    mainContainer.setCenter(content);
+
+    root = mainContainer;
+  }
+
+  @Override
+  protected void setupEventHandlers() {
+    // Event handlers are set up in the createGameIcon method
+  }
+
+  @Override
+  protected void applyInitialUIState() {
+    // No initial state to apply
   }
 
   private HBox createGameSelectionBox() {
@@ -63,19 +70,29 @@ public class IntroScreenView {
     imageView.setPreserveRatio(false);
 
     if (gameType != null) {
-      imageView.setOnMouseClicked(e -> controller.startGame(gameType));
+      logger.info("Game type: {}", gameType);
+      imageView.setOnMouseClicked(e -> {
+        if (startGameListener != null) {
+          startGameListener.run();
+          logger.info("Start game listener executed for game type: {}", gameType);
+        } else {
+          logger.warn("Start game listener is not set");
+        }
+      });
       imageView.setStyle("-fx-cursor: hand;");
     }
 
     return imageView;
   }
 
-  public BorderPane getRoot() {
-    return root;
+  @Override
+  public void setStartGameListener(Runnable listener) {
+    this.startGameListener = listener;
+    logger.info("Start game listener set");
   }
 
-  public void show() {
-    // The NavigationManager will be used by the controller to set the root
-    controller.displayIntroScreen(this);
+  @Override
+  public void setLoadGameListener(Runnable listener) {
+    this.loadGameListener = listener;
   }
 }
