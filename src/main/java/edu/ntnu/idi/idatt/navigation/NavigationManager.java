@@ -132,7 +132,7 @@ public class NavigationManager {
 
   public void navigateToPaintCanvas() {
     PaintModel model = new PaintModel();
-    PaintCanvasView view = new PaintCanvasView(model, primaryStage);
+    PaintCanvasView view = new PaintCanvasView(model);
     setRoot(view.getRoot());
   }
 

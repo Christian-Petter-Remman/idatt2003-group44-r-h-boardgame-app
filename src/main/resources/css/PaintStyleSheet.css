@@ -1,25 +1,78 @@
-/* File: Paint.css */
+/* PaintStyleSheet.css */
+
+/* Toolbar container */
 .toolbar {
-  -fx-background-color: #d0d0d0;
-  -fx-border-color: #aaa;
-  -fx-border-width: 0 1px 0 0;
+  -fx-background-color: #F0F4F8;
+  -fx-border-color: #B0BEC5;
+  -fx-border-width: 0 2px 0 0;
+  -fx-padding: 10;
 }
 
+/* Section labels */
 .section-label {
   -fx-font-size: 14px;
   -fx-font-weight: bold;
-  -fx-text-fill: #333;
-  -fx-padding: 5 0 0 0;
+  -fx-text-fill: #263238;
+  -fx-padding: 5 0;
 }
 
-.tool-button {
-  -fx-pref-width: 160px;
+/* General toolbar buttons (ToggleButton and Button) */
+.toolbar .button,
+.toolbar .tool-button,
+.toolbar .back-button {
+  -fx-background-color: #FFFFFF;
+  -fx-border-color: #B0BEC5;
+  -fx-border-width: 1;
   -fx-background-radius: 4;
   -fx-border-radius: 4;
-  -fx-background-color: #fff;
-  -fx-border-color: #bbb;
+  -fx-padding: 6 12;
+  -fx-font-size: 13px;
+  -fx-text-fill: #263238;
+  -fx-cursor: hand;
 }
 
-.tool-button:selected {
-  -fx-background-color: #ddd;
+/* Hover effect: slight darken */
+.toolbar .button:hover,
+.toolbar .tool-button:hover,
+.toolbar .back-button:hover {
+  -fx-background-color: #E1E5EB;
+}
+
+/* Pressed / selected state */
+.toolbar .toggle-button:selected,
+.toolbar .back-button:pressed {
+  -fx-background-color: #CFD8DC;
+}
+
+/* Undo button: dark green */
+#undoBtn {
+  -fx-background-color: #2E7D32;
+  -fx-text-fill: #FFFFFF;
+}
+#undoBtn:hover { -fx-background-color: #27632A; }
+
+/* Redo button: dark blue */
+#redoBtn {
+  -fx-background-color: #1565C0;
+  -fx-text-fill: #FFFFFF;
+}
+#redoBtn:hover { -fx-background-color: #1254A1; }
+
+/* Clear button: dark red */
+#clearBtn {
+  -fx-background-color: #C62828;
+  -fx-text-fill: #FFFFFF;
+}
+#clearBtn:hover { -fx-background-color: #A81E1E; }
+
+/* Back button: neutral blue */
+.back-button {
+  -fx-background-color: #546E7A;
+  -fx-text-fill: #FFFFFF;
+}
+.back-button:hover { -fx-background-color: #455A64; }
+
+/* Canvas holder styling */
+.canvas-holder {
+  -fx-background-color: #FFFFFF;
 }
