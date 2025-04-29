@@ -20,6 +20,10 @@ public class SNLGameTUI {
     SNLBoard board = new SNLBoard(100);
     board.addSnake(21,8);
     board.addLadder(5,14);
+    board.addLadder(6,14);
+    board.addLadder(7,14);
+    board.addLadder(8,14);
+    board.addLadder(9,14);
 
     game = new SNLGame(board);
     game.initialize(board);

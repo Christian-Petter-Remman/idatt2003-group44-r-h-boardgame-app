@@ -23,31 +23,34 @@ public class SNLBoard extends AbstractBoard {
     Ladder ladder = new Ladder(start, end);
     ladders.add(ladder);
     tiles.get(start).addAttribute(ladder);
-    logger.debug("Added Ladder from {} to {} ", start, end);
+    logger.info("Added Ladder from {} to {} ", start, end);
   }
 
   public void addSnake(int start, int end) {
     Snake snake = new Snake(start, end);
     snakes.add(snake);
     tiles.get(start).addAttribute(snake);
-    logger.debug("Added Snake from {} to {} ", start, end);
+    logger.info("Added Snake from {} to {} ", start, end);
   }
 
-  public Ladder getLadderAt(int start, int end) {
+  public Integer getLadderEnd(int tileNumber) {
     for (Ladder ladder : ladders) {
-      if (ladder.getStart() == start && ladder.getEnd() == end) {
-        return ladder;
+      if (ladder.getStart() == tileNumber) {
+        return ladder.getEnd();
       }
-    } return null;
+    }
+    return null;
   }
 
-  public Snake getSnakeAt(int start, int end) {
+  public Integer getSnakeEnd(int tileNumber) {
     for (Snake snake : snakes) {
-      if (snake.getStart() == start && snake.getEnd() == end) {
-        return snake;
+      if (snake.getStart() == tileNumber) {
+        return snake.getEnd();
       }
-    } return null;
+    }
+    return null;
   }
+
 
   public List<Ladder> getLadders() {
     return new ArrayList<>(ladders);
