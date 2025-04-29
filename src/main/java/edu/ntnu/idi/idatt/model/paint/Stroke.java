@@ -2,7 +2,6 @@ package edu.ntnu.idi.idatt.model.paint;
 
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
-
 import java.util.List;
 
 public class Stroke {
@@ -16,15 +15,7 @@ public class Stroke {
     this.width = width;
   }
 
-  public List<Point2D> getPoints() {
-    return points;
-  }
-
-  public Color getColor() {
-    return color;
-  }
-
-  public double getWidth() {
-    return width;
-  }
+  public List<Point2D> getPoints() { return points; }
+  public Color getColor() { return color; }
+  public double getWidth() { return width; }
 }

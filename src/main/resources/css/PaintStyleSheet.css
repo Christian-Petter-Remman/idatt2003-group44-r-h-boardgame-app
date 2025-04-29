@@ -1,0 +1,25 @@
+/* File: Paint.css */
+.toolbar {
+  -fx-background-color: #d0d0d0;
+  -fx-border-color: #aaa;
+  -fx-border-width: 0 1px 0 0;
+}
+
+.section-label {
+  -fx-font-size: 14px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #333;
+  -fx-padding: 5 0 0 0;
+}
+
+.tool-button {
+  -fx-pref-width: 160px;
+  -fx-background-radius: 4;
+  -fx-border-radius: 4;
+  -fx-background-color: #fff;
+  -fx-border-color: #bbb;
+}
+
+.tool-button:selected {
+  -fx-background-color: #ddd;
+}

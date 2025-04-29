@@ -18,8 +18,10 @@ import edu.ntnu.idi.idatt.view.common.game.LoadScreenView;
 
 import edu.ntnu.idi.idatt.view.paint.PaintCanvasView;
 import edu.ntnu.idi.idatt.view.snl.SNLRuleSelectionView;
+import java.util.Objects;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import java.util.Stack;
 import org.slf4j.Logger;
@@ -106,10 +108,6 @@ public class NavigationManager {
         SNLRuleSelectionModel model = new SNLRuleSelectionModel();
         SNLRuleSelectionController controller = new SNLRuleSelectionController(model);
         SNLRuleSelectionView view = new SNLRuleSelectionView(model, controller);
-        if (view == null) {
-          logger.error("THE RULE SELECTION SCREEN IS NULL");
-          return;
-        }
         setRoot(view.getRoot());
       } catch (Exception e) {
         logger.error("The RuleSelection module could not be loaded");
@@ -134,7 +132,7 @@ public class NavigationManager {
 
   public void navigateToPaintCanvas() {
     PaintModel model = new PaintModel();
-    PaintCanvasView view = new PaintCanvasView(model);
+    PaintCanvasView view = new PaintCanvasView(model, primaryStage);
     setRoot(view.getRoot());
   }
 
@@ -158,5 +156,10 @@ public class NavigationManager {
     } else {
       logger.warn("Navigation stack empty - can't go back");
     }
+  }
+
+  public void setLogo(String path) {
+    primaryStage.getIcons().add(new Image(
+        Objects.requireNonNull(getClass().getResourceAsStream(path))));
   }
 }

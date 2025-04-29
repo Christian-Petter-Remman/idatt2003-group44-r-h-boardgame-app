@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 public class Main extends Application {
 
   private static final Logger logger = LoggerFactory.getLogger(Main.class);
+  private final NavigationManager navigationManager = NavigationManager.getInstance();
 
   @Override
   public void start(Stage primaryStage) {
@@ -28,8 +29,11 @@ public class Main extends Application {
 //      NavigationManager.getInstance().navigateTo(NavigationTarget.INTRO_SCREEN);
 //      primaryStage.show();
 
-      NavigationManager.getInstance().initialize(primaryStage);
-      NavigationManager.getInstance().navigateTo(NavigationTarget.PAINT_CANVAS_SCREEN);
+      navigationManager.initialize(primaryStage);
+      navigationManager.navigateTo(NavigationTarget.PAINT_CANVAS_SCREEN);
+
+      navigationManager.setLogo("/images/logo.png");
+
       primaryStage.show();
     } catch (Exception e) {
       logger.error("Error during startup: {}", e.getMessage(), e);
