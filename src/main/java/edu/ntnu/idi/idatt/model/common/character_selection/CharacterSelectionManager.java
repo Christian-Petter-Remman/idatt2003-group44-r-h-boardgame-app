@@ -8,6 +8,14 @@ public class CharacterSelectionManager implements Observable {
   private final List<CharacterSelectionData> availableCharacters = new ArrayList<>();
   private final List<PlayerData> players;
   private final List<CharacterSelectionObserver> observers = new ArrayList<>();
+  private static CharacterSelectionManager instance;
+
+  public static CharacterSelectionManager getInstance() {
+    if (instance == null) {
+      instance = new CharacterSelectionManager();
+    }
+    return instance;
+  }
 
   public CharacterSelectionManager() {
     availableCharacters.add(new CharacterSelectionData("Bowser", "/player_icons/bowser.png", false, null));

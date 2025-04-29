@@ -1,7 +1,7 @@
 package edu.ntnu.idi.idatt.filehandling;
 
-import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
 import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
+import edu.ntnu.idi.idatt.model.snl.SNLRuleSelectionModel;
 import edu.ntnu.idi.idatt.model.model_observers.CsvExportObserver;
 
 import java.io.BufferedWriter;
@@ -11,14 +11,12 @@ import java.util.List;
 
 public class GameStateCsvExporter implements CsvExportObserver {
 
-  private final String boardFile;
-  private final int diceCount;
+  private final SNLRuleSelectionModel model;
   private final List<PlayerData> players;
   private final String savePath;
 
-  public GameStateCsvExporter(String boardFile, int diceCount, List<PlayerData> players, String savePath) {
-    this.boardFile = boardFile;
-    this.diceCount = diceCount;
+  public GameStateCsvExporter(SNLRuleSelectionModel model, List<PlayerData> players, String savePath) {
+    this.model = model;
     this.players = players;
     this.savePath = savePath;
   }
@@ -26,19 +24,20 @@ public class GameStateCsvExporter implements CsvExportObserver {
   @Override
   public void onExportRequested() {
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(savePath))) {
-      writer.write("Board," + boardFile);
+      writer.write("Board," + model.getSelectedBoardFile());
       writer.newLine();
-      writer.write("DiceCount," + diceCount);
+      writer.write("DiceCount," + model.getDiceCount());
       writer.newLine();
       writer.write("CurrentTurnIndex,0");
       writer.newLine();
       writer.write("Players:");
       writer.newLine();
+
       for (PlayerData player : players) {
         if (player.isActive() && player.getSelectedCharacter() != null) {
           writer.write(player.getId() + "," +
                   player.getSelectedCharacter().getName() + "," +
-                  1); // Start position = 1
+                  1);
           writer.newLine();
         }
       }

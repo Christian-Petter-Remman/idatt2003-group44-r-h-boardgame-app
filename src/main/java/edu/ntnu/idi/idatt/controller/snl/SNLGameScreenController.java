@@ -25,14 +25,10 @@ public class SNLGameScreenController implements NavigationHandler {
   private static final Logger logger = LoggerFactory.getLogger(SNLGameScreenController.class);
 
   private final SNLGame game;
-  private final String boardFile;
-  private final String saveFileName;
   private final List<GameScreenObserver> observers = new ArrayList<>();
 
-  public SNLGameScreenController(SNLGame game, String boardFile, String saveFileName) {
+  public SNLGameScreenController(SNLGame game) {
     this.game = game;
-    this.boardFile = boardFile;
-    this.saveFileName = saveFileName;
   }
 
   // observer
@@ -41,7 +37,6 @@ public class SNLGameScreenController implements NavigationHandler {
     observers.add(observer);
   }
 
-  // Model Accessors
 
   public List<Player> getPlayers() {
     return game.getPlayers();
@@ -59,40 +54,30 @@ public class SNLGameScreenController implements NavigationHandler {
     return game;
   }
 
-  // Game actions
 
   public void handleRoll() {
     game.playTurn();
-//    int roll = game.getCurrentPlayer().getR();
-//    notifyDiceRolled(roll);
-//    notifyPlayerTurnChanged(game.getCurrentPlayer());
-  }
-  public void handleMove(int newPosition) {
-    Player player = game.getCurrentPlayer();
-    int oldPosition = player.getPosition();
-    player.setPosition(newPosition);
-    notifyPlayerPositionChanged(player, oldPosition, newPosition);
-  }
-  public void saveGame() {
-    try {
-      List<String> lines = new ArrayList<>();
-      lines.add("Board:" + boardFile);
-
-      for (Player player : game.getPlayers()) {
-        lines.add(player.getName() + "," + player.getCharacter() + "," + player.getPosition());
-      }
-
-      Files.write(Paths.get(saveFileName), lines);
-      logger.info("Game saved to {}", saveFileName);
-      notifyGameSaved(saveFileName);
-
-    } catch (IOException e) {
-      logger.error("Failed to save game: {}", e.getMessage());
-      AlertUtil.showAlert("Save Error", "Failed to save game: " + e.getMessage());
-    }
   }
 
-  // Notify Observers
+
+//  public void saveGame() {
+//    try {
+//      List<String> lines = new ArrayList<>();
+//      lines.add("Board:" + boardFile);
+//
+//      for (Player player : game.getPlayers()) {
+//        lines.add(player.getName() + "," + player.getCharacter() + "," + player.getPosition());
+//      }
+//
+//      Files.write(Paths.get(saveFileName), lines);
+//      logger.info("Game saved to {}", saveFileName);
+//      notifyGameSaved(saveFileName);
+//
+//    } catch (IOException e) {
+//      logger.error("Failed to save game: {}", e.getMessage());
+//      AlertUtil.showAlert("Save Error", "Failed to save game: " + e.getMessage());
+//    }
+//  }
 
   private void notifyPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
     for (GameScreenObserver observer : observers) {

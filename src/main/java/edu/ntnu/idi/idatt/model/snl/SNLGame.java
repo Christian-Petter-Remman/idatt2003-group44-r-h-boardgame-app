@@ -14,14 +14,17 @@ public class SNLGame extends BoardGame {
 
   private boolean gameOver = false;
 
-  public SNLGame(SNLBoard board) {
+  public SNLGame(SNLBoard board, List<Player> players, int dice) {
     super(board);
+    this.players = players;
+    this.board = board;
+    this.dice = new Dice(dice);
+    initialize();
+    initializePlayer(players);
     logger.info("Snakes and Ladders created with board size {}", board.getSize());
   }
 
-  public void initialize(SNLBoard board) {
-    this.board = board;
-    this.dice = new Dice(1);
+  public void initialize() {
     this.currentPlayerIndex = 0;
     logger.info("Game initialized with board and dice");
   }

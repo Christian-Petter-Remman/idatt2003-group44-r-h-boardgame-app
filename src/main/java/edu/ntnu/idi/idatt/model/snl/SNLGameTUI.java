@@ -25,14 +25,16 @@ public class SNLGameTUI {
     board.addLadder(8,14);
     board.addLadder(9,14);
 
-    game = new SNLGame(board);
-    game.initialize(board);
 
     List<Player> players = new ArrayList<>();
     players.add(new SNLPlayer("Alice", "cow", 1 ));
     players.add(new SNLPlayer("Bob", "pig", 1));
 
     game.initializePlayer(players);
+
+    game = new SNLGame(board,players,1);
+    game.initialize();
+
   }
 
   private void startGameLoop() {

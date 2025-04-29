@@ -8,6 +8,7 @@ import edu.ntnu.idi.idatt.filehandling.FileManager;
 
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
+import edu.ntnu.idi.idatt.model.model_observers.CsvExportObserver;
 
 import java.io.File;
 
@@ -18,6 +19,7 @@ public class SNLRuleSelectionModel {
   }
 
   private final List<Observer> observers = new ArrayList<>();
+  private final List<CsvExportObserver> exportObservers = new ArrayList<>();
 
   private final List<String> availableBoards;
   private String selectedBoardFile;
@@ -27,6 +29,16 @@ public class SNLRuleSelectionModel {
     this.availableBoards = loadAvailableBoards();
     if (!availableBoards.isEmpty()) {
       this.selectedBoardFile = availableBoards.getFirst();
+    }
+  }
+
+  public void addExportObserver(CsvExportObserver observer) {
+    exportObservers.add(observer);
+  }
+
+  public void notifyExportObservers() {
+    for (CsvExportObserver observer : exportObservers) {
+      observer.onExportRequested();
     }
   }
 

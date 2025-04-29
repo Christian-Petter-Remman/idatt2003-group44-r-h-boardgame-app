@@ -20,10 +20,10 @@ public class SNLFactory extends BoardGameFactory {
 
 
 
-  public String[] getAvailableConfigurations() {
-    return new String[]{"default", "easy", "hard"};
-  }
-//
+//  public String[] getAvailableConfigurations() {
+//    return new String[]{"default", "easy", "hard"};
+//  }
+////
 //  @Override
 //  public <T extends BoardGame> T createBoardGameFromConfiguration(String configurationName, Class<T> gameClass) {
 //    SNLBoard board;
@@ -62,8 +62,10 @@ public class SNLFactory extends BoardGameFactory {
 //    return saveBoardToFile(board, configurationName);
 //  }
 
-  private SNLBoard loadBoardFromFile(String fileName) {
-    String filePath = BOARD_DIRECTORY + fileName;
+  public SNLBoard loadBoardFromFile(String fileName) {
+
+    // String filePath = BOARD_DIRECTORY + fileName;
+    String filePath =  fileName;
     File file = new File(filePath);
 
     if (!file.exists()) {

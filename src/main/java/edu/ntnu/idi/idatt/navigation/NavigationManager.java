@@ -1,13 +1,16 @@
 package edu.ntnu.idi.idatt.navigation;
 
 import edu.ntnu.idi.idatt.controller.common.CharacterSelectionController;
+import edu.ntnu.idi.idatt.controller.snl.SNLBoardController;
 import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
 import edu.ntnu.idi.idatt.controller.common.IntroScreenController;
 import edu.ntnu.idi.idatt.controller.snl.SNLLoadController;
 import edu.ntnu.idi.idatt.controller.snl.SNLRuleSelectionController;
 import edu.ntnu.idi.idatt.filehandling.GameStateCsvExporter;
+import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import edu.ntnu.idi.idatt.model.snl.SNLGame;
+import edu.ntnu.idi.idatt.model.snl.SNLPlayer;
 import edu.ntnu.idi.idatt.model.snl.SNLRuleSelectionModel;
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
 import edu.ntnu.idi.idatt.view.common.game.GameScreenView;
@@ -16,10 +19,14 @@ import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
 import edu.ntnu.idi.idatt.view.common.game.LoadScreenView;
 
 
+import edu.ntnu.idi.idatt.view.snl.SNLBoardView;
 import edu.ntnu.idi.idatt.view.snl.SNLRuleSelectionView;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,22 +61,19 @@ public class NavigationManager {
     primaryStage.setFullScreen(true);
   }
 
-  // Base navigation methods
+
   public void navigateTo(NavigationTarget target) {
     switch (target) {
       case INTRO_SCREEN -> showIntroScreen();
       case CHARACTER_SELECTION -> navigateToCharacterSelection();
       case LOAD_SCREEN -> navigateToLoadScreen();
       case SAL_RULE_SELECTION -> navigateToSalRuleSelection();
-      case SAL_GAME_SCREEN -> navigateToSalGameScreen();
+      case SAL_GAME_SCREEN -> navigateToSNLGameScreen();
 
-      // Add other cases as needed
       default -> logger.warn("Unhandled navigation target: {}", target);
     }
   }
 
-  // Dedicated navigation methods
-  // Common screens
   public void showIntroScreen() {
     IntroScreenController controller = new IntroScreenController();
     IntroScreenView view = controller.getView();
@@ -93,43 +97,46 @@ public class NavigationManager {
     logger.info("Navigated to Load Screen");
   }
 
-  // Snakes and Ladders specific screens
   public void navigateToSalRuleSelection() {
-    logger.info("This code is loaded");
+    logger.info("Loading Rule Selection Screen...");
 
-      try {
-        SNLRuleSelectionModel model = new SNLRuleSelectionModel();
-        SNLRuleSelectionController controller = new SNLRuleSelectionController(model);
-        GameStateCsvExporter exporter = new GameStateCsvExporter(model);
-        controller.addObserver(exporter);
-        SNLRuleSelectionView view = new SNLRuleSelectionView(model, controller);
-        if (view == null) {
-          logger.error("THE RULE SELECTION SCREEN IS NULL");
-          return;
-        }
-        setRoot(view.getRoot());
-      } catch (Exception e) {
-        logger.error("The RuleSelection module could not be loaded");
-      }
-    logger.info("Navigated to Rule Selection Screen");
+    try {
+      SNLRuleSelectionModel model = new SNLRuleSelectionModel();
+      SNLRuleSelectionController controller = new SNLRuleSelectionController(model);
+      SNLRuleSelectionView view = new SNLRuleSelectionView(model, controller);
+      setRoot(view.getRoot());
+    } catch (Exception e) {
+      logger.error("Failed to load Rule Selection screen", e);
+    }
+
+    logger.info("Navigated to Rule Selection Screen.");
   }
 
-  public void navigateToSalGameScreen() {
-    // 1. Create new game model
-    SNLGame game = new SNLGame(new SNLBoard(100));
+  public void navigateToSNLGameScreen() {
+    logger.info("Starting Snakes and Ladders game...");
 
-    // 2. Create controller for game
-    SNLGameScreenController controller = new SNLGameScreenController(game, "defaultBoard.json", "saveFile.csv");
+    try {
+      String filename = "data/saved_games/custom_boards/snakes_and_ladders/default.json";
+      List<Player> players = new ArrayList<>();
+      players.add(new SNLPlayer("olle", "bowser", 1));
+      players.add(new SNLPlayer("cgris", "peach", 1));
 
-    // 3. Create view for game
-    GameScreenView view = new GameScreenView(controller);
+      int dice = 1;
+      SNLBoard board = new SNLBoard(100);
+      board.initializeBoardFromFile(filename);
 
-    // 4. Set root to the new view
-    setRoot(view.getRoot());
+      SNLGame game = new SNLGame(board, players, dice);
+      SNLGameScreenController controller = new SNLGameScreenController(game);
+      SNLBoardController boardController = new SNLBoardController(board, players);
+      SNLBoardView boardView = new SNLBoardView(boardController);
+      GameScreenView gameScreenView = new GameScreenView(controller);
 
+      setRoot(gameScreenView.getRoot());
+    } catch (Exception e) {
+      logger.error("Failed to navigate to SNL Game Screen", e);
+    }
   }
 
-  // Core navigation functionality
   public void setRoot(Parent root) { // TODO: Consider changing access modifier to private
     if (primaryStage.getScene() == null) {
       Scene scene = new Scene(root);

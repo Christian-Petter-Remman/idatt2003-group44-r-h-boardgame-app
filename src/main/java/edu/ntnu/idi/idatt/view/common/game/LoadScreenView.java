@@ -97,14 +97,14 @@ public class LoadScreenView extends AbstractView {
 
     Label label = new Label("Save Slot " + (slotIndex + 1));
     box.getChildren().add(label);
-    box.getChildren().add(createLoadButton(file));
+//    box.getChildren().add(createLoadButton(file));
 
     return box;
   }
 
-  private Button createLoadButton(File file) {
-    Button btn = new Button("Load");
-    btn.setOnAction(e -> controller.handleLoad(file.getPath()));
-    return btn;
-  }
+//  private Button createLoadButton(File file) {
+//    Button btn = new Button("Load");
+//    btn.setOnAction(e -> controller.handleLoad(file.getPath()));
+//    return btn;
+//  }
 }
