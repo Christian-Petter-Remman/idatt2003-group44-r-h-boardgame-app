@@ -39,5 +39,10 @@ public class StarPlayer extends Player {
     return points >= 5;
   }
 
+  @Override
+  public int getStartPosition() {
+    return 0;
+  }
+
   //Move tilbake??
 }
