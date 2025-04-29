@@ -27,5 +27,6 @@ public class AlertUtil {
         .filter(Window::isShowing)
         .findFirst()
         .orElse(null);
+
   }
 }
