@@ -3,13 +3,10 @@ package edu.ntnu.idi.idatt.controller.snl;
 import edu.ntnu.idi.idatt.model.common.AbstractBoard;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
-import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import edu.ntnu.idi.idatt.model.snl.SNLGame;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.util.AlertUtil;
-import javafx.animation.PauseTransition;
-import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,7 +127,7 @@ public class SNLGameScreenController implements NavigationHandler {
   public void navigateTo(String destination) {
     switch (destination) {
       case "INTRO_SCREEN":
-        NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.INTRO_SCREEN);
+        NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.START_SCREEN);
         break;
       default:
         logger.warn("Unknown destination: {}", destination);
@@ -140,6 +137,6 @@ public class SNLGameScreenController implements NavigationHandler {
 
   @Override
   public void navigateBack() {
-    NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.INTRO_SCREEN);
+    NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.START_SCREEN);
   }
 }
