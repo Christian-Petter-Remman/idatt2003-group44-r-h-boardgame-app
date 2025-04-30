@@ -88,6 +88,7 @@ public class MemoryGameView extends BorderPane implements MemoryGameObserver {
       cv.showFace(new Image(icon.getImagePath()));
     } else {
       cv.showBack();
+
     }
   }
 
