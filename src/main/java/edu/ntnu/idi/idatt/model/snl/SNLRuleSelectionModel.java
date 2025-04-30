@@ -12,11 +12,14 @@ import edu.ntnu.idi.idatt.model.model_observers.CsvExportObserver;
 
 import java.io.File;
 
+
 public class SNLRuleSelectionModel {
 
   public interface Observer {
     void onRuleSelectionChanged();
   }
+
+
 
   private final List<Observer> observers = new ArrayList<>();
   private final List<CsvExportObserver> exportObservers = new ArrayList<>();
@@ -24,12 +27,22 @@ public class SNLRuleSelectionModel {
   private final List<String> availableBoards;
   private String selectedBoardFile;
   private int diceCount = 1;
+  private String savePath;
 
   public SNLRuleSelectionModel() {
     this.availableBoards = loadAvailableBoards();
     if (!availableBoards.isEmpty()) {
       this.selectedBoardFile = availableBoards.getFirst();
     }
+  }
+
+
+  public String getSavePath() {
+    return savePath;
+  }
+
+  public void setSavePath(String savePath) {
+    this.savePath = savePath;
   }
 
   public void addExportObserver(CsvExportObserver observer) {

@@ -8,6 +8,7 @@ import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.common.game.GameScreenView;
+import javafx.scene.Parent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,5 +97,9 @@ public class SNLLoadController implements NavigationHandler {
   public void navigateBack() {
     NavigationManager.getInstance().navigateBack();
     logger.info("Navigated back to previous screen");
+  }
+
+  @Override
+  public void setRoot(Parent root) {
   }
 }

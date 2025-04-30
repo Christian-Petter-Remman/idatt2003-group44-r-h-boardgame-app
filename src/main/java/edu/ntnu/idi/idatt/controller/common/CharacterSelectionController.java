@@ -7,6 +7,7 @@ import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
 
+import javafx.scene.Parent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,5 +45,10 @@ public class CharacterSelectionController implements NavigationHandler {
   @Override
   public void navigateBack() {
     NavigationManager.getInstance().navigateBack();
+  }
+
+  @Override
+  public void setRoot(Parent root) {
+
   }
 }

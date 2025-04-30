@@ -4,7 +4,6 @@ import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
-import edu.ntnu.idi.idatt.navigation.NavigationManager.NavigationTarget;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

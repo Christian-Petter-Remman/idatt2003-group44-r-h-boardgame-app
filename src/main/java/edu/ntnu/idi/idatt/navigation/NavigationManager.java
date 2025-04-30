@@ -1,166 +1,95 @@
 package edu.ntnu.idi.idatt.navigation;
 
-import edu.ntnu.idi.idatt.controller.common.CharacterSelectionController;
 import edu.ntnu.idi.idatt.controller.snl.SNLBoardController;
 import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
-import edu.ntnu.idi.idatt.controller.common.IntroScreenController;
-import edu.ntnu.idi.idatt.controller.snl.SNLLoadController;
 import edu.ntnu.idi.idatt.controller.snl.SNLRuleSelectionController;
-import edu.ntnu.idi.idatt.filehandling.GameStateCsvExporter;
+import edu.ntnu.idi.idatt.filehandling.GameStateCsvLoader;
 import edu.ntnu.idi.idatt.model.common.Player;
+import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import edu.ntnu.idi.idatt.model.snl.SNLGame;
-import edu.ntnu.idi.idatt.model.snl.SNLPlayer;
 import edu.ntnu.idi.idatt.model.snl.SNLRuleSelectionModel;
-import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
 import edu.ntnu.idi.idatt.view.common.game.GameScreenView;
-import edu.ntnu.idi.idatt.view.common.intro.IntroScreenView;
-import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
-import edu.ntnu.idi.idatt.view.common.game.LoadScreenView;
-
-
 import edu.ntnu.idi.idatt.view.snl.SNLBoardView;
 import edu.ntnu.idi.idatt.view.snl.SNLRuleSelectionView;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public class NavigationManager {
+
   private static final Logger logger = LoggerFactory.getLogger(NavigationManager.class);
   private static NavigationManager instance;
-  private Stage primaryStage;
-  private final Stack<Parent> navigationStack = new Stack<>();
+  private NavigationHandler currentHandler;
 
-  public enum NavigationTarget {
-    INTRO_SCREEN,
-    LOAD_SCREEN,
-    CHARACTER_SELECTION,
-    SAL_RULE_SELECTION,
-    SAL_GAME_SCREEN
-  }
+  private CharacterSelectionManager characterSelectionManager;
+  private SNLRuleSelectionModel ruleSelectionModel;
 
   private NavigationManager() {}
 
-  public static synchronized NavigationManager getInstance() {
+  public static NavigationManager getInstance() {
     if (instance == null) {
       instance = new NavigationManager();
     }
     return instance;
   }
 
-  public void initialize(Stage primaryStage) {
-    this.primaryStage = primaryStage;
-    primaryStage.setTitle("Board Game App");
-    primaryStage.setFullScreenExitHint("");
-    primaryStage.setFullScreen(true);
+  public void setHandler(NavigationHandler handler) {
+    this.currentHandler = handler;
   }
 
-
-  public void navigateTo(NavigationTarget target) {
-    switch (target) {
-      case INTRO_SCREEN -> showIntroScreen();
-      case CHARACTER_SELECTION -> navigateToCharacterSelection();
-      case LOAD_SCREEN -> navigateToLoadScreen();
-      case SAL_RULE_SELECTION -> navigateToSalRuleSelection();
-      case SAL_GAME_SCREEN -> navigateToSNLGameScreen();
-
-      default -> logger.warn("Unhandled navigation target: {}", target);
+  public void setRoot(javafx.scene.Parent root) {
+    if (currentHandler != null) {
+      currentHandler.setRoot(root);
     }
   }
 
-  public void showIntroScreen() {
-    IntroScreenController controller = new IntroScreenController();
-    IntroScreenView view = controller.getView();
-    setRoot(view.getRoot());
-    logger.info("Navigated to Intro Screen");
-  }
-
-  public void navigateToCharacterSelection() {
-    CharacterSelectionManager model = new CharacterSelectionManager();
-    CharacterSelectionScreen view = new CharacterSelectionScreen(model);
-    CharacterSelectionController handler = new CharacterSelectionController(model, view);
-    view.setHandler(handler);
-    setRoot(view.getView());
-    logger.info("Navigated to Character Selection Screen");
-  }
-
-  public void navigateToLoadScreen() {
-    SNLLoadController controller = new SNLLoadController();
-    LoadScreenView view = new LoadScreenView(controller);
-    setRoot(view.getRoot());
-    logger.info("Navigated to Load Screen");
-  }
-
-  public void navigateToSalRuleSelection() {
-    logger.info("Navigating to SNL Rule Selection...");
-
-    try {
-      SNLRuleSelectionModel model = new SNLRuleSelectionModel();
-      CharacterSelectionManager manager = new CharacterSelectionManager();
-      SNLRuleSelectionController controller = new SNLRuleSelectionController(model, manager);
-
-//      GameStateCsvExporter exporter = new GameStateCsvExporter(model,players,"temp");
-//      controller.addObserver(exporter); // if your controller uses observers
-
-      SNLRuleSelectionView view = new SNLRuleSelectionView(model, controller);
-      setRoot(view.getRoot());
-
-    } catch (Exception e) {
-      logger.error("Failed to load Rule Selection", e);
+  public void navigateBack() {
+    if (currentHandler != null) {
+      currentHandler.navigateBack();
     }
+  }
 
+  public void navigateToRuleSelectionScreen(CharacterSelectionManager sharedManager) {
     logger.info("Navigated to Rule Selection Screen");
+
+    this.characterSelectionManager = sharedManager; // <-- Share the manager correctly
+    this.ruleSelectionModel = new SNLRuleSelectionModel();
+
+    SNLRuleSelectionController controller = new SNLRuleSelectionController(ruleSelectionModel, sharedManager);
+    SNLRuleSelectionView view = new SNLRuleSelectionView(ruleSelectionModel, controller);
+
+    setRoot(view.getRoot());
   }
 
   public void navigateToSNLGameScreen() {
     logger.info("Starting Snakes and Ladders game...");
 
     try {
-      String filename = "data/saved_games/custom_boards/snakes_and_ladders/default.json";
-      List<Player> players = new ArrayList<>();
-      players.add(new SNLPlayer("olle", "bowser", 1));
-      players.add(new SNLPlayer("cgris", "peach", 1));
+      // Load from CSV path stored in rule selection model
+      String savePath = ruleSelectionModel.getSavePath();
+      GameStateCsvLoader.GameState gameState = GameStateCsvLoader.load(savePath);
 
-      int dice = 1;
       SNLBoard board = new SNLBoard(100);
-      board.initializeBoardFromFile(filename);
+      board.initializeBoardFromFile("data/saved_games/custom_boards/snakes_and_ladders/" + gameState.boardFile);
 
-      SNLGame game = new SNLGame(board, players, dice,0);
+      SNLGame game = new SNLGame(board, gameState.players, gameState.diceCount, gameState.currentTurnIndex);
       SNLGameScreenController controller = new SNLGameScreenController(game);
-      SNLBoardController boardController = new SNLBoardController(board, players);
+      SNLBoardController boardController = new SNLBoardController(board, gameState.players);
+
       SNLBoardView boardView = new SNLBoardView(boardController);
       GameScreenView gameScreenView = new GameScreenView(controller);
 
-      setRoot(gameScreenView.getRoot());
+      BorderPane combined = new BorderPane();
+      combined.setCenter(boardView.getRoot());
+      combined.setRight(gameScreenView.getRoot());
+
+      setRoot(combined);
+      logger.info("Snakes and Ladders game screen initialized successfully.");
+
     } catch (Exception e) {
-      logger.error("Failed to navigate to SNL Game Screen", e);
-    }
-  }
-
-  public void setRoot(Parent root) { // TODO: Consider changing access modifier to private
-    if (primaryStage.getScene() == null) {
-      Scene scene = new Scene(root);
-      primaryStage.setScene(scene);
-    } else {
-      navigationStack.push(primaryStage.getScene().getRoot());
-      primaryStage.getScene().setRoot(root);
-    }
-    primaryStage.show();
-  }
-
-  public void navigateBack() {
-    if (!navigationStack.isEmpty()) {
-      Parent previous = navigationStack.pop();
-      primaryStage.getScene().setRoot(previous);
-      logger.info("Navigated back to previous screen");
-    } else {
-      logger.warn("Navigation stack empty - can't go back");
+      logger.error("Failed to load Snakes and Ladders game from save file", e);
     }
   }
 }
