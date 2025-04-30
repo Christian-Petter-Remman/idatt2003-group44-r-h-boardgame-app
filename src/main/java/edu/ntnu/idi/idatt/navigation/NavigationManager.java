@@ -114,23 +114,32 @@ public class NavigationManager {
       SNLBoard board = new SNLBoard(100);
       board.initializeBoardFromFile(boardPath);
 
+      // Initialize the game with the loaded state
       SNLGame game = new SNLGame(board, gameState.getPlayers(), gameState.getDiceCount(), gameState.getCurrentTurnIndex());
 
+      // Initialize the controller
       SNLGameScreenController gameController = new SNLGameScreenController(game);
-      SNLBoardController boardController = new SNLBoardController(board, gameState.getPlayers(), game);
 
+      // Initialize the views and pass the controller
       GameScreenView gameScreenView = new GameScreenView();
       gameScreenView.initializeWithController(gameController);
+
+      // Set the root for the controller and the layout
+      gameController.setRoot(gameScreenView.getRoot());
+
+      // Initialize the board view
+      SNLBoardController boardController = new SNLBoardController(board, gameState.getPlayers(), game);
       SNLBoardView boardView = new SNLBoardView();
       boardView.initializeWithController(boardController);
 
-      gameController.setRoot(gameScreenView.getRoot());
-
+      // Set up the layout with GameScreenView and BoardView side by side
       BorderPane layout = new BorderPane();
       layout.setCenter(boardView.getRoot());
       layout.setRight(gameScreenView.getRoot());
 
+      // Set the new layout to the root
       setRoot(layout);
+
       logger.info("Snakes and Ladders game screen initialized successfully.");
 
     } catch (Exception e) {

@@ -2,6 +2,7 @@ package edu.ntnu.idi.idatt.view.snl;
 
 import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
 import edu.ntnu.idi.idatt.model.common.Player;
+import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import edu.ntnu.idi.idatt.view.AbstractView;
 import javafx.geometry.HPos;
@@ -22,12 +23,13 @@ import java.util.List;
 
 public class SNLGameScreenView extends AbstractView {
 
-  private SNLGameScreenController controller;
+
   private VBox root;
   private Label currentPlayerLabel;
   private Label positionLabel;
   private Label diceResultLabel;
   private Button rollButton;
+  private SNLGameScreenController controller;
 
   // Components for the board view
   private GridPane boardGrid;
@@ -35,7 +37,32 @@ public class SNLGameScreenView extends AbstractView {
 
   public void initializeWithController(SNLGameScreenController controller) {
     this.controller = controller;
-    controller.registerObserver(this::onPlayerPositionChanged);
+    controller.registerObserver(new GameScreenObserver() {
+      @Override
+      public void onPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
+        updatePlayerPositionView(player, oldPosition, newPosition);
+      }
+
+      @Override
+      public void onDiceRolled(int result) {
+        diceResultLabel.setText("Roll result: " + result);
+      }
+
+      @Override
+      public void onPlayerTurnChanged(Player currentPlayer) {
+        updateCurrentPlayerView(currentPlayer);
+      }
+
+      @Override
+      public void onGameOver(Player winner) {
+        showGameOverAlert(winner);
+      }
+
+      @Override
+      public void onGameSaved(String filePath) {
+        showGameSavedAlert(filePath);
+      }
+    });
     initializeUI();
   }
 
@@ -68,12 +95,12 @@ public class SNLGameScreenView extends AbstractView {
 
   @Override
   protected void setupEventHandlers() {
-
+    // Set up event handlers if needed
   }
 
   @Override
   protected void applyInitialUIState() {
-
+    // Apply initial state for the game UI
   }
 
   private void initializeBoardGrid() {
@@ -221,5 +248,22 @@ public class SNLGameScreenView extends AbstractView {
   @Override
   public Parent getRoot() {
     return root;
+  }
+
+  private void updatePlayerPositionView(Player player, int oldPosition, int newPosition) {
+    // Update player position labels or UI
+  }
+
+  private void updateCurrentPlayerView(Player currentPlayer) {
+    currentPlayerLabel.setText("Current turn: " + currentPlayer.getName());
+    positionLabel.setText("Position: " + currentPlayer.getPosition());
+  }
+
+  private void showGameOverAlert(Player winner) {
+    // Show game over alert
+  }
+
+  private void showGameSavedAlert(String filePath) {
+    // Show game saved alert
   }
 }

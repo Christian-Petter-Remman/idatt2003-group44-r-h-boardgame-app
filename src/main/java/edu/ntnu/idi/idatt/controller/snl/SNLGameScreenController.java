@@ -6,9 +6,6 @@ import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import edu.ntnu.idi.idatt.model.snl.SNLGame;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
-import edu.ntnu.idi.idatt.navigation.NavigationManager;
-import edu.ntnu.idi.idatt.util.AlertUtil;
-import javafx.animation.PauseTransition;
 import javafx.scene.Parent;
 
 import org.slf4j.Logger;
@@ -53,6 +50,21 @@ public class SNLGameScreenController implements NavigationHandler {
     game.playTurn();
   }
 
+  public String getTileColor(int tileNum) {
+    // Simple example: alternating colors for tiles
+    return (tileNum % 2 == 0) ? "#f0f0f0" : "#d0d0d0";  // Light and dark colors
+  }
+
+  public List<Player> getPlayersAtPosition(int position) {
+    List<Player> playersAtPosition = new ArrayList<>();
+    for (Player player : game.getPlayers()) {
+      if (player.getPosition() == position) {
+        playersAtPosition.add(player);
+      }
+    }
+    return playersAtPosition;
+  }
+
   private void notifyPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
     for (GameScreenObserver observer : observers) {
       observer.onPlayerPositionChanged(player, oldPosition, newPosition);
@@ -83,22 +95,14 @@ public class SNLGameScreenController implements NavigationHandler {
     }
   }
 
-  // NavigationHandler methods
   @Override
   public void navigateTo(String destination) {
-    switch (destination) {
-      case "INTRO_SCREEN":
-        NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.INTRO_SCREEN);
-        break;
-      default:
-        logger.warn("Unknown destination: {}", destination);
-        break;
-    }
+    // Implement navigation handling logic
   }
 
   @Override
   public void navigateBack() {
-    NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.INTRO_SCREEN);
+    // Implement navigation back logic
   }
 
   @Override
