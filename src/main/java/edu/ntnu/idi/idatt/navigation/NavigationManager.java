@@ -1,95 +1,136 @@
 package edu.ntnu.idi.idatt.navigation;
 
-import edu.ntnu.idi.idatt.controller.snl.SNLBoardController;
-import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
-import edu.ntnu.idi.idatt.controller.snl.SNLRuleSelectionController;
+import edu.ntnu.idi.idatt.controller.common.*;
+import edu.ntnu.idi.idatt.controller.snl.*;
+import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.filehandling.GameStateCsvLoader;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
-import edu.ntnu.idi.idatt.model.snl.SNLBoard;
-import edu.ntnu.idi.idatt.model.snl.SNLGame;
-import edu.ntnu.idi.idatt.model.snl.SNLRuleSelectionModel;
+import edu.ntnu.idi.idatt.model.snl.*;
+import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
 import edu.ntnu.idi.idatt.view.common.game.GameScreenView;
+import edu.ntnu.idi.idatt.view.common.intro.IntroScreenView;
 import edu.ntnu.idi.idatt.view.snl.SNLBoardView;
 import edu.ntnu.idi.idatt.view.snl.SNLRuleSelectionView;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import java.util.List;
 
 public class NavigationManager {
-
   private static final Logger logger = LoggerFactory.getLogger(NavigationManager.class);
-  private static NavigationManager instance;
-  private NavigationHandler currentHandler;
+  private static final NavigationManager instance = new NavigationManager();
 
+  private Stage stage;
+  private NavigationHandler currentHandler;
   private CharacterSelectionManager characterSelectionManager;
   private SNLRuleSelectionModel ruleSelectionModel;
 
   private NavigationManager() {}
 
   public static NavigationManager getInstance() {
-    if (instance == null) {
-      instance = new NavigationManager();
-    }
     return instance;
+  }
+
+  public void initialize(Stage stage) {
+    this.stage = stage;
   }
 
   public void setHandler(NavigationHandler handler) {
     this.currentHandler = handler;
   }
 
-  public void setRoot(javafx.scene.Parent root) {
-    if (currentHandler != null) {
+  public void setCharacterSelectionManager(CharacterSelectionManager manager) {
+    this.characterSelectionManager = manager;
+  }
+
+  public void setRuleSelectionModel(SNLRuleSelectionModel model) {
+    this.ruleSelectionModel = model;
+  }
+
+  public void setRoot(Parent root) {
+    if (stage != null) {
+      stage.setScene(new Scene(root));
+    } else if (currentHandler != null) {
       currentHandler.setRoot(root);
     }
   }
 
-  public void navigateBack() {
-    if (currentHandler != null) {
-      currentHandler.navigateBack();
+  public void navigateTo(NavigationTarget target) {
+    switch (target) {
+      case INTRO_SCREEN -> navigateToIntroScreen();
+      case CHARACTER_SELECTION -> navigateToCharacterSelection();
+      case SAL_RULE_SELECTION -> navigateToSalRuleSelection();
+      case SAL_GAME_SCREEN -> navigateToSNLGameScreen();
     }
   }
 
-  public void navigateToRuleSelectionScreen(CharacterSelectionManager sharedManager) {
-    logger.info("Navigated to Rule Selection Screen");
+  public void navigateBack() {
+    // Placeholder if you implement back-navigation
+  }
 
-    this.characterSelectionManager = sharedManager; // <-- Share the manager correctly
-    this.ruleSelectionModel = new SNLRuleSelectionModel();
+  public void navigateToIntroScreen() {
+    IntroScreenController controller = new IntroScreenController();
+    NavigationManager.getInstance().setHandler(controller);
+    NavigationManager.getInstance().setRoot(controller.getView().getRoot());
+  }
 
-    SNLRuleSelectionController controller = new SNLRuleSelectionController(ruleSelectionModel, sharedManager);
-    SNLRuleSelectionView view = new SNLRuleSelectionView(ruleSelectionModel, controller);
+  public void navigateToCharacterSelection() {
+    characterSelectionManager = new CharacterSelectionManager();
+    CharacterSelectionScreen view = new CharacterSelectionScreen(characterSelectionManager);
+    CharacterSelectionController controller = new CharacterSelectionController(characterSelectionManager, view);
+    setCharacterSelectionManager(characterSelectionManager);
+    setHandler(controller);
+    setRoot(view.getView());
+  }
 
-    setRoot(view.getRoot());
+  public void navigateToSalRuleSelection() {
+    try {
+      ruleSelectionModel = new SNLRuleSelectionModel();
+      SNLRuleSelectionController controller = new SNLRuleSelectionController(ruleSelectionModel, characterSelectionManager);
+      SNLRuleSelectionView view = new SNLRuleSelectionView(ruleSelectionModel, controller);
+      setRuleSelectionModel(ruleSelectionModel);
+      setHandler(controller);
+      setRoot(view.getRoot());
+      logger.info("Navigated to Rule Selection Screen");
+    } catch (Exception e) {
+      logger.error("The RuleSelection module could not be loaded", e);
+    }
   }
 
   public void navigateToSNLGameScreen() {
     logger.info("Starting Snakes and Ladders game...");
-
     try {
-      // Load from CSV path stored in rule selection model
       String savePath = ruleSelectionModel.getSavePath();
       GameStateCsvLoader.GameState gameState = GameStateCsvLoader.load(savePath);
-
+      String boardPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + gameState.getBoardFile();
       SNLBoard board = new SNLBoard(100);
-      board.initializeBoardFromFile("data/saved_games/custom_boards/snakes_and_ladders/" + gameState.boardFile);
-
-      SNLGame game = new SNLGame(board, gameState.players, gameState.diceCount, gameState.currentTurnIndex);
+      board.initializeBoardFromFile(boardPath);
+      SNLGame game = new SNLGame(board, gameState.getPlayers(), gameState.getDiceCount(), gameState.getCurrentTurnIndex());
       SNLGameScreenController controller = new SNLGameScreenController(game);
-      SNLBoardController boardController = new SNLBoardController(board, gameState.players);
-
+      SNLBoardController boardController = new SNLBoardController(board, gameState.getPlayers());
       SNLBoardView boardView = new SNLBoardView(boardController);
       GameScreenView gameScreenView = new GameScreenView(controller);
 
-      BorderPane combined = new BorderPane();
-      combined.setCenter(boardView.getRoot());
-      combined.setRight(gameScreenView.getRoot());
+      BorderPane combinedView = new BorderPane();
+      combinedView.setCenter(boardView.getRoot());
+      combinedView.setRight(gameScreenView.getRoot());
 
-      setRoot(combined);
+      setRoot(combinedView);
       logger.info("Snakes and Ladders game screen initialized successfully.");
 
     } catch (Exception e) {
       logger.error("Failed to load Snakes and Ladders game from save file", e);
     }
+  }
+
+  public enum NavigationTarget {
+    INTRO_SCREEN,
+    CHARACTER_SELECTION,
+    SAL_RULE_SELECTION,
+    SAL_GAME_SCREEN
   }
 }

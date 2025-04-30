@@ -21,7 +21,7 @@ public class Main extends Application {
       FileManager.ensureApplicationDirectoriesExist();
 
       NavigationManager.getInstance().initialize(primaryStage);
-      NavigationManager.getInstance().navigateTo(NavigationTarget.INTRO_SCREEN);
+      NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.INTRO_SCREEN);
       primaryStage.show();
 
     } catch (Exception e) {

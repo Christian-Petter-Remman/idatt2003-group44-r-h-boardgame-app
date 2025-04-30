@@ -49,6 +49,6 @@ public class CharacterSelectionController implements NavigationHandler {
 
   @Override
   public void setRoot(Parent root) {
-
+    NavigationManager.getInstance().setRoot(root);
   }
 }
