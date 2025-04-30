@@ -158,8 +158,13 @@ public class NavigationManager {
     }
   }
 
+  public Stage getPrimaryStage() {
+    return primaryStage;
+  }
+
   public void setLogo(String path) {
     primaryStage.getIcons().add(new Image(
         Objects.requireNonNull(getClass().getResourceAsStream(path))));
   }
+
 }

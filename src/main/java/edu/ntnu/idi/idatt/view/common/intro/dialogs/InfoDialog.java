@@ -1,36 +1,50 @@
 package edu.ntnu.idi.idatt.view.common.intro.dialogs;
 
-
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
-import javafx.geometry.*;
+import java.util.Objects;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.image.*;
-import javafx.scene.layout.*;
-import javafx.scene.media.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class InfoDialog extends Stage {
-  private final DialogConfig cfg;
+
   private MediaPlayer player;
 
+  private static final int MAX_BODY_LINES = 4;
+  private static final double BODY_WRAP_WIDTH = 360;
+
   public InfoDialog(DialogConfig cfg) {
-    this.cfg = cfg;
-    initModality(Modality.APPLICATION_MODAL);
+    initOwner(NavigationManager.getInstance().getPrimaryStage());
+    initModality(Modality.WINDOW_MODAL);
     setResizable(false);
     setTitle(cfg.getTitle());
-    getIcons().add(new Image(getClass().getResourceAsStream("/logo.png")));
+    getIcons().add(new Image(
+        Objects.requireNonNull(getClass().getResourceAsStream("/images/logo.png"))));
 
     BorderPane root = new BorderPane();
     root.setPadding(new Insets(20));
-    root.setPrefWidth(400);
+    root.setPrefWidth(BODY_WRAP_WIDTH + 40);
 
-    // Top: title + logo
+    // top bar: title + logo
     Label lblTitle = new Label(cfg.getTitle());
     lblTitle.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
     ImageView logo = new ImageView(new Image(
-        getClass().getResourceAsStream("/logo.png")));
+        Objects.requireNonNull(getClass().getResourceAsStream("/images/logo.png"))));
     logo.setFitWidth(30);
     logo.setFitHeight(30);
     HBox topBar = new HBox(lblTitle, new Region(), logo);
@@ -38,31 +52,42 @@ public class InfoDialog extends Stage {
     topBar.setAlignment(Pos.CENTER_LEFT);
     root.setTop(topBar);
 
-    // Center: body, funFact, image
-    VBox center = new VBox(10);
-    center.setPadding(new Insets(10, 0, 10, 0));
     Label lblBody = new Label(cfg.getBody());
     lblBody.setWrapText(true);
-    center.getChildren().add(lblBody);
+    lblBody.setMaxWidth(BODY_WRAP_WIDTH);
+    lblBody.setPrefWidth(BODY_WRAP_WIDTH);
+
+    Text helper = new Text("A");
+    helper.setFont(lblBody.getFont());
+    helper.applyCss();
+    double lineHeight = helper.getLayoutBounds().getHeight();
+    double maxBodyHeight = lineHeight * MAX_BODY_LINES;
+
+    ScrollPane bodyScroll = new ScrollPane(lblBody);
+    bodyScroll.setFitToWidth(true);
+    bodyScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    bodyScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+    bodyScroll.setPrefViewportHeight(maxBodyHeight);
+    bodyScroll.setMinViewportHeight(maxBodyHeight);
+
+    VBox center = new VBox(10, bodyScroll);
+    center.setPadding(new Insets(10, 0, 10, 0));
 
     if (cfg.getFunFact() != null) {
       Label lblFun = new Label("Fun fact: " + cfg.getFunFact());
-      lblFun.setStyle("-fx-font-style: italic;");
+      lblFun.setWrapText(true);
+      lblFun.setMaxWidth(BODY_WRAP_WIDTH);
       center.getChildren().add(lblFun);
     }
 
-    String imgPath = cfg.getImagePath() != null
-        ? cfg.getImagePath()
-        : "/home_screen/" + cfg.getId() + ".png";
     ImageView mainImg = new ImageView(new Image(
-        getClass().getResourceAsStream(imgPath)));
+        Objects.requireNonNull(getClass().getResourceAsStream(cfg.getImagePath()))));
     mainImg.setFitWidth(150);
     mainImg.setPreserveRatio(true);
     center.getChildren().add(mainImg);
 
     root.setCenter(center);
 
-    // Bottom: buttons
     HBox buttons = new HBox(10);
     buttons.setAlignment(Pos.CENTER_RIGHT);
 
@@ -97,7 +122,7 @@ public class InfoDialog extends Stage {
   private void playSound(String audioRes) {
     if (player == null) {
       Media media = new Media(
-          getClass().getResource(audioRes).toExternalForm()
+          Objects.requireNonNull(getClass().getResource(audioRes)).toExternalForm()
       );
       player = new MediaPlayer(media);
     }
