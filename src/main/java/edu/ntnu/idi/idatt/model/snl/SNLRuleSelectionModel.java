@@ -8,8 +8,10 @@ import edu.ntnu.idi.idatt.filehandling.FileManager;
 
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
+import edu.ntnu.idi.idatt.model.model_observers.CsvExportObserver;
 
 import java.io.File;
+
 
 public class SNLRuleSelectionModel {
 
@@ -17,21 +19,42 @@ public class SNLRuleSelectionModel {
     void onRuleSelectionChanged();
   }
 
+
+
   private final List<Observer> observers = new ArrayList<>();
+  private final List<CsvExportObserver> exportObservers = new ArrayList<>();
 
   private final List<String> availableBoards;
   private String selectedBoardFile;
   private int diceCount = 1;
+  private String savePath;
 
   public SNLRuleSelectionModel() {
     this.availableBoards = loadAvailableBoards();
-    // Default selection
     if (!availableBoards.isEmpty()) {
       this.selectedBoardFile = availableBoards.getFirst();
     }
   }
 
-  // Scans the boards directory for all .json files
+
+  public String getSavePath() {
+    return savePath;
+  }
+
+  public void setSavePath(String savePath) {
+    this.savePath = savePath;
+  }
+
+  public void addExportObserver(CsvExportObserver observer) {
+    exportObservers.add(observer);
+  }
+
+  public void notifyExportObservers() {
+    for (CsvExportObserver observer : exportObservers) {
+      observer.onExportRequested();
+    }
+  }
+
   private List<String> loadAvailableBoards() {
     List<String> boards = new ArrayList<>();
     File dir = new File(FileManager.SNAKES_LADDERS_BOARDS_DIR);

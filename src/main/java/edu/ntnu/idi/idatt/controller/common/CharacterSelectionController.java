@@ -7,6 +7,7 @@ import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
 
+import javafx.scene.Parent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +24,7 @@ public class CharacterSelectionController implements NavigationHandler {
   public void handleCharacterSelection(int playerId, CharacterSelectionData character) {
     PlayerData player = manager.getPlayerById(playerId);
     if (player != null && player.isActive() &&
-        (!character.isSelected() || character.getSelectedBy() == player)) {
+            (!character.isSelected() || character.getSelectedBy() == player)) {
       manager.selectCharacter(player, character);
     }
   }
@@ -36,8 +37,6 @@ public class CharacterSelectionController implements NavigationHandler {
     manager.deactivatePlayer(playerId);
   }
 
-  // Navigation methods
-
   @Override
   public void navigateTo(String destination) {
     NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.valueOf(destination));
@@ -46,5 +45,10 @@ public class CharacterSelectionController implements NavigationHandler {
   @Override
   public void navigateBack() {
     NavigationManager.getInstance().navigateBack();
+  }
+
+  @Override
+  public void setRoot(Parent root) {
+    NavigationManager.getInstance().setRoot(root);
   }
 }

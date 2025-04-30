@@ -1,22 +1,38 @@
 package edu.ntnu.idi.idatt.controller.snl;
 
-import edu.ntnu.idi.idatt.exceptions.FileReadException;
-import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
-import edu.ntnu.idi.idatt.model.common.AbstractBoard;
+import edu.ntnu.idi.idatt.filehandling.GameStateCsvExporter;
+import edu.ntnu.idi.idatt.filehandling.SaveFileNameGenerator;
+import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
+import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
+import edu.ntnu.idi.idatt.model.model_observers.CsvExportObserver;
 import edu.ntnu.idi.idatt.model.snl.SNLRuleSelectionModel;
+import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationManager.NavigationTarget;
+import javafx.scene.Parent;
 
-/**
- * Controller for the Snakes and Ladders rule selection screen.
- * Handles user interactions and updates the model accordingly.
- */
-public class SNLRuleSelectionController {
+import java.util.ArrayList;
+import java.util.List;
+
+public class SNLRuleSelectionController implements NavigationHandler {
 
   private final SNLRuleSelectionModel model;
+  private final List<CsvExportObserver> observers = new ArrayList<>();
+  private final CharacterSelectionManager characterSelectionManager;
 
-  public SNLRuleSelectionController(SNLRuleSelectionModel model) {
+  public SNLRuleSelectionController(SNLRuleSelectionModel model, CharacterSelectionManager manager) {
     this.model = model;
+    this.characterSelectionManager = manager;
+  }
+
+  public void addObserver(CsvExportObserver observer) {
+    observers.add(observer);
+  }
+
+  public void notifyObservers() {
+    for (CsvExportObserver o : observers) {
+      o.onExportRequested();
+    }
   }
 
   public void onBoardSelected(String boardFile) {
@@ -32,11 +48,37 @@ public class SNLRuleSelectionController {
   }
 
   public void onContinuePressed() {
-    NavigationManager.getInstance().navigateTo(NavigationTarget.SAL_GAME_SCREEN);
+    String saveFileName = SaveFileNameGenerator.generateSaveFileName();
+    String savePath = "saves/" + saveFileName;
+    model.setSavePath(savePath);
+
+    List<PlayerData> players = characterSelectionManager.getPlayers();
+    GameStateCsvExporter exporter = new GameStateCsvExporter(model, players, savePath);
+
+    addObserver(exporter);
+    notifyObservers();
+
+    NavigationManager.getInstance().navigateToSNLGameScreen();
   }
 
   public void onBackPressed() {
     NavigationManager.getInstance().navigateBack();
   }
 
+  // === NavigationHandler IMPLEMENTATION ===
+
+  @Override
+  public void navigateTo(String destination) {
+    NavigationManager.getInstance().navigateTo(NavigationTarget.valueOf(destination));
+  }
+
+  @Override
+  public void navigateBack() {
+    NavigationManager.getInstance().navigateBack();
+  }
+
+  @Override
+  public void setRoot(Parent root) {
+    NavigationManager.getInstance().setRoot(root);
+  }
 }

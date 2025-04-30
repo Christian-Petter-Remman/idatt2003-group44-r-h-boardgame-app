@@ -1,13 +1,8 @@
 package edu.ntnu.idi.idatt.controller.snl;
 
-import edu.ntnu.idi.idatt.exceptions.FileReadException;
-import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
-import edu.ntnu.idi.idatt.filehandling.SNLBoardJsonHandler;
-import edu.ntnu.idi.idatt.model.snl.SNLGame;
-import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
-import edu.ntnu.idi.idatt.view.common.game.GameScreenView;
+import javafx.scene.Parent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,8 +12,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
 public class SNLLoadController implements NavigationHandler {
 
@@ -30,28 +23,28 @@ public class SNLLoadController implements NavigationHandler {
    * Handles the load action given a CSV path.
    * Opens the game screen if successful, otherwise shows an alert.
    */
-  public void handleLoad(String csvPath) {
-    SNLBoardJsonHandler handler = new SNLBoardJsonHandler();
-    String boardPath = extractBoardPathFromCsv(csvPath);
-
-    if (boardPath == null) {
-      showAlert("Error", "Failed to read board path from CSV.");
-      return;
-    }
-
-    try {
-      SNLGame snakeGame = handler.loadGameFromFile(boardPath, SNLGame::new);
-      int players = 2;
-      //TODO set dice and players from file
-      logger.info("Loaded {} players from {}", players, csvPath);
-
-      new GameScreenView(new SNLGameScreenController(snakeGame, boardPath, csvPath));
-
-    } catch (FileReadException | JsonParsingException ex) {
-      logger.error("Failed to load game: {}", ex.getMessage());
-      showAlert("Load Error", "Could not load saved game: " + ex.getMessage());
-    }
-  }
+//  public void handleLoad(String csvPath) {
+//    SNLBoardJsonHandler handler = new SNLBoardJsonHandler();
+//    String boardPath = extractBoardPathFromCsv(csvPath);
+//
+//    if (boardPath == null) {
+//      showAlert("Error", "Failed to read board path from CSV.");
+//      return;
+//    }
+//
+//    try {
+//      SNLGame snakeGame = handler.loadGameFromFile(boardPath, SNLGame::new);
+//      int players = 2;
+//      //TODO set dice and players from file
+//      logger.info("Loaded {} players from {}", players, csvPath);
+//
+//      new GameScreenView(new SNLGameScreenController(snakeGame));
+//
+//    } catch (FileReadException | JsonParsingException ex) {
+//      logger.error("Failed to load game: {}", ex.getMessage());
+//      showAlert("Load Error", "Could not load saved game: " + ex.getMessage());
+//    }
+//  }
 
   private String extractBoardPathFromCsv(String csvPath) {
     try (BufferedReader reader = new BufferedReader(new FileReader(csvPath))) {
@@ -96,5 +89,9 @@ public class SNLLoadController implements NavigationHandler {
   public void navigateBack() {
     NavigationManager.getInstance().navigateBack();
     logger.info("Navigated back to previous screen");
+  }
+
+  @Override
+  public void setRoot(Parent root) {
   }
 }

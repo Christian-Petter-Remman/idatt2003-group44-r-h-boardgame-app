@@ -5,40 +5,33 @@ import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.snl.SNLGame;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
-import edu.ntnu.idi.idatt.navigation.NavigationManager;
-import edu.ntnu.idi.idatt.util.AlertUtil;
+import javafx.scene.Parent;
+port edu.ntnu.idi.idatt.util.AlertUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class SNLGameScreenController implements NavigationHandler {
 
   private static final Logger logger = LoggerFactory.getLogger(SNLGameScreenController.class);
 
   private final SNLGame game;
-  private final String boardFile;
-  private final String saveFileName;
   private final List<GameScreenObserver> observers = new ArrayList<>();
+  private Parent root;
 
-  public SNLGameScreenController(SNLGame game, String boardFile, String saveFileName) {
+  public SNLGameScreenController(SNLGame game) {
     this.game = game;
-    this.boardFile = boardFile;
-    this.saveFileName = saveFileName;
   }
-
-  // observer
 
   public void registerObserver(GameScreenObserver observer) {
     observers.add(observer);
+    game.addMoveObserver(observer);
+    game.addTurnObserver(observer);
+    game.addWinnerObserver(observer);
   }
-
-  // Model Accessors
 
   public List<Player> getPlayers() {
     return game.getPlayers();
@@ -56,75 +49,45 @@ public class SNLGameScreenController implements NavigationHandler {
     return game;
   }
 
-  // Game actions
-
   public void handleRoll() {
     game.playTurn();
-//    int roll = game.getCurrentPlayer().getR();
-//    notifyDiceRolled(roll);
-//    notifyPlayerTurnChanged(game.getCurrentPlayer());
   }
-  public void handleMove(int newPosition) {
-    Player player = game.getCurrentPlayer();
-    int oldPosition = player.getPosition();
-    player.setPosition(newPosition);
-    notifyPlayerPositionChanged(player, oldPosition, newPosition);
-  }
-  public void saveGame() {
-    try {
-      List<String> lines = new ArrayList<>();
-      lines.add("Board:" + boardFile);
 
-      for (Player player : game.getPlayers()) {
-        lines.add(player.getName() + "," + player.getCharacter() + "," + player.getPosition());
+  public String getTileColor(int tileNum) {
+    return (tileNum % 2 == 0) ? "#f0f0f0" : "#d0d0d0";  // Light and dark colors
+  }
+
+  public List<Player> getPlayersAtPosition(int position) {
+    List<Player> playersAtPosition = new ArrayList<>();
+    for (Player player : game.getPlayers()) {
+      if (player.getPosition() == position) {
+        playersAtPosition.add(player);
       }
+    }
+    return playersAtPosition;
+  }
 
-      Files.write(Paths.get(saveFileName), lines);
-      logger.info("Game saved to {}", saveFileName);
-      notifyGameSaved(saveFileName);
+  public void initializeGameScreen() {
+    notifyPlayerPositionChangedAll();
+  }
 
-    } catch (IOException e) {
-      logger.error("Failed to save game: {}", e.getMessage());
-      AlertUtil.showAlert("Save Error", "Failed to save game: " + e.getMessage());
+  public void notifyPlayerPositionChangedAll() {
+    for (Player player : game.getPlayers()) {
+      int pos = player.getPosition();
+      notifyPlayerPositionChanged(player, pos, pos);
     }
   }
 
-  // Notify Observers
-
-  private void notifyPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
+  public void notifyPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
     for (GameScreenObserver observer : observers) {
       observer.onPlayerPositionChanged(player, oldPosition, newPosition);
     }
   }
 
-  private void notifyDiceRolled(int result) {
-    for (GameScreenObserver observer : observers) {
-      observer.onDiceRolled(result);
-    }
-  }
-
-  private void notifyPlayerTurnChanged(Player currentPlayer) {
-    for (GameScreenObserver observer : observers) {
-      observer.onPlayerTurnChanged(currentPlayer);
-    }
-  }
-
-  private void notifyGameOver(Player winner) {
-    for (GameScreenObserver observer : observers) {
-      observer.onGameOver(winner);
-    }
-  }
-
-  private void notifyGameSaved(String filePath) {
-    for (GameScreenObserver observer : observers) {
-      observer.onGameSaved(filePath);
-    }
-  }
-
-  // Navigation
-
   @Override
   public void navigateTo(String destination) {
+
+    // Implement navigation handling logic
     switch (destination) {
       case "INTRO_SCREEN":
         NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.START_SCREEN);
@@ -137,6 +100,15 @@ public class SNLGameScreenController implements NavigationHandler {
 
   @Override
   public void navigateBack() {
-    NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.START_SCREEN);
+    // Implement navigation back logic
+  }
+
+  @Override
+  public void setRoot(Parent root) {
+    this.root = root;
+  }
+
+  public Parent getRoot() {
+    return root;
   }
 }
