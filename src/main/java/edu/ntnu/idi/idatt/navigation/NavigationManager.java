@@ -1,19 +1,25 @@
 package edu.ntnu.idi.idatt.navigation;
 
+
 import edu.ntnu.idi.idatt.controller.common.*;
 import edu.ntnu.idi.idatt.controller.snl.*;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.filehandling.GameStateCsvLoader;
 import edu.ntnu.idi.idatt.model.common.Player;
+
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
 import edu.ntnu.idi.idatt.model.common.factory.SNLFactory;
 import edu.ntnu.idi.idatt.model.snl.*;
 import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
+
 import edu.ntnu.idi.idatt.view.common.intro.IntroScreenView;
 import edu.ntnu.idi.idatt.view.snl.SNLGameScreenView;
+
 import edu.ntnu.idi.idatt.view.snl.SNLRuleSelectionView;
+import java.util.Objects;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +28,12 @@ public class NavigationManager {
   private static final Logger logger = LoggerFactory.getLogger(NavigationManager.class);
   private static final NavigationManager instance = new NavigationManager();
 
+
   private Stage stage;
   private NavigationHandler currentHandler;
   private CharacterSelectionManager characterSelectionManager;
   private SNLRuleSelectionModel ruleSelectionModel;
+
 
   private NavigationManager() {}
 
@@ -76,6 +84,7 @@ public class NavigationManager {
     controller.getView().initializeUI();
     setHandler(controller);
     setRoot(controller.getView().getRoot());
+
   }
 
   public void navigateToCharacterSelection() {
@@ -102,6 +111,7 @@ public class NavigationManager {
     } catch (Exception e) {
       logger.error("The RuleSelection module could not be loaded", e);
     }
+
   }
 
   public void navigateToSNLGameScreen() {
@@ -130,6 +140,7 @@ public class NavigationManager {
       logger.info("Snakes and Ladders game screen initialized successfully.");
     } catch (Exception e) {
       logger.error("Failed to load Snakes and Ladders game from save file", e);
+
     }
   }
 
@@ -139,4 +150,12 @@ public class NavigationManager {
     SAL_RULE_SELECTION,
     SAL_GAME_SCREEN
   }
+
 }
+
+  public void setLogo(String path) {
+    primaryStage.getIcons().add(new Image(
+        Objects.requireNonNull(getClass().getResourceAsStream(path))));
+  }
+}
+

@@ -1,6 +1,9 @@
 package edu.ntnu.idi.idatt.view.common.intro;
 
+import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -130,7 +133,23 @@ public class StartScreenView {
   }
 
   private void onPaintClicked(MouseEvent event) {
-    System.out.println("Paint clicked!");
+    Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+    confirmationAlert.setTitle("Welcome to the painting game!");
+    confirmationAlert.setHeaderText("Are you ready to paint?");
+    confirmationAlert.setContentText("Click OK to start painting!");
+
+    ButtonType backButton = new ButtonType("Back");
+    ButtonType okButton = new ButtonType("OK");
+
+    confirmationAlert.getButtonTypes().setAll(backButton, okButton);
+
+    confirmationAlert.showAndWait().ifPresent(response -> {
+      if (response == backButton) {
+        confirmationAlert.close();
+      } else if (response == okButton) {
+       NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.PAINT_CANVAS_SCREEN);
+      }
+    });
   }
 
   public StackPane getRoot() {
