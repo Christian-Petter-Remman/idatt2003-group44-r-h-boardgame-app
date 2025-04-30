@@ -10,7 +10,7 @@ import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.util.AlertUtil;
 import javafx.animation.PauseTransition;
 import javafx.scene.Parent;
-import javafx.util.Duration;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,13 +23,12 @@ public class SNLGameScreenController implements NavigationHandler {
 
   private final SNLGame game;
   private final List<GameScreenObserver> observers = new ArrayList<>();
-  private Parent root; // NEW: holds the view’s root node
+  private Parent root;
 
   public SNLGameScreenController(SNLGame game) {
     this.game = game;
   }
 
-  // Observer methods
   public void registerObserver(GameScreenObserver observer) {
     observers.add(observer);
   }

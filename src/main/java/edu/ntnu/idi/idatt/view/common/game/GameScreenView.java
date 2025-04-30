@@ -15,17 +15,27 @@ import javafx.stage.Modality;
 
 public class GameScreenView extends AbstractView implements GameScreenObserver {
 
-  private final SNLGameScreenController controller;
-
+  private SNLGameScreenController controller;
   private VBox root;
   private Label currentPlayerLabel;
   private Label positionLabel;
   private Label diceResultLabel;
   private Button rollButton;
 
-  public GameScreenView(SNLGameScreenController controller) {
+  public GameScreenView() {
+    // Empty constructor; initialization will be done later through the setter
+  }
+
+  /**
+   * This method should be called to set the controller after instantiating the view.
+   * It will initialize the view with the provided controller.
+   *
+   * @param controller the controller to be used by this view
+   */
+  public void initializeWithController(SNLGameScreenController controller) {
     this.controller = controller;
-    controller.registerObserver(this);
+    controller.registerObserver(this);  // Registering the observer to handle updates
+    initializeUI();  // Initialize the UI with the controller
   }
 
   @Override
@@ -50,28 +60,30 @@ public class GameScreenView extends AbstractView implements GameScreenObserver {
 
   @Override
   protected void applyInitialUIState() {
+    // After initializing UI, set the initial state for the player and dice result
     updateCurrentPlayerView(controller.getCurrentPlayer());
   }
 
   @Override
   public void onPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
-    updateCurrentPlayerView(player);
+    updateCurrentPlayerView(player);  // Update UI when the player's position changes
   }
 
   @Override
   public void onDiceRolled(int result) {
     diceResultLabel.setText("Roll result: " + result);
-    rollButton.setDisable(true);
+    rollButton.setDisable(true);  // Disable roll button until next turn
   }
 
   @Override
   public void onPlayerTurnChanged(Player currentPlayer) {
-    updateCurrentPlayerView(currentPlayer);
-    rollButton.setDisable(false);
+    updateCurrentPlayerView(currentPlayer);  // Update the UI for the current player
+    rollButton.setDisable(false);  // Enable the roll button for the next turn
   }
 
   @Override
   public void onGameOver(Player winner) {
+    // Show an alert when the game is over with the winner's details
     Alert alert = new Alert(Alert.AlertType.INFORMATION);
     alert.setTitle("Game Over");
     alert.setHeaderText("🎉 " + winner.getName() + " has won the game!");
@@ -86,7 +98,7 @@ public class GameScreenView extends AbstractView implements GameScreenObserver {
     alert.initOwner(root.getScene().getWindow());
     alert.showAndWait();
 
-    rollButton.setDisable(true);
+    rollButton.setDisable(true);  // Disable roll button once the game is over
   }
 
   @Override
@@ -95,7 +107,7 @@ public class GameScreenView extends AbstractView implements GameScreenObserver {
     alert.setTitle("Game Saved");
     alert.setHeaderText("Game saved successfully");
     alert.setContentText("Saved to: " + filePath);
-    alert.showAndWait();
+    alert.showAndWait();  // Show the alert once the game has been saved
   }
 
   private void updateCurrentPlayerView(Player player) {
@@ -105,6 +117,6 @@ public class GameScreenView extends AbstractView implements GameScreenObserver {
 
   @Override
   public Parent getRoot() {
-    return root;
+    return root;  // Return the root node of the view
   }
 }

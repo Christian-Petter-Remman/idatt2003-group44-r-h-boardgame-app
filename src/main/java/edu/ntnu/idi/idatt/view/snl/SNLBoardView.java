@@ -23,13 +23,21 @@ public class SNLBoardView extends AbstractView implements BoardObserver {
   private static final int TILE_SIZE = 90;
   private static final int BOARD_SIZE = 10;
 
-  private final SNLBoardController controller;
-  private final GridPane boardGrid = new GridPane();
-  private final Pane ladderSnakeOverlay = new Pane();
+  private SNLBoardController controller;
+  private GridPane boardGrid;
+  private Pane ladderSnakeOverlay;
 
-  public SNLBoardView(SNLBoardController controller) {
+  public SNLBoardView() {
+    // don’t initialize yet
+  }
+
+  public void initializeWithController(SNLBoardController controller) {
     this.controller = controller;
-    controller.registerObserver(this);
+    this.controller.registerObserver(this);
+    this.boardGrid = new GridPane();
+    this.ladderSnakeOverlay = new Pane();
+
+    initializeUI();  // Now safe to call createUI(), setupEventHandlers(), applyInitialUIState()
   }
 
   @Override
@@ -133,12 +141,12 @@ public class SNLBoardView extends AbstractView implements BoardObserver {
     return cell;
   }
 
-//  private void renderLaddersAndSnakes() {
-//    ladderSnakeOverlay.getChildren().clear();
+// private void renderLaddersAndSnakes() {
+//  ladderSnakeOverlay.getChildren().clear();
 //
-//    controller.getLadders().forEach(ladder -> drawLadder();
-//    controller.getSnakes().forEach(snake -> drawSnake(snake.start(), snake.end()));
-//  }
+//  controller.getLadders().forEach(ladder -> drawLadder();
+//  controller.getSnakes().forEach(snake -> drawSnake(snake.start(), snake.end()));
+//} //TODO do not remove
 
   //TODO ladders start og ladder slutt
 

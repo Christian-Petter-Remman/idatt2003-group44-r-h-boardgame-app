@@ -107,19 +107,27 @@ public class NavigationManager {
       String savePath = ruleSelectionModel.getSavePath();
       GameStateCsvLoader.GameState gameState = GameStateCsvLoader.load(savePath);
       String boardPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + gameState.getBoardFile();
+
       SNLBoard board = new SNLBoard(100);
       board.initializeBoardFromFile(boardPath);
+
       SNLGame game = new SNLGame(board, gameState.getPlayers(), gameState.getDiceCount(), gameState.getCurrentTurnIndex());
-      SNLGameScreenController controller = new SNLGameScreenController(game);
-      SNLBoardController boardController = new SNLBoardController(board, gameState.getPlayers());
-      SNLBoardView boardView = new SNLBoardView(boardController);
-      GameScreenView gameScreenView = new GameScreenView(controller);
 
-      BorderPane combinedView = new BorderPane();
-      combinedView.setCenter(boardView.getRoot());
-      combinedView.setRight(gameScreenView.getRoot());
+      SNLGameScreenController gameController = new SNLGameScreenController(game);
+      SNLBoardController boardController = new SNLBoardController(board, gameState.getPlayers(), game); // FIXED: pass game
 
-      setRoot(combinedView);
+      GameScreenView gameScreenView = new GameScreenView();
+      gameScreenView.initializeWithController(gameController); // registers observer ✅
+      SNLBoardView boardView = new SNLBoardView();
+      boardView.initializeWithController(boardController);// registers observer ✅
+
+      gameController.setRoot(gameScreenView.getRoot());
+
+      BorderPane layout = new BorderPane();
+      layout.setCenter(boardView.getRoot());
+      layout.setRight(gameScreenView.getRoot());
+
+      setRoot(layout);
       logger.info("Snakes and Ladders game screen initialized successfully.");
 
     } catch (Exception e) {

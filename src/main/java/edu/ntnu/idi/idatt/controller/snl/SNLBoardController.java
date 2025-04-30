@@ -3,8 +3,7 @@ package edu.ntnu.idi.idatt.controller.snl;
 import edu.ntnu.idi.idatt.model.common.AbstractBoard;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.BoardObserver;
-import edu.ntnu.idi.idatt.model.snl.Ladder;
-import edu.ntnu.idi.idatt.model.snl.Snake;
+import edu.ntnu.idi.idatt.model.snl.SNLGame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,37 +19,45 @@ public class SNLBoardController {
   private final List<Player> players;
   private final List<BoardObserver> observers = new ArrayList<>();
   private final Map<Integer, List<Player>> playerPositions = new HashMap<>();
+  private final SNLGame game;
 
-  public SNLBoardController(AbstractBoard board, List<Player> players) {
+  public SNLBoardController(AbstractBoard board, List<Player> players, SNLGame game) {
     this.board = board;
     this.players = new ArrayList<>(players);
+    this.game = game;
     updatePlayerPositions();
+
+    // Register to game updates
+    game.addMoveObserver(new BoardObserver() {
+      @Override
+      public void onPlayerMoved(Player player, int fromPosition, int toPosition) {
+        updatePlayerPositions();
+        notifyPlayerMoved(player, fromPosition, toPosition);
+      }
+
+      @Override
+      public void onBoardRendered() {
+        render();
+      }
+
+      @Override
+      public void onSpecialTileActivated(int tileNumber, int destination, boolean isLadder) {
+        notifySpecialTileActivated(tileNumber, destination, isLadder);
+      }
+    });
   }
 
-  //Observer Registration
   public void registerObserver(BoardObserver observer) {
     observers.add(observer);
   }
-
-  //Board Queries
 
   public AbstractBoard getBoard() {
     return board;
   }
 
-//  public List<Ladder> getLadders() {
-//    return board.getLadders();
-//  }
-//
-//  public List<Snake> getSnakes() {
-//    return board.getSnakes();
-//  }
-
   public int getBoardSize() {
     return board.getSize();
   }
-
-  //Player Queries
 
   public List<Player> getPlayers() {
     return new ArrayList<>(players);
@@ -60,38 +67,15 @@ public class SNLBoardController {
     return playerPositions.getOrDefault(position, new ArrayList<>());
   }
 
-  //Actions
-
-//  public void movePlayer(Player player, int toPosition) {
-//    int fromPosition = player.getPosition();
-//    player.setPosition(toPosition);
-//
-//    updatePlayerPositions();
-//    notifyPlayerMoved(player, fromPosition, toPosition);
-//
-//    int finalPosition = board.getFinalPosition(toPosition);
-//    if (finalPosition != toPosition) {
-//      boolean isLadder = finalPosition > toPosition;
-//      notifySpecialTileActivated(toPosition, finalPosition, isLadder);
-//
-//      player.setPosition(finalPosition);
-//      updatePlayerPositions();
-//      notifyPlayerMoved(player, toPosition, finalPosition);
-//    }
-//  }
-
   public void render() {
     updatePlayerPositions();
     notifyBoardRendered();
     logger.debug("Board rendered and updated.");
   }
 
-
   public String getTileColor(int tileNum) {
     return (tileNum % 2 == 0) ? "#f0f0f0" : "#d0d0d0";
   }
-
-  //Internal Helpers
 
   private void updatePlayerPositions() {
     playerPositions.clear();
@@ -100,8 +84,6 @@ public class SNLBoardController {
       playerPositions.computeIfAbsent(position, k -> new ArrayList<>()).add(player);
     }
   }
-
-  //Notify Observers
 
   private void notifyBoardRendered() {
     for (BoardObserver observer : observers) {
