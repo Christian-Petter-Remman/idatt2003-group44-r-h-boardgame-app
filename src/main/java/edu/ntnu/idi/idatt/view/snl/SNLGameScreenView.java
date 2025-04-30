@@ -4,6 +4,7 @@ import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
+import edu.ntnu.idi.idatt.model.snl.SNLGame;
 import edu.ntnu.idi.idatt.view.AbstractView;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
@@ -19,8 +20,12 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Objects;
+
 
 public class SNLGameScreenView extends AbstractView {
 
@@ -33,11 +38,14 @@ public class SNLGameScreenView extends AbstractView {
   private GridPane boardGrid;
   private Pane ladderSnakeOverlay;
 
+  private static final Logger logger = LoggerFactory.getLogger(SNLGameScreenView.class.getName());
+
   public SNLGameScreenView(SNLGameScreenController controller) {
     this.controller = controller;
     controller.registerObserver(new GameScreenObserver() {
       @Override
       public void onPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
+        renderBoardGrid(); // Redraw all players
         updatePlayerPositionView(player, oldPosition, newPosition);
       }
 
@@ -153,10 +161,18 @@ public class SNLGameScreenView extends AbstractView {
 
     List<Player> playersOnTile = controller.getPlayersAtPosition(tileNum);
     for (Player player : playersOnTile) {
-      String characterName = (player.getCharacter() != null) ? player.getCharacter() : "default";
-      Image image = new Image("player_icons/" + characterName + ".png", 40, 40, true, true);
-      ImageView icon = new ImageView(image);
-      cell.getChildren().add(icon);
+      String characterName = (player.getCharacter() != null) ? player.getCharacter().toLowerCase() : "default";
+      try {
+        Image image = new Image(
+                Objects.requireNonNull(getClass().getResource("/player_icons/" + characterName + ".png")).toExternalForm(),
+                40, 40, true, true
+        );
+        logger.info("Creating tile image with {}", characterName);
+        ImageView icon = new ImageView(image);
+        cell.getChildren().add(icon);
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
     }
 
     return cell;
@@ -248,7 +264,7 @@ public class SNLGameScreenView extends AbstractView {
   }
 
   private void updatePlayerPositionView(Player player, int oldPosition, int newPosition) {
-    // You can refresh tile graphics here if needed
+    // Optional additional UI updates
   }
 
   private void updateCurrentPlayerView(Player currentPlayer) {
