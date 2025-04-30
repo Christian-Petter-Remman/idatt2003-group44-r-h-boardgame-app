@@ -28,6 +28,9 @@ public class SNLGameScreenController implements NavigationHandler {
 
   public void registerObserver(GameScreenObserver observer) {
     observers.add(observer);
+    game.addMoveObserver(observer);
+    game.addTurnObserver(observer);
+    game.addWinnerObserver(observer);
   }
 
   public List<Player> getPlayers() {
@@ -51,7 +54,6 @@ public class SNLGameScreenController implements NavigationHandler {
   }
 
   public String getTileColor(int tileNum) {
-    // Simple example: alternating colors for tiles
     return (tileNum % 2 == 0) ? "#f0f0f0" : "#d0d0d0";  // Light and dark colors
   }
 
@@ -65,33 +67,20 @@ public class SNLGameScreenController implements NavigationHandler {
     return playersAtPosition;
   }
 
-  private void notifyPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
+  public void initializeGameScreen() {
+    notifyPlayerPositionChangedAll();
+  }
+
+  public void notifyPlayerPositionChangedAll() {
+    for (Player player : game.getPlayers()) {
+      int pos = player.getPosition();
+      notifyPlayerPositionChanged(player, pos, pos);
+    }
+  }
+
+  public void notifyPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
     for (GameScreenObserver observer : observers) {
       observer.onPlayerPositionChanged(player, oldPosition, newPosition);
-    }
-  }
-
-  private void notifyDiceRolled(int result) {
-    for (GameScreenObserver observer : observers) {
-      observer.onDiceRolled(result);
-    }
-  }
-
-  private void notifyPlayerTurnChanged(Player currentPlayer) {
-    for (GameScreenObserver observer : observers) {
-      observer.onPlayerTurnChanged(currentPlayer);
-    }
-  }
-
-  private void notifyGameOver(Player winner) {
-    for (GameScreenObserver observer : observers) {
-      observer.onGameOver(winner);
-    }
-  }
-
-  private void notifyGameSaved(String filePath) {
-    for (GameScreenObserver observer : observers) {
-      observer.onGameSaved(filePath);
     }
   }
 

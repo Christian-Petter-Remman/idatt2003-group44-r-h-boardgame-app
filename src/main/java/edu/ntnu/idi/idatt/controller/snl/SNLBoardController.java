@@ -63,7 +63,13 @@ public class SNLBoardController {
   }
 
   public List<Player> getPlayersAtPosition(int position) {
-    return playerPositions.getOrDefault(position, new ArrayList<>());
+    List<Player> result = new ArrayList<>();
+    for (Player player : game.getPlayers()) {
+      if (player.getPosition() == position) {
+        result.add(player);
+      }
+    }
+    return result;
   }
 
   public void render() {

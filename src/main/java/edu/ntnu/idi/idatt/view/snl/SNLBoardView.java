@@ -17,6 +17,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -29,6 +31,8 @@ public class SNLBoardView extends AbstractView implements BoardObserver {
   private GridPane boardGrid;
   private Pane ladderSnakeOverlay;
   private StackPane root;
+
+  private static final Logger logger = LoggerFactory.getLogger(SNLBoard.class.getName());
 
   public SNLBoardView() {}
 
@@ -128,13 +132,32 @@ public class SNLBoardView extends AbstractView implements BoardObserver {
     cell.getChildren().add(tileNumber);
 
     List<Player> playersOnTile = controller.getPlayersAtPosition(tileNum);
+
     for (Player player : playersOnTile) {
-      String characterName = (player.getCharacter() != null) ? player.getCharacter() : "default";
-      Image image = new Image("player_icons/" + characterName + ".png", 40, 40, true, true);
-      ImageView icon = new ImageView(image);
-      cell.getChildren().add(icon);
+      String characterName = (player.getCharacter() != null) ? player.getCharacter().toLowerCase() : "default";
+      try {
+        var url = getClass().getResource("/player_icons/" + characterName + ".png");
+        if (url == null) {
+          logger.warn("Image not found for character: {}", characterName);
+          continue;
+        }
+
+        Image image = new Image(url.toExternalForm(), 40, 40, true, true);
+        if (image.getWidth() == -1) {
+          logger.warn("Failed to load image for: {}", characterName);
+        } else {
+          logger.info("Successfully loaded image for {} ({} x {})", characterName, image.getWidth(), image.getHeight());
+        }
+
+        ImageView icon = new ImageView(image);
+        icon.setTranslateY(10 * playersOnTile.indexOf(player)); // Slight vertical offset per player
+        cell.getChildren().add(icon);
+      } catch (Exception e) {
+        logger.error("Error loading image for character: {}", characterName, e);
+      }
     }
 
+    cell.layout(); // Force layout pass
     return cell;
   }
 

@@ -4,7 +4,6 @@ import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
-import edu.ntnu.idi.idatt.model.snl.SNLGame;
 import edu.ntnu.idi.idatt.view.AbstractView;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
@@ -26,8 +25,12 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Objects;
 
-
 public class SNLGameScreenView extends AbstractView {
+
+  private static final Logger logger = LoggerFactory.getLogger(SNLGameScreenView.class.getName());
+
+  private static final int TILE_SIZE = 60;
+  private static final int BOARD_SIZE = 10;
 
   private VBox root;
   private Label currentPlayerLabel;
@@ -38,15 +41,13 @@ public class SNLGameScreenView extends AbstractView {
   private GridPane boardGrid;
   private Pane ladderSnakeOverlay;
 
-  private static final Logger logger = LoggerFactory.getLogger(SNLGameScreenView.class.getName());
-
   public SNLGameScreenView(SNLGameScreenController controller) {
     this.controller = controller;
     controller.registerObserver(new GameScreenObserver() {
+
       @Override
       public void onPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
-        renderBoardGrid(); // Redraw all players
-        updatePlayerPositionView(player, oldPosition, newPosition);
+        renderBoardGrid(); // this is enough
       }
 
       @Override
@@ -98,28 +99,24 @@ public class SNLGameScreenView extends AbstractView {
   }
 
   @Override
-  protected void setupEventHandlers() {
-    // Optionally implement
-  }
+  protected void setupEventHandlers() {}
 
   @Override
-  protected void applyInitialUIState() {
-    // Optionally implement
-  }
+  protected void applyInitialUIState() {}
 
   private void initializeBoardGrid() {
     boardGrid = new GridPane();
     boardGrid.setHgap(2);
     boardGrid.setVgap(2);
     boardGrid.setAlignment(Pos.CENTER);
-    boardGrid.setPrefSize(90 * 10, 90 * 10);
+    boardGrid.setPrefSize(TILE_SIZE * BOARD_SIZE, TILE_SIZE * BOARD_SIZE);
 
-    for (int i = 0; i < 10; i++) {
-      ColumnConstraints colConst = new ColumnConstraints(90);
+    for (int i = 0; i < BOARD_SIZE; i++) {
+      ColumnConstraints colConst = new ColumnConstraints(TILE_SIZE);
       colConst.setHalignment(HPos.CENTER);
       boardGrid.getColumnConstraints().add(colConst);
 
-      RowConstraints rowConst = new RowConstraints(90);
+      RowConstraints rowConst = new RowConstraints(TILE_SIZE);
       rowConst.setValignment(VPos.CENTER);
       boardGrid.getRowConstraints().add(rowConst);
     }
@@ -131,7 +128,7 @@ public class SNLGameScreenView extends AbstractView {
     ladderSnakeOverlay = new Pane();
     ladderSnakeOverlay.setPickOnBounds(false);
     ladderSnakeOverlay.setMouseTransparent(true);
-    ladderSnakeOverlay.setPrefSize(90 * 10, 90 * 10);
+    ladderSnakeOverlay.setPrefSize(TILE_SIZE * BOARD_SIZE, TILE_SIZE * BOARD_SIZE);
     renderLaddersAndSnakes();
   }
 
@@ -142,8 +139,8 @@ public class SNLGameScreenView extends AbstractView {
       int tileNum = i + 1;
       StackPane cell = createTile(tileNum);
 
-      int row = 9 - (i / 10);
-      int col = (row % 2 == 0) ? i % 10 : (9 - i % 10);
+      int row = 9 - (i / BOARD_SIZE);
+      int col = (row % 2 == 0) ? i % BOARD_SIZE : (BOARD_SIZE - 1 - i % BOARD_SIZE);
 
       boardGrid.add(cell, col, row);
     }
@@ -151,7 +148,7 @@ public class SNLGameScreenView extends AbstractView {
 
   private StackPane createTile(int tileNum) {
     StackPane cell = new StackPane();
-    cell.setPrefSize(90, 90);
+    cell.setPrefSize(TILE_SIZE, TILE_SIZE);
 
     cell.setStyle("-fx-border-color: black; -fx-background-color: " + controller.getTileColor(tileNum) + ";");
 
@@ -160,18 +157,28 @@ public class SNLGameScreenView extends AbstractView {
     cell.getChildren().add(tileNumber);
 
     List<Player> playersOnTile = controller.getPlayersAtPosition(tileNum);
+
     for (Player player : playersOnTile) {
       String characterName = (player.getCharacter() != null) ? player.getCharacter().toLowerCase() : "default";
       try {
-        Image image = new Image(
-                Objects.requireNonNull(getClass().getResource("/player_icons/" + characterName + ".png")).toExternalForm(),
-                40, 40, true, true
-        );
-        logger.info("Creating tile image with {}", characterName);
+        var url = getClass().getResource("/player_icons/" + characterName + ".png");
+        if (url == null) {
+          logger.warn("Image not found for character: {}", characterName);
+          continue;
+        }
+
+        Image image = new Image(url.toExternalForm(), TILE_SIZE * 0.5, TILE_SIZE * 0.5, true, true);
+        if (image.getWidth() == -1) {
+          logger.warn("Failed to load image for: {}", characterName);
+        } else {
+          logger.info("Successfully loaded image for {} ({} x {})", characterName, image.getWidth(), image.getHeight());
+        }
+
         ImageView icon = new ImageView(image);
+        icon.setTranslateY(TILE_SIZE * 0.15 * playersOnTile.indexOf(player));
         cell.getChildren().add(icon);
       } catch (Exception e) {
-        throw new RuntimeException(e);
+        logger.error("Error loading image for character: {}", characterName, e);
       }
     }
 
@@ -249,22 +256,33 @@ public class SNLGameScreenView extends AbstractView {
 
   private double[] getTileCenter(int tileNum) {
     int i = tileNum - 1;
-    int row = 9 - (i / 10);
-    int col = (row % 2 == 0) ? i % 10 : (9 - i % 10);
+    int row = 9 - (i / BOARD_SIZE);
+    int col = (row % 2 == 0) ? i % BOARD_SIZE : (BOARD_SIZE - 1 - i % BOARD_SIZE);
 
-    double x = col * 90 + 90 / 2.0;
-    double y = row * 90 + 90 / 2.0;
+    double x = col * TILE_SIZE + TILE_SIZE / 2.0;
+    double y = row * TILE_SIZE + TILE_SIZE / 2.0;
 
     return new double[]{x, y};
   }
 
-  @Override
-  public Parent getRoot() {
-    return root;
+  private int[] getGridCoords(int tileNum) {
+    int i = tileNum - 1;
+    int row = 9 - (i / BOARD_SIZE);
+    int col = (row % 2 == 0) ? i % BOARD_SIZE : (BOARD_SIZE - 1 - i % BOARD_SIZE);
+    return new int[]{col, row};
   }
 
   private void updatePlayerPositionView(Player player, int oldPosition, int newPosition) {
-    // Optional additional UI updates
+    int[] oldCoords = getGridCoords(oldPosition);
+    int[] newCoords = getGridCoords(newPosition);
+
+    boardGrid.getChildren().removeIf(node ->
+            GridPane.getRowIndex(node) == oldCoords[1] && GridPane.getColumnIndex(node) == oldCoords[0] ||
+                    GridPane.getRowIndex(node) == newCoords[1] && GridPane.getColumnIndex(node) == newCoords[0]
+    );
+
+    boardGrid.add(createTile(oldPosition), oldCoords[0], oldCoords[1]);
+    boardGrid.add(createTile(newPosition), newCoords[0], newCoords[1]);
   }
 
   private void updateCurrentPlayerView(Player currentPlayer) {
@@ -272,11 +290,12 @@ public class SNLGameScreenView extends AbstractView {
     positionLabel.setText("Position: " + currentPlayer.getPosition());
   }
 
-  private void showGameOverAlert(Player winner) {
-    // Optional alert logic
-  }
+  private void showGameOverAlert(Player winner) {}
 
-  private void showGameSavedAlert(String filePath) {
-    // Optional alert logic
+  private void showGameSavedAlert(String filePath) {}
+
+  @Override
+  public Parent getRoot() {
+    return root;
   }
 }
