@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>edu.ntnu.idi.idatt</groupId>
@@ -18,11 +18,11 @@
     <javafx.version>23.0.1</javafx.version>
     <junit.version>5.11.4</junit.version>
     <slf4j.version>2.0.12</slf4j.version>
-    <logback.version>1.5.3</logback.version>
+    <logback.version>1.5.13</logback.version>
   </properties>
 
   <dependencies>
-    <!-- JUnit Dependencies -->
+    <!-- JUnit -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -30,7 +30,7 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- JavaFX Dependencies -->
+    <!-- JavaFX Modules -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
@@ -41,8 +41,13 @@
       <artifactId>javafx-fxml</artifactId>
       <version>${javafx.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-media</artifactId>
+      <version>${javafx.version}</version>
+    </dependency>
 
-    <!-- Logging Dependencies -->
+    <!-- Logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -59,14 +64,14 @@
       <version>${logback.version}</version>
     </dependency>
 
-    <!-- Jansi Dependencies -->
+    <!-- Jansi -->
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi</artifactId>
       <version>2.3.2</version>
     </dependency>
 
-    <!-- Gson Dependencies -->
+    <!-- Gson -->
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
@@ -76,18 +81,17 @@
 
   <build>
     <plugins>
-      <!-- Maven Compiler Plugin -->
+      <!-- Compiler -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.13.0</version>
         <configuration>
-          <!-- Ensure compatibility with JDK 21 -->
           <release>21</release>
         </configuration>
       </plugin>
 
-      <!-- Maven Surefire Plugin -->
+      <!-- Surefire -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -100,12 +104,14 @@
         <artifactId>javafx-maven-plugin</artifactId>
         <version>0.0.8</version>
         <configuration>
-          <!-- Replace with your main class -->
           <mainClass>edu.ntnu.idi.idatt.mainapp.Main</mainClass>
+          <options>
+            <option>--add-modules=javafx.controls,javafx.fxml,javafx.media</option>
+          </options>
         </configuration>
       </plugin>
 
-      <!-- Maven Javadoc Plugin -->
+      <!-- Javadoc -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
