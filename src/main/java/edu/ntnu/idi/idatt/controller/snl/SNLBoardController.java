@@ -27,7 +27,6 @@ public class SNLBoardController {
     this.game = game;
     updatePlayerPositions();
 
-    // Register to game updates
     game.addMoveObserver(new BoardObserver() {
       @Override
       public void onPlayerMoved(Player player, int fromPosition, int toPosition) {

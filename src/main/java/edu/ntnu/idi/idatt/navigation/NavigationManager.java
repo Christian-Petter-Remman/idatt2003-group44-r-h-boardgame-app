@@ -82,6 +82,8 @@ public class NavigationManager {
     characterSelectionManager = new CharacterSelectionManager();
     CharacterSelectionScreen view = new CharacterSelectionScreen(characterSelectionManager);
     CharacterSelectionController controller = new CharacterSelectionController(characterSelectionManager, view);
+    logger.info("CharacterSelectionManager initialized: {}", characterSelectionManager != null ? "Yes" : "No");
+    logger.info("CharacterSelectionScreen initialized: {}", view != null ? "Yes" : "No");
     setCharacterSelectionManager(characterSelectionManager);
     setHandler(controller);
     setRoot(view.getView());
@@ -107,6 +109,7 @@ public class NavigationManager {
       String savePath = ruleSelectionModel.getSavePath();
       GameStateCsvLoader.GameState gameState = GameStateCsvLoader.load(savePath);
       String boardPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + gameState.getBoardFile();
+      logger.info("final board path: " + boardPath);
 
       SNLBoard board = new SNLBoard(100);
       board.initializeBoardFromFile(boardPath);

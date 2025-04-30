@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class GameStateCsvLoader {
 
   public static class GameState {
@@ -17,8 +20,18 @@ public class GameStateCsvLoader {
     public int currentTurnIndex;
     public List<Player> players = new ArrayList<>();
 
+
+    private static final Logger logger = LoggerFactory.getLogger(GameStateCsvLoader.class);
+
+
     public String getBoardFile() {
+      logger.info("Loading game state from {}", boardFile);  // Log statement
       return boardFile;
+    }
+
+    public void setBoardFile(String boardFile) {
+      this.boardFile = boardFile;  // Ensure no recursive calls here
+      logger.info("Board file set to {}", boardFile);
     }
 
     public int getDiceCount() {

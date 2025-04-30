@@ -91,6 +91,7 @@ public class SNLBoardJsonHandler implements FileHandler <SNLBoard> {
   @Override
   public SNLBoard loadFromFile(String fileName) throws FileReadException, JsonParsingException {
     try (Reader reader = new FileReader(fileName)) {
+      logger.info("Loading board from file: {}", fileName);
       return gson.fromJson(reader, SNLBoard.class);
     } catch (FileNotFoundException e) {
       throw new FileReadException("SNLBoard file not found: " + fileName, e);
