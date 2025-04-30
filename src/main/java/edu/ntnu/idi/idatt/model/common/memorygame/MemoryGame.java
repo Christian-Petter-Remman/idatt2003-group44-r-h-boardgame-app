@@ -3,16 +3,16 @@ package edu.ntnu.idi.idatt.model.common.memorygame;
 
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionData;
 import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MemoryGame {
-
   private final List<MemoryPlayer> players;
-
   private final MemoryBoard board;
-
   private int currentPlayerIdx = 0;
+  private final List<MemoryGameObserver> observers = new ArrayList<>();
+
   private MemoryCard firstFlipped = null;
   private GameState state = GameState.NOT_STARTED;
 
@@ -25,6 +25,50 @@ public class MemoryGame {
         .collect(Collectors.toList());
 
     this.board = new MemoryBoard(rows, cols, icons);
+  }
+
+  public void addObserver(MemoryGameObserver observer) {
+    observers.add(observer);
+  }
+  public void removeObserver(MemoryGameObserver observer) {
+    observers.remove(observer);
+  }
+
+  private void fireCardFlipped(int row, int col, CardState state) {
+    for (MemoryGameObserver observer : observers) {
+      observer.onCardFlipped(row, col, state);
+    }
+  }
+
+  private void fireMatchFound(MemoryPlayer player, int newScore) {
+    for (MemoryGameObserver observer : observers) {
+      observer.onMatchFound(player, newScore);
+    }
+  }
+
+  private void fireTurnChanged(MemoryPlayer nextPlayer) {
+    for (MemoryGameObserver observer : observers) {
+      observer.onTurnChanged(nextPlayer);
+    }
+  }
+
+  private void fireGameStateChanged(GameState newState) {
+    for (MemoryGameObserver observer : observers) {
+      observer.onGameStateChanged(newState);
+    }
+  }
+
+  private void fireGameFinished(List<MemoryPlayer> winners) {
+    for (MemoryGameObserver observer : observers) {
+      observer.onGameFinished(winners);
+    }
+  }
+
+
+
+
+  public MemoryBoard getBoard() {
+    return board;
   }
 
   public void start() {
