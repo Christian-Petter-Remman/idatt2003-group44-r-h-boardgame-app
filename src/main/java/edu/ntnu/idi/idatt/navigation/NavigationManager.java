@@ -117,12 +117,12 @@ public class NavigationManager {
       SNLGame game = new SNLGame(board, gameState.getPlayers(), gameState.getDiceCount(), gameState.getCurrentTurnIndex());
 
       SNLGameScreenController gameController = new SNLGameScreenController(game);
-      SNLBoardController boardController = new SNLBoardController(board, gameState.getPlayers(), game); // FIXED: pass game
+      SNLBoardController boardController = new SNLBoardController(board, gameState.getPlayers(), game);
 
       GameScreenView gameScreenView = new GameScreenView();
-      gameScreenView.initializeWithController(gameController); // registers observer ✅
+      gameScreenView.initializeWithController(gameController);
       SNLBoardView boardView = new SNLBoardView();
-      boardView.initializeWithController(boardController);// registers observer ✅
+      boardView.initializeWithController(boardController);
 
       gameController.setRoot(gameScreenView.getRoot());
 

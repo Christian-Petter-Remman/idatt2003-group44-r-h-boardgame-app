@@ -17,7 +17,7 @@ public class IntroScreenView extends AbstractView implements IntroView {
   private Runnable loadGameListener;
 
     public IntroScreenView() {
-      createUI();
+      //createUI();
       setupEventHandlers();
       applyInitialUIState();
     }
