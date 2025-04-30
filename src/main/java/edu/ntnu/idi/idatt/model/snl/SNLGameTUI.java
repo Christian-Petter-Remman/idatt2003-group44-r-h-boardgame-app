@@ -29,11 +29,7 @@ public class SNLGameTUI {
     List<Player> players = new ArrayList<>();
     players.add(new SNLPlayer("Alice", "cow", 1 ));
     players.add(new SNLPlayer("Bob", "pig", 1));
-
-    game.initializePlayer(players);
-
-    game = new SNLGame(board,players,1);
-    game.initialize();
+    game = new SNLGame(board,players,1,0);
 
   }
 

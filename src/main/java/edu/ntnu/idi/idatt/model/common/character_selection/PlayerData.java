@@ -2,14 +2,26 @@ package edu.ntnu.idi.idatt.model.common.character_selection;
 
 public class PlayerData {
   private int id;
-  private String name; // <-- ADD THIS
+  private String name;
   private CharacterSelectionData selectedCharacter;
   private boolean active;
+  private String characterIcon;
+
+
+
 
   public PlayerData(int id) {
     this.id = id;
     this.name = "Player " + id; // default
     this.active = (id <= 2);
+  }
+
+  public void setCharacterIcon(String characterIcon) {
+    this.characterIcon = characterIcon;
+  }
+
+  public String getCharacterIcon() {
+    return characterIcon;
   }
 
   public String getName() {

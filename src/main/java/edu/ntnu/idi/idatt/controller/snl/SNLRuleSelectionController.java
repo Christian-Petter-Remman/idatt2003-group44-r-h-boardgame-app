@@ -15,11 +15,12 @@ public class SNLRuleSelectionController {
 
   private final SNLRuleSelectionModel model;
   private final List<CsvExportObserver> observers = new ArrayList<>();
-  private CharacterSelectionManager characterSelectionManager;
+    private final CharacterSelectionManager characterSelectionManager;
 
-  public SNLRuleSelectionController(SNLRuleSelectionModel model) {
-    this.model = model;
-  }
+    public SNLRuleSelectionController(SNLRuleSelectionModel model, CharacterSelectionManager manager) {
+      this.model = model;
+      this.characterSelectionManager = manager;  // ✅ assign it properly
+    }
 
 
   public void notifyObservers() {

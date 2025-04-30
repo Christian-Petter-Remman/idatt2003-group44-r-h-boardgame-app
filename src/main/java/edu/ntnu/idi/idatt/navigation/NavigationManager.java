@@ -98,18 +98,24 @@ public class NavigationManager {
   }
 
   public void navigateToSalRuleSelection() {
-    logger.info("Loading Rule Selection Screen...");
+    logger.info("Navigating to SNL Rule Selection...");
 
     try {
       SNLRuleSelectionModel model = new SNLRuleSelectionModel();
-      SNLRuleSelectionController controller = new SNLRuleSelectionController(model);
+      CharacterSelectionManager manager = new CharacterSelectionManager();
+      SNLRuleSelectionController controller = new SNLRuleSelectionController(model, manager);
+
+//      GameStateCsvExporter exporter = new GameStateCsvExporter(model,players,"temp");
+//      controller.addObserver(exporter); // if your controller uses observers
+
       SNLRuleSelectionView view = new SNLRuleSelectionView(model, controller);
       setRoot(view.getRoot());
+
     } catch (Exception e) {
-      logger.error("Failed to load Rule Selection screen", e);
+      logger.error("Failed to load Rule Selection", e);
     }
 
-    logger.info("Navigated to Rule Selection Screen.");
+    logger.info("Navigated to Rule Selection Screen");
   }
 
   public void navigateToSNLGameScreen() {
@@ -125,7 +131,7 @@ public class NavigationManager {
       SNLBoard board = new SNLBoard(100);
       board.initializeBoardFromFile(filename);
 
-      SNLGame game = new SNLGame(board, players, dice);
+      SNLGame game = new SNLGame(board, players, dice,0);
       SNLGameScreenController controller = new SNLGameScreenController(game);
       SNLBoardController boardController = new SNLBoardController(board, players);
       SNLBoardView boardView = new SNLBoardView(boardController);

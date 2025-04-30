@@ -14,24 +14,14 @@ public class SNLGame extends BoardGame {
 
   private boolean gameOver = false;
 
-  public SNLGame(SNLBoard board, List<Player> players, int dice) {
+  public SNLGame(SNLBoard board, List<Player> players, int diceCount, int currentTurnIndex) {
     super(board);
     this.players = players;
     this.board = board;
-    this.dice = new Dice(dice);
-    initialize();
+    this.dice = new Dice(diceCount);
+    this.currentPlayerIndex = currentTurnIndex;
     initializePlayer(players);
-    logger.info("Snakes and Ladders created with board size {}", board.getSize());
-  }
-
-  public void initialize() {
-    this.currentPlayerIndex = 0;
-    logger.info("Game initialized with board and dice");
-  }
-
-  public void initializePlayer(List<Player> players) {
-    super.initializePlayer(players);
-    logger.info("{} players initialized", players.size());
+    logger.info("Snakes and Ladders created with board size {} and turn index {}", board.getSize(), currentTurnIndex);
   }
 
   public void playTurn() {
@@ -94,5 +84,4 @@ public class SNLGame extends BoardGame {
   public boolean isGameOver() {
     return gameOver;
   }
-
 }

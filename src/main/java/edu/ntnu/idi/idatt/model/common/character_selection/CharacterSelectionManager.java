@@ -35,6 +35,10 @@ public class CharacterSelectionManager implements Observable {
     }
   }
 
+  public boolean isReadyForExport() {
+    return players.stream().allMatch(p -> !p.getName().isEmpty() && p.isActive() && p.getSelectedCharacter() != null);
+  }
+
   public List<CharacterSelectionData> getAvailableCharacters() {
     return availableCharacters;
   }
@@ -61,6 +65,9 @@ public class CharacterSelectionManager implements Observable {
     character.setSelected(true);
     character.setSelectedBy(player);
     player.setSelectedCharacter(character);
+
+    player.setCharacterIcon(character.getName());
+
     notifyObservers();
   }
 
