@@ -54,7 +54,8 @@ public class SNLBoard extends AbstractBoard {
     return null;
   }
 
-  public SNLBoard initializeBoardFromFile(String initFilename) {
+  public static SNLBoard initializeBoardFromFile(String initFilename) {
+    SNLFactory snlFactory = new SNLFactory();
     SNLBoard board = snlFactory.loadBoardFromFile(initFilename);
     logger.info("Board initialized from {} ", initFilename);
     return board;

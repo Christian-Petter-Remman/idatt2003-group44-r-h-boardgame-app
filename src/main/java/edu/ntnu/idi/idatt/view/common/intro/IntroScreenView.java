@@ -3,6 +3,7 @@ package edu.ntnu.idi.idatt.view.common.intro;
 import edu.ntnu.idi.idatt.view.AbstractView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -10,17 +11,20 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IntroScreenView extends AbstractView implements IntroView {
   private Runnable startGameListener;
   private Runnable loadGameListener;
 
-    public IntroScreenView() {
-      //createUI();
-      setupEventHandlers();
-      applyInitialUIState();
-    }
+  Logger logger = LoggerFactory.getLogger(IntroScreenView.class);
+
+  private Parent root;
+
+  public IntroScreenView() {
+    // Avhengigheter må være satt før initializeUI() kalles.
+  }
 
   @Override
   protected void createUI() {
@@ -37,18 +41,22 @@ public class IntroScreenView extends AbstractView implements IntroView {
     content.setPadding(new Insets(10));
 
     mainContainer.setCenter(content);
-
     root = mainContainer;
   }
 
   @Override
   protected void setupEventHandlers() {
-    // Event handlers are set up in the createGameIcon method
+    // Event handlers are set up in createGameIcon
   }
 
   @Override
   protected void applyInitialUIState() {
-    // No initial state to apply
+    // No initial state needed
+  }
+
+  @Override
+  public Parent getRoot() {
+    return root;
   }
 
   private HBox createGameSelectionBox() {

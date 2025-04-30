@@ -6,19 +6,17 @@ import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.filehandling.GameStateCsvLoader;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
+import edu.ntnu.idi.idatt.model.common.factory.SNLFactory;
 import edu.ntnu.idi.idatt.model.snl.*;
 import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
-import edu.ntnu.idi.idatt.view.common.game.GameScreenView;
 import edu.ntnu.idi.idatt.view.common.intro.IntroScreenView;
-import edu.ntnu.idi.idatt.view.snl.SNLBoardView;
+import edu.ntnu.idi.idatt.view.snl.SNLGameScreenView;
 import edu.ntnu.idi.idatt.view.snl.SNLRuleSelectionView;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.List;
 
 public class NavigationManager {
   private static final Logger logger = LoggerFactory.getLogger(NavigationManager.class);
@@ -52,6 +50,7 @@ public class NavigationManager {
   }
 
   public void setRoot(Parent root) {
+    if (root == null) throw new NullPointerException("Root cannot be null");
     if (stage != null) {
       stage.setScene(new Scene(root));
     } else if (currentHandler != null) {
@@ -74,19 +73,20 @@ public class NavigationManager {
 
   public void navigateToIntroScreen() {
     IntroScreenController controller = new IntroScreenController();
-    NavigationManager.getInstance().setHandler(controller);
-    NavigationManager.getInstance().setRoot(controller.getView().getRoot());
+    controller.getView().initializeUI();
+    setHandler(controller);
+    setRoot(controller.getView().getRoot());
   }
 
   public void navigateToCharacterSelection() {
     characterSelectionManager = new CharacterSelectionManager();
     CharacterSelectionScreen view = new CharacterSelectionScreen(characterSelectionManager);
     CharacterSelectionController controller = new CharacterSelectionController(characterSelectionManager, view);
-    logger.info("CharacterSelectionManager initialized: {}", characterSelectionManager != null ? "Yes" : "No");
-    logger.info("CharacterSelectionScreen initialized: {}", view != null ? "Yes" : "No");
     setCharacterSelectionManager(characterSelectionManager);
     setHandler(controller);
     setRoot(view.getView());
+    logger.info("CharacterSelectionManager initialized: {}", characterSelectionManager != null ? "Yes" : "No");
+    logger.info("CharacterSelectionScreen initialized: {}", view != null ? "Yes" : "No");
   }
 
   public void navigateToSalRuleSelection() {
@@ -94,6 +94,7 @@ public class NavigationManager {
       ruleSelectionModel = new SNLRuleSelectionModel();
       SNLRuleSelectionController controller = new SNLRuleSelectionController(ruleSelectionModel, characterSelectionManager);
       SNLRuleSelectionView view = new SNLRuleSelectionView(ruleSelectionModel, controller);
+      view.initializeUI();
       setRuleSelectionModel(ruleSelectionModel);
       setHandler(controller);
       setRoot(view.getRoot());
@@ -109,39 +110,20 @@ public class NavigationManager {
       String savePath = ruleSelectionModel.getSavePath();
       GameStateCsvLoader.GameState gameState = GameStateCsvLoader.load(savePath);
       String boardPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + gameState.getBoardFile();
-      logger.info("final board path: " + boardPath);
+      logger.info("Final board path: " + boardPath);
 
-      SNLBoard board = new SNLBoard(100);
-      board.initializeBoardFromFile(boardPath);
+      SNLFactory factory = new SNLFactory();
+      SNLBoard board = factory.loadBoardFromFile(boardPath);
 
-      // Initialize the game with the loaded state
       SNLGame game = new SNLGame(board, gameState.getPlayers(), gameState.getDiceCount(), gameState.getCurrentTurnIndex());
+      SNLGameScreenController controller = new SNLGameScreenController(game);
+      SNLGameScreenView gameScreenView = new SNLGameScreenView(controller);
+      gameScreenView.initializeUI();
 
-      // Initialize the controller
-      SNLGameScreenController gameController = new SNLGameScreenController(game);
-
-      // Initialize the views and pass the controller
-      GameScreenView gameScreenView = new GameScreenView();
-      gameScreenView.initializeWithController(gameController);
-
-      // Set the root for the controller and the layout
-      gameController.setRoot(gameScreenView.getRoot());
-
-      // Initialize the board view
-      SNLBoardController boardController = new SNLBoardController(board, gameState.getPlayers(), game);
-      SNLBoardView boardView = new SNLBoardView();
-      boardView.initializeWithController(boardController);
-
-      // Set up the layout with GameScreenView and BoardView side by side
-      BorderPane layout = new BorderPane();
-      layout.setCenter(boardView.getRoot());
-      layout.setRight(gameScreenView.getRoot());
-
-      // Set the new layout to the root
-      setRoot(layout);
+      setHandler(controller);
+      setRoot(gameScreenView.getRoot());
 
       logger.info("Snakes and Ladders game screen initialized successfully.");
-
     } catch (Exception e) {
       logger.error("Failed to load Snakes and Ladders game from save file", e);
     }

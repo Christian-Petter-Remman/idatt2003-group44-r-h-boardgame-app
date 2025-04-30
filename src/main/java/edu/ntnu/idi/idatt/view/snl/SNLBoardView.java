@@ -8,14 +8,15 @@ import edu.ntnu.idi.idatt.view.AbstractView;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
+import javafx.scene.Parent;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 import java.util.List;
 
@@ -27,34 +28,31 @@ public class SNLBoardView extends AbstractView implements BoardObserver {
   private SNLBoardController controller;
   private GridPane boardGrid;
   private Pane ladderSnakeOverlay;
+  private StackPane root;
 
-  public SNLBoardView() {
-  }
+  public SNLBoardView() {}
 
   public void initializeWithController(SNLBoardController controller) {
     this.controller = controller;
     this.controller.registerObserver(this);
-    this.boardGrid = new GridPane();
-    this.ladderSnakeOverlay = new Pane();
-
     initializeUI();
   }
 
   @Override
   protected void createUI() {
-    StackPane mainContainer = new StackPane();
+    root = new StackPane();
+    boardGrid = new GridPane();
+    ladderSnakeOverlay = new Pane();
 
     initializeBoardGrid();
     initializeOverlay();
 
-    mainContainer.getChildren().addAll(boardGrid, ladderSnakeOverlay);
-    root = mainContainer;
+    root.getChildren().addAll(boardGrid, ladderSnakeOverlay);
+    boardGrid.toBack();
+    ladderSnakeOverlay.toFront();
 
     renderBoardGrid();
     renderLaddersAndSnakes();
-
-    boardGrid.toBack();
-    ladderSnakeOverlay.toFront();
   }
 
   @Override
@@ -70,7 +68,6 @@ public class SNLBoardView extends AbstractView implements BoardObserver {
   @Override
   public void onBoardRendered() {
     renderBoardGrid();
-//    renderLaddersAndSnakes();
   }
 
   @Override
@@ -144,27 +141,11 @@ public class SNLBoardView extends AbstractView implements BoardObserver {
   private void renderLaddersAndSnakes() {
     ladderSnakeOverlay.getChildren().clear();
 
-    SNLBoard board = (SNLBoard) controller.getBoard();  // Cast to SNLBoard
+    SNLBoard board = (SNLBoard) controller.getBoard();
 
-    // Debugging: Log how many ladders and snakes exist
-    logger.debug("Ladders count: " + board.getLadders().size());
-    logger.debug("Snakes count: " + board.getSnakes().size());
-
-    board.getLadders().forEach(ladder -> {
-      logger.debug("Drawing ladder from " + ladder.getStart() + " to " + ladder.getEnd());
-      drawLadder(ladder.getStart(), ladder.getEnd());
-    });
-
-    board.getSnakes().forEach(snake -> {
-      logger.debug("Drawing snake from " + snake.getStart() + " to " + snake.getEnd());
-      drawSnake(snake.getStart(), snake.getEnd());
-    });
-
-    ladderSnakeOverlay.toFront();  // Ensure overlay is on top
+    board.getLadders().forEach(ladder -> drawLadder(ladder.getStart(), ladder.getEnd()));
+    board.getSnakes().forEach(snake -> drawSnake(snake.getStart(), snake.getEnd()));
   }
-
-
-  //TODO ladders start og ladder slutt
 
   private void drawLadder(int start, int end) {
     double[] startPos = getTileCenter(start);
@@ -183,14 +164,8 @@ public class SNLBoardView extends AbstractView implements BoardObserver {
     double offsetX = perpX * ladderWidth;
     double offsetY = perpY * ladderWidth;
 
-    Line left = new Line(
-        startPos[0] + offsetX, startPos[1] + offsetY,
-        endPos[0] + offsetX, endPos[1] + offsetY
-    );
-    Line right = new Line(
-        startPos[0] - offsetX, startPos[1] - offsetY,
-        endPos[0] - offsetX, endPos[1] - offsetY
-    );
+    Line left = new Line(startPos[0] + offsetX, startPos[1] + offsetY, endPos[0] + offsetX, endPos[1] + offsetY);
+    Line right = new Line(startPos[0] - offsetX, startPos[1] - offsetY, endPos[0] - offsetX, endPos[1] - offsetY);
 
     left.setStroke(Color.BURLYWOOD);
     right.setStroke(Color.BURLYWOOD);
@@ -205,10 +180,7 @@ public class SNLBoardView extends AbstractView implements BoardObserver {
       double midX = startPos[0] + dx * ratio;
       double midY = startPos[1] + dy * ratio;
 
-      Line rung = new Line(
-          midX - offsetX, midY - offsetY,
-          midX + offsetX, midY + offsetY
-      );
+      Line rung = new Line(midX - offsetX, midY - offsetY, midX + offsetX, midY + offsetY);
       rung.setStroke(Color.BURLYWOOD);
       rung.setStrokeWidth(2);
 
@@ -233,12 +205,7 @@ public class SNLBoardView extends AbstractView implements BoardObserver {
     double ctrlX2 = startPos[0] + dx * 0.7 - perpX * curveAmplitude;
     double ctrlY2 = startPos[1] + dy * 0.7 - perpY * curveAmplitude;
 
-    CubicCurve snake = new CubicCurve(
-        startPos[0], startPos[1],
-        ctrlX1, ctrlY1,
-        ctrlX2, ctrlY2,
-        endPos[0], endPos[1]
-    );
+    CubicCurve snake = new CubicCurve(startPos[0], startPos[1], ctrlX1, ctrlY1, ctrlX2, ctrlY2, endPos[0], endPos[1]);
     snake.setStroke(Color.DARKRED);
     snake.setStrokeWidth(4);
     snake.setFill(null);
@@ -258,5 +225,10 @@ public class SNLBoardView extends AbstractView implements BoardObserver {
     double y = row * TILE_SIZE + TILE_SIZE / 2.0;
 
     return new double[]{x, y};
+  }
+
+  @Override
+  public Parent getRoot() {
+    return root;
   }
 }

@@ -9,10 +9,11 @@ import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Parent;
-import javafx.scene.layout.*;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
@@ -23,19 +24,16 @@ import java.util.List;
 
 public class SNLGameScreenView extends AbstractView {
 
-
   private VBox root;
   private Label currentPlayerLabel;
   private Label positionLabel;
   private Label diceResultLabel;
   private Button rollButton;
   private SNLGameScreenController controller;
-
-  // Components for the board view
   private GridPane boardGrid;
   private Pane ladderSnakeOverlay;
 
-  public void initializeWithController(SNLGameScreenController controller) {
+  public SNLGameScreenView(SNLGameScreenController controller) {
     this.controller = controller;
     controller.registerObserver(new GameScreenObserver() {
       @Override
@@ -71,7 +69,6 @@ public class SNLGameScreenView extends AbstractView {
     root = new VBox(20);
     root.setStyle("-fx-padding: 30; -fx-alignment: center;");
 
-    // Game controls
     currentPlayerLabel = new Label("Current turn:");
     positionLabel = new Label("Position:");
     diceResultLabel = new Label("Roll result:");
@@ -81,7 +78,6 @@ public class SNLGameScreenView extends AbstractView {
 
     root.getChildren().addAll(currentPlayerLabel, positionLabel, diceResultLabel, rollButton);
 
-    // Board components
     StackPane mainContainer = new StackPane();
     initializeBoardGrid();
     initializeOverlay();
@@ -95,12 +91,12 @@ public class SNLGameScreenView extends AbstractView {
 
   @Override
   protected void setupEventHandlers() {
-    // Set up event handlers if needed
+    // Optionally implement
   }
 
   @Override
   protected void applyInitialUIState() {
-    // Apply initial state for the game UI
+    // Optionally implement
   }
 
   private void initializeBoardGrid() {
@@ -128,6 +124,7 @@ public class SNLGameScreenView extends AbstractView {
     ladderSnakeOverlay.setPickOnBounds(false);
     ladderSnakeOverlay.setMouseTransparent(true);
     ladderSnakeOverlay.setPrefSize(90 * 10, 90 * 10);
+    renderLaddersAndSnakes();
   }
 
   private void renderBoardGrid() {
@@ -251,7 +248,7 @@ public class SNLGameScreenView extends AbstractView {
   }
 
   private void updatePlayerPositionView(Player player, int oldPosition, int newPosition) {
-    // Update player position labels or UI
+    // You can refresh tile graphics here if needed
   }
 
   private void updateCurrentPlayerView(Player currentPlayer) {
@@ -260,10 +257,10 @@ public class SNLGameScreenView extends AbstractView {
   }
 
   private void showGameOverAlert(Player winner) {
-    // Show game over alert
+    // Optional alert logic
   }
 
   private void showGameSavedAlert(String filePath) {
-    // Show game saved alert
+    // Optional alert logic
   }
 }

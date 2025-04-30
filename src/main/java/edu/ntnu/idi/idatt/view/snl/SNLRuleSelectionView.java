@@ -5,6 +5,7 @@ import edu.ntnu.idi.idatt.model.snl.SNLRuleSelectionModel;
 import edu.ntnu.idi.idatt.view.AbstractView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -29,15 +30,13 @@ public class SNLRuleSelectionView extends AbstractView implements SNLRuleSelecti
   private Label countLabel;
   private Button backBtn, continueBtn, randomBtn;
 
+  private Parent root;
+
   public SNLRuleSelectionView(SNLRuleSelectionModel model, SNLRuleSelectionController controller) {
     this.model = model;
     this.controller = controller;
     model.addObserver(this);
-
-    // Load stylesheet
-    root.getStylesheets().add(
-        Objects.requireNonNull(getClass().getResource("/css/SalRuleSelectionStyles.css")).toExternalForm()
-    );
+    initializeUI();
   }
 
   @Override
@@ -55,7 +54,7 @@ public class SNLRuleSelectionView extends AbstractView implements SNLRuleSelecti
     card.setPadding(new Insets(30));
     card.setMaxWidth(380);
     card.setBackground(new Background(
-        new BackgroundFill(Color.gray(0.2, 0.8), new CornerRadii(12), Insets.EMPTY)
+            new BackgroundFill(Color.gray(0.2, 0.8), new CornerRadii(12), Insets.EMPTY)
     ));
 
     // Spacers for vertical centering
@@ -90,8 +89,8 @@ public class SNLRuleSelectionView extends AbstractView implements SNLRuleSelecti
     randomBtn.setGraphic(q);
     randomBtn.setOnAction(e -> {
       List<String> r = model.getAvailableBoards().stream()
-          .filter(f -> f.toLowerCase().startsWith("random"))
-          .toList();
+              .filter(f -> f.toLowerCase().startsWith("random"))
+              .toList();
       if (!r.isEmpty()) model.setSelectedBoardFile(r.get(new Random().nextInt(r.size())));
     });
 
@@ -114,14 +113,14 @@ public class SNLRuleSelectionView extends AbstractView implements SNLRuleSelecti
 
     // Assemble card
     card.getChildren().addAll(
-        topSpacer,
-        title,
-        diffBox,
-        randomBtn,
-        modTitle,
-        countLabel,
-        nav,
-        bottomSpacer
+            topSpacer,
+            title,
+            diffBox,
+            randomBtn,
+            modTitle,
+            countLabel,
+            nav,
+            bottomSpacer
     );
 
     // Root container
@@ -151,18 +150,13 @@ public class SNLRuleSelectionView extends AbstractView implements SNLRuleSelecti
     onRuleSelectionChanged();
   }
 
- @Override
- public void onRuleSelectionChanged() {
-//    try {
-//      SNLFactory = controller.loadSelectedBoardForGame();
-//      countLabel.setText(
-//          "Snakes: " + b.getSnakes().size() +
-//              "    Ladders: " + b.getLadders().size()
-//      );
-//    } catch (FileReadException | JsonParsingException ex) {
-//      countLabel.setText("Snakes: ?    Ladders: ?");
-//      logger.error("Failed to load counts", ex);
-//    }
+  @Override
+  public void onRuleSelectionChanged() {
+    // optional implementation for board stats
   }
-  //TODO implement board changed to observer
+
+  @Override
+  public Parent getRoot() {
+    return root;
+  }
 }
