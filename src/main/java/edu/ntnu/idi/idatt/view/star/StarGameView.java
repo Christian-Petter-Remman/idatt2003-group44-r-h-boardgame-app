@@ -49,6 +49,20 @@ import java.util.List;
     public void initializeUI() {
       createUI();
     }
+    @Override
+    public void renderBoardGrid() {
+      boardGrid.getChildren().clear();
+
+      for (int i = 0; i < 100; i++) {
+        int tileNum = i + 1;
+        StackPane cell = createTile(tileNum);
+
+        int row = 9 - (i / BOARD_SIZE);
+        int col = (row % 2 == 0) ? i % BOARD_SIZE : (BOARD_SIZE - 1 - i % BOARD_SIZE);
+
+        boardGrid.add(cell, col, row);
+      }
+    }
 
     @Override
     protected void handleRoll() {
