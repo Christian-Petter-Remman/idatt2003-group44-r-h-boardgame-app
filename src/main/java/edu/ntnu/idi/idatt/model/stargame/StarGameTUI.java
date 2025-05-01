@@ -27,14 +27,12 @@ public class StarGameTUI {
     board.addJail(4);
     board.addStar();
 
-    game = new StarGame(board);
-    game.initialize(board);
-
     List<Player> players = new ArrayList<>();
     players.add(new StarPlayer("Alice", "cow", 1, 0));
     players.add(new StarPlayer("Bob", "pig", 1, 0));
 
-    game.initializePlayer(players);
+    game = new StarGame(board,players,0);
+
   }
 
   private void startGameLoop() {

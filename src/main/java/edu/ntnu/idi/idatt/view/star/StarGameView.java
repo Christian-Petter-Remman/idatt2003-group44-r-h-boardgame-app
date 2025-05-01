@@ -1,7 +1,9 @@
 package edu.ntnu.idi.idatt.view.star;
 
+import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
 import edu.ntnu.idi.idatt.controller.star.StarGameController;
 import edu.ntnu.idi.idatt.model.common.Player;
+import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.view.GameScreen;
 import javafx.scene.layout.Pane;
 
@@ -13,6 +15,34 @@ import java.util.List;
 
     public StarGameView(StarGameController controller) {
       this.controller = controller;
+
+      controller.registerObserver(new GameScreenObserver() {
+        @Override
+        public void onPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
+          renderBoardGrid();
+        }
+
+        @Override
+        public void onDiceRolled(int result) {
+          diceResultLabel.setText("Roll result: " + result);
+        }
+
+        @Override
+        public void onPlayerTurnChanged(Player currentPlayer) {
+          currentPlayerLabel.setText("Current turn: " + currentPlayer.getName());
+          positionLabel.setText("Position: " + currentPlayer.getPosition());
+        }
+
+        @Override
+        public void onGameOver(Player winner) {
+        }
+
+        @Override
+        public void onGameSaved(String filePath) {
+        }
+      });
+
+      createUI();
     }
 
     public void initializeUI() {

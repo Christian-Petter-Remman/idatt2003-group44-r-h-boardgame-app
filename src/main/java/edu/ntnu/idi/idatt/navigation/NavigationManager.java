@@ -167,7 +167,7 @@ public class NavigationManager {
       StarFactory factory = new StarFactory();
       StarBoard board = factory.loadBoardFromFile(boardpath);
 
-      StarGame game = new StarGame(board);
+      StarGame game = new StarGame(board,gameState.getPlayers(), gameState.getCurrentTurnIndex());
       game.addPlayer(new StarPlayer("olli", "peach", 1, 0));
       game.addPlayer(new StarPlayer("123", "bowser", 1, 0));
 
@@ -175,6 +175,9 @@ public class NavigationManager {
       controller.notifyPlayerPositionChangedAll();
       StarGameView view = new StarGameView(controller);
       view.initializeUI();
+
+      setHandler(controller);
+      setRoot(view.getRoot());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
