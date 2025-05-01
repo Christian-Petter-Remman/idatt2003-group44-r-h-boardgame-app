@@ -40,8 +40,3 @@ build/
 # Log files
 logs/
 *.log
-
-# Data files
-data/
-*.csv
-*.json

@@ -3,6 +3,8 @@ package edu.ntnu.idi.idatt.model.stargame;
 import edu.ntnu.idi.idatt.model.common.BoardGame;
 import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.model.common.Player;
+import edu.ntnu.idi.idatt.model.model_observers.BoardObserver;
+import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.List;
 public class StarGame extends BoardGame {
 
   private static final Logger logger = LoggerFactory.getLogger(StarGame.class);
+
 
   private boolean pendingPathDecision = false;
   private Path pendingPath;

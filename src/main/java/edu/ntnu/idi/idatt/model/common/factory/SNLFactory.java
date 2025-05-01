@@ -20,10 +20,10 @@ public class SNLFactory extends BoardGameFactory {
 
 
 
-  public String[] getAvailableConfigurations() {
-    return new String[]{"default", "easy", "hard"};
-  }
-//
+//  public String[] getAvailableConfigurations() {
+//    return new String[]{"default", "easy", "hard"};
+//  }
+////
 //  @Override
 //  public <T extends BoardGame> T createBoardGameFromConfiguration(String configurationName, Class<T> gameClass) {
 //    SNLBoard board;
@@ -62,24 +62,25 @@ public class SNLFactory extends BoardGameFactory {
 //    return saveBoardToFile(board, configurationName);
 //  }
 
-  private SNLBoard loadBoardFromFile(String fileName) {
-    String filePath = BOARD_DIRECTORY + fileName;
-    File file = new File(filePath);
+  public SNLBoard loadBoardFromFile(String fileName) {
+
+    File file = new File(fileName);
 
     if (!file.exists()) {
-      logger.debug("SNLBoard file does not exist: {}", filePath);
+      logger.debug("SNLBoard file does not exist: {}", fileName);
       return null;
     }
 
     try {
-      SNLBoard board = boardJsonHandler.loadFromFile(filePath);
-      logger.info("Successfully loaded board from: {}", filePath);
+      SNLBoard board = boardJsonHandler.loadBoardFromFile(fileName);
+      logger.info("Successfully loaded board from: {}", fileName);
       return board;
     } catch (Exception e) {
-      logger.error("Failed to load board from file: {}", e.getMessage());
-      return null;
-    }
+    logger.error("Failed to load board from file: {}", e.getMessage(), e);
+    return null;
   }
+    }
+
 
   private boolean saveBoardToFile(SNLBoard board, String fileName) {
     String filePath = BOARD_DIRECTORY + File.separator + fileName;

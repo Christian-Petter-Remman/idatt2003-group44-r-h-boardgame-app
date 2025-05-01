@@ -1,0 +1,86 @@
+[
+  {
+    "id": "cow",
+    "title": "Cow",
+    "body": "Hi! I’m the cow. I love munching fresh grass and making soft “moo” sounds to my friends. I live in a herd and enjoy relaxing in the warm sun.",
+    "funFact": "Cows have four stomachs to help digest grass.",
+    "imagePath": "/home_screen/cow.png",
+    "audio": "/sounds/cow-moo.mp3"
+  },
+  {
+    "id": "pig",
+    "title": "Pig",
+    "body": "Oink oink! I’m the pig and I love digging in the soil for tasty treats. I wallow in mud to stay cool and protect my skin. I chat with my pals using playful grunts.",
+    "funFact": "Pigs can learn their names and follow simple tricks.",
+    "imagePath": "/home_screen/pig.png",
+    "audio": "/sounds/pig-oink.mp3"
+  },
+  {
+    "id": "sheep",
+    "title": "Sheep",
+    "body": "Baa! I’m the sheep and my soft wool keeps me warm all day. I stick close to my flock and follow our leader. Farmers shear my wool each spring to make cozy clothes.",
+    "funFact": "Sheep can remember the faces of up to 50 other flock members.",
+    "imagePath": "/home_screen/sheep.png",
+    "audio": "/sounds/sheep-bleat.mp3"
+  },
+  {
+    "id": "duck",
+    "title": "Duck",
+    "body": "Quack! I’m the duck and I love paddling on quiet ponds. My webbed feet help me swim fast and a special oil keeps my feathers dry. I lead my ducklings to water soon after they hatch.",
+    "funFact": "Ducks have an oil gland that makes their feathers waterproof.",
+    "imagePath": "/home_screen/duck.png",
+    "audio": "/sounds/duck-quack.mp3"
+  },
+  {
+    "id": "hen",
+    "title": "Hen",
+    "body": "Cluck-cluck! I’m the hen and I lay fresh eggs almost every day. I scratch for seeds and insects on the ground. At night I roost up high to stay safe with my flock.",
+    "funFact": "Hens can see ultraviolet colors that humans cannot.",
+    "imagePath": "/home_screen/hen.png",
+    "audio": "/sounds/hen-cluck.mp3"
+  },
+  {
+    "id": "mole",
+    "title": "Mole",
+    "body": "Hello! I’m the mole and I spend my days digging tunnels underground. I use my strong paws to hunt for worms and insects. My burrows help keep the soil healthy for plants.",
+    "funFact": "Moles can tunnel over 15 feet in just one hour.",
+    "imagePath": "/home_screen/mole.png",
+    "audio": "/sounds/mole-sound.mp3"
+  },
+  {
+    "id": "starGame",
+    "title": "Star Game",
+    "body": "I’m the star! Connect the numbered dots to see me sparkle in bright colors. Each puzzle helps you practice counting and fine motor skills. Watch as your picture comes to life!",
+    "funFact": "Real stars shine in different colors based on their heat.",
+    "imagePath": "/home_screen/star.png",
+    "ctaLabel": "Play Star Game",
+    "ctaAction": "STAR_INTRO"
+  },
+  {
+    "id": "paintCanvas",
+    "title": "Paint Canvas",
+    "body": "I’m your paintbrush! Pick colors and brush shapes to draw anything you imagine. Mix paints to learn about colors. Painting helps you be creative and have fun!",
+    "funFact": "The earliest known paintings are over 40 000 years old.",
+    "imagePath": "/home_screen/paint.png",
+    "ctaLabel": "Open Canvas",
+    "ctaAction": "PAINT_CANVAS_SCREEN"
+  },
+  {
+    "id": "snakeGame",
+    "title": "Snakes & Ladders",
+    "body": "I’m the Snakes & Ladders board! Roll the dice and move your token along the squares. Climb ladders to jump ahead or slide down snakes to go back. It’s a fun way to practice counting!",
+    "funFact": "This game began in India over 2 000 years ago.",
+    "imagePath": "/home_screen/snake.png",
+    "ctaLabel": "Play Snakes & Ladders",
+    "ctaAction": "INTRO_SCREEN"
+  },
+  {
+    "id": "memoryGame",
+    "title": "Memory Match",
+    "body": "I’m the thinking boy! Flip two cards to find matching pairs. If they match, they stay face-up; if not, they flip back down. Can you match them all?",
+    "funFact": "Memory games help improve short-term memory and focus.",
+    "imagePath": "/home_screen/farmer.png",
+    "ctaLabel": "Play Memory Game",
+    "ctaAction": "CHARACTER_SELECTION"
+  }
+]

@@ -3,10 +3,8 @@ package edu.ntnu.idi.idatt.mainapp;
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
 import edu.ntnu.idi.idatt.filehandling.FileManager;
-import edu.ntnu.idi.idatt.model.common.memorygame.MemoryGame;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
-import edu.ntnu.idi.idatt.navigation.NavigationManager.NavigationTarget;
-import edu.ntnu.idi.idatt.view.memorygame.MemoryGameView;
+import edu.ntnu.idi.idatt.navigation.NavigationTarget;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -25,16 +23,12 @@ public class Main extends Application {
     try {
       FileManager.ensureApplicationDirectoriesExist();
 
-//      NavigationManager.getInstance().initialize(primaryStage);
-//      NavigationManager.getInstance().navigateTo(NavigationTarget.START_SCREEN);
+      NavigationManager.getInstance().initialize(primaryStage);
 
-
-
-
-
-
-
+      NavigationManager.getInstance().navigateTo(NavigationTarget.START_SCREEN);
       navigationManager.setLogo("/images/logo.png");
+
+
       primaryStage.show();
     } catch (Exception e) {
       logger.error("Error during startup: {}", e.getMessage(), e);

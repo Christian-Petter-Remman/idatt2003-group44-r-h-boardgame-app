@@ -1,0 +1,21 @@
+{
+  "size": 100,
+  "ladders": [
+    {"start": 4, "end": 68},
+    {"start": 12, "end": 50},
+    {"start": 21, "end": 82},
+    {"start": 35, "end": 57},
+    {"start": 45, "end": 86},
+    {"start": 71, "end": 94},
+    {"start": 77, "end": 98}
+  ],
+  "snakes": [
+    {"start": 99, "end": 38},
+    {"start": 89, "end": 53},
+    {"start": 76, "end": 24},
+    {"start": 66, "end": 47},
+    {"start": 54, "end": 19},
+    {"start": 43, "end": 17},
+    {"start": 32, "end": 6}
+  ]
+}

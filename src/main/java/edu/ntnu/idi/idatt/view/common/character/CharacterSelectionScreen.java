@@ -59,7 +59,7 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
       grid.add(p.node, i%2, i/2);
     }
 
-    Label title = new Label("Rule Selection Screen");
+    Label title = new Label("Character Selection");
     title.setFont(Font.font(24)); title.setStyle("-fx-text-fill:#333;");
 
     Button back = new Button("Back"), next = new Button("Continue");
@@ -113,7 +113,10 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
 
       removeBtn.getStyleClass().add("remove-button");
 
-      TextField name = new TextField("Player " + p.getId());
+      TextField name = new TextField(p.getName());
+      name.textProperty().addListener((obs, oldVal, newVal) -> {
+        player.setName(newVal);
+      });
       name.setFont(Font.font(16));
       name.getStyleClass().add("player-name-field");
       activeBox.setAlignment(Pos.CENTER);
@@ -127,7 +130,6 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
         else                            row2.getChildren().add(port);
       });
 
-      // Initial build of UI based on active state
       rebuildOuter();
       applyStylesAndListeners();
     }

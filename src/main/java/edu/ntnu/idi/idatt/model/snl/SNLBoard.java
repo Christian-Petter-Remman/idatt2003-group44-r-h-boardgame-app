@@ -1,6 +1,7 @@
 package edu.ntnu.idi.idatt.model.snl;
 
 import edu.ntnu.idi.idatt.model.common.AbstractBoard;
+import edu.ntnu.idi.idatt.model.common.factory.SNLFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,11 +14,13 @@ public class SNLBoard extends AbstractBoard {
 
   private final List<Ladder> ladders = new ArrayList<>();
   private final List<Snake> snakes = new ArrayList<>();
+  SNLFactory snlFactory = new SNLFactory();
+  String filename;
 
   public SNLBoard(int size) {
     super(size);
-    initializeBoard();
   }
+
 
   public void addLadder(int start, int end) {
     Ladder ladder = new Ladder(start, end);
@@ -49,6 +52,13 @@ public class SNLBoard extends AbstractBoard {
       }
     }
     return null;
+  }
+
+  public static SNLBoard initializeBoardFromFile(String initFilename) {
+    SNLFactory snlFactory = new SNLFactory();
+    SNLBoard board = snlFactory.loadBoardFromFile(initFilename);
+    logger.info("Board initialized from {} ", initFilename);
+    return board;
   }
 
 
