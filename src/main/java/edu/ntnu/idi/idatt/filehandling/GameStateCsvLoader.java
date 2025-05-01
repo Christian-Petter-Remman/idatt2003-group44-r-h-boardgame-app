@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.ntnu.idi.idatt.model.stargame.StarPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +101,8 @@ public class GameStateCsvLoader {
           String name = parts[0];
           String character = parts[1];
           int position = Integer.parseInt(parts[2]);
-          state.players.add(new SNLPlayer(name, character, position));
+          int points = Integer.parseInt(parts[3]);
+          state.players.add(new StarPlayer(name, character, position,points));
         }
       }
     }

@@ -31,7 +31,7 @@ public class StarGameStateExporter implements CsvExportObserver {
       }
 
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-        writer.write("Board," + "starboard.json");
+        writer.write("Board," + "default.json");
         writer.newLine();
         writer.write("DiceCount," + 2);
         writer.newLine();
@@ -44,7 +44,8 @@ public class StarGameStateExporter implements CsvExportObserver {
           if (player.isActive() && player.getSelectedCharacter() != null) {
             writer.write(player.getName() + "," +
                     player.getSelectedCharacter().getName() + "," +
-                    1); // Start pos
+                    1 + "," +
+                    player.getPoints());
             writer.newLine();
           }
         }

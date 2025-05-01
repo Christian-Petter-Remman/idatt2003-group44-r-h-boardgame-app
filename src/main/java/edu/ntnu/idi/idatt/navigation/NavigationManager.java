@@ -168,8 +168,6 @@ public class NavigationManager {
       StarBoard board = factory.loadBoardFromFile(boardpath);
 
       StarGame game = new StarGame(board,gameState.getPlayers(), gameState.getCurrentTurnIndex());
-      game.addPlayer(new StarPlayer("olli", "peach", 1, 0));
-      game.addPlayer(new StarPlayer("123", "bowser", 1, 0));
 
       StarGameController controller = new StarGameController(game);
       controller.notifyPlayerPositionChangedAll();

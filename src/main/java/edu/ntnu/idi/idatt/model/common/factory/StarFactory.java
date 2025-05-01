@@ -12,7 +12,7 @@ import java.io.File;
 
 public class StarFactory extends BoardGameFactory {
 
-  private static final String BOARD_DIRECTORY = "data/custom_boards/stargame/";
+  private static final String BOARD_DIRECTORY = "data/custom_boards/star_game/";
   private static final Logger logger = LoggerFactory.getLogger(StarFactory.class);
   private final StarBoardJsonHandler boardJsonHandler = new StarBoardJsonHandler();
 
@@ -63,7 +63,7 @@ public class StarFactory extends BoardGameFactory {
     File file = new File(filePath);
 
     if (!file.exists()) {
-      logger.debug("STARBoard file does not exist: {}", filePath);
+      logger.info("STARBoard file does not exist: {}", filePath);
       return null;
     }
 
