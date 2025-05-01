@@ -6,6 +6,7 @@ import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.view.GameScreen;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 
 import java.util.List;
 
