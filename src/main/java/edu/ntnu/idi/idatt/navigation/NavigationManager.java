@@ -78,6 +78,7 @@ public class NavigationManager {
       case CHARACTER_SELECTION -> navigateToSNLCharacterSelection();
       case SAL_RULE_SELECTION -> navigateToSNLRuleSelection();
       case SAL_GAME_SCREEN -> navigateToSNLGameScreen();
+      case STAR_CHARACTER_SELECTION -> navigateToStarCharacterSelection();
       case STAR_INTRO -> navigateToStarIntroScreen();
       case STAR_GAME -> navigateToStarGameScreen();
     }
@@ -196,6 +197,7 @@ public class NavigationManager {
     SAL_GAME_SCREEN,
     STAR_INTRO,
     STAR_GAME,
+    STAR_CHARACTER_SELECTION,
   }
 
 }
