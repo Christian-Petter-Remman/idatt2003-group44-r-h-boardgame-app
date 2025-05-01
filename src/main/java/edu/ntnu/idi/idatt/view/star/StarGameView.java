@@ -8,7 +8,10 @@ import edu.ntnu.idi.idatt.view.GameScreen;
 import edu.ntnu.idi.idatt.view.snl.BoardCreator;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 
 import java.util.List;
 
@@ -56,6 +59,7 @@ import java.util.List;
     public void initializeUI() {
       createUI();
     }
+
     @Override
     public void renderBoardGrid() {
       boardGrid.getChildren().clear();
@@ -89,6 +93,40 @@ import java.util.List;
         boardGrid.add(cell, col, row);
       }
     }
+
+    @Override
+    public StackPane createTile(int tileNum) {
+      StackPane cell = new StackPane();
+      cell.setPrefSize(TILE_SIZE, TILE_SIZE);
+
+      cell.setStyle("-fx-border-color: black; -fx-background-color: " + getTileColor(tileNum) + ";");
+
+      Text tileNumber = new Text(String.valueOf(tileNum));
+      tileNumber.setStyle("-fx-fill: #555;");
+      cell.getChildren().add(tileNumber);
+
+      List<Player> playersOnTile = getPlayersAtPosition(tileNum);
+      for (Player player : playersOnTile) {
+        String characterName = (player.getCharacter() != null) ? player.getCharacter().toLowerCase() : "default";
+        try {
+          var url = getClass().getResource("/player_icons/" + characterName + ".png");
+          if (url == null) {
+            logger.warn("Image not found for character: {}", characterName);
+            continue;
+          }
+
+          Image image = new Image(url.toExternalForm(), TILE_SIZE * 0.5, TILE_SIZE * 0.5, true, true);
+          ImageView icon = new ImageView(image);
+          icon.setTranslateY(TILE_SIZE * 0.15 * playersOnTile.indexOf(player));
+          cell.getChildren().add(icon);
+        } catch (Exception e) {
+          logger.error("Error loading image for character: {}", characterName, e);
+        }
+      }
+
+      return cell;
+    }
+
     @Override
     protected void handleRoll() {
       controller.handleRoll();

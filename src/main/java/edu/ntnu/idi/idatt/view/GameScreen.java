@@ -93,7 +93,6 @@ public abstract class GameScreen {
   }
 
 
-
   protected StackPane createTile(int tileNum) {
     StackPane cell = new StackPane();
     cell.setPrefSize(TILE_SIZE, TILE_SIZE);
