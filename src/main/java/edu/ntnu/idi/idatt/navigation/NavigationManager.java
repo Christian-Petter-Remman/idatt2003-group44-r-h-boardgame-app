@@ -10,20 +10,23 @@ import edu.ntnu.idi.idatt.filehandling.GameStateCsvLoader;
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
 import edu.ntnu.idi.idatt.model.common.factory.SNLFactory;
 import edu.ntnu.idi.idatt.model.common.factory.StarFactory;
+import edu.ntnu.idi.idatt.model.common.intro.StartScreenModel;
 import edu.ntnu.idi.idatt.model.snl.*;
 import edu.ntnu.idi.idatt.model.stargame.StarBoard;
 import edu.ntnu.idi.idatt.model.stargame.StarGame;
 import edu.ntnu.idi.idatt.model.stargame.StarPlayer;
-import edu.ntnu.idi.idatt.view.GameScreen;
 import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
 
 import edu.ntnu.idi.idatt.view.common.character.StarCharSelectionScreen;
+import edu.ntnu.idi.idatt.view.common.intro.StartScreenView;
 import edu.ntnu.idi.idatt.view.snl.SNLGameScreenView;
 
 import edu.ntnu.idi.idatt.view.snl.SNLRuleSelectionView;
 import edu.ntnu.idi.idatt.view.star.StarGameView;
+import java.util.Objects;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,24 +34,26 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 public class NavigationManager {
+
   private static final Logger logger = LoggerFactory.getLogger(NavigationManager.class);
   private static final NavigationManager instance = new NavigationManager();
 
 
-  private Stage stage;
+  private Stage primaryStage;
   private NavigationHandler currentHandler;
   private CharacterSelectionManager characterSelectionManager;
   private SNLRuleSelectionModel ruleSelectionModel;
 
 
-  private NavigationManager() {}
+  private NavigationManager() {
+  }
 
   public static NavigationManager getInstance() {
     return instance;
   }
 
   public void initialize(Stage stage) {
-    this.stage = stage;
+    this.primaryStage = stage;
   }
 
   public void setHandler(NavigationHandler handler) {
@@ -64,16 +69,22 @@ public class NavigationManager {
   }
 
   public void setRoot(Parent root) {
-    if (root == null) throw new NullPointerException("Root cannot be null");
-    if (stage != null) {
-      stage.setScene(new Scene(root));
+    if (root == null)
+      throw new NullPointerException("Root cannot be null");
+    if (primaryStage != null) {
+      primaryStage.setScene(new Scene(root));
     } else if (currentHandler != null) {
       currentHandler.setRoot(root);
     }
   }
 
+  public void navigateBack() {
+   //TODO: Implement navigateBack
+  }
+
   public void navigateTo(NavigationTarget target) {
     switch (target) {
+      case START_SCREEN -> navigateToStartScreen();
       case INTRO_SCREEN -> navigateToIntroScreen();
       case CHARACTER_SELECTION -> navigateToSNLCharacterSelection();
       case SAL_RULE_SELECTION -> navigateToSNLRuleSelection();
@@ -84,8 +95,13 @@ public class NavigationManager {
     }
   }
 
-  public void navigateBack() {
+  public void navigateToStartScreen() {
+    StartScreenModel model = new StartScreenModel();
+    StartScreenController controller = new StartScreenController(model);
+    StartScreenView view = new StartScreenView();
+    setRoot(view.getRoot());
   }
+
 
   public void navigateToIntroScreen() {
     IntroScreenController controller = new IntroScreenController();
@@ -102,10 +118,11 @@ public class NavigationManager {
     setRoot(controller.getView().getRoot());
   }
 
-  public void navigateToStarCharacterSelection(){
+  public void navigateToStarCharacterSelection() {
     characterSelectionManager = new CharacterSelectionManager();
     StarCharSelectionScreen view = new StarCharSelectionScreen(characterSelectionManager);
-    StarCharSelectionController controller = new StarCharSelectionController(characterSelectionManager,view);
+    StarCharSelectionController controller = new StarCharSelectionController(
+        characterSelectionManager, view);
     setHandler(controller);
     setRoot(view.getView());
   }
@@ -114,18 +131,21 @@ public class NavigationManager {
   public void navigateToSNLCharacterSelection() {
     characterSelectionManager = new CharacterSelectionManager();
     CharacterSelectionScreen view = new CharacterSelectionScreen(characterSelectionManager);
-    CharacterSelectionController controller = new CharacterSelectionController(characterSelectionManager, view);
+    CharacterSelectionController controller = new CharacterSelectionController(
+        characterSelectionManager, view);
     setCharacterSelectionManager(characterSelectionManager);
     setHandler(controller);
     setRoot(view.getView());
-    logger.info("CharacterSelectionManager initialized: {}", characterSelectionManager != null ? "Yes" : "No");
-    logger.info("CharacterSelectionScreen initialized: {}", view != null ? "Yes" : "No");
+    logger.info("CharacterSelectionManager initialized: {}",
+        characterSelectionManager != null ? "Yes" : "No");
+    logger.info("CharacterSelectionScreen initialized: {}", "Yes");
   }
 
   public void navigateToSNLRuleSelection() {
     try {
       ruleSelectionModel = new SNLRuleSelectionModel();
-      SNLRuleSelectionController controller = new SNLRuleSelectionController(ruleSelectionModel, characterSelectionManager);
+      SNLRuleSelectionController controller = new SNLRuleSelectionController(ruleSelectionModel,
+          characterSelectionManager);
       SNLRuleSelectionView view = new SNLRuleSelectionView(ruleSelectionModel, controller);
       view.initializeUI();
       setRuleSelectionModel(ruleSelectionModel);
@@ -139,8 +159,8 @@ public class NavigationManager {
 
   public void navigateToStarGameScreen() {
     logger.info("Starting Star Game...");
-    try{
-      String savePath = "test123";
+    try {
+      String savePath = "default_players.csv";
       GameStateCsvLoader.GameState gameState = GameStateCsvLoader.load(savePath);
       String boardpath = FileManager.STAR_GAME_DIR + "/default.json";
 
@@ -148,8 +168,8 @@ public class NavigationManager {
       StarBoard board = factory.loadBoardFromFile(boardpath);
 
       StarGame game = new StarGame(board);
-      game.addPlayer(new StarPlayer("olli", "peach",1,0 ));
-      game.addPlayer(new StarPlayer("123", "bowser",1,0 ));
+      game.addPlayer(new StarPlayer("olli", "peach", 1, 0));
+      game.addPlayer(new StarPlayer("123", "bowser", 1, 0));
 
       StarGameController controller = new StarGameController(game);
       controller.notifyPlayerPositionChangedAll();
@@ -171,7 +191,8 @@ public class NavigationManager {
       SNLFactory factory = new SNLFactory();
       SNLBoard board = factory.loadBoardFromFile(boardPath);
 
-      SNLGame game = new SNLGame(board, gameState.getPlayers(), gameState.getDiceCount(), gameState.getCurrentTurnIndex());
+      SNLGame game = new SNLGame(board, gameState.getPlayers(), gameState.getDiceCount(),
+          gameState.getCurrentTurnIndex());
       SNLGameScreenController controller = new SNLGameScreenController(game);
 
       controller.notifyPlayerPositionChangedAll();
@@ -196,19 +217,6 @@ public class NavigationManager {
   public void setLogo(String path) {
     primaryStage.getIcons().add(new Image(
         Objects.requireNonNull(getClass().getResourceAsStream(path))));
-
-  public enum NavigationTarget {
-    INTRO_SCREEN,
-    CHARACTER_SELECTION,
-    SAL_RULE_SELECTION,
-    START_SCREEN,
-    SAL_GAME_SCREEN,
-    STAR_INTRO,
-    STAR_GAME,
-    STAR_CHARACTER_SELECTION,
-
   }
-
 }
-
 

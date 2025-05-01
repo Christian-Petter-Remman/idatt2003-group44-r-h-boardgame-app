@@ -1,6 +1,7 @@
 package edu.ntnu.idi.idatt.view.common.intro.dialogs;
 
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
+import edu.ntnu.idi.idatt.navigation.NavigationTarget;
 import java.util.Objects;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -112,7 +113,7 @@ public class InfoDialog extends Stage {
         close();
         NavigationManager.getInstance()
             .navigateTo(
-                NavigationManager.NavigationTarget
+                NavigationTarget
                     .valueOf(cfg.getCtaAction())
             );
       });

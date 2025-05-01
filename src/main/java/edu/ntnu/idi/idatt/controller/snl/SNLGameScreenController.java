@@ -6,6 +6,7 @@ import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.snl.SNLGame;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
+import edu.ntnu.idi.idatt.navigation.NavigationTarget;
 import javafx.scene.Parent;
 
 
@@ -91,7 +92,7 @@ public class SNLGameScreenController implements NavigationHandler {
     // Implement navigation handling logic
     switch (destination) {
       case "INTRO_SCREEN":
-        NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.START_SCREEN);
+        NavigationManager.getInstance().navigateTo(NavigationTarget.START_SCREEN);
         break;
       default:
         logger.warn("Unknown destination: {}", destination);

@@ -52,7 +52,7 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
 
   private void buildRoot() {
 
-    ImageView bg = new ImageView(new Image("/home_screen/star.jpg"));
+    ImageView bg = new ImageView(new Image("/home_screen/star.png"));
     bg.setFitWidth(1280); bg.setFitHeight(800); bg.setOpacity(0.15);
 
     grid.setHgap(40); grid.setVgap(40); grid.setAlignment(Pos.CENTER);

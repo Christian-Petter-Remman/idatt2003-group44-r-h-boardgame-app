@@ -2,6 +2,7 @@ package edu.ntnu.idi.idatt.controller.common;
 
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
+import edu.ntnu.idi.idatt.navigation.NavigationTarget;
 import edu.ntnu.idi.idatt.view.common.intro.IntroScreenView;
 import edu.ntnu.idi.idatt.view.common.intro.StarIntroView;
 import javafx.scene.Parent;
@@ -19,14 +20,14 @@ public class StarIntroScreenController implements NavigationHandler {
   }
 
   private void startStarGame() {
-    navigateTo("CHARACTER_SELECTION");
+    navigateTo("STAR_CHARACTER_SELECTION");
     logger.info("Starting game: {}", "Snakes and Ladders");
   }
 
   @Override
   public void navigateTo(String destination) {
     NavigationManager.getInstance().navigateTo(
-            NavigationManager.NavigationTarget.valueOf(destination)
+            NavigationTarget.valueOf(destination)
     );
   }
 

@@ -54,7 +54,7 @@
     "funFact": "Real stars shine in different colors based on their heat.",
     "imagePath": "/home_screen/star.png",
     "ctaLabel": "Play Star Game",
-    "ctaAction": "SAL_RULE_SELECTION"
+    "ctaAction": "STAR_INTRO"
   },
   {
     "id": "paintCanvas",
@@ -72,7 +72,7 @@
     "funFact": "This game began in India over 2 000 years ago.",
     "imagePath": "/home_screen/snake.png",
     "ctaLabel": "Play Snakes & Ladders",
-    "ctaAction": "SAL_RULE_SELECTION"
+    "ctaAction": "INTRO_SCREEN"
   },
   {
     "id": "memoryGame",
