@@ -13,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +47,7 @@ public class StarGameView extends GameScreen {
         positionLabel.setText("Position: " + currentPlayer.getPosition());
       }
 
+
       @Override
       public void onGameOver(Player winner) {}
 
@@ -59,6 +61,22 @@ public class StarGameView extends GameScreen {
   public void initializeUI() {
     createUI();
   }
+
+  @Override
+  protected Image getCurrentPlayerImage() {
+    Player currentPlayer = controller.getCurrentPlayer();
+    if (currentPlayer != null && currentPlayer.getCharacter() != null) {
+      String characterName = currentPlayer.getCharacter().toLowerCase();
+      URL url = getClass().getResource("/player_icons/" + characterName + ".png");
+      if (url != null) {
+        return new Image(url.toExternalForm());
+      } else {
+        logger.warn("No image found for character: {}", characterName);
+      }
+    }
+    return null;
+  }
+
 
   @Override
   public void renderBoardGrid() {

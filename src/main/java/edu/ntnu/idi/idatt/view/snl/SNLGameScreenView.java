@@ -19,6 +19,7 @@ import javafx.scene.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URL;
 import java.util.List;
 
 public class SNLGameScreenView extends GameScreen {
@@ -64,6 +65,21 @@ public class SNLGameScreenView extends GameScreen {
 
   public void initializeUI() {
     createUI();
+  }
+
+  @Override
+  protected Image getCurrentPlayerImage() {
+    Player currentPlayer = controller.getCurrentPlayer();
+    if (currentPlayer != null && currentPlayer.getCharacter() != null) {
+      String characterName = currentPlayer.getCharacter().toLowerCase();
+      URL url = getClass().getResource("/player_icons/" + characterName + ".png");
+      if (url != null) {
+        return new Image(url.toExternalForm());
+      } else {
+        logger.warn("No image found for character: {}", characterName);
+      }
+    }
+    return null;
   }
 
   @Override
