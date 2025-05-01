@@ -99,14 +99,17 @@ public class SNLGame extends BoardGame {
     }
   }
 
+  @Override
   public void addTurnObserver(GameScreenObserver observer) {
     turnObservers.add(observer);
   }
 
+  @Override
   public void addMoveObserver(GameScreenObserver observer) {
     moveObservers.add(observer);
   }
 
+  @Override
   public void addWinnerObserver(GameScreenObserver observer) {
     winnerObservers.add(observer);
   }

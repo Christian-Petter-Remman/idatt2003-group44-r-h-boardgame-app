@@ -4,6 +4,7 @@ import com.google.gson.*;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
 import edu.ntnu.idi.idatt.model.common.BoardGame;
+import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import edu.ntnu.idi.idatt.model.stargame.StarBoard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,25 @@ public class StarBoardJsonHandler implements FileHandler <StarBoard> {
   private StarBoard parseBoard(JsonObject jsonObject) {
     int size = jsonObject.get("size").getAsInt();
     StarBoard board = new StarBoard(size);
+
+    if (jsonObject.has("tunnels")) {
+      JsonArray laddersArray = jsonObject.getAsJsonArray("tunnels");
+      for (JsonElement element : laddersArray) {
+        JsonObject obj = element.getAsJsonObject();
+        int start = obj.get("start").getAsInt();
+        int end = obj.get("end").getAsInt();
+        board.addTunnel(start, end);
+      }
+    }
+    if (jsonObject.has("bridge")) {
+      JsonArray snakesArray = jsonObject.getAsJsonArray("bridge");
+      for (JsonElement element : snakesArray) {
+        JsonObject obj = element.getAsJsonObject();
+        int start = obj.get("start").getAsInt();
+        int end = obj.get("end").getAsInt();
+        board.addBridge(start, end);
+      }
+    }
 
     return board;
   }

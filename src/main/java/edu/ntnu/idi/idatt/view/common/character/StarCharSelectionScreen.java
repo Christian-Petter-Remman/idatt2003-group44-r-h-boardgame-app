@@ -1,7 +1,11 @@
 package edu.ntnu.idi.idatt.view.common.character;
 
 import edu.ntnu.idi.idatt.controller.common.CharacterSelectionController;
-import edu.ntnu.idi.idatt.model.common.character_selection.*;
+import edu.ntnu.idi.idatt.controller.common.StarCharSelectionController;
+import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionData;
+import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
+import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionObserver;
+import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -17,26 +21,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public final class CharacterSelectionScreen implements CharacterSelectionObserver {
+public class StarCharSelectionScreen implements CharacterSelectionObserver {
 
   private final CharacterSelectionManager manager;
-  private CharacterSelectionController handler;
+  private StarCharSelectionController handler;
 
   private final StackPane root = new StackPane();
   private final GridPane grid = new GridPane();
   private final List<PlayerPanel> panels = new ArrayList<>();
 
-  public CharacterSelectionScreen(CharacterSelectionManager manager) {
+  public StarCharSelectionScreen(CharacterSelectionManager manager) {
     this.manager = manager;
     manager.addObserver(this);
     buildRoot();
     root.getStylesheets().add(
-        Objects.requireNonNull(
-                getClass().getResource("/css/CharacterSelectionScreenStyles.css"))
-            .toExternalForm());
+            Objects.requireNonNull(
+                            getClass().getResource("/css/CharacterSelectionScreenStyles.css"))
+                    .toExternalForm());
   }
 
-  public void setHandler(CharacterSelectionController handler) {
+  public void setHandler(StarCharSelectionController handler) {
     this.handler = handler;
     panels.forEach(p -> p.setHandler(handler));
     update();
@@ -48,7 +52,7 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
 
   private void buildRoot() {
 
-    ImageView bg = new ImageView(new Image("/images/snakesbackground.jpg"));
+    ImageView bg = new ImageView(new Image("/home_screen/star.jpg"));
     bg.setFitWidth(1280); bg.setFitHeight(800); bg.setOpacity(0.15);
 
     grid.setHgap(40); grid.setVgap(40); grid.setAlignment(Pos.CENTER);
@@ -65,7 +69,7 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
     Button back = new Button("Back"), next = new Button("Continue");
     back.getStyleClass().add("button"); next.getStyleClass().add("button");
     back.setOnAction(e -> handler.navigateBack());
-    next.setOnAction(e -> handler.navigateTo("SAL_RULE_SELECTION"));
+    next.setOnAction(e -> handler.navigateTo("STAR_GAME"));
 
     HBox btnRow = new HBox(20, back, new Region(), next);
     btnRow.setAlignment(Pos.CENTER);
@@ -77,7 +81,7 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
     card.setPadding(new Insets(40));
     card.setMaxWidth(1000);
     card.setStyle("-fx-background-color:rgba(204,204,204,0.8);" +
-        "-fx-background-radius:20;");
+            "-fx-background-radius:20;");
 
     VBox wrap = new VBox(card);
     wrap.setAlignment(Pos.CENTER);
@@ -90,13 +94,13 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
   private final class PlayerPanel {
 
     private final PlayerData player;
-    private CharacterSelectionController handler;
+    private StarCharSelectionController handler;
 
     private final StackPane node = new StackPane();
     private final VBox  activeBox = new VBox(10);
     private final HBox  row1 = new HBox(10), row2 = new HBox(10);
     private final ImageView plusIcon   = new ImageView(
-        new Image("/images/plus_icon.png"));
+            new Image("/images/plus_icon.png"));
     private final Button removeBtn = new Button("X");
 
     private boolean shownActive = false;
@@ -134,7 +138,7 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
       applyStylesAndListeners();
     }
 
-    void setHandler(CharacterSelectionController h){ this.handler = h; }
+    void setHandler(StarCharSelectionController h){ this.handler = h; }
 
     void syncWithModel(){
       if(player.isActive()!=shownActive){
@@ -161,7 +165,7 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
         box.setAlignment(Pos.CENTER);
 
         ImageView plus = new ImageView(
-            new Image("/images/plus_icon.png", 80, 80, true, true));
+                new Image("/images/plus_icon.png", 80, 80, true, true));
 
         Label txt = new Label("Activate");
         txt.setStyle("-fx-text-fill:#333; -fx-font-size:18;");
@@ -196,15 +200,15 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
 
       for(VBox portrait: portraits){
         CharacterSelectionData data =
-            (CharacterSelectionData) portrait.getUserData();
+                (CharacterSelectionData) portrait.getUserData();
 
         portrait.getStyleClass()
-            .removeAll("selected-character","disabled-character");
+                .removeAll("selected-character","disabled-character");
 
         boolean taken = manager.isCharacterTaken(data);
 
         if(player.getSelectedCharacter()!=null &&
-            player.getSelectedCharacter().equals(data)){
+                player.getSelectedCharacter().equals(data)){
           portrait.getStyleClass().add("selected-character");
         }else if(taken){
           portrait.getStyleClass().add("disabled-character");
@@ -227,7 +231,7 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
       box.getStyleClass().add("character-container");
       box.setUserData(c);
       ImageView img = new ImageView(
-          new Image(c.getImagePath(),60,60,true,true));
+              new Image(c.getImagePath(),60,60,true,true));
       box.getChildren().add(img);
       return box;
     }

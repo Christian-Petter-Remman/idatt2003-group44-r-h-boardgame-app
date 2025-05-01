@@ -16,7 +16,7 @@ public class CharacterSelectionCSVExporter implements CharacterSelectionObserver
 
   @Override
   public void update() {
-    playerCharacterData.clear(); // Clear previous data
+    playerCharacterData.clear();
 
     for (PlayerData player : manager.getPlayers()) {
       if (player.isActive() && player.getSelectedCharacter() != null) {

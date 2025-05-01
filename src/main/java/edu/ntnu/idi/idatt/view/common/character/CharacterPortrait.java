@@ -56,7 +56,7 @@ public class CharacterPortrait {
 
   public void setSelected(boolean selected, boolean isCurrentPlayer) {
     if (selected && isCurrentPlayer) {
-      container.setStyle("-fx-border-color: blue; -fx-border-width: 3;");
+      container.setStyle("-fx-border-color: black; -fx-border-width: 2;");
     } else {
       container.setStyle("");
     }

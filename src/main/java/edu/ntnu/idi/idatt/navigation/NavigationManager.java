@@ -3,26 +3,32 @@ package edu.ntnu.idi.idatt.navigation;
 
 import edu.ntnu.idi.idatt.controller.common.*;
 import edu.ntnu.idi.idatt.controller.snl.*;
+import edu.ntnu.idi.idatt.controller.star.StarGameController;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.filehandling.GameStateCsvLoader;
-import edu.ntnu.idi.idatt.model.common.Player;
 
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
 import edu.ntnu.idi.idatt.model.common.factory.SNLFactory;
+import edu.ntnu.idi.idatt.model.common.factory.StarFactory;
 import edu.ntnu.idi.idatt.model.snl.*;
+import edu.ntnu.idi.idatt.model.stargame.StarBoard;
+import edu.ntnu.idi.idatt.model.stargame.StarGame;
+import edu.ntnu.idi.idatt.model.stargame.StarPlayer;
+import edu.ntnu.idi.idatt.view.GameScreen;
 import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
 
-import edu.ntnu.idi.idatt.view.common.intro.IntroScreenView;
+import edu.ntnu.idi.idatt.view.common.character.StarCharSelectionScreen;
 import edu.ntnu.idi.idatt.view.snl.SNLGameScreenView;
 
 import edu.ntnu.idi.idatt.view.snl.SNLRuleSelectionView;
-import java.util.Objects;
+import edu.ntnu.idi.idatt.view.star.StarGameView;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 public class NavigationManager {
   private static final Logger logger = LoggerFactory.getLogger(NavigationManager.class);
@@ -69,14 +75,16 @@ public class NavigationManager {
   public void navigateTo(NavigationTarget target) {
     switch (target) {
       case INTRO_SCREEN -> navigateToIntroScreen();
-      case CHARACTER_SELECTION -> navigateToCharacterSelection();
-      case SAL_RULE_SELECTION -> navigateToSalRuleSelection();
+      case CHARACTER_SELECTION -> navigateToSNLCharacterSelection();
+      case SAL_RULE_SELECTION -> navigateToSNLRuleSelection();
       case SAL_GAME_SCREEN -> navigateToSNLGameScreen();
+      case STAR_CHARACTER_SELECTION -> navigateToStarCharacterSelection();
+      case STAR_INTRO -> navigateToStarIntroScreen();
+      case STAR_GAME -> navigateToStarGameScreen();
     }
   }
 
   public void navigateBack() {
-    // Placeholder if you implement back-navigation
   }
 
   public void navigateToIntroScreen() {
@@ -87,7 +95,23 @@ public class NavigationManager {
 
   }
 
-  public void navigateToCharacterSelection() {
+  public void navigateToStarIntroScreen() {
+    StarIntroScreenController controller = new StarIntroScreenController();
+    controller.getView().initializeUI();
+    setHandler(controller);
+    setRoot(controller.getView().getRoot());
+  }
+
+  public void navigateToStarCharacterSelection(){
+    characterSelectionManager = new CharacterSelectionManager();
+    StarCharSelectionScreen view = new StarCharSelectionScreen(characterSelectionManager);
+    StarCharSelectionController controller = new StarCharSelectionController(characterSelectionManager,view);
+    setHandler(controller);
+    setRoot(view.getView());
+  }
+
+
+  public void navigateToSNLCharacterSelection() {
     characterSelectionManager = new CharacterSelectionManager();
     CharacterSelectionScreen view = new CharacterSelectionScreen(characterSelectionManager);
     CharacterSelectionController controller = new CharacterSelectionController(characterSelectionManager, view);
@@ -98,7 +122,7 @@ public class NavigationManager {
     logger.info("CharacterSelectionScreen initialized: {}", view != null ? "Yes" : "No");
   }
 
-  public void navigateToSalRuleSelection() {
+  public void navigateToSNLRuleSelection() {
     try {
       ruleSelectionModel = new SNLRuleSelectionModel();
       SNLRuleSelectionController controller = new SNLRuleSelectionController(ruleSelectionModel, characterSelectionManager);
@@ -111,7 +135,29 @@ public class NavigationManager {
     } catch (Exception e) {
       logger.error("The RuleSelection module could not be loaded", e);
     }
+  }
 
+  public void navigateToStarGameScreen() {
+    logger.info("Starting Star Game...");
+    try{
+      String savePath = "test123";
+      GameStateCsvLoader.GameState gameState = GameStateCsvLoader.load(savePath);
+      String boardpath = FileManager.STAR_GAME_DIR + "/default.json";
+
+      StarFactory factory = new StarFactory();
+      StarBoard board = factory.loadBoardFromFile(boardpath);
+
+      StarGame game = new StarGame(board);
+      game.addPlayer(new StarPlayer("olli", "peach",1,0 ));
+      game.addPlayer(new StarPlayer("123", "bowser",1,0 ));
+
+      StarGameController controller = new StarGameController(game);
+      controller.notifyPlayerPositionChangedAll();
+      StarGameView view = new StarGameView(controller);
+      view.initializeUI();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   public void navigateToSNLGameScreen() {
@@ -128,7 +174,6 @@ public class NavigationManager {
       SNLGame game = new SNLGame(board, gameState.getPlayers(), gameState.getDiceCount(), gameState.getCurrentTurnIndex());
       SNLGameScreenController controller = new SNLGameScreenController(game);
 
-      // 👇 FIX: Notify view of all player positions before UI init
       controller.notifyPlayerPositionChangedAll();
 
       SNLGameScreenView gameScreenView = new SNLGameScreenView(controller);
@@ -157,7 +202,10 @@ public class NavigationManager {
     CHARACTER_SELECTION,
     SAL_RULE_SELECTION,
     START_SCREEN,
-    SAL_GAME_SCREEN
+    SAL_GAME_SCREEN,
+    STAR_INTRO,
+    STAR_GAME,
+    STAR_CHARACTER_SELECTION,
 
   }
 
