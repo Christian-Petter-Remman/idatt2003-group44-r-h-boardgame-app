@@ -27,6 +27,7 @@ import java.util.Objects;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,7 @@ public class NavigationManager {
   private CharacterSelectionManager characterSelectionManager;
   private SNLRuleSelectionModel ruleSelectionModel;
   private StarCharSelectionController starCharSelectionController;
+  private Scene scene;
 
 
   private NavigationManager() {
@@ -55,6 +57,14 @@ public class NavigationManager {
 
   public void initialize(Stage stage) {
     this.primaryStage = stage;
+    this.scene = new Scene(new StackPane());
+
+    // Set up the stage
+    primaryStage.setScene(scene);
+    primaryStage.setFullScreen(true);             // Start in fullscreen
+    primaryStage.setFullScreenExitHint("");       // Hide "Press ESC to exit"
+    primaryStage.setFullScreenExitKeyCombination(null); // Disable ESC key exit
+    primaryStage.setResizable(false);             // Prevent window resizing
   }
 
   public void setHandler(NavigationHandler handler) {
@@ -72,10 +82,8 @@ public class NavigationManager {
   public void setRoot(Parent root) {
     if (root == null)
       throw new NullPointerException("Root cannot be null");
-    if (primaryStage != null) {
-      primaryStage.setScene(new Scene(root));
-    } else if (currentHandler != null) {
-      currentHandler.setRoot(root);
+    if (scene != null) {
+      scene.setRoot(root);
     }
   }
 
