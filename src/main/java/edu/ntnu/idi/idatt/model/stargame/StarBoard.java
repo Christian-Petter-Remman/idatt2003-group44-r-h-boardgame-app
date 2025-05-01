@@ -28,7 +28,7 @@ public class StarBoard extends AbstractBoard {
   }
 
   public Star addStar() {
-    int start = new Random().nextInt(getSize());
+    int start = new Random().nextInt(73);
     Star star = new Star(start, start);
     getTile(start).addAttribute(star);
     stars.add(star);
@@ -136,6 +136,10 @@ public class StarBoard extends AbstractBoard {
 
   public List<Bridge> getBridges() {
     return new ArrayList<>(bridges);
+  }
+
+  public List<Star> getStars() {
+    return new ArrayList<>(stars);
   }
 
   public List<Tunnel> getTunnels() {

@@ -165,7 +165,7 @@ public class BoardCreator {
       outputTile = 19;
     }
     if(imputTile == 53){
-      outputTile = 0;
+      outputTile = -1;
     }
     if(imputTile == 54){
       outputTile = 13;

@@ -140,6 +140,7 @@ public class StarGameView extends GameScreen {
 
     board.getBridges().forEach(bridge -> renderBridges(bridge.getStart(), bridge.getEnd()));
     board.getTunnels().forEach(tunnel -> renderTunnels(tunnel.getStart(), tunnel.getEnd()));
+    board.getStars().forEach(star -> renderStars(star.getStart()));
   }
 
   private void renderBridges(int tileStart, int tileEnd) {
@@ -147,7 +148,6 @@ public class StarGameView extends GameScreen {
     double[] endPos = getTileCenter(tileEnd);
     addImageToOverlay("bridge.png", startPos[0], startPos[1]);
     addImageToOverlay("bridge.png", endPos[0], endPos[1]);
-    logger.info("Bridge rendered");
   }
 
   private void renderTunnels(int tileStart, int tileEnd) {
@@ -155,7 +155,11 @@ public class StarGameView extends GameScreen {
     double[] endPos = getTileCenter(tileEnd);
     addImageToOverlay("tunnel.png", startPos[0], startPos[1]);
     addImageToOverlay("tunnel.png", endPos[0], endPos[1]);
-    logger.info("Tunnel rendered");
+  }
+
+  private void renderStars(int tileStart) {
+    double[] startPos = getTileCenter(tileStart);
+    addImageToOverlay("star.png", startPos[0], startPos[1]);
   }
 
   private void addImageToOverlay(String imageFileName, double x, double y) {
