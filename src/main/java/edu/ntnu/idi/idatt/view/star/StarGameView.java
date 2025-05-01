@@ -23,7 +23,7 @@ import java.util.List;
     private final int tileSize = 75;
     private final int rows = 10;
     private final int cols = 13;
-    private final List<Tile> blankTiles = new ArrayList<>(new Tile(0));
+    List<Integer> blankTiles = new ArrayList<>(List.of(0));
 
     private final StarGameController controller;
 
