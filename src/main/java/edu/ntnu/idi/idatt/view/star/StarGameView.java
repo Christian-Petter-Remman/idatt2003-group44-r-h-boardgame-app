@@ -14,6 +14,11 @@ import java.util.List;
 
   public class StarGameView extends GameScreen {
 
+    private final Pane attributeOverlay = new Pane();
+    private final int tileSize = 75;
+    private final int rows = 10;
+    private final int cols = 13;
+
     private final StarGameController controller;
 
     public StarGameView(StarGameController controller) {
