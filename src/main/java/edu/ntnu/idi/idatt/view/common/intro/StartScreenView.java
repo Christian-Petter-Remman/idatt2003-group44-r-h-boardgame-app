@@ -50,7 +50,7 @@ public class StartScreenView implements PropertyChangeListener {
     cowImage = createClickableImage("/home_screen/cow.png", 200, 200);
     pigImage = createClickableImage("/home_screen/pig.png", 100, 100);
     sheepImage = createClickableImage("/home_screen/sheep.png", 100, 100);
-//    duckImage = createClickableImage("/HomeScreen/duck.png", 100, 100);
+    duckImage = createClickableImage("/home_screen/duck.png", 100, 100);
     starImage = createClickableImage("/home_screen/star.png", 80, 80);
     moleImage = createClickableImage("/home_screen/mole.png", 80, 80);
     paintImage = createClickableImage("/home_screen/paint.png", 80, 80);

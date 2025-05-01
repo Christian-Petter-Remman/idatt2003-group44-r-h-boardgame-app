@@ -8,7 +8,8 @@ import edu.ntnu.idi.idatt.model.model_observers.CsvExportObserver;
 import edu.ntnu.idi.idatt.model.snl.SNLRuleSelectionModel;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
-import edu.ntnu.idi.idatt.navigation.NavigationManager.NavigationTarget;
+
+import edu.ntnu.idi.idatt.navigation.NavigationTarget;
 import javafx.scene.Parent;
 
 import java.util.ArrayList;

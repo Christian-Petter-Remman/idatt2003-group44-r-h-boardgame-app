@@ -4,6 +4,7 @@ import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
+import edu.ntnu.idi.idatt.navigation.NavigationTarget;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -24,8 +25,8 @@ public class Main extends Application {
 
       NavigationManager.getInstance().initialize(primaryStage);
 
-      NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.INTRO_SCREEN);
-      primaryStage.show();
+      NavigationManager.getInstance().navigateTo(NavigationTarget.START_SCREEN);
+      navigationManager.setLogo("/images/logo.png");
 
 
       primaryStage.show();
