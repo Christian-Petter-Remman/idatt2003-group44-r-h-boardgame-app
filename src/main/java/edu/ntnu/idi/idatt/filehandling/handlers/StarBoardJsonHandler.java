@@ -1,10 +1,12 @@
-package edu.ntnu.idi.idatt.filehandling;
+package edu.ntnu.idi.idatt.filehandling.handlers;
 
 import com.google.gson.*;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
+import edu.ntnu.idi.idatt.filehandling.FileHandler;
+import edu.ntnu.idi.idatt.filehandling.FileManager;
+import edu.ntnu.idi.idatt.filehandling.RandomExclusionStrategy;
 import edu.ntnu.idi.idatt.model.common.BoardGame;
-import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import edu.ntnu.idi.idatt.model.stargame.StarBoard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public class StarBoardJsonHandler implements FileHandler <StarBoard> {
+public class StarBoardJsonHandler implements FileHandler<StarBoard> {
   
   private static final Logger logger = LoggerFactory.getLogger(StarBoardJsonHandler.class);
   private final Gson gson;

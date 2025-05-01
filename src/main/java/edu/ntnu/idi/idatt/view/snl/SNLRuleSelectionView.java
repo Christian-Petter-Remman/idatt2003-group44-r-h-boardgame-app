@@ -56,7 +56,7 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
     card.setPadding(new Insets(30));
     card.setMaxWidth(380);
     card.setBackground(new Background(
-            new BackgroundFill(Color.gray(0.2, 0.8), new CornerRadii(12), Insets.EMPTY)
+        new BackgroundFill(Color.gray(0.2, 0.8), new CornerRadii(12), Insets.EMPTY)
     ));
 
     Region topSpacer = new Region();
@@ -68,9 +68,12 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
     title.getStyleClass().add("rs-title");
 
     difficultyGroup = new ToggleGroup();
-    easyRadio    = new RadioButton("Easy");    easyRadio.setUserData("easy.json");
-    defaultRadio = new RadioButton("Default"); defaultRadio.setUserData("default.json");
-    hardRadio    = new RadioButton("Hard");    hardRadio.setUserData("hard.json");
+    easyRadio = new RadioButton("Easy");
+    easyRadio.setUserData("easy.json");
+    defaultRadio = new RadioButton("Default");
+    defaultRadio.setUserData("default.json");
+    hardRadio = new RadioButton("Hard");
+    hardRadio.setUserData("hard.json");
     easyRadio.getStyleClass().add("rs-diff-rb");
     defaultRadio.getStyleClass().add("rs-diff-rb");
     hardRadio.getStyleClass().add("rs-diff-rb");
@@ -83,13 +86,16 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
     randomBtn = new Button("Random");
     randomBtn.getStyleClass().add("rs-random");
     ImageView q = new ImageView(new Image("/images/question_mark_icon.png"));
-    q.setFitWidth(18); q.setFitHeight(18);
+    q.setFitWidth(18);
+    q.setFitHeight(18);
     randomBtn.setGraphic(q);
     randomBtn.setOnAction(e -> {
       List<String> r = model.getAvailableBoards().stream()
-              .filter(f -> f.toLowerCase().startsWith("random"))
-              .toList();
-      if (!r.isEmpty()) model.setSelectedBoardFile(r.get(new Random().nextInt(r.size())));
+          .filter(f -> f.toLowerCase().startsWith("random"))
+          .toList();
+      if (!r.isEmpty()) {
+        model.setSelectedBoardFile(r.get(new Random().nextInt(r.size())));
+      }
     });
 
     Label modTitle = new Label("Game Modifiers");
@@ -98,9 +104,10 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
     countLabel = new Label();
     countLabel.getStyleClass().add("rs-count");
 
-
-    backBtn     = new Button("Back");     backBtn.getStyleClass().add("rs-nav");
-    continueBtn = new Button("Continue"); continueBtn.getStyleClass().add("rs-nav");
+    backBtn = new Button("Back");
+    backBtn.getStyleClass().add("rs-nav");
+    continueBtn = new Button("Continue");
+    continueBtn.getStyleClass().add("rs-nav");
     HBox nav = new HBox();
     Region navSpacer = new Region();
     HBox.setHgrow(navSpacer, Priority.ALWAYS);
@@ -109,14 +116,14 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
 
     // Assemble card
     card.getChildren().addAll(
-            topSpacer,
-            title,
-            diffBox,
-            randomBtn,
-            modTitle,
-            countLabel,
-            nav,
-            bottomSpacer
+        topSpacer,
+        title,
+        diffBox,
+        randomBtn,
+        modTitle,
+        countLabel,
+        nav,
+        bottomSpacer
     );
 
     StackPane container = new StackPane(bg, card);
@@ -137,9 +144,13 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
 
   protected void applyInitialUIState() {
     String sel = model.getSelectedBoardFile();
-    if ("easy.json".equals(sel))       easyRadio.setSelected(true);
-    else if ("hard.json".equals(sel))  hardRadio.setSelected(true);
-    else                                 defaultRadio.setSelected(true);
+    if ("easy.json".equals(sel)) {
+      easyRadio.setSelected(true);
+    } else if ("hard.json".equals(sel)) {
+      hardRadio.setSelected(true);
+    } else {
+      defaultRadio.setSelected(true);
+    }
     onRuleSelectionChanged();
   }
 

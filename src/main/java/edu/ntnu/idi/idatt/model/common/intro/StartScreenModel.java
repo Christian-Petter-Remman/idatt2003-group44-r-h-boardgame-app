@@ -1,6 +1,6 @@
 package edu.ntnu.idi.idatt.model.common.intro;
 
-import edu.ntnu.idi.idatt.filehandling.DialogJsonHandler;
+import edu.ntnu.idi.idatt.filehandling.handlers.DialogJsonHandler;
 import edu.ntnu.idi.idatt.view.common.intro.dialogs.DialogConfig;
 
 import java.beans.PropertyChangeListener;

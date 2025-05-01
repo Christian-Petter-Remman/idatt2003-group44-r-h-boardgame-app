@@ -1,10 +1,8 @@
 package edu.ntnu.idi.idatt.model.common.factory;
 
-import edu.ntnu.idi.idatt.filehandling.*;
+import edu.ntnu.idi.idatt.filehandling.handlers.SNLBoardJsonHandler;
 import edu.ntnu.idi.idatt.model.common.BoardGameFactory;
-import edu.ntnu.idi.idatt.model.common.BoardGame;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
-import edu.ntnu.idi.idatt.model.snl.SNLGame;
 import java.io.File;
 
 

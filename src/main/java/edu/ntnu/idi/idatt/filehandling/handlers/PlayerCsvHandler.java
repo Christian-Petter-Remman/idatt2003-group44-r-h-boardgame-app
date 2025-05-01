@@ -1,10 +1,10 @@
-package edu.ntnu.idi.idatt.filehandling;
+package edu.ntnu.idi.idatt.filehandling.handlers;
 
 import edu.ntnu.idi.idatt.exceptions.CsvFormatException;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
+import edu.ntnu.idi.idatt.filehandling.FileHandler;
 import edu.ntnu.idi.idatt.model.snl.SNLPlayer;
 import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.model.stargame.StarPlayer;
 
 import java.io.*;
 import java.util.ArrayList;

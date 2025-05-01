@@ -1,6 +1,7 @@
 package edu.ntnu.idi.idatt.filehandling;
 
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
+import edu.ntnu.idi.idatt.filehandling.handlers.SNLBoardJsonHandler;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import org.junit.jupiter.api.*;
 
