@@ -5,21 +5,18 @@ import edu.ntnu.idi.idatt.controller.common.*;
 import edu.ntnu.idi.idatt.controller.snl.*;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.filehandling.GameStateCsvLoader;
-import edu.ntnu.idi.idatt.model.common.Player;
 
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
 import edu.ntnu.idi.idatt.model.common.factory.SNLFactory;
 import edu.ntnu.idi.idatt.model.snl.*;
 import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
 
-import edu.ntnu.idi.idatt.view.common.intro.IntroScreenView;
+import edu.ntnu.idi.idatt.view.common.character.StarCharSelectionScreen;
 import edu.ntnu.idi.idatt.view.snl.SNLGameScreenView;
 
 import edu.ntnu.idi.idatt.view.snl.SNLRuleSelectionView;
-import java.util.Objects;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,14 +66,15 @@ public class NavigationManager {
   public void navigateTo(NavigationTarget target) {
     switch (target) {
       case INTRO_SCREEN -> navigateToIntroScreen();
-      case CHARACTER_SELECTION -> navigateToCharacterSelection();
-      case SAL_RULE_SELECTION -> navigateToSalRuleSelection();
+      case CHARACTER_SELECTION -> navigateToSNLCharacterSelection();
+      case SAL_RULE_SELECTION -> navigateToSNLRuleSelection();
       case SAL_GAME_SCREEN -> navigateToSNLGameScreen();
+      case STAR_INTRO -> navigateToStarIntroScreen();
+      case STAR_GAME -> navigateToStarGameScreen();
     }
   }
 
   public void navigateBack() {
-    // Placeholder if you implement back-navigation
   }
 
   public void navigateToIntroScreen() {
@@ -87,7 +85,25 @@ public class NavigationManager {
 
   }
 
-  public void navigateToCharacterSelection() {
+  public void navigateToStarIntroScreen() {
+    StarIntroScreenController controller = new StarIntroScreenController();
+    controller.getView().initializeUI();
+    setHandler(controller);
+    setRoot(controller.getView().getRoot());
+  }
+
+  public void navigateToStarCharacterSelection(){
+    characterSelectionManager = new CharacterSelectionManager();
+    StarCharSelectionScreen view = new StarCharSelectionScreen(characterSelectionManager);
+    StarCharSelectionController controller = new StarCharSelectionController(characterSelectionManager,view);
+    setHandler(controller);
+    setRoot(view.getView());
+  }
+
+
+
+
+  public void navigateToSNLCharacterSelection() {
     characterSelectionManager = new CharacterSelectionManager();
     CharacterSelectionScreen view = new CharacterSelectionScreen(characterSelectionManager);
     CharacterSelectionController controller = new CharacterSelectionController(characterSelectionManager, view);
@@ -98,7 +114,7 @@ public class NavigationManager {
     logger.info("CharacterSelectionScreen initialized: {}", view != null ? "Yes" : "No");
   }
 
-  public void navigateToSalRuleSelection() {
+  public void navigateToSNLRuleSelection() {
     try {
       ruleSelectionModel = new SNLRuleSelectionModel();
       SNLRuleSelectionController controller = new SNLRuleSelectionController(ruleSelectionModel, characterSelectionManager);
@@ -111,8 +127,9 @@ public class NavigationManager {
     } catch (Exception e) {
       logger.error("The RuleSelection module could not be loaded", e);
     }
-
   }
+
+  public void navigateToStarGameScreen() {}
 
   public void navigateToSNLGameScreen() {
     logger.info("Starting Snakes and Ladders game...");
@@ -128,7 +145,6 @@ public class NavigationManager {
       SNLGame game = new SNLGame(board, gameState.getPlayers(), gameState.getDiceCount(), gameState.getCurrentTurnIndex());
       SNLGameScreenController controller = new SNLGameScreenController(game);
 
-      // 👇 FIX: Notify view of all player positions before UI init
       controller.notifyPlayerPositionChangedAll();
 
       SNLGameScreenView gameScreenView = new SNLGameScreenView(controller);
@@ -148,7 +164,10 @@ public class NavigationManager {
     INTRO_SCREEN,
     CHARACTER_SELECTION,
     SAL_RULE_SELECTION,
-    START_SCREEN, SAL_GAME_SCREEN
+    START_SCREEN,
+    SAL_GAME_SCREEN,
+    STAR_INTRO,
+    STAR_GAME,
   }
 
 }

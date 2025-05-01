@@ -5,21 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.ntnu.idi.idatt.filehandling.FileManager;
-
-import edu.ntnu.idi.idatt.exceptions.FileReadException;
-import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
 import edu.ntnu.idi.idatt.model.model_observers.CsvExportObserver;
 
 import java.io.File;
-
 
 public class SNLRuleSelectionModel {
 
   public interface Observer {
     void onRuleSelectionChanged();
   }
-
-
 
   private final List<Observer> observers = new ArrayList<>();
   private final List<CsvExportObserver> exportObservers = new ArrayList<>();

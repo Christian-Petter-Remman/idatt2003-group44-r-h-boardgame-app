@@ -73,6 +73,10 @@ public class SNLGameScreenView extends AbstractView {
     initializeUI();
   }
 
+  public void initializeUI() {
+    createUI();
+  }
+
   @Override
   protected void createUI() {
     root = new VBox(20);
@@ -97,12 +101,6 @@ public class SNLGameScreenView extends AbstractView {
     boardGrid.toBack();
     ladderSnakeOverlay.toFront();
   }
-
-  @Override
-  protected void setupEventHandlers() {}
-
-  @Override
-  protected void applyInitialUIState() {}
 
   private void initializeBoardGrid() {
     boardGrid = new GridPane();
@@ -265,25 +263,6 @@ public class SNLGameScreenView extends AbstractView {
     return new double[]{x, y};
   }
 
-  private int[] getGridCoords(int tileNum) {
-    int i = tileNum - 1;
-    int row = 9 - (i / BOARD_SIZE);
-    int col = (row % 2 == 0) ? i % BOARD_SIZE : (BOARD_SIZE - 1 - i % BOARD_SIZE);
-    return new int[]{col, row};
-  }
-
-  private void updatePlayerPositionView(Player player, int oldPosition, int newPosition) {
-    int[] oldCoords = getGridCoords(oldPosition);
-    int[] newCoords = getGridCoords(newPosition);
-
-    boardGrid.getChildren().removeIf(node ->
-            GridPane.getRowIndex(node) == oldCoords[1] && GridPane.getColumnIndex(node) == oldCoords[0] ||
-                    GridPane.getRowIndex(node) == newCoords[1] && GridPane.getColumnIndex(node) == newCoords[0]
-    );
-
-    boardGrid.add(createTile(oldPosition), oldCoords[0], oldCoords[1]);
-    boardGrid.add(createTile(newPosition), newCoords[0], newCoords[1]);
-  }
 
   private void updateCurrentPlayerView(Player currentPlayer) {
     currentPlayerLabel.setText("Current turn: " + currentPlayer.getName());

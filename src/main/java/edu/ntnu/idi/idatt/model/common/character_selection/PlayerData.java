@@ -8,8 +8,6 @@ public class PlayerData {
   private String characterIcon;
 
 
-
-
   public PlayerData(int id) {
     this.id = id;
     this.name = "Player " + id; // default

@@ -3,17 +3,15 @@ package edu.ntnu.idi.idatt.view.common.intro;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class IntroScreenView implements IntroView {
+public class StarIntroView implements IntroView {
   private Runnable startGameListener;
   private Runnable loadGameListener;
 
@@ -21,7 +19,7 @@ public class IntroScreenView implements IntroView {
 
   private Parent root;
 
-  public IntroScreenView() {
+  public StarIntroView() {
   }
 
   public void initializeUI() {
@@ -31,13 +29,9 @@ public class IntroScreenView implements IntroView {
   protected void createUI() {
     BorderPane mainContainer = new BorderPane();
 
-    Label titleLabel = new Label("The BoardGame App");
-    titleLabel.setFont(Font.font("Century Gothic", 32));
-    titleLabel.setAlignment(Pos.CENTER);
-
     HBox gameSelectionBox = createGameSelectionBox();
 
-    VBox content = new VBox(20, titleLabel, gameSelectionBox);
+    VBox content = new VBox(20, gameSelectionBox);
     content.setAlignment(Pos.CENTER);
     content.setPadding(new Insets(10));
 
@@ -52,10 +46,10 @@ public class IntroScreenView implements IntroView {
   }
 
   private HBox createGameSelectionBox() {
-    Image snakesAndLaddersImage = new Image("images/snakesnladders.png");
-    ImageView snakesAndLaddersView = createGameIcon(snakesAndLaddersImage, "SNAKES_AND_LADDERS");
+    Image image = new Image("home_screen/star.png");
+    ImageView StarGame = createGameIcon(image, "STAR_GAME");
 
-    HBox gameSelectionBox = new HBox(20, snakesAndLaddersView);
+    HBox gameSelectionBox = new HBox(20, StarGame);
     gameSelectionBox.setAlignment(Pos.CENTER);
     gameSelectionBox.setPadding(new Insets(10));
     return gameSelectionBox;

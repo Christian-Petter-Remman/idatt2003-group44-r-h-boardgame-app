@@ -22,7 +22,6 @@ public class FileManager {
 
   public static final String DEFAULT_PLAYERS_FILE = "data/players/default_players.csv";
   public static final String LAST_GAME_PLAYERS_FILE = "data/players/last_game_players.csv";
-  public static final String DEFAULT_BOARD_FILE = "data/custom_boards/default_board.json";
 
 
   public static void ensureApplicationDirectoriesExist() throws IOException {

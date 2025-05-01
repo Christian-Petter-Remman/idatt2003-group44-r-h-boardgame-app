@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-public class SNLRuleSelectionView extends AbstractView implements SNLRuleSelectionModel.Observer {
+public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
 
   private final SNLRuleSelectionModel model;
   private final SNLRuleSelectionController controller;
@@ -39,16 +39,19 @@ public class SNLRuleSelectionView extends AbstractView implements SNLRuleSelecti
     initializeUI();
   }
 
-  @Override
+  public void initializeUI() {
+    createUI();
+    setupEventHandlers();
+    applyInitialUIState();
+  }
+
   protected void createUI() {
-    // Background: fixed size, faded
     ImageView bg = new ImageView(new Image("/images/snakesbackground.jpg"));
     bg.setFitWidth(800);
     bg.setFitHeight(600);
     bg.setPreserveRatio(true);
     bg.setOpacity(0.3);
 
-    // Card container: centered, limited width, margins
     VBox card = new VBox(20);
     card.setAlignment(Pos.CENTER);
     card.setPadding(new Insets(30));
@@ -57,17 +60,14 @@ public class SNLRuleSelectionView extends AbstractView implements SNLRuleSelecti
             new BackgroundFill(Color.gray(0.2, 0.8), new CornerRadii(12), Insets.EMPTY)
     ));
 
-    // Spacers for vertical centering
     Region topSpacer = new Region();
     Region bottomSpacer = new Region();
     VBox.setVgrow(topSpacer, Priority.ALWAYS);
     VBox.setVgrow(bottomSpacer, Priority.ALWAYS);
 
-    // Title
     Label title = new Label("Rule Selection");
     title.getStyleClass().add("rs-title");
 
-    // Difficulty radios
     difficultyGroup = new ToggleGroup();
     easyRadio    = new RadioButton("Easy");    easyRadio.setUserData("easy.json");
     defaultRadio = new RadioButton("Default"); defaultRadio.setUserData("default.json");
@@ -81,7 +81,6 @@ public class SNLRuleSelectionView extends AbstractView implements SNLRuleSelecti
     HBox diffBox = new HBox(10, easyRadio, defaultRadio, hardRadio);
     diffBox.setAlignment(Pos.CENTER);
 
-    // Random button
     randomBtn = new Button("Random");
     randomBtn.getStyleClass().add("rs-random");
     ImageView q = new ImageView(new Image("/images/question_mark_icon.png"));
@@ -94,15 +93,13 @@ public class SNLRuleSelectionView extends AbstractView implements SNLRuleSelecti
       if (!r.isEmpty()) model.setSelectedBoardFile(r.get(new Random().nextInt(r.size())));
     });
 
-    // Game Modifiers label
     Label modTitle = new Label("Game Modifiers");
     modTitle.getStyleClass().add("rs-mod-title");
 
-    // Count label
     countLabel = new Label();
     countLabel.getStyleClass().add("rs-count");
 
-    // Navigation buttons
+
     backBtn     = new Button("Back");     backBtn.getStyleClass().add("rs-nav");
     continueBtn = new Button("Continue"); continueBtn.getStyleClass().add("rs-nav");
     HBox nav = new HBox();
@@ -123,14 +120,12 @@ public class SNLRuleSelectionView extends AbstractView implements SNLRuleSelecti
             bottomSpacer
     );
 
-    // Root container
     StackPane container = new StackPane(bg, card);
     StackPane.setAlignment(card, Pos.CENTER);
     StackPane.setMargin(card, new Insets(20));
     root = container;
   }
 
-  @Override
   protected void setupEventHandlers() {
     difficultyGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
       if (newVal != null) {
@@ -141,7 +136,6 @@ public class SNLRuleSelectionView extends AbstractView implements SNLRuleSelecti
     continueBtn.setOnAction(e -> controller.onContinuePressed());
   }
 
-  @Override
   protected void applyInitialUIState() {
     String sel = model.getSelectedBoardFile();
     if ("easy.json".equals(sel))       easyRadio.setSelected(true);
@@ -150,12 +144,11 @@ public class SNLRuleSelectionView extends AbstractView implements SNLRuleSelecti
     onRuleSelectionChanged();
   }
 
-  @Override
-  public void onRuleSelectionChanged() {
-    // optional implementation for board stats
-  }
 
   @Override
+  public void onRuleSelectionChanged() {
+  }
+
   public Parent getRoot() {
     return root;
   }

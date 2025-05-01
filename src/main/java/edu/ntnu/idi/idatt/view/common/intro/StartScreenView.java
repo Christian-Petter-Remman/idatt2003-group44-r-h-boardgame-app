@@ -1,9 +1,6 @@
 package edu.ntnu.idi.idatt.view.common.intro;
 
-import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -29,7 +26,7 @@ public class StartScreenView {
   public StartScreenView() {
     root = new StackPane();
     backgroundImage = new ImageView(new Image(getClass().getResourceAsStream(
-        "/home_screen/farmy.jpg")));
+            "/home_screen/farmy.jpg")));
     initialize();
   }
 
@@ -58,7 +55,6 @@ public class StartScreenView {
     positionIcons();
     setupHandlers();
 
-    // Add everything to root
     root.getChildren().addAll(backgroundImage, cowImage, pigImage, sheepImage, starImage, moleImage, paintImage, SNLImage);
   }
 
@@ -156,19 +152,4 @@ public class StartScreenView {
     return root;
   }
 
-  public static class TestApp extends javafx.application.Application {
-    @Override
-    public void start(Stage primaryStage) {
-      StartScreenView startScreenView = new StartScreenView();
-      Scene scene = new Scene(startScreenView.getRoot(), 800, 600, Color.LIGHTBLUE);
-
-      primaryStage.setTitle("Farm Home Screen");
-      primaryStage.setScene(scene);
-      primaryStage.show();
-    }
-
-    public static void main(String[] args) {
-      launch(args);
-    }
-  }
 }
