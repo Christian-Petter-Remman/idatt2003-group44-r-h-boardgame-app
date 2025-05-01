@@ -1,10 +1,8 @@
 package edu.ntnu.idi.idatt.view.common.intro;
 
-import edu.ntnu.idi.idatt.filehandling.DialogJsonHandler;
+import edu.ntnu.idi.idatt.controller.common.StartScreenController;
+import edu.ntnu.idi.idatt.model.common.intro.StartScreenModel;
 import edu.ntnu.idi.idatt.view.common.intro.dialogs.DialogConfig;
-import edu.ntnu.idi.idatt.view.common.intro.dialogs.InfoDialog;
-import java.util.Map;
-import java.util.Objects;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -12,31 +10,25 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Screen;
 
-public class StartScreenView {
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Map;
+import java.util.Objects;
 
-  private final StackPane root;
+public class StartScreenView implements PropertyChangeListener {
+
+  private final StackPane root = new StackPane();
   private final ImageView backgroundImage;
-
-  private ImageView cowImage;
-  private ImageView pigImage;
-  private ImageView sheepImage;
-  private ImageView duckImage;
-  private ImageView henImage;
-  private ImageView moleImage;
-  private ImageView starImage;
-  private ImageView paintImage;
-  private ImageView snlImage;
-  private ImageView farmerImage;
-  private ImageView fredrikImage;
-
-  private final Map<String, DialogConfig> dialogs;
+  private final StartScreenModel model;
+  private final StartScreenController controller;
 
   public StartScreenView() {
-    root = new StackPane();
+    model = new StartScreenModel();
+    controller = new StartScreenController(model);
+    model.addListener(this);
+
     root.getStylesheets().add(
         Objects.requireNonNull(getClass().getResource("/css/StartScreenStyleSheet.css"))
             .toExternalForm()
@@ -46,139 +38,74 @@ public class StartScreenView {
         Objects.requireNonNull(getClass().getResourceAsStream("/home_screen/farm.jpg"))
     ));
 
-    dialogs = DialogJsonHandler.loadDialogs();
-    initialize();
+    initializeUI();
+    loadIconsFromModel();
   }
 
-  private void initialize() {
+  private void initializeUI() {
     Rectangle2D bounds = Screen.getPrimary().getBounds();
     backgroundImage.setFitWidth(bounds.getWidth());
     backgroundImage.setFitHeight(bounds.getHeight());
     backgroundImage.setPreserveRatio(true);
     backgroundImage.setSmooth(true);
+    root.getChildren().add(backgroundImage);
+  }
 
-    cowImage    = createClickableImage("/home_screen/cow.png",   200, 200);
-    pigImage    = createClickableImage("/home_screen/pig.png",   120, 120);
-    sheepImage  = createClickableImage("/home_screen/sheep.png", 120, 120);
-    duckImage   = createClickableImage("/home_screen/duck.png",  100, 100);
-    henImage    = createClickableImage("/home_screen/hen.png",   100, 100);
-    moleImage   = createClickableImage("/home_screen/mole.png",   80,  80);
-    starImage   = createClickableImage("/home_screen/star.png",   80,  80);
-    paintImage  = createClickableImage("/home_screen/paint.png",  80,  80);
-    snlImage    = createClickableImage("/home_screen/snake.png",  80,  80);
-    farmerImage = createClickableImage("/home_screen/farmer.png",140, 140);
+  private void loadIconsFromModel() {
+    root.getChildren().removeIf(node -> node instanceof ImageView && node != backgroundImage);
 
-    // static Fredrik intro image (bottom-left)
-    fredrikImage = new ImageView(new Image(
+    Map<String, DialogConfig> dialogs = model.getDialogs();
+    dialogs.forEach((id, cfg) -> {
+      ImageView iv = new ImageView(new Image(
+          Objects.requireNonNull(getClass().getResourceAsStream(cfg.getImagePath()))
+      ));
+      iv.setFitWidth(cfg.getId().equals("cow") ? 200 : 100);
+      iv.setPreserveRatio(true);
+      iv.setPickOnBounds(true);
+      iv.getStyleClass().add("clickable-image");
+      iv.setId(id);
+      positionIcon(id, iv);
+      iv.setOnMouseClicked(this::handleClick);
+      root.getChildren().add(iv);
+    });
+
+    ImageView fredrik = new ImageView(new Image(
         Objects.requireNonNull(getClass().getResourceAsStream("/home_screen/farmerfredrik.png"))
     ));
-    fredrikImage.setFitWidth(300);
-    fredrikImage.setPreserveRatio(true);
-    StackPane.setAlignment(fredrikImage, Pos.BOTTOM_LEFT);
-    StackPane.setMargin(fredrikImage, new Insets(0, 0, 20, 20));
-
-    positionIcons();
-    setupHandlers();
-
-    root.getChildren().addAll(
-        backgroundImage,
-        cowImage, pigImage, sheepImage,
-        duckImage, henImage, moleImage,
-        starImage, paintImage, snlImage,
-        farmerImage,
-        fredrikImage
-    );
+    fredrik.setFitWidth(300);
+    fredrik.setPreserveRatio(true);
+    StackPane.setAlignment(fredrik, Pos.BOTTOM_LEFT);
+    StackPane.setMargin(fredrik, new Insets(0, 0, 20, 20));
+    root.getChildren().add(fredrik);
   }
 
-  private void positionIcons() {
-
-    cowImage.setTranslateX(-50);
-    cowImage.setTranslateY(30);
-
-    pigImage.setTranslateX(-250);
-    pigImage.setTranslateY(200);
-
-    sheepImage.setTranslateX(-50);
-    sheepImage.setTranslateY(220);
-
-    duckImage.setTranslateX(470);
-    duckImage.setTranslateY(150);
-
-    henImage.setTranslateX(380);
-    henImage.setTranslateY(210);
-
-    moleImage.setTranslateX(-250);
-    moleImage.setTranslateY(60);
-
-    starImage.setTranslateX(-140);
-    starImage.setTranslateY(-300);
-
-
-    paintImage.setTranslateX(300);
-    paintImage.setTranslateY(90);
-
-    snlImage.setTranslateX(0);
-    snlImage.setTranslateY(-150);
-
-
-    farmerImage.setTranslateX(150);
-    farmerImage.setTranslateY(50);
-  }
-
-  private void setupHandlers() {
-    cowImage.setOnMouseClicked(this::onClicked);
-    pigImage.setOnMouseClicked(this::onClicked);
-    sheepImage.setOnMouseClicked(this::onClicked);
-    duckImage.setOnMouseClicked(this::onClicked);
-    henImage.setOnMouseClicked(this::onClicked);
-    moleImage.setOnMouseClicked(this::onClicked);
-    starImage.setOnMouseClicked(this::onClicked);
-    paintImage.setOnMouseClicked(this::onClicked);
-    snlImage.setOnMouseClicked(this::onClicked);
-    farmerImage.setOnMouseClicked(this::onClicked);
-  }
-
-  private void onClicked(MouseEvent ev) {
+  private void handleClick(MouseEvent ev) {
     ImageView src = (ImageView) ev.getSource();
-    String id = null;
+    controller.onIconClicked(src, src.getId());
+  }
 
-    if (src == cowImage)         id = "cow";
-    else if (src == pigImage)    id = "pig";
-    else if (src == sheepImage)  id = "sheep";
-    else if (src == duckImage)   id = "duck";
-    else if (src == henImage)    id = "hen";
-    else if (src == moleImage)   id = "mole";
-    else if (src == starImage)   id = "starGame";
-    else if (src == paintImage)  id = "paintCanvas";
-    else if (src == snlImage)    id = "snakeGame";
-    else if (src == farmerImage) id = "memoryGame";
-
-    if (id != null && dialogs.containsKey(id)) {
-      DialogConfig cfg = dialogs.get(id);
-
-      // play the animal sound first
-      if (cfg.getAudio() != null && !cfg.getAudio().isBlank()) {
-        Media media = new Media(getClass().getResource(cfg.getAudio()).toExternalForm());
-        new MediaPlayer(media).play();
-      }
-
-      // then show the info dialog
-      new InfoDialog(cfg).showAndWait();
+  private void positionIcon(String id, ImageView iv) {
+    switch (id) {
+      case "cow" -> { iv.setTranslateX(-50); iv.setTranslateY(30); }
+      case "pig" -> { iv.setTranslateX(-250); iv.setTranslateY(200); }
+      case "sheep" -> { iv.setTranslateX(-50); iv.setTranslateY(220); }
+      case "duck" -> { iv.setTranslateX(470); iv.setTranslateY(150); }
+      case "hen" -> { iv.setTranslateX(380); iv.setTranslateY(210); }
+      case "mole" -> { iv.setTranslateX(-250); iv.setTranslateY(60); }
+      case "starGame" -> { iv.setTranslateX(-140); iv.setTranslateY(-300); }
+      case "paintCanvas" -> { iv.setTranslateX(300); iv.setTranslateY(90); }
+      case "snakeGame" -> { iv.setTranslateX(0); iv.setTranslateY(-150); }
+      case "memoryGame" -> { iv.setTranslateX(150); iv.setTranslateY(50); }
+      default -> {}
     }
   }
-  
-  private ImageView createClickableImage(String path, double w, double h) {
-    ImageView iv = new ImageView(new Image(
-        Objects.requireNonNull(getClass().getResourceAsStream(path))
-    ));
-    iv.setFitWidth(w);
-    iv.setFitHeight(h);
-    iv.setPreserveRatio(true);
-    iv.setPickOnBounds(true);
-    iv.getStyleClass().add("clickable-image");
-    return iv;
-  }
 
+  @Override
+  public void propertyChange(PropertyChangeEvent evt) {
+    if ("dialogs".equals(evt.getPropertyName())) {
+      loadIconsFromModel();
+    }
+  }
 
   public StackPane getRoot() {
     return root;
