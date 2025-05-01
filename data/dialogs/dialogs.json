@@ -81,6 +81,6 @@
     "funFact": "Memory games help improve short-term memory and focus.",
     "imagePath": "/home_screen/farmer.png",
     "ctaLabel": "Play Memory Game",
-    "ctaAction": "CHARACTER_SELECTION"
+    "ctaAction": "MEMORY_RULE_SCREEN"
   }
 ]
