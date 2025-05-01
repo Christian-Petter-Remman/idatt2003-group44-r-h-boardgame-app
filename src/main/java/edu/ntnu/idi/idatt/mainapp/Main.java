@@ -28,7 +28,6 @@ public class Main extends Application {
       primaryStage.show();
 
 
-      navigationManager.setLogo("/images/logo.png");
       primaryStage.show();
     } catch (Exception e) {
       logger.error("Error during startup: {}", e.getMessage(), e);

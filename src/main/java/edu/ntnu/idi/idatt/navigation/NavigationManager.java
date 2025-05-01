@@ -148,14 +148,9 @@ public class NavigationManager {
     INTRO_SCREEN,
     CHARACTER_SELECTION,
     SAL_RULE_SELECTION,
-    SAL_GAME_SCREEN
+    START_SCREEN, SAL_GAME_SCREEN
   }
 
 }
 
-  public void setLogo(String path) {
-    primaryStage.getIcons().add(new Image(
-        Objects.requireNonNull(getClass().getResourceAsStream(path))));
-  }
-}
 

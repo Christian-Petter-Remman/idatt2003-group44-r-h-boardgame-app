@@ -95,7 +95,7 @@ public class StartScreenView {
 
     starImage.setOnMouseClicked(this::onStarClicked);
     moleImage.setOnMouseClicked(this::onMoleClicked);
-    paintImage.setOnMouseClicked(this::onPaintClicked);
+//    paintImage.setOnMouseClicked(this::onPaintClicked);
   }
 
   private ImageView createClickableImage(String resourcePath, double width, double height) {
@@ -132,25 +132,25 @@ public class StartScreenView {
     System.out.println("Mole clicked!");
   }
 
-  private void onPaintClicked(MouseEvent event) {
-    Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
-    confirmationAlert.setTitle("Welcome to the painting game!");
-    confirmationAlert.setHeaderText("Are you ready to paint?");
-    confirmationAlert.setContentText("Click OK to start painting!");
-
-    ButtonType backButton = new ButtonType("Back");
-    ButtonType okButton = new ButtonType("OK");
-
-    confirmationAlert.getButtonTypes().setAll(backButton, okButton);
-
-    confirmationAlert.showAndWait().ifPresent(response -> {
-      if (response == backButton) {
-        confirmationAlert.close();
-      } else if (response == okButton) {
-       NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.PAINT_CANVAS_SCREEN);
-      }
-    });
-  }
+//  private void onPaintClicked(MouseEvent event) {
+//    Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+//    confirmationAlert.setTitle("Welcome to the painting game!");
+//    confirmationAlert.setHeaderText("Are you ready to paint?");
+//    confirmationAlert.setContentText("Click OK to start painting!");
+//
+//    ButtonType backButton = new ButtonType("Back");
+//    ButtonType okButton = new ButtonType("OK");
+//
+//    confirmationAlert.getButtonTypes().setAll(backButton, okButton);
+//
+//    confirmationAlert.showAndWait().ifPresent(response -> {
+//      if (response == backButton) {
+//        confirmationAlert.close();
+//      } else if (response == okButton) {
+//       NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.PAINT_CANVAS_SCREEN);
+//      }
+//    });
+//  }
 
   public StackPane getRoot() {
     return root;

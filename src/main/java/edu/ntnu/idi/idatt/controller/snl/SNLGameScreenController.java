@@ -5,8 +5,9 @@ import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.snl.SNLGame;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
+import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import javafx.scene.Parent;
-port edu.ntnu.idi.idatt.util.AlertUtil;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
