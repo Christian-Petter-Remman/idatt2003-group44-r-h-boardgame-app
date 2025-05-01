@@ -4,7 +4,7 @@ import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
-import edu.ntnu.idi.idatt.view.AbstractView;
+import edu.ntnu.idi.idatt.view.GameScreen;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -21,11 +21,10 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.List;
-import java.util.Objects;
 
-public class SNLGameScreenView extends AbstractView {
+
+public class SNLGameScreenView extends GameScreen {
 
   private static final Logger logger = LoggerFactory.getLogger(SNLGameScreenView.class.getName());
 

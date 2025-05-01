@@ -2,9 +2,9 @@ package edu.ntnu.idi.idatt.view;
 
 import javafx.scene.Parent;
 
-public abstract class AbstractView {
+public abstract class GameScreen{
 
-  public AbstractView() {
+  public GameScreen() {
   }
 
   protected abstract void createUI();

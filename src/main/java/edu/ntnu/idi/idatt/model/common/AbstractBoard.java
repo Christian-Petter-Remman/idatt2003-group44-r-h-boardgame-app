@@ -30,5 +30,7 @@ public abstract class AbstractBoard {
     tiles.put(tile.getNumber(), tile);
   }
 
+
+
   public abstract int getSize();
 }

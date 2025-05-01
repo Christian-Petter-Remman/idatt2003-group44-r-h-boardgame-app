@@ -2,7 +2,6 @@ package edu.ntnu.idi.idatt.view.snl;
 
 import edu.ntnu.idi.idatt.controller.snl.SNLRuleSelectionController;
 import edu.ntnu.idi.idatt.model.snl.SNLRuleSelectionModel;
-import edu.ntnu.idi.idatt.view.AbstractView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
