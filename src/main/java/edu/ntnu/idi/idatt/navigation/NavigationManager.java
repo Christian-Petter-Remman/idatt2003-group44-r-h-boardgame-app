@@ -3,23 +3,32 @@ package edu.ntnu.idi.idatt.navigation;
 
 import edu.ntnu.idi.idatt.controller.common.*;
 import edu.ntnu.idi.idatt.controller.snl.*;
+import edu.ntnu.idi.idatt.controller.star.StarGameController;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.filehandling.GameStateCsvLoader;
 
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
 import edu.ntnu.idi.idatt.model.common.factory.SNLFactory;
+import edu.ntnu.idi.idatt.model.common.factory.StarFactory;
 import edu.ntnu.idi.idatt.model.snl.*;
+import edu.ntnu.idi.idatt.model.stargame.StarBoard;
+import edu.ntnu.idi.idatt.model.stargame.StarGame;
+import edu.ntnu.idi.idatt.model.stargame.StarPlayer;
+import edu.ntnu.idi.idatt.view.GameScreen;
 import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
 
 import edu.ntnu.idi.idatt.view.common.character.StarCharSelectionScreen;
 import edu.ntnu.idi.idatt.view.snl.SNLGameScreenView;
 
 import edu.ntnu.idi.idatt.view.snl.SNLRuleSelectionView;
+import edu.ntnu.idi.idatt.view.star.StarGameView;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 public class NavigationManager {
   private static final Logger logger = LoggerFactory.getLogger(NavigationManager.class);
@@ -101,8 +110,6 @@ public class NavigationManager {
   }
 
 
-
-
   public void navigateToSNLCharacterSelection() {
     characterSelectionManager = new CharacterSelectionManager();
     CharacterSelectionScreen view = new CharacterSelectionScreen(characterSelectionManager);
@@ -129,7 +136,28 @@ public class NavigationManager {
     }
   }
 
-  public void navigateToStarGameScreen() {}
+  public void navigateToStarGameScreen() {
+    logger.info("Starting Star Game...");
+    try{
+      String savePath = "test123";
+      GameStateCsvLoader.GameState gameState = GameStateCsvLoader.load(savePath);
+      String boardpath = FileManager.STAR_GAME_DIR + "/default.json";
+
+      StarFactory factory = new StarFactory();
+      StarBoard board = factory.loadBoardFromFile(boardpath);
+
+      StarGame game = new StarGame(board);
+      game.addPlayer(new StarPlayer("olli", "peach",1,0 ));
+      game.addPlayer(new StarPlayer("123", "bowser",1,0 ));
+
+      StarGameController controller = new StarGameController(game);
+      controller.notifyPlayerPositionChangedAll();
+      StarGameView view = new StarGameView(controller);
+      view.initializeUI();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
   public void navigateToSNLGameScreen() {
     logger.info("Starting Snakes and Ladders game...");

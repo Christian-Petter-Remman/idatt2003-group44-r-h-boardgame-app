@@ -5,15 +5,10 @@ import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import edu.ntnu.idi.idatt.view.GameScreen;
-import javafx.geometry.HPos;
-import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
@@ -21,32 +16,23 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.List;
 
+import java.util.List;
 
 public class SNLGameScreenView extends GameScreen {
 
-  private static final Logger logger = LoggerFactory.getLogger(SNLGameScreenView.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(SNLGameScreenView.class);
 
-  private static final int TILE_SIZE = 60;
-  private static final int BOARD_SIZE = 10;
-
-  private VBox root;
-  private Label currentPlayerLabel;
-  private Label positionLabel;
-  private Label diceResultLabel;
-  private Button rollButton;
-  private SNLGameScreenController controller;
-  private GridPane boardGrid;
+  private final SNLGameScreenController controller;
   private Pane ladderSnakeOverlay;
 
   public SNLGameScreenView(SNLGameScreenController controller) {
     this.controller = controller;
-    controller.registerObserver(new GameScreenObserver() {
 
+    controller.registerObserver(new GameScreenObserver() {
       @Override
       public void onPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
-        renderBoardGrid(); // this is enough
+        renderBoardGrid();
       }
 
       @Override
@@ -56,7 +42,8 @@ public class SNLGameScreenView extends GameScreen {
 
       @Override
       public void onPlayerTurnChanged(Player currentPlayer) {
-        updateCurrentPlayerView(currentPlayer);
+        currentPlayerLabel.setText("Current turn: " + currentPlayer.getName());
+        positionLabel.setText("Position: " + currentPlayer.getPosition());
       }
 
       @Override
@@ -69,7 +56,8 @@ public class SNLGameScreenView extends GameScreen {
         showGameSavedAlert(filePath);
       }
     });
-    initializeUI();
+
+    createUI(); // Call after controller is ready
   }
 
   public void initializeUI() {
@@ -77,51 +65,22 @@ public class SNLGameScreenView extends GameScreen {
   }
 
   @Override
-  protected void createUI() {
-    root = new VBox(20);
-    root.setStyle("-fx-padding: 30; -fx-alignment: center;");
-
-    currentPlayerLabel = new Label("Current turn:");
-    positionLabel = new Label("Position:");
-    diceResultLabel = new Label("Roll result:");
-    rollButton = new Button("Roll Dice");
-
-    rollButton.setOnAction(e -> controller.handleRoll());
-
-    root.getChildren().addAll(currentPlayerLabel, positionLabel, diceResultLabel, rollButton);
-
-    StackPane mainContainer = new StackPane();
-    initializeBoardGrid();
-    initializeOverlay();
-
-    mainContainer.getChildren().addAll(boardGrid, ladderSnakeOverlay);
-    root.getChildren().add(mainContainer);
-
-    boardGrid.toBack();
-    ladderSnakeOverlay.toFront();
+  protected void handleRoll() {
+    controller.handleRoll();
   }
 
-  private void initializeBoardGrid() {
-    boardGrid = new GridPane();
-    boardGrid.setHgap(2);
-    boardGrid.setVgap(2);
-    boardGrid.setAlignment(Pos.CENTER);
-    boardGrid.setPrefSize(TILE_SIZE * BOARD_SIZE, TILE_SIZE * BOARD_SIZE);
-
-    for (int i = 0; i < BOARD_SIZE; i++) {
-      ColumnConstraints colConst = new ColumnConstraints(TILE_SIZE);
-      colConst.setHalignment(HPos.CENTER);
-      boardGrid.getColumnConstraints().add(colConst);
-
-      RowConstraints rowConst = new RowConstraints(TILE_SIZE);
-      rowConst.setValignment(VPos.CENTER);
-      boardGrid.getRowConstraints().add(rowConst);
-    }
-
-    renderBoardGrid();
+  @Override
+  protected String getTileColor(int tileNumber) {
+    return controller.getTileColor(tileNumber);
   }
 
-  private void initializeOverlay() {
+  @Override
+  protected List<Player> getPlayersAtPosition(int tileNumber) {
+    return controller.getPlayersAtPosition(tileNumber);
+  }
+
+  @Override
+  protected void initializeOverlay() {
     ladderSnakeOverlay = new Pane();
     ladderSnakeOverlay.setPickOnBounds(false);
     ladderSnakeOverlay.setMouseTransparent(true);
@@ -129,63 +88,15 @@ public class SNLGameScreenView extends GameScreen {
     renderLaddersAndSnakes();
   }
 
-  private void renderBoardGrid() {
-    boardGrid.getChildren().clear();
-
-    for (int i = 0; i < 100; i++) {
-      int tileNum = i + 1;
-      StackPane cell = createTile(tileNum);
-
-      int row = 9 - (i / BOARD_SIZE);
-      int col = (row % 2 == 0) ? i % BOARD_SIZE : (BOARD_SIZE - 1 - i % BOARD_SIZE);
-
-      boardGrid.add(cell, col, row);
-    }
-  }
-
-  private StackPane createTile(int tileNum) {
-    StackPane cell = new StackPane();
-    cell.setPrefSize(TILE_SIZE, TILE_SIZE);
-
-    cell.setStyle("-fx-border-color: black; -fx-background-color: " + controller.getTileColor(tileNum) + ";");
-
-    Text tileNumber = new Text(String.valueOf(tileNum));
-    tileNumber.setStyle("-fx-fill: #555;");
-    cell.getChildren().add(tileNumber);
-
-    List<Player> playersOnTile = controller.getPlayersAtPosition(tileNum);
-
-    for (Player player : playersOnTile) {
-      String characterName = (player.getCharacter() != null) ? player.getCharacter().toLowerCase() : "default";
-      try {
-        var url = getClass().getResource("/player_icons/" + characterName + ".png");
-        if (url == null) {
-          logger.warn("Image not found for character: {}", characterName);
-          continue;
-        }
-
-        Image image = new Image(url.toExternalForm(), TILE_SIZE * 0.5, TILE_SIZE * 0.5, true, true);
-        if (image.getWidth() == -1) {
-          logger.warn("Failed to load image for: {}", characterName);
-        } else {
-          logger.info("Successfully loaded image for {} ({} x {})", characterName, image.getWidth(), image.getHeight());
-        }
-
-        ImageView icon = new ImageView(image);
-        icon.setTranslateY(TILE_SIZE * 0.15 * playersOnTile.indexOf(player));
-        cell.getChildren().add(icon);
-      } catch (Exception e) {
-        logger.error("Error loading image for character: {}", characterName, e);
-      }
-    }
-
-    return cell;
+  @Override
+  protected Pane getOverlay() {
+    return ladderSnakeOverlay;
   }
 
   private void renderLaddersAndSnakes() {
     ladderSnakeOverlay.getChildren().clear();
-
     SNLBoard board = (SNLBoard) controller.getBoard();
+
     board.getLadders().forEach(ladder -> drawLadder(ladder.getStart(), ladder.getEnd()));
     board.getSnakes().forEach(snake -> drawSnake(snake.getStart(), snake.getEnd()));
   }
@@ -262,15 +173,13 @@ public class SNLGameScreenView extends GameScreen {
     return new double[]{x, y};
   }
 
-
-  private void updateCurrentPlayerView(Player currentPlayer) {
-    currentPlayerLabel.setText("Current turn: " + currentPlayer.getName());
-    positionLabel.setText("Position: " + currentPlayer.getPosition());
+  private void showGameOverAlert(Player winner) {
+    // Optional: JavaFX Alert dialog or modal
   }
 
-  private void showGameOverAlert(Player winner) {}
-
-  private void showGameSavedAlert(String filePath) {}
+  private void showGameSavedAlert(String filePath) {
+    // Optional: Confirm save with user
+  }
 
   @Override
   public Parent getRoot() {
