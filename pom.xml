@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <!-- Project coordinates -->
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>edu.ntnu.idi.idatt</groupId>
   <artifactId>idatt-group-r-h-boardgame-app</artifactId>
   <version>1.0-SNAPSHOT</version>
 
+  <!--
+    Global properties for Java and dependency versions.
+    Keeping JavaFX version in a property makes upgrades easier.
+  -->
   <properties>
-    <!-- Java version -->
+    <!-- Java source/target level -->
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -21,6 +26,14 @@
     <logback.version>1.5.13</logback.version>
   </properties>
 
+  <!--
+    Project dependencies:
+    - JUnit for testing
+    - JavaFX modules (controls, fxml, media)
+    - Logging via SLF4J + Logback
+    - Jansi for colored console output
+    - Gson for JSON handling
+  -->
   <dependencies>
     <!-- JUnit -->
     <dependency>
@@ -30,29 +43,32 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- JavaFX Modules -->
+    <!-- JavaFX Controls -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
       <version>${javafx.version}</version>
     </dependency>
+    <!-- JavaFX FXML -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
       <version>${javafx.version}</version>
     </dependency>
+    <!-- JavaFX Media (for sounds) -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-media</artifactId>
       <version>${javafx.version}</version>
     </dependency>
 
-    <!-- Logging -->
+    <!-- SLF4J API -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
     </dependency>
+    <!-- Logback for SLF4J implementation -->
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
@@ -64,14 +80,14 @@
       <version>${logback.version}</version>
     </dependency>
 
-    <!-- Jansi -->
+    <!-- Jansi for ANSI console colors -->
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi</artifactId>
       <version>2.3.2</version>
     </dependency>
 
-    <!-- Gson -->
+    <!-- Gson for JSON serialization/deserialization -->
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
@@ -81,7 +97,10 @@
 
   <build>
     <plugins>
-      <!-- Compiler -->
+      <!--
+        Maven Compiler Plugin:
+        Ensures code is compiled to the Java version specified above.
+      -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -91,14 +110,23 @@
         </configuration>
       </plugin>
 
-      <!-- Surefire -->
+      <!--
+        Surefire Plugin:
+        Runs JUnit tests during the test phase.
+      -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.5.2</version>
       </plugin>
 
-      <!-- JavaFX Maven Plugin -->
+      <!--
+        JavaFX Maven Plugin:
+        Packages and launches the JavaFX application.
+        We add both the required JavaFX modules and export the internal
+        javafx.base/com.sun.javafx package so Media works without
+        IllegalAccessError.
+      -->
       <plugin>
         <groupId>org.openjfx</groupId>
         <artifactId>javafx-maven-plugin</artifactId>
@@ -106,12 +134,18 @@
         <configuration>
           <mainClass>edu.ntnu.idi.idatt.mainapp.Main</mainClass>
           <options>
+            <!-- Load JavaFX modules -->
             <option>--add-modules=javafx.controls,javafx.fxml,javafx.media</option>
+            <!-- Export internal package needed by javafx.media -->
+            <option>--add-exports=javafx.base/com.sun.javafx=ALL-UNNAMED</option>
           </options>
         </configuration>
       </plugin>
 
-      <!-- Javadoc -->
+      <!--
+        Javadoc Plugin:
+        Generates project documentation.
+      -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
