@@ -1,10 +1,10 @@
 package edu.ntnu.idi.idatt.view.star;
 
-import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
 import edu.ntnu.idi.idatt.controller.star.StarGameController;
 import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.model.common.Tile;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
+import edu.ntnu.idi.idatt.model.stargame.Bridge;
+import edu.ntnu.idi.idatt.model.stargame.Tunnel;
 import edu.ntnu.idi.idatt.view.GameScreen;
 import edu.ntnu.idi.idatt.view.snl.BoardCreator;
 import javafx.geometry.HPos;
@@ -16,8 +16,6 @@ import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.awt.Color.white;
 
 public class StarGameView extends GameScreen {
 
@@ -57,7 +55,6 @@ public class StarGameView extends GameScreen {
         public void onGameSaved(String filePath) {
         }
       });
-
       createUI();
     }
 
@@ -142,6 +139,48 @@ public class StarGameView extends GameScreen {
     }
 
     return cell;
+  }
+
+  private void renderBridges(int tileStart, int tileEnd) {
+    double[] startPos = getTileCenter(tileStart);
+    double[] endPos = getTileCenter(tileEnd);
+    addImageToOverlay("bridge.png", startPos[0], startPos[1]);
+    addImageToOverlay("bridge.png", endPos[0], endPos[1]);
+  }
+
+  private void renderTunnels(int tileStart, int tileEnd) {
+    double[] startPos = getTileCenter(tileStart);
+    double[] endPos = getTileCenter(tileEnd);
+    addImageToOverlay("tunnel.png", startPos[0], startPos[1]);
+    addImageToOverlay("tunnel.png", endPos[0], endPos[1]);
+  }
+
+  private void addImageToOverlay(String imageFileName, double x, double y) {
+    try {
+      var url = getClass().getResource("/images/" + imageFileName);
+      if (url == null) {
+        logger.warn("Image not found: {}", imageFileName);
+        return;
+      }
+
+      Image image = new Image(url.toExternalForm(), TILE_SIZE * 0.8, TILE_SIZE * 0.8, true, true);
+      ImageView icon = new ImageView(image);
+      icon.setLayoutX(x - TILE_SIZE * 0.4); // center image
+      icon.setLayoutY(y - TILE_SIZE * 0.4);
+      attributeOverlay.getChildren().add(icon);
+    } catch (Exception e) {
+      logger.error("Failed to load image: {}", imageFileName, e);
+    }
+  }
+  @Override
+  public void initializeOverlay() {
+    for (Tunnel tunnel : ) {
+      renderTunnels(tunnel.getStart(), tunnel.getEnd());
+    }
+
+    for (Bridge bridge : controller.getBridges()) {
+      renderBridges(bridge.getStart(), bridge.getEnd());
+    }
   }
 
     @Override

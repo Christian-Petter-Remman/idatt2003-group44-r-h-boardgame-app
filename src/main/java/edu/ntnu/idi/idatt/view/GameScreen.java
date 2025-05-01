@@ -125,7 +125,17 @@ public abstract class GameScreen {
     return cell;
   }
 
-  // ABSTRACT METHODS to be implemented by SNL or Star view
+  protected double[] getTileCenter(int tileNum) {
+    int i = tileNum - 1;
+    int row = 9 - (i / BOARD_SIZE);
+    int col = (row % 2 == 0) ? i % BOARD_SIZE : (BOARD_SIZE - 1 - i % BOARD_SIZE);
+
+    double x = col * TILE_SIZE + TILE_SIZE / 2.0;
+    double y = row * TILE_SIZE + TILE_SIZE / 2.0;
+
+    return new double[]{x, y};
+  }
+
   protected abstract void handleRoll();
 
   protected abstract String getTileColor(int tileNumber);
