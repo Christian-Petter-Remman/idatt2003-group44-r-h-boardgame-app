@@ -3,7 +3,9 @@ package edu.ntnu.idi.idatt.view.star;
 import edu.ntnu.idi.idatt.controller.star.StarGameController;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
+import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import edu.ntnu.idi.idatt.model.stargame.Bridge;
+import edu.ntnu.idi.idatt.model.stargame.StarBoard;
 import edu.ntnu.idi.idatt.model.stargame.Tunnel;
 import edu.ntnu.idi.idatt.view.GameScreen;
 import edu.ntnu.idi.idatt.view.snl.BoardCreator;
@@ -19,11 +21,12 @@ import java.util.List;
 
 public class StarGameView extends GameScreen {
 
-    private final Pane attributeOverlay = new Pane();
+
     private final int tileSize = 75;
     private final int rows = 10;
     private final int cols = 13;
     List<Integer> blankTiles = new ArrayList<>(List.of(0));
+    private Pane tileOverlay = new Pane();
 
     private final StarGameController controller;
 
@@ -71,7 +74,7 @@ public class StarGameView extends GameScreen {
       boardGrid.setPrefSize(tileSize * cols, tileSize * rows);
       boardGrid.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
       boardGrid.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-      attributeOverlay.setPrefSize(tileSize * cols, tileSize * rows);
+      tileOverlay.setPrefSize(tileSize * cols, tileSize * rows);
 
       for (int i = 0; i < cols; i++) {
         ColumnConstraints colConst = new ColumnConstraints(tileSize);
@@ -167,20 +170,26 @@ public class StarGameView extends GameScreen {
       ImageView icon = new ImageView(image);
       icon.setLayoutX(x - TILE_SIZE * 0.4); // center image
       icon.setLayoutY(y - TILE_SIZE * 0.4);
-      attributeOverlay.getChildren().add(icon);
+      tileOverlay.getChildren().add(icon);
     } catch (Exception e) {
       logger.error("Failed to load image: {}", imageFileName, e);
     }
   }
   @Override
   public void initializeOverlay() {
-    for (Tunnel tunnel : ) {
-      renderTunnels(tunnel.getStart(), tunnel.getEnd());
-    }
+    tileOverlay= new Pane();
+    tileOverlay.setPickOnBounds(false);
+    tileOverlay.setMouseTransparent(true);
+    tileOverlay.setPrefSize(TILE_SIZE * BOARD_SIZE, TILE_SIZE * BOARD_SIZE);
+    renderOverlay();
+  }
 
-    for (Bridge bridge : controller.getBridges()) {
-      renderBridges(bridge.getStart(), bridge.getEnd());
-    }
+  private void renderOverlay(){
+    tileOverlay.getChildren().clear();
+    StarBoard board = (StarBoard) controller.getBoard();
+
+    board.getBridges().forEach(bridge -> renderBridges(bridge.getStart(), bridge.getEnd()));
+    board.getTunnels().forEach(tunnel -> renderTunnels(tunnel.getStart(), tunnel.getEnd()));
   }
 
     @Override
@@ -205,6 +214,6 @@ public class StarGameView extends GameScreen {
      */
     @Override
     protected Pane getOverlay() {
-      return new Pane(); // No overlay logic needed, but required by base class
+      return tileOverlay;
     }
   }
