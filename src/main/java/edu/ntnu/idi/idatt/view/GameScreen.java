@@ -14,6 +14,7 @@ import javafx.scene.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URL;
 import java.util.List;
 
 public abstract class GameScreen {
@@ -22,40 +23,56 @@ public abstract class GameScreen {
   protected static final int TILE_SIZE = 60;
   protected static final int BOARD_SIZE = 10;
 
-  protected VBox root;
+  protected BorderPane root;
   protected GridPane boardGrid;
   protected Label currentPlayerLabel;
   protected Label positionLabel;
   protected Label diceResultLabel;
   protected Button rollButton;
+  protected abstract Image getCurrentPlayerImage();
 
-  public GameScreen() {
-  }
+  public GameScreen() {}
 
   protected void createUI() {
-    root = new VBox(20);
-    root.setStyle("-fx-padding: 30; -fx-alignment: center;");
+    root = new BorderPane();
+    root.setStyle("-fx-padding: 30;");
 
-    currentPlayerLabel = new Label("Current turn:");
-    positionLabel = new Label("Position:");
-    diceResultLabel = new Label("Roll result:");
-    rollButton = new Button("Roll Dice");
-
-    rollButton.setOnAction(e -> handleRoll());
-
-    root.getChildren().addAll(currentPlayerLabel, positionLabel, diceResultLabel, rollButton);
-
-    StackPane mainContainer = new StackPane();
+    // Left: board
     initializeBoardGrid();
     initializeOverlay();
 
-    mainContainer.getChildren().addAll(boardGrid, getOverlay());
-    root.getChildren().add(mainContainer);
-
+    StackPane boardWithOverlay = new StackPane();
+    boardWithOverlay.getChildren().addAll(boardGrid, getOverlay());
     boardGrid.toBack();
-    if (getOverlay() != null) {
-      getOverlay().toFront();
+    if (getOverlay() != null) getOverlay().toFront();
+
+    root.setLeft(boardWithOverlay);
+
+
+    VBox infoBox = new VBox(20);
+    infoBox.setAlignment(Pos.TOP_CENTER);
+    currentPlayerLabel = new Label("Current turn:");
+    positionLabel = new Label("Position:");
+    diceResultLabel = new Label("Roll result:");
+
+    ImageView playerImage = new ImageView();
+    playerImage.setFitWidth(60);
+    playerImage.setFitHeight(60);
+    playerImage.setPreserveRatio(true);
+
+    Image image = getCurrentPlayerImage();
+    if (image != null) {
+      playerImage.setImage(image);
     }
+
+    infoBox.getChildren().addAll( playerImage, currentPlayerLabel, positionLabel, diceResultLabel);
+    root.setRight(infoBox);
+
+    // Bottom: roll button
+    rollButton = new Button("Roll Dice");
+    rollButton.setOnAction(e -> handleRoll());
+    BorderPane.setAlignment(rollButton, Pos.CENTER);
+    root.setBottom(rollButton);
   }
 
   protected void initializeBoardGrid() {
@@ -124,19 +141,24 @@ public abstract class GameScreen {
     return cell;
   }
 
-  // ABSTRACT METHODS to be implemented by SNL or Star view
-  protected abstract void handleRoll();
+  protected double[] getTileCenter(int tileNum) {
+    int i = tileNum - 1;
+    int row = 9 - (i / BOARD_SIZE);
+    int col = (row % 2 == 0) ? i % BOARD_SIZE : (BOARD_SIZE - 1 - i % BOARD_SIZE);
 
-  protected abstract String getTileColor(int tileNumber);
+    double x = col * TILE_SIZE + TILE_SIZE / 2.0;
+    double y = row * TILE_SIZE + TILE_SIZE / 2.0;
 
-  protected abstract List<Player> getPlayersAtPosition(int tileNumber);
-
-  protected abstract Pane getOverlay(); // e.g., ladder/snake overlay in SNL
-  public Parent getRoot() {
-    return root;
+    return new double[]{x, y};
   }
 
-  protected void initializeOverlay() {
-    // Optional to override in subclass
+  protected abstract void handleRoll();
+  protected abstract String getTileColor(int tileNumber);
+  protected abstract List<Player> getPlayersAtPosition(int tileNumber);
+  protected abstract Pane getOverlay();
+  protected void initializeOverlay() {}
+
+  public Parent getRoot() {
+    return root;
   }
 }

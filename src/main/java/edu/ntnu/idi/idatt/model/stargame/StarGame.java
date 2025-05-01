@@ -23,7 +23,7 @@ public class StarGame extends BoardGame {
     super(board);
     this.players = players;
     this.currentPlayerIndex = currentPlayerIndex;
-    this.dice = new Dice(2);
+    this.dice = new Dice(1);
     initializePlayer(players);
 
     logger.info("StarGame created with board size {}", board.getSize());

@@ -3,7 +3,9 @@ package edu.ntnu.idi.idatt.view.snl;
 import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
+import edu.ntnu.idi.idatt.model.snl.Ladder;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
+import edu.ntnu.idi.idatt.model.snl.Snake;
 import edu.ntnu.idi.idatt.view.GameScreen;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
@@ -17,6 +19,7 @@ import javafx.scene.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URL;
 import java.util.List;
 
 public class SNLGameScreenView extends GameScreen {
@@ -62,6 +65,21 @@ public class SNLGameScreenView extends GameScreen {
 
   public void initializeUI() {
     createUI();
+  }
+
+  @Override
+  protected Image getCurrentPlayerImage() {
+    Player currentPlayer = controller.getCurrentPlayer();
+    if (currentPlayer != null && currentPlayer.getCharacter() != null) {
+      String characterName = currentPlayer.getCharacter().toLowerCase();
+      URL url = getClass().getResource("/player_icons/" + characterName + ".png");
+      if (url != null) {
+        return new Image(url.toExternalForm());
+      } else {
+        logger.warn("No image found for character: {}", characterName);
+      }
+    }
+    return null;
   }
 
   @Override
@@ -118,8 +136,10 @@ public class SNLGameScreenView extends GameScreen {
     double offsetX = perpX * ladderWidth;
     double offsetY = perpY * ladderWidth;
 
-    Line left = new Line(startPos[0] + offsetX, startPos[1] + offsetY, endPos[0] + offsetX, endPos[1] + offsetY);
-    Line right = new Line(startPos[0] - offsetX, startPos[1] - offsetY, endPos[0] - offsetX, endPos[1] - offsetY);
+    Line left = new Line(startPos[0] + offsetX, startPos[1] + offsetY,
+            endPos[0] + offsetX, endPos[1] + offsetY);
+    Line right = new Line(startPos[0] - offsetX, startPos[1] - offsetY,
+            endPos[0] - offsetX, endPos[1] - offsetY);
 
     left.setStroke(Color.BURLYWOOD);
     right.setStroke(Color.BURLYWOOD);
@@ -127,6 +147,21 @@ public class SNLGameScreenView extends GameScreen {
     right.setStrokeWidth(3);
 
     ladderSnakeOverlay.getChildren().addAll(left, right);
+
+
+    int steps = (int) (distance / 15);
+    for (int i = 1; i < steps; i++) {
+      double t = (double) i / steps;
+      double centerX = startPos[0] + dx * t;
+      double centerY = startPos[1] + dy * t;
+
+      Line rung = new Line(centerX - offsetX, centerY - offsetY,
+              centerX + offsetX, centerY + offsetY);
+      rung.setStroke(Color.SADDLEBROWN);
+      rung.setStrokeWidth(2);
+
+      ladderSnakeOverlay.getChildren().add(rung);
+    }
   }
 
   private void drawSnake(int start, int end) {
@@ -162,16 +197,7 @@ public class SNLGameScreenView extends GameScreen {
     ladderSnakeOverlay.getChildren().addAll(snake, head, tail);
   }
 
-  private double[] getTileCenter(int tileNum) {
-    int i = tileNum - 1;
-    int row = 9 - (i / BOARD_SIZE);
-    int col = (row % 2 == 0) ? i % BOARD_SIZE : (BOARD_SIZE - 1 - i % BOARD_SIZE);
 
-    double x = col * TILE_SIZE + TILE_SIZE / 2.0;
-    double y = row * TILE_SIZE + TILE_SIZE / 2.0;
-
-    return new double[]{x, y};
-  }
 
   private void showGameOverAlert(Player winner) {
     // Optional: JavaFX Alert dialog or modal

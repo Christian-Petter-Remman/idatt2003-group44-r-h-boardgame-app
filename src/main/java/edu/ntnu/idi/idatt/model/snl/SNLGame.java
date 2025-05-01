@@ -122,6 +122,7 @@ public class SNLGame extends BoardGame {
     for (GameScreenObserver observer : moveObservers) {
       observer.onDiceRolled(roll);
       observer.onPlayerPositionChanged(player, -1, player.getPosition());
+      observer.onPlayerTurnChanged(player);
     }
   }
   @Override
