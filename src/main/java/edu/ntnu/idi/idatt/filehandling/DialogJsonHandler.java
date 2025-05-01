@@ -24,7 +24,7 @@ public class DialogJsonHandler {
       }
       return map;
     } catch (IOException e) {
-      throw new RuntimeException("Failed to load dialogs.json", e);
+      throw new RuntimeException("Failed to SNLLoad dialogs.json", e);
     }
   }
 }

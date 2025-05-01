@@ -32,6 +32,7 @@ public class StarBoardJsonHandler implements FileHandler <StarBoard> {
   }
 
   public StarBoard loadBoardFromFile(String filePath) throws FileReadException, JsonParsingException {
+    logger.info("Loading board from file {}", filePath);
     try (Reader reader = new FileReader(filePath)) {
       JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
       return parseBoard(jsonObject);

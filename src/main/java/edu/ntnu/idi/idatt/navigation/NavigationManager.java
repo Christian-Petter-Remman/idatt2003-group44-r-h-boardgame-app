@@ -43,6 +43,7 @@ public class NavigationManager {
   private NavigationHandler currentHandler;
   private CharacterSelectionManager characterSelectionManager;
   private SNLRuleSelectionModel ruleSelectionModel;
+  private StarCharSelectionController starCharSelectionController;
 
 
   private NavigationManager() {
@@ -121,9 +122,8 @@ public class NavigationManager {
   public void navigateToStarCharacterSelection() {
     characterSelectionManager = new CharacterSelectionManager();
     StarCharSelectionScreen view = new StarCharSelectionScreen(characterSelectionManager);
-    StarCharSelectionController controller = new StarCharSelectionController(
-        characterSelectionManager, view);
-    setHandler(controller);
+    starCharSelectionController = new StarCharSelectionController(characterSelectionManager,view);
+    setHandler(starCharSelectionController);
     setRoot(view.getView());
   }
 
@@ -160,9 +160,9 @@ public class NavigationManager {
   public void navigateToStarGameScreen() {
     logger.info("Starting Star Game...");
     try {
-      String savePath = "default_players.csv";
-      GameStateCsvLoader.GameState gameState = GameStateCsvLoader.load(savePath);
-      String boardpath = FileManager.STAR_GAME_DIR + "/default.json";
+      String savePath = starCharSelectionController.getSavePath();
+      GameStateCsvLoader.GameState gameState = GameStateCsvLoader.StarLoad(savePath);
+      String boardpath = "default.json";
 
       StarFactory factory = new StarFactory();
       StarBoard board = factory.loadBoardFromFile(boardpath);
@@ -184,7 +184,7 @@ public class NavigationManager {
     logger.info("Starting Snakes and Ladders game...");
     try {
       String savePath = ruleSelectionModel.getSavePath();
-      GameStateCsvLoader.GameState gameState = GameStateCsvLoader.load(savePath);
+      GameStateCsvLoader.GameState gameState = GameStateCsvLoader.SNLLoad(savePath);
       String boardPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + gameState.getBoardFile();
       logger.info("Final board path: " + boardPath);
 
@@ -205,7 +205,7 @@ public class NavigationManager {
 
       logger.info("Snakes and Ladders game screen initialized successfully.");
     } catch (Exception e) {
-      logger.error("Failed to load Snakes and Ladders game from save file", e);
+      logger.error("Failed to SNLLoad Snakes and Ladders game from save file", e);
 
     }
   }

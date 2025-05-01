@@ -69,7 +69,7 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
     Button back = new Button("Back"), next = new Button("Continue");
     back.getStyleClass().add("button"); next.getStyleClass().add("button");
     back.setOnAction(e -> handler.navigateBack());
-    next.setOnAction(e -> handler.navigateTo("STAR_GAME"));
+    next.setOnAction(e -> handler.onStart());
 
     HBox btnRow = new HBox(20, back, new Region(), next);
     btnRow.setAlignment(Pos.CENTER);

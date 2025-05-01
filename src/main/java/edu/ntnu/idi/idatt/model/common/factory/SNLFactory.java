@@ -36,7 +36,7 @@ public class SNLFactory extends BoardGameFactory {
 //      board = loadBoardFromFile(configurationName + ".json");
 //
 //      if (board == null) {
-//        logger.warn("Failed to load board for configuration: {}, using default", configurationName);
+//        logger.warn("Failed to SNLLoad board for configuration: {}, using default", configurationName);
 //        board = loadBoardFromFile("default.json");
 //      }
 //    }
@@ -76,7 +76,7 @@ public class SNLFactory extends BoardGameFactory {
       logger.info("Successfully loaded board from: {}", fileName);
       return board;
     } catch (Exception e) {
-    logger.error("Failed to load board from file: {}", e.getMessage(), e);
+    logger.error("Failed to SNLLoad board from file: {}", e.getMessage(), e);
     return null;
   }
     }

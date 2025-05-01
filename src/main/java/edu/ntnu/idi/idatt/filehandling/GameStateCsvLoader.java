@@ -19,6 +19,7 @@ public class GameStateCsvLoader {
     public int diceCount;
     public int currentTurnIndex;
     public List<Player> players = new ArrayList<>();
+    public int points;
 
 
     private static final Logger logger = LoggerFactory.getLogger(GameStateCsvLoader.class);
@@ -47,7 +48,7 @@ public class GameStateCsvLoader {
     }
   }
 
-  public static GameState load(String filePath) throws IOException {
+  public static GameState SNLLoad(String filePath) throws IOException {
     GameState state = new GameState();
 
     try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
@@ -75,4 +76,37 @@ public class GameStateCsvLoader {
 
     return state;
   }
+
+  public static GameState StarLoad(String filePath) throws IOException {
+    GameState state = new GameState();
+
+    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+      String line;
+      boolean readingPlayers = false;
+
+      while ((line = reader.readLine()) != null) {
+        if (line.startsWith("Board,")) {
+          state.boardFile = line.split(",")[1];
+        } else if (line.startsWith("DiceCount,")) {
+          state.diceCount = Integer.parseInt(line.split(",")[1]);
+        } else if (line.startsWith("Points")) {
+          state.points = Integer.parseInt(line.split(",")[1]);
+        } else if (line.startsWith("CurrentTurnIndex,")) {
+          state.currentTurnIndex = Integer.parseInt(line.split(",")[1]);
+        } else if (line.equals("Players:")) {
+          readingPlayers = true;
+        } else if (readingPlayers && !line.isBlank()) {
+          String[] parts = line.split(",");
+          String name = parts[0];
+          String character = parts[1];
+          int position = Integer.parseInt(parts[2]);
+          state.players.add(new SNLPlayer(name, character, position));
+        }
+      }
+    }
+
+    return state;
+  }
+
+
 }

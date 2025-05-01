@@ -71,7 +71,7 @@ class PlayerCsvHandlerTest {
 
     List<Player> players = handler.loadFromFile(path);
 
-    assertEquals(2, players.size(), "Should load 2 players from CSV");
+    assertEquals(2, players.size(), "Should SNLLoad 2 players from CSV");
     assertEquals("Anna", players.get(0).getName());
     assertEquals("Bob", players.get(1).getName());
   }

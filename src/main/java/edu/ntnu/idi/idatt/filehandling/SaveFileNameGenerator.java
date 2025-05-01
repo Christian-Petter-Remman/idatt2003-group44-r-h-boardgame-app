@@ -11,8 +11,13 @@ public class SaveFileNameGenerator {
    * Generates a unique filename for saving game states.
    * @return a filename like snl_save_20250429_171532.csv
    */
-  public static String generateSaveFileName() {
+  public static String SNLgenerateSaveFileName() {
     String timestamp = LocalDateTime.now().format(formatter);
     return "snl_save_" + timestamp + ".csv";
+  }
+
+  public static String StargenerateSaveFileName() {
+    String timestamp = LocalDateTime.now().format(formatter);
+    return "star_save_" + timestamp + ".csv";
   }
 }

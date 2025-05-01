@@ -32,7 +32,7 @@ public class StarFactory extends BoardGameFactory {
 //      board = loadBoardFromFile(configurationName + ".json");
 //
 //      if (board == null) {
-//        logger.warn("Failed to load board for configuration: {}, using default", configurationName);
+//        logger.warn("Failed to SNLLoad board for configuration: {}, using default", configurationName);
 //        board = loadBoardFromFile("default.json");
 //      }
 //    }
@@ -63,16 +63,16 @@ public class StarFactory extends BoardGameFactory {
     File file = new File(filePath);
 
     if (!file.exists()) {
-      logger.debug("SNLBoard file does not exist: {}", filePath);
+      logger.debug("STARBoard file does not exist: {}", filePath);
       return null;
     }
 
     try {
-      StarBoard board = boardJsonHandler.loadFromFile(filePath);
+      StarBoard board = boardJsonHandler.loadBoardFromFile(filePath);
       logger.info("Successfully loaded board from: {}", filePath);
       return board;
     } catch (Exception e) {
-      logger.error("Failed to load board from file: {}", e.getMessage());
+      logger.error("Failed to Load board from file: {}", e.getMessage());
       return null;
     }
   }
