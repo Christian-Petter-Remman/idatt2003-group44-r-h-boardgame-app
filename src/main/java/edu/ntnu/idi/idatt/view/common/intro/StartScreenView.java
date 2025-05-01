@@ -1,29 +1,34 @@
 package edu.ntnu.idi.idatt.view.common.intro;
 
 import javafx.scene.Scene;
+
+import edu.ntnu.idi.idatt.controller.common.StartScreenController;
+import edu.ntnu.idi.idatt.model.common.intro.StartScreenModel;
+import edu.ntnu.idi.idatt.view.common.intro.dialogs.DialogConfig;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Screen;
-import javafx.stage.Stage;
 
-public class StartScreenView {
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Map;
+import java.util.Objects;
 
-  private final StackPane root;
+public class StartScreenView implements PropertyChangeListener {
+
+  private final StackPane root = new StackPane();
   private final ImageView backgroundImage;
-
-  private ImageView cowImage;
-  private ImageView pigImage;
-  private ImageView sheepImage;
-  private ImageView duckImage;
-  private ImageView starImage;
-  private ImageView moleImage;
-  private ImageView paintImage;
-  private ImageView SNLImage;
+  private final StartScreenModel model;
+  private final StartScreenController controller;
 
   public StartScreenView() {
+
     root = new StackPane();
     backgroundImage = new ImageView(new Image(getClass().getResourceAsStream(
             "/home_screen/farmy.jpg")));
@@ -74,82 +79,90 @@ public class StartScreenView {
     starImage.setTranslateX(0);
     starImage.setTranslateY(-250);
 
-    moleImage.setTranslateX(-150);
-    moleImage.setTranslateY(150);
+    model = new StartScreenModel();
+    controller = new StartScreenController(model);
+    model.addListener(this);
 
-    paintImage.setTranslateX(250);
-    paintImage.setTranslateY(250);
 
-    SNLImage.setTranslateX(0);
-    SNLImage.setTranslateY(-150);
+    root.getStylesheets().add(
+        Objects.requireNonNull(getClass().getResource("/css/StartScreenStyleSheet.css"))
+            .toExternalForm()
+    );
+
+    backgroundImage = new ImageView(new Image(
+        Objects.requireNonNull(getClass().getResourceAsStream("/home_screen/farm.jpg"))
+    ));
+
+    initializeUI();
+    loadIconsFromModel();
   }
 
-  private void setupHandlers() {
-    cowImage.setOnMouseClicked(this::onCowClicked);
-    pigImage.setOnMouseClicked(this::onPigClicked);
-    sheepImage.setOnMouseClicked(this::onSheepClicked);
-
-    starImage.setOnMouseClicked(this::onStarClicked);
-    moleImage.setOnMouseClicked(this::onMoleClicked);
-//    paintImage.setOnMouseClicked(this::onPaintClicked);
+  private void initializeUI() {
+    Rectangle2D bounds = Screen.getPrimary().getBounds();
+    backgroundImage.setFitWidth(bounds.getWidth());
+    backgroundImage.setFitHeight(bounds.getHeight());
+    backgroundImage.setPreserveRatio(true);
+    backgroundImage.setSmooth(true);
+    root.getChildren().add(backgroundImage);
   }
 
-  private ImageView createClickableImage(String resourcePath, double width, double height) {
-    Image image = new Image(getClass().getResourceAsStream(resourcePath));
-    ImageView imageView = new ImageView(image);
-    imageView.setFitWidth(width);
-    imageView.setFitHeight(height);
-    imageView.setPreserveRatio(true);
-    imageView.setPickOnBounds(true);
-    return imageView;
+  private void loadIconsFromModel() {
+    root.getChildren().removeIf(node -> node instanceof ImageView && node != backgroundImage);
+
+    Map<String, DialogConfig> dialogs = model.getDialogs();
+    dialogs.forEach((id, cfg) -> {
+      ImageView iv = new ImageView(new Image(
+          Objects.requireNonNull(getClass().getResourceAsStream(cfg.getImagePath()))
+      ));
+      iv.setFitWidth(cfg.getId().equals("cow") ? 200 : 100);
+      iv.setPreserveRatio(true);
+      iv.setPickOnBounds(true);
+      iv.getStyleClass().add("clickable-image");
+      iv.setId(id);
+      positionIcon(id, iv);
+      iv.setOnMouseClicked(this::handleClick);
+      root.getChildren().add(iv);
+    });
+
+    ImageView fredrik = new ImageView(new Image(
+        Objects.requireNonNull(getClass().getResourceAsStream("/home_screen/farmerfredrik.png"))
+    ));
+    fredrik.setFitWidth(300);
+    fredrik.setPreserveRatio(true);
+    StackPane.setAlignment(fredrik, Pos.BOTTOM_LEFT);
+    StackPane.setMargin(fredrik, new Insets(0, 0, 20, 20));
+    root.getChildren().add(fredrik);
   }
 
-  private void onCowClicked(MouseEvent event) {
-    System.out.println("Cow clicked!");
+  private void handleClick(MouseEvent ev) {
+    ImageView src = (ImageView) ev.getSource();
+    controller.onIconClicked(src, src.getId());
   }
 
-  private void onPigClicked(MouseEvent event) {
-    System.out.println("Pig clicked!");
+  private void positionIcon(String id, ImageView iv) {
+    switch (id) {
+      case "cow" -> { iv.setTranslateX(-50); iv.setTranslateY(30); }
+      case "pig" -> { iv.setTranslateX(-250); iv.setTranslateY(200); }
+      case "sheep" -> { iv.setTranslateX(-50); iv.setTranslateY(220); }
+      case "duck" -> { iv.setTranslateX(470); iv.setTranslateY(150); }
+      case "hen" -> { iv.setTranslateX(380); iv.setTranslateY(210); }
+      case "mole" -> { iv.setTranslateX(-250); iv.setTranslateY(60); }
+      case "starGame" -> { iv.setTranslateX(-140); iv.setTranslateY(-300); }
+      case "paintCanvas" -> { iv.setTranslateX(300); iv.setTranslateY(90); }
+      case "snakeGame" -> { iv.setTranslateX(0); iv.setTranslateY(-150); }
+      case "memoryGame" -> { iv.setTranslateX(150); iv.setTranslateY(50); }
+      default -> {}
+    }
   }
 
-  private void onSheepClicked(MouseEvent event) {
-    System.out.println("Sheep clicked!");
+  @Override
+  public void propertyChange(PropertyChangeEvent evt) {
+    if ("dialogs".equals(evt.getPropertyName())) {
+      loadIconsFromModel();
+    }
   }
-
-  private void onDuckClicked(MouseEvent event) {
-    System.out.println("Duck clicked!");
-  }
-
-  private void onStarClicked(MouseEvent event) {
-    System.out.println("Star clicked - Start Star Game!");
-  }
-
-  private void onMoleClicked(MouseEvent event) {
-    System.out.println("Mole clicked!");
-  }
-
-//  private void onPaintClicked(MouseEvent event) {
-//    Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
-//    confirmationAlert.setTitle("Welcome to the painting game!");
-//    confirmationAlert.setHeaderText("Are you ready to paint?");
-//    confirmationAlert.setContentText("Click OK to start painting!");
-//
-//    ButtonType backButton = new ButtonType("Back");
-//    ButtonType okButton = new ButtonType("OK");
-//
-//    confirmationAlert.getButtonTypes().setAll(backButton, okButton);
-//
-//    confirmationAlert.showAndWait().ifPresent(response -> {
-//      if (response == backButton) {
-//        confirmationAlert.close();
-//      } else if (response == okButton) {
-//       NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.PAINT_CANVAS_SCREEN);
-//      }
-//    });
-//  }
 
   public StackPane getRoot() {
     return root;
   }
-
 }

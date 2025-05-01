@@ -1,0 +1,48 @@
+/* ===================== */
+/*  START SCREEN ICONS   */
+/* ===================== */
+
+.clickable-image {
+  -fx-cursor: hand;
+}
+
+.clickable-image:hover {
+  /* big white glow */
+  -fx-effect: dropshadow(three-pass-box,
+  rgba(255,255,255,0.8),
+  8,    /* blur radius */
+  0.8,   /* spread: make it more filled */
+  0,     /* x offset */
+  0      /* y offset */
+  );
+}
+
+
+
+/* ===================== */
+/*   INFO DIALOG STYLES  */
+/* ===================== */
+
+/* remove ScrollPane border/background */
+.dialog-scroll-pane {
+  -fx-background-color: transparent;
+  -fx-border-color: transparent;
+}
+
+.dialog-scroll-pane > .viewport {
+  -fx-background-color: transparent;
+}
+
+/* dialog buttons */
+.dialog-button {
+  -fx-background-color: #4285f4;
+  -fx-text-fill: white;
+  -fx-font-size: 13px;
+  -fx-padding: 6 14 6 14;
+  -fx-background-radius: 4;
+}
+
+.dialog-button:hover {
+  -fx-background-color: #3367d6;
+  -fx-cursor: hand;
+}

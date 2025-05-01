@@ -189,6 +189,14 @@ public class NavigationManager {
     }
   }
 
+  public Stage getPrimaryStage() {
+    return primaryStage;
+  }
+
+  public void setLogo(String path) {
+    primaryStage.getIcons().add(new Image(
+        Objects.requireNonNull(getClass().getResourceAsStream(path))));
+
   public enum NavigationTarget {
     INTRO_SCREEN,
     CHARACTER_SELECTION,
@@ -198,6 +206,7 @@ public class NavigationManager {
     STAR_INTRO,
     STAR_GAME,
     STAR_CHARACTER_SELECTION,
+
   }
 
 }
