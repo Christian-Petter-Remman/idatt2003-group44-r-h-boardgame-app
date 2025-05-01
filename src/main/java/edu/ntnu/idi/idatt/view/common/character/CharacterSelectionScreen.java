@@ -113,7 +113,10 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
 
       removeBtn.getStyleClass().add("remove-button");
 
-      TextField name = new TextField("Player " + p.getId());
+      TextField name = new TextField(p.getName());
+      name.textProperty().addListener((obs, oldVal, newVal) -> {
+        player.setName(newVal);
+      });
       name.setFont(Font.font(16));
       name.getStyleClass().add("player-name-field");
       activeBox.setAlignment(Pos.CENTER);

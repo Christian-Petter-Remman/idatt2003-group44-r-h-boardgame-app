@@ -4,7 +4,6 @@ import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
-import edu.ntnu.idi.idatt.navigation.NavigationManager.NavigationTarget;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -24,9 +23,11 @@ public class Main extends Application {
       FileManager.ensureApplicationDirectoriesExist();
 
       NavigationManager.getInstance().initialize(primaryStage);
-      NavigationManager.getInstance().navigateTo(NavigationTarget.START_SCREEN);
 
-      navigationManager.setLogo("/images/logo.png");
+      NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.INTRO_SCREEN);
+      primaryStage.show();
+
+
       primaryStage.show();
     } catch (Exception e) {
       logger.error("Error during startup: {}", e.getMessage(), e);

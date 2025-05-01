@@ -113,6 +113,7 @@ public class StartScreenView {
     starImage.setTranslateX(-140);
     starImage.setTranslateY(-300);
 
+
     paintImage.setTranslateX(300);
     paintImage.setTranslateY(90);
 
@@ -165,7 +166,7 @@ public class StartScreenView {
       new InfoDialog(cfg).showAndWait();
     }
   }
-
+  
   private ImageView createClickableImage(String path, double w, double h) {
     ImageView iv = new ImageView(new Image(
         Objects.requireNonNull(getClass().getResourceAsStream(path))
@@ -177,6 +178,7 @@ public class StartScreenView {
     iv.getStyleClass().add("clickable-image");
     return iv;
   }
+
 
   public StackPane getRoot() {
     return root;
