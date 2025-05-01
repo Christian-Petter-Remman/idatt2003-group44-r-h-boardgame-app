@@ -12,6 +12,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Screen;
 
 public class StartScreenView {
@@ -89,14 +91,13 @@ public class StartScreenView {
   }
 
   private void positionIcons() {
-    // Cow just to the left of the farmer
+
     cowImage.setTranslateX(-50);
     cowImage.setTranslateY(30);
 
     pigImage.setTranslateX(-250);
     pigImage.setTranslateY(200);
 
-    // Sheep moved slightly right and lower
     sheepImage.setTranslateX(-50);
     sheepImage.setTranslateY(220);
 
@@ -106,7 +107,6 @@ public class StartScreenView {
     henImage.setTranslateX(380);
     henImage.setTranslateY(210);
 
-    // Mole moved more to the left
     moleImage.setTranslateX(-250);
     moleImage.setTranslateY(60);
 
@@ -119,7 +119,7 @@ public class StartScreenView {
     snlImage.setTranslateX(0);
     snlImage.setTranslateY(-150);
 
-    // Farmer moved more to the right
+
     farmerImage.setTranslateX(150);
     farmerImage.setTranslateY(50);
   }
@@ -153,7 +153,16 @@ public class StartScreenView {
     else if (src == farmerImage) id = "memoryGame";
 
     if (id != null && dialogs.containsKey(id)) {
-      new InfoDialog(dialogs.get(id)).showAndWait();
+      DialogConfig cfg = dialogs.get(id);
+
+      // play the animal sound first
+      if (cfg.getAudio() != null && !cfg.getAudio().isBlank()) {
+        Media media = new Media(getClass().getResource(cfg.getAudio()).toExternalForm());
+        new MediaPlayer(media).play();
+      }
+
+      // then show the info dialog
+      new InfoDialog(cfg).showAndWait();
     }
   }
 
