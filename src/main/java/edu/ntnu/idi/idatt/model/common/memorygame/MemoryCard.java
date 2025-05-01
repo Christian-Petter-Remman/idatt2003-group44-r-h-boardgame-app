@@ -1,53 +1,59 @@
 package edu.ntnu.idi.idatt.model.common.memorygame;
 
-import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionData;
+import java.util.Objects;
 
 public class MemoryCard {
 
-  private final int pairId;
-  private final CharacterSelectionData icon;
-  private CardState state = CardState.FACE_DOWN;
+  private final String id;
+  private final String imagePath;
+  private boolean faceUp;
+  private boolean matched;
 
-
-  public MemoryCard(int pairId, CharacterSelectionData icon) {
-    this.pairId = pairId;
-    this.icon = icon;
+  public MemoryCard(String id, String imagePath) {
+    this.id = id;
+    this.imagePath = imagePath;
+    this.faceUp = false;
+    this.matched = false;
   }
 
-  public int getPairId() {
-    return pairId;
+  public String getId() {
+    return id;
   }
 
-  public CharacterSelectionData getIcon() {
-    return icon;
+  public String getImagePath() {
+    return imagePath;
   }
 
-  public CardState getState() {
-    return state;
+  public boolean isFaceUp() {
+    return faceUp;
   }
 
-  public void flipUp() {
-    if (state == CardState.FACE_DOWN) {
-      state = CardState.FACE_UP;
+  public boolean isMatched() {
+    return matched;
+  }
+
+  public void setFaceUp(boolean faceUp) {
+    this.faceUp = faceUp;
+  }
+
+  public void setMatched(boolean matched) {
+    this.matched = matched;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
-  }
-
-  public void flipDown() {
-    if (state == CardState.FACE_UP) {
-      state = CardState.FACE_DOWN;
+    if (o == null || getClass() != o.getClass()) {
+      return false;
     }
+    MemoryCard card = (MemoryCard) o;
+    return Objects.equals(id, card.id);
   }
 
-  public void markMatched() {
-    if (state == CardState.FACE_UP) {
-      state = CardState.MATCHED;
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
   }
-
-  public boolean isMatchable() {
-    return state == CardState.FACE_DOWN;
-  }
-
-
 }
-

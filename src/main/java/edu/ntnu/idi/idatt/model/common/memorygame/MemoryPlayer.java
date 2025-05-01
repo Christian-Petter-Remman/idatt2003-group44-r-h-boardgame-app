@@ -1,35 +1,24 @@
 package edu.ntnu.idi.idatt.model.common.memorygame;
 
-
-import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
-
 public class MemoryPlayer {
 
-  private final PlayerData playerData;
-  private int matchesFound = 0;
+  private final String name;
+  private int score;
 
-  public MemoryPlayer(PlayerData playerData) {
-    this.playerData = playerData;
-  }
-
-  public PlayerData getPlayerData() {
-    return playerData;
-  }
-
-  public int getMatchesFound() {
-    return matchesFound;
-  }
-
-  public void incrementMatches() {
-    matchesFound++;
+  public MemoryPlayer(String name) {
+    this.name = name;
+    this.score = 0;
   }
 
   public String getName() {
-    return playerData.getSelectedCharacter().getName();
+    return name;
   }
 
-  public String getIconPath() {
-    return playerData.getSelectedCharacter().getImagePath();
+  public int getScore() {
+    return score;
+  }
+
+  public void incrementScore() {
+    score++;
   }
 }
-

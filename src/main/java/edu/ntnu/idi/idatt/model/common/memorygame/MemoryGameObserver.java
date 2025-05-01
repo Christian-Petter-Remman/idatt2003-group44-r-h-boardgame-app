@@ -4,13 +4,7 @@ import java.util.List;
 
 public interface MemoryGameObserver {
 
-  void onCardFlipped(int row, int col, CardState state);
+  void onBoardUpdated(MemoryBoardGame board);
 
-  void onMatchFound(MemoryPlayer player, int newScore);
-
-  void onTurnChanged(MemoryPlayer nextPlayer);
-
-  void onGameStateChanged(GameState newState);
-
-  void onGameFinished(List<MemoryPlayer> winners);
+  void onGameOver(List<MemoryPlayer> winners);
 }

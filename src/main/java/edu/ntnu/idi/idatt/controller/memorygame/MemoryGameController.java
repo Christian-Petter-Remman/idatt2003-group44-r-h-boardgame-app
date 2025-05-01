@@ -1,6 +1,5 @@
 package edu.ntnu.idi.idatt.controller.memorygame;
 
-import edu.ntnu.idi.idatt.model.common.memorygame.MemoryGame;
 import edu.ntnu.idi.idatt.model.common.memorygame.GameState;
 import edu.ntnu.idi.idatt.view.memorygame.MemoryGameView;
 import javafx.scene.Node;
