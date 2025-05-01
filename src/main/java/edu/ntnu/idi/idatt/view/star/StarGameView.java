@@ -92,8 +92,8 @@ public class StarGameView extends GameScreen {
         int tileNum = BoardCreator.StarGame(i);
         StackPane cell = createTile(tileNum);
 
-        int row = i / cols;
-        int col = i % cols;
+        int row = rows - 1 - (i / cols);
+        int col = (row % 2 == 0) ? (i % cols) : (cols - 1 - (i % cols));
 
         boardGrid.add(cell, col, row);
       }
