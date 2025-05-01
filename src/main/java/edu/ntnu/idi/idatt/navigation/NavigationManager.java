@@ -160,7 +160,7 @@ public class NavigationManager {
   public void navigateToStarGameScreen() {
     logger.info("Starting Star Game...");
     try {
-      String savePath = "test123";
+      String savePath = "default_players.csv";
       GameStateCsvLoader.GameState gameState = GameStateCsvLoader.load(savePath);
       String boardpath = FileManager.STAR_GAME_DIR + "/default.json";
 

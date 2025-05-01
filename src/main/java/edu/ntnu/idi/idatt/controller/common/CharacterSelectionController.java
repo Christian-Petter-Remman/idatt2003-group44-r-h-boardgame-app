@@ -5,6 +5,7 @@ import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionMan
 import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
+import edu.ntnu.idi.idatt.navigation.NavigationTarget;
 import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
 
 import javafx.scene.Parent;
@@ -39,7 +40,7 @@ public class CharacterSelectionController implements NavigationHandler {
 
   @Override
   public void navigateTo(String destination) {
-    NavigationManager.getInstance().navigateTo(NavigationManager.NavigationTarget.valueOf(destination));
+    NavigationManager.getInstance().navigateTo(NavigationTarget.valueOf(destination));
   }
 
   @Override
