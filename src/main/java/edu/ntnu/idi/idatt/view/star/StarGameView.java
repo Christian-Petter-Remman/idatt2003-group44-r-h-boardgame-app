@@ -3,6 +3,7 @@ package edu.ntnu.idi.idatt.view.star;
 import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
 import edu.ntnu.idi.idatt.controller.star.StarGameController;
 import edu.ntnu.idi.idatt.model.common.Player;
+import edu.ntnu.idi.idatt.model.common.Tile;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.view.GameScreen;
 import edu.ntnu.idi.idatt.view.snl.BoardCreator;
@@ -13,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
+import java.util.ArrayList;
 import java.util.List;
 
   public class StarGameView extends GameScreen {
@@ -21,6 +23,7 @@ import java.util.List;
     private final int tileSize = 75;
     private final int rows = 10;
     private final int cols = 13;
+    private final List<Tile> blankTiles = new ArrayList<>(new Tile(0));
 
     private final StarGameController controller;
 
@@ -92,6 +95,14 @@ import java.util.List;
 
         boardGrid.add(cell, col, row);
       }
+    }
+    public String getTileBorder(int tileNum) {
+      if (isBlank(tileNum)) return "white";
+      return "black";
+    }
+
+    public boolean isBlank(int tileNum) {
+      return blankTiles.contains(tileNum);
     }
 
     @Override
