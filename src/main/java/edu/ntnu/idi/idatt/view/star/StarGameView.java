@@ -5,8 +5,10 @@ import edu.ntnu.idi.idatt.controller.star.StarGameController;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.view.GameScreen;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import edu.ntnu.idi.idatt.view.snl.BoardCreator;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
+import javafx.scene.layout.*;
 
 import java.util.List;
 
@@ -52,18 +54,36 @@ import java.util.List;
     @Override
     public void renderBoardGrid() {
       boardGrid.getChildren().clear();
+      boardGrid.getColumnConstraints().clear();
+      boardGrid.getRowConstraints().clear();
 
-      for (int i = 0; i < 100; i++) {
-        int tileNum = i + 1;
+      boardGrid.setPrefSize(tileSize * cols, tileSize * rows);
+      boardGrid.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+      boardGrid.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+      attributeOverlay.setPrefSize(tileSize * cols, tileSize * rows);
+
+      for (int i = 0; i < cols; i++) {
+        ColumnConstraints colConst = new ColumnConstraints(tileSize);
+        colConst.setHalignment(HPos.CENTER);
+        boardGrid.getColumnConstraints().add(colConst);
+      }
+
+      for (int i = 0; i < rows; i++) {
+        RowConstraints rowConst = new RowConstraints(tileSize);
+        rowConst.setValignment(VPos.CENTER);
+        boardGrid.getRowConstraints().add(rowConst);
+      }
+
+      for (int i = 0; i < rows * cols; i++) {
+        int tileNum = BoardCreator.StarGame(i);
         StackPane cell = createTile(tileNum);
 
-        int row = 9 - (i / BOARD_SIZE);
-        int col = (row % 2 == 0) ? i % BOARD_SIZE : (BOARD_SIZE - 1 - i % BOARD_SIZE);
+        int row = i / cols;
+        int col = i % cols;
 
         boardGrid.add(cell, col, row);
       }
     }
-
     @Override
     protected void handleRoll() {
       controller.handleRoll();
