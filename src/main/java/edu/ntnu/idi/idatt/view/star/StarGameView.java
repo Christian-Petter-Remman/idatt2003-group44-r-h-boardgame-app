@@ -17,7 +17,9 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 import java.util.List;
 
-  public class StarGameView extends GameScreen {
+import static java.awt.Color.white;
+
+public class StarGameView extends GameScreen {
 
     private final Pane attributeOverlay = new Pane();
     private final int tileSize = 75;
@@ -96,47 +98,51 @@ import java.util.List;
         boardGrid.add(cell, col, row);
       }
     }
-    public String getTileBorder(int tileNum) {
+
+    private String getTileBorder(int tileNum) {
       if (isBlank(tileNum)) return "white";
       return "black";
     }
 
-    public boolean isBlank(int tileNum) {
+    private boolean isBlank(int tileNum) {
       return blankTiles.contains(tileNum);
     }
 
-    @Override
-    public StackPane createTile(int tileNum) {
-      StackPane cell = new StackPane();
-      cell.setPrefSize(TILE_SIZE, TILE_SIZE);
+  @Override
+  public StackPane createTile(int tileNum) {
+    StackPane cell = new StackPane();
+    cell.setPrefSize(TILE_SIZE, TILE_SIZE);
 
-      cell.setStyle("-fx-border-color: black; -fx-background-color: " + getTileColor(tileNum) + ";");
+    String borderColor = getTileBorder(tileNum);
+    cell.setStyle("-fx-border-color: " + borderColor + "; -fx-background-color: white;");
 
+    if (tileNum != 0) {
       Text tileNumber = new Text(String.valueOf(tileNum));
       tileNumber.setStyle("-fx-fill: #555;");
       cell.getChildren().add(tileNumber);
-
-      List<Player> playersOnTile = getPlayersAtPosition(tileNum);
-      for (Player player : playersOnTile) {
-        String characterName = (player.getCharacter() != null) ? player.getCharacter().toLowerCase() : "default";
-        try {
-          var url = getClass().getResource("/player_icons/" + characterName + ".png");
-          if (url == null) {
-            logger.warn("Image not found for character: {}", characterName);
-            continue;
-          }
-
-          Image image = new Image(url.toExternalForm(), TILE_SIZE * 0.5, TILE_SIZE * 0.5, true, true);
-          ImageView icon = new ImageView(image);
-          icon.setTranslateY(TILE_SIZE * 0.15 * playersOnTile.indexOf(player));
-          cell.getChildren().add(icon);
-        } catch (Exception e) {
-          logger.error("Error loading image for character: {}", characterName, e);
-        }
-      }
-
-      return cell;
     }
+
+    List<Player> playersOnTile = getPlayersAtPosition(tileNum);
+    for (Player player : playersOnTile) {
+      String characterName = (player.getCharacter() != null) ? player.getCharacter().toLowerCase() : "default";
+      try {
+        var url = getClass().getResource("/player_icons/" + characterName + ".png");
+        if (url == null) {
+          logger.warn("Image not found for character: {}", characterName);
+          continue;
+        }
+
+        Image image = new Image(url.toExternalForm(), TILE_SIZE * 0.5, TILE_SIZE * 0.5, true, true);
+        ImageView icon = new ImageView(image);
+        icon.setTranslateY(TILE_SIZE * 0.15 * playersOnTile.indexOf(player));
+        cell.getChildren().add(icon);
+      } catch (Exception e) {
+        logger.error("Error loading image for character: {}", characterName, e);
+      }
+    }
+
+    return cell;
+  }
 
     @Override
     protected void handleRoll() {

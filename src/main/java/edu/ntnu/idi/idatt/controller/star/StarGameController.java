@@ -57,7 +57,7 @@ public class StarGameController implements NavigationHandler {
   }
 
   public String getTileColor(int tileNum) {
-    return (tileNum % 2 == 0) ? "#f0f0f0" : "#d0d0d0";  // Light and dark colors
+    return (tileNum % 2 == 0) ? "#f0f0f0" : "#d0d0d0";
   }
 
   public List<Player> getPlayersAtPosition(int position) {
