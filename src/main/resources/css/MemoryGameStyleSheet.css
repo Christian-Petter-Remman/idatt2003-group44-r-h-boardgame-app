@@ -1,0 +1,85 @@
+/* File: MemoryGameStyles.css */
+
+/* Base background */
+.memory-root {
+  -fx-background-color: #fdf5e6;
+}
+
+/* Header styling */
+.header {
+  -fx-font-size: 24px;
+  -fx-text-fill: #4a148c;
+  -fx-font-weight: bold;
+  -fx-padding: 10px;
+  -fx-background-color: #e1bee7;
+}
+
+/* Grid container */
+.grid {
+  -fx-padding: 20px;
+  -fx-background-color: transparent;
+}
+
+/* Card style */
+.card {
+  -fx-background-color: white;
+  -fx-border-color: #bdbdbd;
+  -fx-border-width: 1px;
+  -fx-background-radius: 4px;
+  -fx-cursor: hand;
+}
+.card:selected {
+  -fx-background-color: #ede7f6;
+}
+
+/* Scoreboard panel */
+.scoreboard-box {
+  -fx-background-color: #ffffff;
+  -fx-border-color: #9575cd;
+  -fx-border-width: 1px;
+  -fx-padding: 10px;
+  -fx-spacing: 8px;
+}
+.sb-title {
+  -fx-font-size: 18px;
+  -fx-text-fill: #6a1b9a;
+  -fx-font-weight: bold;
+}
+.player-box {
+  -fx-background-color: #f3e5f5;
+  -fx-padding: 6px;
+  -fx-spacing: 4px;
+}
+.sb-score {
+  -fx-font-size: 14px;
+  -fx-text-fill: #283593;
+}
+.sb-pairs {
+  -fx-spacing: 4px;
+}
+.pair-icon {
+  -fx-fit-width: 20px;
+  -fx-fit-height: 20px;
+}
+
+/* Turn label */
+.turn-label {
+  -fx-font-size: 16px;
+  -fx-text-fill: #d81b60;
+  -fx-font-weight: bold;
+}
+
+/* Quit button */
+.quit-button {
+  -fx-background-color: #8e24aa;
+  -fx-text-fill: #ffffff;
+  -fx-padding: 8px 12px;
+}
+.quit-button:hover {
+  -fx-background-color: #6a1b9a;
+}
+
+/* Footer spacing */
+.footer-box {
+  -fx-padding: 10px;
+}

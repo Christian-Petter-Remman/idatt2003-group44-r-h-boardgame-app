@@ -8,6 +8,7 @@ public class MemoryCard {
   private final String imagePath;
   private boolean faceUp;
   private boolean matched;
+  private int matchedBy = -1;
 
   public MemoryCard(String id, String imagePath) {
     this.id = id;
@@ -28,16 +29,21 @@ public class MemoryCard {
     return faceUp;
   }
 
-  public boolean isMatched() {
-    return matched;
-  }
-
   public void setFaceUp(boolean faceUp) {
     this.faceUp = faceUp;
   }
 
-  public void setMatched(boolean matched) {
-    this.matched = matched;
+  public boolean isMatched() {
+    return matched;
+  }
+
+  public void setMatched(int playerIndex) {
+    this.matched = true;
+    this.matchedBy = playerIndex;
+  }
+
+  public int getMatchedBy() {
+    return matchedBy;
   }
 
   @Override
@@ -45,11 +51,11 @@ public class MemoryCard {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (!(o instanceof MemoryCard)) {
       return false;
     }
-    MemoryCard card = (MemoryCard) o;
-    return Objects.equals(id, card.id);
+    MemoryCard that = (MemoryCard) o;
+    return Objects.equals(id, that.id);
   }
 
   @Override

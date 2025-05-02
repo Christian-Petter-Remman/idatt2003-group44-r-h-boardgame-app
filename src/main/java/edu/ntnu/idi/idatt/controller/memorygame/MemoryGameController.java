@@ -10,12 +10,11 @@ import javafx.scene.Parent;
 
 public class MemoryGameController implements NavigationHandler {
 
-  private final MemoryBoardGame model;
   private final MemoryGameView view;
   private final NavigationManager navManager = NavigationManager.getInstance();
 
   public MemoryGameController(MemoryGameSettings settings) {
-    this.model = new MemoryBoardGame(settings);
+    MemoryBoardGame model = new MemoryBoardGame(settings);
     this.view = new MemoryGameView(settings);
     model.addObserver(view);
     view.setOnCardClick(model::flipCard);

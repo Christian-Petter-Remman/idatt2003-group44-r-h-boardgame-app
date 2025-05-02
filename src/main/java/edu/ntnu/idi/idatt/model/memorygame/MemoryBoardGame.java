@@ -1,12 +1,13 @@
 package edu.ntnu.idi.idatt.model.memorygame;
 
 import edu.ntnu.idi.idatt.model.common.factory.MemoryCardFactory;
-import javafx.application.Platform;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javafx.application.Platform;
 
 public class MemoryBoardGame {
+
   private final List<MemoryCard> cards;
   private final List<MemoryPlayer> players;
   private int currentPlayerIndex;
@@ -17,15 +18,14 @@ public class MemoryBoardGame {
     this.cards = MemoryCardFactory.loadAndShuffle(settings.getBoardSize());
     this.players = new ArrayList<>(settings.getPlayers());
     this.currentPlayerIndex = 0;
-    this.firstSelected = null;
   }
 
-  public void addObserver(MemoryGameObserver observer) {
-    observers.add(observer);
+  public void addObserver(MemoryGameObserver o) {
+    observers.add(o);
   }
 
-  public void removeObserver(MemoryGameObserver observer) {
-    observers.remove(observer);
+  public void removeObserver(MemoryGameObserver o) {
+    observers.remove(o);
   }
 
   private void notifyBoardUpdated() {
@@ -42,9 +42,11 @@ public class MemoryBoardGame {
 
   public void flipCard(int index) {
     MemoryCard card = cards.get(index);
-    if (card.isFaceUp() || card.isMatched()) return;
-    card.setFaceUp(true);
+    if (card.isFaceUp() || card.isMatched()) {
+      return;
+    }
 
+    card.setFaceUp(true);
     if (firstSelected == null) {
       firstSelected = card;
       notifyBoardUpdated();
@@ -52,34 +54,31 @@ public class MemoryBoardGame {
     }
 
     // Second card selected
-    MemoryCard second = card;
     notifyBoardUpdated();
 
-    // Check for match
+    MemoryCard second = card;
     if (firstSelected.getId().equals(second.getId())) {
-      firstSelected.setMatched(true);
-      second.setMatched(true);
+      firstSelected.setMatched(currentPlayerIndex);
+      second.setMatched(currentPlayerIndex);
       players.get(currentPlayerIndex).incrementScore();
       firstSelected = null;
       notifyBoardUpdated();
-      if (isGameOver()) notifyGameOver();
+      if (isGameOver()) {
+        notifyGameOver();
+      }
     } else {
-
       MemoryCard first = firstSelected;
-      int prevPlayer = currentPlayerIndex;
+      int prev = currentPlayerIndex;
       firstSelected = null;
 
       new Thread(() -> {
         try {
-          Thread.sleep(750);
-        } catch (InterruptedException ignored) {}
-
-        // flip both back
+          Thread.sleep(500);
+        } catch (InterruptedException ignored) {
+        }
         first.setFaceUp(false);
         second.setFaceUp(false);
-        currentPlayerIndex = (prevPlayer + 1) % players.size();
-
-        // update UI on FX thread
+        currentPlayerIndex = (prev + 1) % players.size();
         Platform.runLater(this::notifyBoardUpdated);
       }).start();
     }
@@ -93,7 +92,9 @@ public class MemoryBoardGame {
     int max = players.stream().mapToInt(MemoryPlayer::getScore).max().orElse(0);
     List<MemoryPlayer> winners = new ArrayList<>();
     for (MemoryPlayer p : players) {
-      if (p.getScore() == max) winners.add(p);
+      if (p.getScore() == max) {
+        winners.add(p);
+      }
     }
     return winners;
   }
