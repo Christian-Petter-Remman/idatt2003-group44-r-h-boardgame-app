@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import javafx.animation.ScaleTransition;
+import javafx.animation.SequentialTransition;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,32 +26,37 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
-public class MemoryGameView extends BorderPane implements MemoryGameObserver {
-  private final GridPane grid;
-  private final ImageView[] cardViews;
-  private final Label turnLabel;
-  private final Label player1Score;
-  private final Label player2Score;
-  private final HBox player1Pairs;
-  private final HBox player2Pairs;
-  private final Button restartButton;
+public class MemoryGameView implements MemoryGameObserver {
+
+  private BorderPane root;
+  private GridPane grid;
+  private ImageView[] cardViews;
+  private boolean[] previousFace;
+  private Label turnLabel, player1Score, player2Score;
+  private HBox player1Pairs, player2Pairs;
+  private Button quitButton, restartButton;
   private Consumer<Integer> onCardClick;
-  private Runnable onQuit;
-  private Runnable onRestart;
+  private Runnable onQuit, onRestart;
 
-  public MemoryGameView(MemoryGameSettings settings) {
-    getStyleClass().add("memory-root");
-    getStylesheets().add(
-        getClass().getResource("/css/MemoryGameStyleSheet.css").toExternalForm()
+  public MemoryGameView() {
+  }
+
+  public void initialize(MemoryGameSettings settings) {
+    root = new BorderPane();
+    root.getStyleClass().add("memory-root");
+    root.getStylesheets().add(
+        getClass().getResource("/css/MemoryGameStyleSheet.css")
+            .toExternalForm()
     );
 
-    Label title = new Label("Memory Match!");
-    title.getStyleClass().add("header");
-    HBox titleBox = new HBox(title);
-    titleBox.setAlignment(Pos.CENTER);
-    titleBox.setPadding(new Insets(10));
-    setTop(titleBox);
+    Label header = new Label("Memory Match!");
+    header.getStyleClass().add("header");
+    HBox top = new HBox(header);
+    top.setAlignment(Pos.CENTER);
+    top.setPadding(new Insets(10));
+    root.setTop(top);
 
     int rows = settings.getBoardSize().getRows();
     int cols = settings.getBoardSize().getCols();
@@ -60,6 +67,7 @@ public class MemoryGameView extends BorderPane implements MemoryGameObserver {
     grid.setAlignment(Pos.CENTER);
 
     cardViews = new ImageView[rows * cols];
+    previousFace = new boolean[rows * cols];
     for (int i = 0; i < rows * cols; i++) {
       ImageView iv = new ImageView();
       iv.getStyleClass().add("card");
@@ -67,15 +75,18 @@ public class MemoryGameView extends BorderPane implements MemoryGameObserver {
       iv.setFitHeight(80);
       iv.setPreserveRatio(true);
       final int idx = i;
-      iv.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-        if (onCardClick != null) onCardClick.accept(idx);
+      iv.setOnMouseClicked(e -> {
+        if (onCardClick != null) {
+          onCardClick.accept(idx);
+        }
       });
       cardViews[i] = iv;
       grid.add(iv, i % cols, i / cols);
+      previousFace[i] = false;
     }
-    setCenter(grid);
+    root.setCenter(grid);
 
-    turnLabel = new Label("Turn: ");
+    turnLabel = new Label("Turn:");
     turnLabel.getStyleClass().add("turn-label");
 
     player1Score = new Label("Pairs: 0");
@@ -90,20 +101,25 @@ public class MemoryGameView extends BorderPane implements MemoryGameObserver {
 
     VBox p1 = new VBox(4,
         new Label(settings.getPlayers().get(0).getName()),
-        player1Score, player1Pairs);
-    p1.setPadding(new Insets(5));
+        player1Score, player1Pairs
+    );
     p1.getStyleClass().add("player-box");
+    p1.setPadding(new Insets(5));
+
     VBox p2 = new VBox(4,
         new Label(settings.getPlayers().get(1).getName()),
-        player2Score, player2Pairs);
-    p2.setPadding(new Insets(5));
+        player2Score, player2Pairs
+    );
     p2.getStyleClass().add("player-box");
+    p2.setPadding(new Insets(5));
 
-    VBox leftBox = new VBox(10, turnLabel, new Label("Scoreboard"), p1, p2);
-    leftBox.setPadding(new Insets(10));
-    leftBox.getStyleClass().add("scoreboard-box");
-    leftBox.setPrefWidth(250);
-    setLeft(leftBox);
+    VBox left = new VBox(10,
+        turnLabel, new Label("Scoreboard"), p1, p2
+    );
+    left.getStyleClass().add("scoreboard-box");
+    left.setPadding(new Insets(10));
+    left.setPrefWidth(250);
+    root.setLeft(left);
 
     Label instrTitle = new Label("How to Play");
     instrTitle.getStyleClass().add("instr-title");
@@ -114,35 +130,53 @@ public class MemoryGameView extends BorderPane implements MemoryGameObserver {
             "• Otherwise turn passes\n" +
             "• Find all pairs to win!"
     );
-    instrText.getStyleClass().add("instr-text");
     instrText.setWrapText(true);
-    VBox instrBox = new VBox(5, instrTitle, instrText);
-    instrBox.setPadding(new Insets(10));
-    instrBox.getStyleClass().add("instr-box");
+    instrText.getStyleClass().add("instr-text");
+    VBox instr = new VBox(5, instrTitle, instrText);
+    instr.getStyleClass().add("instr-box");
+    instr.setPadding(new Insets(10));
 
     restartButton = new Button("Restart Game");
     restartButton.getStyleClass().add("restart-button");
     restartButton.setOnAction(e -> {
-      if (onRestart != null) onRestart.run();
+      if (onRestart != null) {
+        onRestart.run();
+      }
     });
-    VBox rightBox = new VBox(20, instrBox, restartButton);
-    rightBox.setPadding(new Insets(10));
-    rightBox.setAlignment(Pos.TOP_CENTER);
-    setRight(rightBox);
 
-    Button quit = new Button("Quit Game");
-    quit.getStyleClass().add("quit-button");
-    quit.setOnAction(e -> { if (onQuit != null) onQuit.run(); });
-    HBox footer = new HBox(quit);
-    footer.setAlignment(Pos.CENTER_LEFT);
-    footer.setPadding(new Insets(10));
-    footer.getStyleClass().add("footer-box");
-    setBottom(footer);
+    VBox right = new VBox(20, instr, restartButton);
+    right.setPadding(new Insets(10));
+    right.setAlignment(Pos.TOP_CENTER);
+    root.setRight(right);
+
+    quitButton = new Button("Quit Game");
+    quitButton.getStyleClass().add("quit-button");
+    quitButton.setOnAction(e -> {
+      if (onQuit != null) {
+        onQuit.run();
+      }
+    });
+    HBox bottom = new HBox(quitButton);
+    bottom.getStyleClass().add("footer-box");
+    bottom.setPadding(new Insets(10));
+    root.setBottom(bottom);
   }
 
-  public void setOnCardClick(Consumer<Integer> handler) { this.onCardClick = handler; }
-  public void setOnQuit(Runnable handler)     { this.onQuit = handler; }
-  public void setOnRestart(Runnable handler)  { this.onRestart = handler; }
+  public Parent getRoot() {
+    return root;
+  }
+
+  public void setOnCardClick(Consumer<Integer> h) {
+    this.onCardClick = h;
+  }
+
+  public void setOnQuit(Runnable h) {
+    this.onQuit = h;
+  }
+
+  public void setOnRestart(Runnable h) {
+    this.onRestart = h;
+  }
 
   @Override
   public void onBoardUpdated(MemoryBoardGame board) {
@@ -152,62 +186,79 @@ public class MemoryGameView extends BorderPane implements MemoryGameObserver {
   @Override
   public void onGameOver(List<MemoryPlayer> winners) {
     Platform.runLater(() -> {
-      Alert alert = new Alert(Alert.AlertType.INFORMATION);
-      alert.setHeaderText(winners.size() > 1 ? "Winners!" : "Winner!");
-      StringBuilder names = new StringBuilder();
-      winners.forEach(p -> names.append(p.getName()).append(" "));
-      alert.setContentText(names.toString());
-      alert.showAndWait();
+      Alert a = new Alert(Alert.AlertType.INFORMATION);
+      a.setHeaderText(winners.size() > 1 ? "Winners" : "Winner");
+      StringBuilder sb = new StringBuilder();
+      winners.forEach(p -> sb.append(p.getName()).append(" "));
+      a.setContentText(sb.toString());
+      a.showAndWait();
     });
   }
 
   public void render(MemoryBoardGame board) {
-    List<MemoryPlayer> players = board.getPlayers();
-    turnLabel.setText("Turn: " + players.get(board.getCurrentPlayerIndex()).getName());
-    player1Score.setText("Pairs: " + players.get(0).getScore());
-    player2Score.setText("Pairs: " + players.get(1).getScore());
+    List<MemoryPlayer> ps = board.getPlayers();
+    turnLabel.setText("Turn: " + ps.get(board.getCurrentPlayerIndex()).getName());
+    player1Score.setText("Pairs: " + ps.get(0).getScore());
+    player2Score.setText("Pairs: " + ps.get(1).getScore());
 
-    Set<String> p1Ids = new HashSet<>(), p2Ids = new HashSet<>();
-    for (MemoryCard c : board.getCards()) {
+    Set<String> p1 = new HashSet<>(), p2 = new HashSet<>();
+    for (var c : board.getCards()) {
       if (c.isMatched()) {
-        if (c.getMatchedBy() == 0) p1Ids.add(c.getId());
-        else                      p2Ids.add(c.getId());
+        if (c.getMatchedBy() == 0) {
+          p1.add(c.getId());
+        } else {
+          p2.add(c.getId());
+        }
       }
     }
     player1Pairs.getChildren().clear();
     player2Pairs.getChildren().clear();
-    for (String id : p1Ids) {
-      ImageView iv = new ImageView(new Image(
-          Objects.requireNonNull(getClass().getResourceAsStream(
-              board.getCards().stream().filter(c->c.getId().equals(id))
-                  .findFirst().get().getImagePath()
-          ))
-      ));
-      iv.setFitWidth(24); iv.setFitHeight(24);
-      player1Pairs.getChildren().add(iv);
+    for (String id : p1) {
+      addPairIcon(player1Pairs, board, id);
     }
-    for (String id : p2Ids) {
-      ImageView iv = new ImageView(new Image(
-          Objects.requireNonNull(getClass().getResourceAsStream(
-              board.getCards().stream().filter(c->c.getId().equals(id))
-                  .findFirst().get().getImagePath()
-          ))
-      ));
-      iv.setFitWidth(24); iv.setFitHeight(24);
-      player2Pairs.getChildren().add(iv);
+    for (String id : p2) {
+      addPairIcon(player2Pairs, board, id);
     }
 
+    var cards = board.getCards();
     for (int i = 0; i < cardViews.length; i++) {
-      MemoryCard c = board.getCards().get(i);
-      String path = (c.isFaceUp()||c.isMatched())
-          ? c.getImagePath() : "/images/card_back.png";
-      cardViews[i].setImage(new Image(
-          Objects.requireNonNull(getClass().getResourceAsStream(path))
-      ));
+      MemoryCard c = cards.get(i);
+      boolean face = c.isFaceUp() || c.isMatched();
+      String path = face ? c.getImagePath() : "/images/card_back.png";
+      if (previousFace[i] != face) {
+        animateFlip(cardViews[i], path);
+      } else {
+        cardViews[i].setImage(load(path));
+      }
+      previousFace[i] = face;
     }
   }
 
-  public Parent getRoot() {
-    return this;
+  private void addPairIcon(HBox box, MemoryBoardGame b, String id) {
+    var img = b.getCards().stream()
+        .filter(c -> c.getId().equals(id))
+        .findFirst().get().getImagePath();
+    ImageView iv = new ImageView(load(img));
+    iv.setFitWidth(24);
+    iv.setFitHeight(24);
+    box.getChildren().add(iv);
   }
+
+  private Image load(String p) {
+    return new Image(Objects.requireNonNull(
+        getClass().getResourceAsStream(p)
+    ));
+  }
+
+  private void animateFlip(ImageView iv, String path) {
+    var hide = new ScaleTransition(Duration.millis(150), iv);
+    hide.setFromX(1);
+    hide.setToX(0);
+    hide.setOnFinished(e -> iv.setImage(load(path)));
+    var show = new ScaleTransition(Duration.millis(150), iv);
+    show.setFromX(0);
+    show.setToX(1);
+    new SequentialTransition(hide, show).play();
+  }
+
 }

@@ -106,8 +106,7 @@ public class NavigationManager {
   }
 
   public void navigateToStartScreen() {
-    StartScreenModel model = new StartScreenModel();
-    StartScreenController controller = new StartScreenController(model);
+    new StartScreenModel();
     StartScreenView view = new StartScreenView();
     setRoot(view.getRoot());
   }
@@ -196,7 +195,7 @@ public class NavigationManager {
       String savePath = ruleSelectionModel.getSavePath();
       GameStateCsvLoader.GameState gameState = GameStateCsvLoader.load(savePath);
       String boardPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + gameState.getBoardFile();
-      logger.info("Final board path: " + boardPath);
+      logger.info("Final board path: {}", boardPath);
 
       SNLFactory factory = new SNLFactory();
       SNLBoard board = factory.loadBoardFromFile(boardPath);
@@ -234,17 +233,20 @@ public class NavigationManager {
     }
   }
 
-
   public void navigateToMemoryGame() {
     try {
-      MemoryRuleSelectionController ruleCtrl =
-          (MemoryRuleSelectionController) currentHandler;
-
+      MemoryRuleSelectionController ruleCtrl = (MemoryRuleSelectionController) currentHandler;
       MemoryGameSettings settings = ruleCtrl.getSettings();
-
+      if (settings == null) {
+        showAlert("Error", "Please complete the rule selection first.");
+        return;
+      }
       MemoryGameController gameCtrl = new MemoryGameController(settings);
       setHandler(gameCtrl);
       setRoot(gameCtrl.getView().getRoot());
+      logger.info("Navigated to Memory Game Screen");
+    } catch (ClassCastException e) {
+      showAlert("Error", "Internal navigation error: wrong handler type.");
     } catch (Exception e) {
       logger.error("Failed to load Memory Game", e);
       showAlert("Error", "Failed to load Memory Game");
