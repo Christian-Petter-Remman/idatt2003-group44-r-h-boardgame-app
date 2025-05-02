@@ -17,10 +17,12 @@ public class MemoryGameController implements NavigationHandler {
     model = new MemoryBoardGame(settings);
     view = new MemoryGameView();
     view.initialize(settings);
+
     model.addObserver(view);
     view.setOnCardClick(model::flipCard);
     view.setOnRestart(model::reset);
     view.setOnQuit(this::navigateBack);
+
     view.render(model);
   }
 

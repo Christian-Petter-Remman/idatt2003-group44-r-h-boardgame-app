@@ -2,6 +2,7 @@ package edu.ntnu.idi.idatt.view.memorygame;
 
 import edu.ntnu.idi.idatt.controller.memorygame.MemoryRuleSelectionController;
 import edu.ntnu.idi.idatt.model.memorygame.MemoryGameSettings;
+import java.util.Objects;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -83,7 +84,7 @@ public class MemoryRuleSelectionView {
 
     StackPane container = new StackPane(bg, card);
     container.getStylesheets().add(
-        getClass().getResource("/css/RuleSelectionStyles.css").toExternalForm()
+        Objects.requireNonNull(getClass().getResource("/css/RuleSelectionStyles.css")).toExternalForm()
     );
     StackPane.setAlignment(card, Pos.CENTER);
     StackPane.setMargin(card, new Insets(20));
