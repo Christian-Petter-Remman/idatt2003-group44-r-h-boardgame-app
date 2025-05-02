@@ -62,7 +62,7 @@ public class StarGameController implements NavigationHandler {
     Tile tile = getBoard().getTile(tileNum);
 
     if (tile.hasAttribute(Bridge.class)) {
-      return "brown"; // Brown
+      return "yellow"; // Brown
     } else if (tile.hasAttribute(Tunnel.class)) {
       return "purple"; // Purple
     } else if (tile.hasAttribute(Jail.class)) {
@@ -70,10 +70,12 @@ public class StarGameController implements NavigationHandler {
     } else if (tile.hasAttribute(Path.class)) {
       return "blue"; // Blue
     }
-
-    // Default color if no special attribute
+    if (tileNum == 1000){
+      return "Black";
+    }
     return (tileNum % 2 == 0) ? "#f0f0f0" : "#d0d0d0";
   }
+
   public List<Player> getPlayersAtPosition(int position) {
     List<Player> playersAtPosition = new ArrayList<>();
     for (Player player : game.getPlayers()) {

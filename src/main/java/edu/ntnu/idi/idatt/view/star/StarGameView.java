@@ -5,7 +5,6 @@ import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.stargame.StarBoard;
 import edu.ntnu.idi.idatt.view.GameScreen;
-import edu.ntnu.idi.idatt.view.snl.BoardCreator;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.image.Image;
@@ -127,7 +126,8 @@ public class StarGameView extends GameScreen {
     cell.setPrefSize(TILE_SIZE, TILE_SIZE);
 
     String borderColor = isBlank(tileNum) ? "white" : "black";
-    cell.setStyle("-fx-border-color: " + borderColor + "; -fx-background-color: white;");
+    cell.setStyle("-fx-border-color: " + borderColor+";" + "-fx-background-color:"+getTileColor(tileNum)+";" );
+
 
     if (tileNum != 0) {
       Text tileNumber = new Text(String.valueOf(tileNum));
