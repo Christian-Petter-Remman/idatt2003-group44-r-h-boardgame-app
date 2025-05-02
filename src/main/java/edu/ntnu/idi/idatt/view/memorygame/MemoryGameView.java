@@ -84,9 +84,9 @@ public class MemoryGameView extends BorderPane implements MemoryGameObserver {
   public void render(MemoryBoardGame board) {
     List<MemoryCard> cards = board.getCards();
     for (int i = 0; i < cards.size(); i++) {
-      MemoryCard c = cards.get(i);
-      String imagePath = (c.isFaceUp() || c.isMatched())
-          ? c.getImagePath()
+      MemoryCard card = cards.get(i);
+      String imagePath = (card.isFaceUp() || card.isMatched())
+          ? card.getImagePath()
           : "/images/card_back.png";
       cardViews[i].setImage(new Image(
           Objects.requireNonNull(getClass().getResourceAsStream(imagePath))

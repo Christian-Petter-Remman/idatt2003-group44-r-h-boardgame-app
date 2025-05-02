@@ -30,8 +30,6 @@ public class MemoryGameSettings {
     }
   }
 
-
-
   private BoardSize boardSize;
   private List<MemoryPlayer> players;
 
