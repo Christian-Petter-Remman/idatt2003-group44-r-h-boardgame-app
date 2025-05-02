@@ -1,42 +1,44 @@
 package edu.ntnu.idi.idatt.controller.memorygame;
 
-import edu.ntnu.idi.idatt.model.common.memorygame.GameState;
+import edu.ntnu.idi.idatt.model.memorygame.MemoryBoardGame;
+import edu.ntnu.idi.idatt.model.memorygame.MemoryGameSettings;
+import edu.ntnu.idi.idatt.navigation.NavigationHandler;
+import edu.ntnu.idi.idatt.navigation.NavigationManager;
+import edu.ntnu.idi.idatt.navigation.NavigationTarget;
 import edu.ntnu.idi.idatt.view.memorygame.MemoryGameView;
-import javafx.scene.Node;
-import javafx.stage.Stage;
+import javafx.scene.Parent;
 
-public class MemoryGameController {
-  private final MemoryGame model;
+public class MemoryGameController implements NavigationHandler {
+
+  private final MemoryBoardGame model;
   private final MemoryGameView view;
+  private final NavigationManager navManager = NavigationManager.getInstance();
 
-  public MemoryGameController(MemoryGame model, Stage stage) {
-    this.model = model;
-    this.view = new MemoryGameView(model);
-
-    // Register the view as an observer of the model
+  public MemoryGameController(MemoryGameSettings settings) {
+    this.model = new MemoryBoardGame(settings);
+    this.view = new MemoryGameView(settings);
     model.addObserver(view);
+    view.setOnCardClick(model::flipCard);
+    view.render(model);
+  }
 
-    // Wire up the Start button to begin the game
-    view.getStartButton().setOnAction(e -> model.start());
+  public MemoryGameView getView() {
+    return view;
+  }
 
-    // Wire up each card slot in the view to call model.flipCard
-    Node[][] slots = view.getCardSlots();
-    for (int r = 0; r < slots.length; r++) {
-      for (int c = 0; c < slots[r].length; c++) {
-        final int row = r, col = c;
-        slots[r][c].setOnMouseClicked(e -> {
-          if (model.getState() == GameState.IN_PROGRESS) {
-            try {
-              model.flipCard(row, col);
-            } catch (IllegalArgumentException ex) {
-              // invalid flip
-            }
-          }
-        });
-      }
-    }
 
-    //Finally, show the view in the given stage
-    view.show(stage);
+  @Override
+  public void navigateTo(String destination) {
+    navManager.navigateTo(NavigationTarget.valueOf(destination));
+  }
+
+  @Override
+  public void navigateBack() {
+    navManager.navigateBack();
+  }
+
+  @Override
+  public void setRoot(Parent root) {
+    navManager.setRoot(root);
   }
 }

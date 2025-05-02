@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.model.common.memorygame;
+package edu.ntnu.idi.idatt.model.memorygame;
 
 import java.util.List;
 
@@ -17,6 +17,10 @@ public class MemoryGameSettings {
       this.cols = cols;
     }
 
+    public String getFileName() {
+      return String.format("memory_%dx%d.json", rows, cols);
+    }
+
     public int getRows() {
       return rows;
     }
@@ -25,6 +29,8 @@ public class MemoryGameSettings {
       return cols;
     }
   }
+
+
 
   private BoardSize boardSize;
   private List<MemoryPlayer> players;
@@ -49,4 +55,5 @@ public class MemoryGameSettings {
   public void setPlayers(List<MemoryPlayer> players) {
     this.players = players;
   }
+
 }

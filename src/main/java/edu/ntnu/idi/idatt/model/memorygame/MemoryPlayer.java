@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.model.common.memorygame;
+package edu.ntnu.idi.idatt.model.memorygame;
 
 public class MemoryPlayer {
 

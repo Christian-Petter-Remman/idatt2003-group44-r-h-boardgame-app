@@ -1,6 +1,6 @@
 package edu.ntnu.idi.idatt.view.memorygame;
 
-import edu.ntnu.idi.idatt.model.common.memorygame.MemoryGameSettings;
+import edu.ntnu.idi.idatt.model.memorygame.MemoryGameSettings;
 
 public interface MemoryRuleSelectionListener {
   void onBack();

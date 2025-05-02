@@ -1,10 +1,11 @@
 package edu.ntnu.idi.idatt.controller.memorygame;
 
-import edu.ntnu.idi.idatt.model.common.memorygame.MemoryGameSettings;
-import edu.ntnu.idi.idatt.model.common.memorygame.MemoryPlayer;
+import edu.ntnu.idi.idatt.model.memorygame.MemoryGameSettings;
+import edu.ntnu.idi.idatt.model.memorygame.MemoryPlayer;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationTarget;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
@@ -66,7 +67,7 @@ public class MemoryRuleSelectionController implements NavigationHandler {
   }
 
   @Override
-  public void setRoot(javafx.scene.Parent root) {
+  public void setRoot(Parent root) {
     navManager.setRoot(root);
   }
 }

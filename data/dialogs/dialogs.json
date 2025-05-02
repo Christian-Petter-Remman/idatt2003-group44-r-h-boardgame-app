@@ -77,7 +77,7 @@
   {
     "id": "memoryGame",
     "title": "Memory Match",
-    "body": "I’m the thinking boy! Flip two cards to find matching pairs. If they match, they stay face-up; if not, they flip back down. Can you match them all?",
+    "body": "I’m the thinking farmer! Flip two cards to find matching pairs. If they match, they stay face-up; if not, they flip back down. Can you match them all?",
     "funFact": "Memory games help improve short-term memory and focus.",
     "imagePath": "/home_screen/farmer.png",
     "ctaLabel": "Play Memory Game",

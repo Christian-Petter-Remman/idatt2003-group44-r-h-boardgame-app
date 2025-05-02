@@ -1,170 +1,104 @@
 package edu.ntnu.idi.idatt.view.memorygame;
 
-import edu.ntnu.idi.idatt.model.common.memorygame.*;
-import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionData;
+import java.util.Objects;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.scene.Scene;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
-
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import edu.ntnu.idi.idatt.model.memorygame.MemoryBoardGame;
+import edu.ntnu.idi.idatt.model.memorygame.MemoryCard;
+import edu.ntnu.idi.idatt.model.memorygame.MemoryGameObserver;
+import edu.ntnu.idi.idatt.model.memorygame.MemoryGameSettings;
+import edu.ntnu.idi.idatt.model.memorygame.MemoryPlayer;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.function.Consumer;
 
 public class MemoryGameView extends BorderPane implements MemoryGameObserver {
-  private final MemoryGame model;
-  private final CardView[][] cardGrid;
-  private final Label statusLabel = new Label("Click Start to begin");
-  private final HBox scoreBox = new HBox(10);
-  private final Button startButton = new Button("Start");
-  private final GridPane gridPane;
 
-  public MemoryGameView(MemoryGame model) {
-    this.model = model;
-    MemoryBoard board = model.getBoard();
-    int rows = board.getRowCount(), cols = board.getColCount();
+  private final Label player1Label;
+  private final Label player2Label;
+  private final ImageView[] cardViews;
+  private Consumer<Integer> onCardClick;
 
-    // Build grid pane
-    gridPane = new GridPane();
-    gridPane.setHgap(5); gridPane.setVgap(5); gridPane.setPadding(new Insets(10));
+  public MemoryGameView(MemoryGameSettings settings) {
+    int rows = settings.getBoardSize().getRows();
+    int cols = settings.getBoardSize().getCols();
+    this.cardViews = new ImageView[rows * cols];
 
-    cardGrid = new CardView[rows][cols];
-    for (int r = 0; r < rows; r++) {
-      for (int c = 0; c < cols; c++) {
-        CardView cv = new CardView();
-        cardGrid[r][c] = cv;
-        gridPane.add(cv, c, r);
+    // Scoreboard
+    player1Label = new Label();
+    player2Label = new Label();
+    HBox scoreboard = new HBox(20, player1Label, player2Label);
+    scoreboard.setPadding(new Insets(10));
+    setTop(scoreboard);
 
-        // User clicks flip
-        final int row = r, col = c;
-        cv.setOnMouseClicked((MouseEvent e) -> {
-          if (model.getState() == GameState.IN_PROGRESS) {
-            try { model.flipCard(row, col); }
-            catch (IllegalArgumentException ignore) {}
-          }
-        });
-      }
+    // Grid of cards
+    GridPane grid = new GridPane();
+    grid.setHgap(5);
+    grid.setVgap(5);
+    grid.setPadding(new Insets(10));
+    for (int i = 0; i < rows * cols; i++) {
+      ImageView iv = new ImageView();
+      iv.setFitWidth(80);
+      iv.setFitHeight(80);
+      final int idx = i;
+      iv.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+        if (onCardClick != null) onCardClick.accept(idx);
+      });
+      cardViews[i] = iv;
+      grid.add(iv, i % cols, i / cols);
     }
+    setCenter(grid);
   }
 
-  // Call this to build and show the UI; the controller should use this.
-  public void show(Stage stage) {
-    // Register self as observer
-    model.addObserver(this);
-
-    // Top bar
-    startButton.setOnAction(e -> model.start());
-    HBox topBar = new HBox(10, statusLabel, startButton);
-    topBar.setPadding(new Insets(10));
-
-    // Bottom scores
-    scoreBox.setPadding(new Insets(10));
-
-    // Assemble layout
-    setTop(topBar);
-    setCenter(gridPane);
-    setBottom(scoreBox);
-
-    stage.setScene(new Scene(this));
-    stage.setTitle("Memory Game");
-    stage.show();
+  public void setOnCardClick(Consumer<Integer> handler) {
+    this.onCardClick = handler;
   }
 
   @Override
-  public void onCardFlipped(int row, int col, CardState state) {
-    MemoryCard card = model.getBoard().getCard(row, col);
-    CardView cv = cardGrid[row][col];
-    if (state == CardState.FACE_UP || state == CardState.MATCHED) {
-      CharacterSelectionData icon = card.getIcon();
-      cv.showFace(new Image(icon.getImagePath()));
-    } else {
-      cv.showBack();
-
-    }
+  public void onBoardUpdated(MemoryBoardGame board) {
+    Platform.runLater(() -> render(board));
   }
 
   @Override
-  public void onMatchFound(MemoryPlayer player, int newScore) {
-    Label lbl = findOrCreateScoreLabel(player.getName());
-    lbl.setText(player.getName() + ": " + newScore);
+  public void onGameOver(List<MemoryPlayer> winners) {
+    Platform.runLater(() -> {
+      Alert a = new Alert(Alert.AlertType.INFORMATION);
+      a.setHeaderText("Game Over");
+      StringBuilder sb = new StringBuilder("Winner");
+      if (winners.size() > 1) sb.append("s");
+      sb.append(": ");
+      winners.forEach(p -> sb.append(p.getName()).append(" "));
+      a.setContentText(sb.toString());
+      a.showAndWait();
+    });
   }
 
-  @Override
-  public void onTurnChanged(MemoryPlayer nextPlayer) {
-    statusLabel.setText("Turn: " + nextPlayer.getName());
-  }
-
-  @Override
-  public void onGameStateChanged(GameState newState) {
-    if (newState == GameState.IN_PROGRESS) {
-      startButton.setDisable(true);
-      statusLabel.setText("Game in progress");
-    } else if (newState == GameState.FINISHED) {
-      startButton.setDisable(false);
+  public void render(MemoryBoardGame board) {
+    List<MemoryCard> cards = board.getCards();
+    for (int i = 0; i < cards.size(); i++) {
+      MemoryCard c = cards.get(i);
+      String imagePath = (c.isFaceUp() || c.isMatched())
+          ? c.getImagePath()
+          : "/images/card_back.png";
+      cardViews[i].setImage(new Image(
+          Objects.requireNonNull(getClass().getResourceAsStream(imagePath))
+      ));
     }
+    List<MemoryPlayer> players = board.getPlayers();
+    player1Label.setText(players.get(0).getName() + ": " + players.get(0).getScore());
+    player2Label.setText(players.get(1).getName() + ": " + players.get(1).getScore());
   }
 
-  @Override
-  public void onGameFinished(List<MemoryPlayer> winners) {
-    String names = winners.stream()
-        .map(MemoryPlayer::getName)
-        .collect(Collectors.joining(", "));
-    Alert alert = new Alert(AlertType.INFORMATION);
-    alert.setHeaderText("Game Over");
-    alert.setContentText("Winner(s): " + names);
-    alert.showAndWait();
-  }
 
-  private Label findOrCreateScoreLabel(String playerName) {
-    for (Node node : scoreBox.getChildren()) {
-      if (node instanceof Label && ((Label) node).getText().startsWith(playerName + ":")) {
-        return (Label) node;
-      }
-    }
-    Label lbl = new Label(playerName + ": 0");
-    scoreBox.getChildren().add(lbl);
-    return lbl;
-  }
-
-  // Simple card UI component with back face and image face.
-  private static class CardView extends StackPane {
-    private final Rectangle back = new Rectangle(80, 80);
-    private final ImageView face = new ImageView();
-
-    public CardView() {
-      back.setArcWidth(10);
-      back.setArcHeight(10);
-      back.setFill(Color.GRAY);
-      face.setFitWidth(80);
-      face.setFitHeight(80);
-      getChildren().addAll(back, face);
-      showBack();
-    }
-
-    public void showFace(Image img) {
-      face.setImage(img);
-      back.setVisible(false);
-    }
-
-    public void showBack() {
-      face.setImage(null);
-      back.setVisible(true);
-    }
-  }
-  public Button getStartButton(){
-    return startButton;
-  }
-
-  public Node[][] getCardSlots(){
-    return cardGrid;
+  public Parent getRoot() {
+    return this;
   }
 }

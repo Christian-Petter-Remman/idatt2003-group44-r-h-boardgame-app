@@ -15,7 +15,7 @@ import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionMan
 import edu.ntnu.idi.idatt.model.common.factory.SNLFactory;
 import edu.ntnu.idi.idatt.model.common.factory.StarFactory;
 import edu.ntnu.idi.idatt.model.common.intro.StartScreenModel;
-import edu.ntnu.idi.idatt.model.common.memorygame.MemoryGameSettings;
+import edu.ntnu.idi.idatt.model.memorygame.MemoryGameSettings;
 import edu.ntnu.idi.idatt.model.snl.*;
 import edu.ntnu.idi.idatt.model.stargame.StarBoard;
 import edu.ntnu.idi.idatt.model.stargame.StarGame;

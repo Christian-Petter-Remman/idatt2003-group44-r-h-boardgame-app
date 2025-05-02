@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.model.common.memorygame;
+package edu.ntnu.idi.idatt.model.memorygame;
 
 import edu.ntnu.idi.idatt.model.common.factory.MemoryCardFactory;
 import java.util.ArrayList;

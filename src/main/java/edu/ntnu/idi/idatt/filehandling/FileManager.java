@@ -22,6 +22,7 @@ public class FileManager {
 
   public static final String DEFAULT_PLAYERS_FILE = "data/players/default_players.csv";
   public static final String LAST_GAME_PLAYERS_FILE = "data/players/last_game_players.csv";
+  public static final String MEMORYGAME_DIR = "data/memorygame";
 
 
   public static void ensureApplicationDirectoriesExist() throws IOException {
@@ -32,7 +33,8 @@ public class FileManager {
             SAVED_GAMES_DIR,
             CUSTOM_BOARDS_DIR,
             SNAKES_LADDERS_BOARDS_DIR,
-            STAR_GAME_DIR
+            STAR_GAME_DIR,
+            MEMORYGAME_DIR
     };
 
     for (String dirPath : directories) {

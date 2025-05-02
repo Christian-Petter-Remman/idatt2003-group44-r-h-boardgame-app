@@ -1,10 +1,12 @@
+// File: MemoryJsonHandler.java
 package edu.ntnu.idi.idatt.filehandling.handlers;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import edu.ntnu.idi.idatt.filehandling.FileHandler;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
-import edu.ntnu.idi.idatt.model.common.memorygame.MemoryCard;
+import edu.ntnu.idi.idatt.model.memorygame.MemoryCard;
+
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
@@ -15,7 +17,7 @@ import java.util.Map;
 
 public class MemoryJsonHandler implements FileHandler<List<MemoryCard>> {
   private static final Gson GSON = new Gson();
-  private static final String MEMORY_DIR = FileManager.DATA_DIR + "/memorygame";
+  private static final String MEMORY_DIR = FileManager.MEMORYGAME_DIR;
 
   @Override
   public void saveToFile(List<MemoryCard> cards, String fileName) {
@@ -24,13 +26,15 @@ public class MemoryJsonHandler implements FileHandler<List<MemoryCard>> {
 
   @Override
   public List<MemoryCard> loadFromFile(String fileName) throws IOException {
-    String path = MEMORY_DIR + "/" + fileName;
-    String json = Files.readString(Path.of(path));
+    Path path = Path.of(MEMORY_DIR, fileName);
+    String json = Files.readString(path);
+
     Type listType = new TypeToken<List<Map<String, String>>>(){}.getType();
     List<Map<String, String>> entries = GSON.fromJson(json, listType);
+
     List<MemoryCard> cards = new ArrayList<>();
     for (Map<String, String> e : entries) {
-      String id = e.get("id");
+      String id        = e.get("id");
       String imagePath = e.get("imagePath");
       cards.add(new MemoryCard(id, imagePath));
       cards.add(new MemoryCard(id, imagePath));
@@ -38,4 +42,3 @@ public class MemoryJsonHandler implements FileHandler<List<MemoryCard>> {
     return cards;
   }
 }
-

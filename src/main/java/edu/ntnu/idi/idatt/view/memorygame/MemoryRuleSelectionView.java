@@ -1,7 +1,7 @@
 package edu.ntnu.idi.idatt.view.memorygame;
 
 import edu.ntnu.idi.idatt.controller.memorygame.MemoryRuleSelectionController;
-import edu.ntnu.idi.idatt.model.common.memorygame.MemoryGameSettings;
+import edu.ntnu.idi.idatt.model.memorygame.MemoryGameSettings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
