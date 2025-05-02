@@ -9,4 +9,8 @@ public enum NavigationTarget {
   STAR_INTRO,
   STAR_GAME,
   STAR_CHARACTER_SELECTION,
+
+  MEMORY_RULE_SCREEN,
+  MEMORY_GAME_SCREEN
+
 }

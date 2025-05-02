@@ -1,7 +1,11 @@
 package edu.ntnu.idi.idatt.navigation;
 
 
+import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
+
 import edu.ntnu.idi.idatt.controller.common.*;
+import edu.ntnu.idi.idatt.controller.memorygame.MemoryGameController;
+import edu.ntnu.idi.idatt.controller.memorygame.MemoryRuleSelectionController;
 import edu.ntnu.idi.idatt.controller.snl.*;
 import edu.ntnu.idi.idatt.controller.star.StarGameController;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
@@ -11,6 +15,7 @@ import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionMan
 import edu.ntnu.idi.idatt.model.common.factory.SNLFactory;
 import edu.ntnu.idi.idatt.model.common.factory.StarFactory;
 import edu.ntnu.idi.idatt.model.common.intro.StartScreenModel;
+import edu.ntnu.idi.idatt.model.common.memorygame.MemoryGameSettings;
 import edu.ntnu.idi.idatt.model.snl.*;
 import edu.ntnu.idi.idatt.model.stargame.StarBoard;
 import edu.ntnu.idi.idatt.model.stargame.StarGame;
@@ -19,6 +24,7 @@ import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
 
 import edu.ntnu.idi.idatt.view.common.character.StarCharSelectionScreen;
 import edu.ntnu.idi.idatt.view.common.intro.StartScreenView;
+import edu.ntnu.idi.idatt.view.memorygame.MemoryRuleSelectionView;
 import edu.ntnu.idi.idatt.view.snl.SNLGameScreenView;
 
 import edu.ntnu.idi.idatt.view.snl.SNLRuleSelectionView;
@@ -92,6 +98,10 @@ public class NavigationManager {
       case STAR_CHARACTER_SELECTION -> navigateToStarCharacterSelection();
       case STAR_INTRO -> navigateToStarIntroScreen();
       case STAR_GAME -> navigateToStarGameScreen();
+
+      case MEMORY_RULE_SCREEN -> navigateToMemoryRuleScreen();
+      case MEMORY_GAME_SCREEN -> navigateToMemoryGame();
+
     }
   }
 
@@ -207,6 +217,37 @@ public class NavigationManager {
     } catch (Exception e) {
       logger.error("Failed to load Snakes and Ladders game from save file", e);
 
+    }
+  }
+
+  public void navigateToMemoryRuleScreen() {
+    try {
+      MemoryRuleSelectionController controller = new MemoryRuleSelectionController();
+      MemoryRuleSelectionView view = new MemoryRuleSelectionView(controller);
+      view.initializeUI();
+      setHandler(controller);
+      setRoot(view.getRoot());
+      logger.info("Navigated to Memory Game Rule Selection Screen");
+    } catch (Exception e) {
+      logger.error("Failed to load Memory Rule Selection", e);
+      showAlert("Error", "Failed to load Memory Rule Selection");
+    }
+  }
+
+
+  public void navigateToMemoryGame() {
+    try {
+      MemoryRuleSelectionController ruleCtrl =
+          (MemoryRuleSelectionController) currentHandler;
+
+      MemoryGameSettings settings = ruleCtrl.getSettings();
+
+      MemoryGameController gameCtrl = new MemoryGameController(settings);
+      setHandler(gameCtrl);
+      setRoot(gameCtrl.getView().getRoot());
+    } catch (Exception e) {
+      logger.error("Failed to load Memory Game", e);
+      showAlert("Error", "Failed to load Memory Game");
     }
   }
 
