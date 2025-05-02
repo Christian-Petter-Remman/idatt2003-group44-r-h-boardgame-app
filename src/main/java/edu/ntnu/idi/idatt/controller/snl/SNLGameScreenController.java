@@ -47,6 +47,10 @@ public class SNLGameScreenController implements NavigationHandler {
     return game.getCurrentPlayer();
   }
 
+  public List<Player> getAllPlayers() {
+    return game.getPlayers();
+  }
+
   public SNLGame getGame() {
     return game;
   }

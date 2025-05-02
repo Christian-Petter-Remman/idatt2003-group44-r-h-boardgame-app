@@ -28,11 +28,47 @@ public class StarBoard extends AbstractBoard {
   }
 
   public Star addStar() {
-    int start = new Random().nextInt(73);
-    Star star = new Star(start, start);
-    getTile(start).addAttribute(star);
+    List<Integer> occupied = new ArrayList<>();
+
+    // Add jail positions
+    for (Jail jail : getJailTiles()) {
+      occupied.add(jail.getStart());
+    }
+
+    // Add bridges
+    for (Bridge bridge : getBridges()) {
+      occupied.add(bridge.getStart());
+      occupied.add(bridge.getEnd());
+    }
+
+    // Add tunnels
+    for (Tunnel tunnel : getTunnels()) {
+      occupied.add(tunnel.getStart());
+      occupied.add(tunnel.getEnd());
+    }
+
+    for (Star existingStar : stars) {
+      occupied.add(existingStar.getStart());
+    }
+
+    // Build a list of valid tiles
+    List<Integer> validTiles = new ArrayList<>();
+    for (int i = 1; i <= 73; i++) {
+      if (!occupied.contains(i)) {
+        validTiles.add(i);
+      }
+    }
+
+    if (validTiles.isEmpty()) {
+      logger.warn("No valid tiles left to place a Star.");
+      return null;
+    }
+
+    int selected = validTiles.get(new Random().nextInt(validTiles.size()));
+    Star star = new Star(selected, selected);
+    getTile(selected).addAttribute(star);
     stars.add(star);
-    logger.info("Star placed at tile {}", start);
+    logger.info("Star placed at tile {}", selected);
     return star;
   }
 

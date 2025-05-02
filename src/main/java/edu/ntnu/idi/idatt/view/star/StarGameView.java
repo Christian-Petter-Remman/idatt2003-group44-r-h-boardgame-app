@@ -45,6 +45,12 @@ public class StarGameView extends GameScreen {
       public void onPlayerTurnChanged(Player currentPlayer) {
         currentPlayerLabel.setText("Current turn: " + currentPlayer.getName());
         positionLabel.setText("Position: " + currentPlayer.getPosition());
+        updatePlayerImages();
+
+        Image newImage = getCurrentPlayerImage();
+        if (newImage != null) {
+          playerImage.setImage(newImage);
+        }
       }
 
 
@@ -76,7 +82,6 @@ public class StarGameView extends GameScreen {
     }
     return null;
   }
-
 
   @Override
   public void renderBoardGrid() {
@@ -113,7 +118,7 @@ public class StarGameView extends GameScreen {
       boardGrid.add(cell, col, row);
     }
 
-    renderOverlay(); // Also refresh overlay
+    renderOverlay();
   }
 
   @Override
@@ -209,6 +214,11 @@ public class StarGameView extends GameScreen {
       }
     }
     return new double[]{0, 0}; // Fallback
+  }
+
+  @Override
+  protected List<Player> getAllPlayers() {
+    return controller.getPlayers(); // Or however you store them
   }
 
   @Override

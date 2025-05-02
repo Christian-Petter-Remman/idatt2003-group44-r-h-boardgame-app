@@ -25,11 +25,13 @@ public abstract class GameScreen {
 
   protected BorderPane root;
   protected GridPane boardGrid;
+  protected VBox playerImagesBox;
   protected Label currentPlayerLabel;
   protected Label positionLabel;
   protected Label diceResultLabel;
   protected Button rollButton;
-  protected abstract Image getCurrentPlayerImage();
+  protected ImageView playerImage;
+  protected VBox playerInfoList;
 
   public GameScreen() {}
 
@@ -37,7 +39,7 @@ public abstract class GameScreen {
     root = new BorderPane();
     root.setStyle("-fx-padding: 30;");
 
-    // Left: board
+    // 🎮 Board (left)
     initializeBoardGrid();
     initializeOverlay();
 
@@ -45,34 +47,61 @@ public abstract class GameScreen {
     boardWithOverlay.getChildren().addAll(boardGrid, getOverlay());
     boardGrid.toBack();
     if (getOverlay() != null) getOverlay().toFront();
-
     root.setLeft(boardWithOverlay);
 
-
-    VBox infoBox = new VBox(20);
-    infoBox.setAlignment(Pos.TOP_CENTER);
+    // 🧍‍♂️ Current player (top)
+    VBox currentPlayerBox = new VBox(5);
+    currentPlayerBox.setAlignment(Pos.CENTER);
     currentPlayerLabel = new Label("Current turn:");
+    playerImage = new ImageView();
+    playerImage.setFitWidth(70);
+    playerImage.setFitHeight(70);
+    playerImage.setPreserveRatio(true);
+    currentPlayerBox.getChildren().addAll(currentPlayerLabel, playerImage);
+
+    // 📊 All players info (middle)
+    playerInfoList = new VBox(10);
+    playerInfoList.setAlignment(Pos.CENTER_LEFT);
+
+    // 🎲 Roll button (bottom)
+    VBox bottomBox = new VBox(10);
     positionLabel = new Label("Position:");
     diceResultLabel = new Label("Roll result:");
-
-    ImageView playerImage = new ImageView();
-    playerImage.setFitWidth(60);
-    playerImage.setFitHeight(60);
-    playerImage.setPreserveRatio(true);
-
-    Image image = getCurrentPlayerImage();
-    if (image != null) {
-      playerImage.setImage(image);
-    }
-
-    infoBox.getChildren().addAll( playerImage, currentPlayerLabel, positionLabel, diceResultLabel);
-    root.setRight(infoBox);
-
-    // Bottom: roll button
     rollButton = new Button("Roll Dice");
     rollButton.setOnAction(e -> handleRoll());
-    BorderPane.setAlignment(rollButton, Pos.CENTER);
-    root.setBottom(rollButton);
+    bottomBox.setAlignment(Pos.CENTER);
+    bottomBox.getChildren().addAll(positionLabel, diceResultLabel, rollButton);
+
+    // 📦 Assemble info panel (right side)
+    VBox infoPanel = new VBox(30);
+    infoPanel.setAlignment(Pos.TOP_CENTER);
+    infoPanel.getChildren().addAll(currentPlayerBox, playerInfoList, bottomBox);
+    root.setRight(infoPanel);
+    updatePlayerImages();
+  }
+
+
+  protected void updatePlayerImages() {
+    playerInfoList.getChildren().clear();
+    for (Player player : getAllPlayers()) {
+      String characterName = player.getCharacter() != null ? player.getCharacter().toLowerCase() : "default";
+      try {
+        URL url = getClass().getResource("/player_icons/" + characterName + ".png");
+        Image image = url != null ? new Image(url.toExternalForm(), 50, 50, true, true) : null;
+        ImageView imageView = image != null ? new ImageView(image) : new ImageView();
+
+        Label name = new Label(player.getName());
+        Label pos = new Label("Pos: " + player.getPosition());
+        Label points = new Label("Pts: " + player.getPoints());
+
+        HBox row = new HBox(10, imageView, name, pos, points);
+        row.setAlignment(Pos.CENTER_LEFT);
+
+        playerInfoList.getChildren().add(row);
+      } catch (Exception e) {
+        logger.error("Error loading image for character: {}", characterName, e);
+      }
+    }
   }
 
   protected void initializeBoardGrid() {
@@ -94,6 +123,8 @@ public abstract class GameScreen {
 
     renderBoardGrid();
   }
+
+  protected abstract Image getCurrentPlayerImage();
 
   protected void renderBoardGrid() {
     boardGrid.getChildren().clear();
@@ -121,13 +152,10 @@ public abstract class GameScreen {
 
     List<Player> playersOnTile = getPlayersAtPosition(tileNum);
     for (Player player : playersOnTile) {
-      String characterName = (player.getCharacter() != null) ? player.getCharacter().toLowerCase() : "default";
+      String characterName = player.getCharacter() != null ? player.getCharacter().toLowerCase() : "default";
       try {
         var url = getClass().getResource("/player_icons/" + characterName + ".png");
-        if (url == null) {
-          logger.warn("Image not found for character: {}", characterName);
-          continue;
-        }
+        if (url == null) continue;
 
         Image image = new Image(url.toExternalForm(), TILE_SIZE * 0.5, TILE_SIZE * 0.5, true, true);
         ImageView icon = new ImageView(image);
@@ -156,6 +184,7 @@ public abstract class GameScreen {
   protected abstract String getTileColor(int tileNumber);
   protected abstract List<Player> getPlayersAtPosition(int tileNumber);
   protected abstract Pane getOverlay();
+  protected abstract List<Player> getAllPlayers();  // NEW abstract method
   protected void initializeOverlay() {}
 
   public Parent getRoot() {

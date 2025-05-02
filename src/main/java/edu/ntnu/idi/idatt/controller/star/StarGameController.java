@@ -2,12 +2,11 @@ package edu.ntnu.idi.idatt.controller.star;
 
 import edu.ntnu.idi.idatt.model.common.AbstractBoard;
 import edu.ntnu.idi.idatt.model.common.Player;
+import edu.ntnu.idi.idatt.model.common.Tile;
 import edu.ntnu.idi.idatt.model.model_observers.BoardObserver;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.snl.SNLGame;
-import edu.ntnu.idi.idatt.model.stargame.StarBoard;
-import edu.ntnu.idi.idatt.model.stargame.StarGame;
-import edu.ntnu.idi.idatt.model.stargame.Tunnel;
+import edu.ntnu.idi.idatt.model.stargame.*;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationTarget;
@@ -58,10 +57,23 @@ public class StarGameController implements NavigationHandler {
     game.playTurn();
   }
 
+
   public String getTileColor(int tileNum) {
+    Tile tile = getBoard().getTile(tileNum);
+
+    if (tile.hasAttribute(Bridge.class)) {
+      return "brown"; // Brown
+    } else if (tile.hasAttribute(Tunnel.class)) {
+      return "purple"; // Purple
+    } else if (tile.hasAttribute(Jail.class)) {
+      return "red"; // Red
+    } else if (tile.hasAttribute(Path.class)) {
+      return "blue"; // Blue
+    }
+
+    // Default color if no special attribute
     return (tileNum % 2 == 0) ? "#f0f0f0" : "#d0d0d0";
   }
-
   public List<Player> getPlayersAtPosition(int position) {
     List<Player> playersAtPosition = new ArrayList<>();
     for (Player player : game.getPlayers()) {
