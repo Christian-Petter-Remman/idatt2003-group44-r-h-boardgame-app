@@ -21,4 +21,8 @@ public class MemoryPlayer {
   public void incrementScore() {
     score++;
   }
+
+  public void resetScore(){
+    this.score = 0;
+  }
 }

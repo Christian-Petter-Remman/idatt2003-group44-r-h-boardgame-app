@@ -9,15 +9,17 @@ import edu.ntnu.idi.idatt.view.memorygame.MemoryGameView;
 import javafx.scene.Parent;
 
 public class MemoryGameController implements NavigationHandler {
-
+  private final MemoryBoardGame model;
   private final MemoryGameView view;
-  private final NavigationManager navManager = NavigationManager.getInstance();
+  private final NavigationManager nav = NavigationManager.getInstance();
 
   public MemoryGameController(MemoryGameSettings settings) {
-    MemoryBoardGame model = new MemoryBoardGame(settings);
+    this.model = new MemoryBoardGame(settings);
     this.view = new MemoryGameView(settings);
     model.addObserver(view);
     view.setOnCardClick(model::flipCard);
+    view.setOnQuit(this::navigateBack);
+    view.setOnRestart(this::onRestart);
     view.render(model);
   }
 
@@ -25,19 +27,22 @@ public class MemoryGameController implements NavigationHandler {
     return view;
   }
 
+  private void onRestart() {
+    model.reset();
+  }
 
   @Override
   public void navigateTo(String destination) {
-    navManager.navigateTo(NavigationTarget.valueOf(destination));
+    nav.navigateTo(NavigationTarget.valueOf(destination));
   }
 
   @Override
   public void navigateBack() {
-    navManager.navigateBack();
+    nav.navigateBack();
   }
 
   @Override
   public void setRoot(Parent root) {
-    navManager.setRoot(root);
+    nav.setRoot(root);
   }
 }

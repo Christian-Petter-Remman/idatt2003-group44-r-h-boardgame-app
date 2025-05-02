@@ -1,85 +1,73 @@
-/* File: MemoryGameStyles.css */
-
-/* Base background */
+/* MemoryGameStyles.css */
 .memory-root {
-  -fx-background-color: #fdf5e6;
+  -fx-background-color: beige;
 }
-
-/* Header styling */
 .header {
   -fx-font-size: 24px;
-  -fx-text-fill: #4a148c;
+  -fx-font-family: "Comic Sans MS";
   -fx-font-weight: bold;
-  -fx-padding: 10px;
-  -fx-background-color: #e1bee7;
+  -fx-text-fill: purple;
+  -fx-background-color: plum;
+  -fx-padding: 8 16;
+  -fx-background-radius: 5;
 }
-
-/* Grid container */
-.grid {
-  -fx-padding: 20px;
-  -fx-background-color: transparent;
-}
-
-/* Card style */
+.grid { -fx-padding: 20; }
 .card {
-  -fx-background-color: white;
-  -fx-border-color: #bdbdbd;
-  -fx-border-width: 1px;
-  -fx-background-radius: 4px;
   -fx-cursor: hand;
+  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 4, 0, 2, 2);
 }
-.card:selected {
-  -fx-background-color: #ede7f6;
-}
-
-/* Scoreboard panel */
 .scoreboard-box {
-  -fx-background-color: #ffffff;
-  -fx-border-color: #9575cd;
-  -fx-border-width: 1px;
-  -fx-padding: 10px;
-  -fx-spacing: 8px;
-}
-.sb-title {
-  -fx-font-size: 18px;
-  -fx-text-fill: #6a1b9a;
-  -fx-font-weight: bold;
+  -fx-background-color: lavenderblush;
+  -fx-border-color: purple;
+  -fx-border-width: 2;
+  -fx-background-radius: 5;
+  -fx-border-radius: 5;
+  -fx-pref-width: 250;
+  -fx-font-family: "Comic Sans MS";
+  -fx-font-size: 14px;
+  -fx-text-fill: darkslateblue;
 }
 .player-box {
-  -fx-background-color: #f3e5f5;
-  -fx-padding: 6px;
-  -fx-spacing: 4px;
+  -fx-background-color: white;
+  -fx-background-radius: 4;
+  -fx-padding: 6;
 }
-.sb-score {
-  -fx-font-size: 14px;
-  -fx-text-fill: #283593;
-}
-.sb-pairs {
-  -fx-spacing: 4px;
-}
-.pair-icon {
-  -fx-fit-width: 20px;
-  -fx-fit-height: 20px;
-}
-
-/* Turn label */
+.sb-pairs { -fx-padding: 4; }
 .turn-label {
-  -fx-font-size: 16px;
-  -fx-text-fill: #d81b60;
+  -fx-text-fill: crimson;
+  -fx-font-family: "Comic Sans MS";
   -fx-font-weight: bold;
 }
-
-/* Quit button */
-.quit-button {
-  -fx-background-color: #8e24aa;
-  -fx-text-fill: #ffffff;
-  -fx-padding: 8px 12px;
+.instr-box {
+  -fx-background-color: honeydew;
+  -fx-border-color: darkgreen;
+  -fx-border-width: 2;
+  -fx-padding: 8;
+  -fx-background-radius: 5;
+  -fx-border-radius: 5;
 }
-.quit-button:hover {
-  -fx-background-color: #6a1b9a;
+.instr-title {
+  -fx-font-size: 16px;
+  -fx-font-family: "Comic Sans MS";
+  -fx-font-weight: bold;
+  -fx-text-fill: darkgreen;
 }
-
-/* Footer spacing */
+.instr-text {
+  -fx-font-size: 14px;
+  -fx-font-family: "Comic Sans MS";
+  -fx-text-fill: black;
+}
+.restart-button, .quit-button {
+  -fx-background-color: mediumpurple;
+  -fx-text-fill: white;
+  -fx-font-family: "Comic Sans MS";
+  -fx-font-weight: bold;
+  -fx-padding: 6 12;
+  -fx-background-radius: 4;
+}
+.restart-button:hover, .quit-button:hover {
+  -fx-background-color: slateblue;
+}
 .footer-box {
-  -fx-padding: 10px;
+  -fx-background-color: lavender;
 }
