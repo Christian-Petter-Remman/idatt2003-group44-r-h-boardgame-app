@@ -86,10 +86,6 @@ public class StarGameController implements NavigationHandler {
     return playersAtPosition;
   }
 
-  public void initializeGameScreen() {
-    notifyPlayerPositionChangedAll();
-  }
-
   public void notifyPlayerPositionChangedAll() {
     for (Player player : game.getPlayers()) {
       int pos = player.getPosition();
@@ -106,7 +102,6 @@ public class StarGameController implements NavigationHandler {
   @Override
   public void navigateTo(String destination) {
 
-    // Implement navigation handling logic
     switch (destination) {
       case "INTRO_SCREEN":
         NavigationManager.getInstance().navigateTo(NavigationTarget.START_SCREEN);
