@@ -144,13 +144,24 @@ public class StarGameView extends GameScreen {
     StackPane cell = new StackPane();
     cell.setPrefSize(TILE_SIZE, TILE_SIZE);
 
-    String borderColor = isBlank(tileNum) ? "white" : "black";
-    cell.setStyle("-fx-border-color: " + borderColor + ";" + "-fx-background-color:" + getTileColor(tileNum) + ";");
+    if (tileNum == 100) {
+      var url = getClass().getResource("/images/jailTile.png");
+      if (url != null) {
+        cell.setStyle("-fx-border-color: black; -fx-background-image: url('" + url.toExternalForm() + "'); " +
+                "-fx-background-size: cover;");
+      } else {
+        cell.setStyle("-fx-border-color: black; -fx-background-color: black;");
+      }
+    } else {
+      String borderColor = isBlank(tileNum) ? "white" : "black";
+      cell.setStyle("-fx-border-color: " + borderColor + ";" +
+              "-fx-background-color:" + getTileColor(tileNum) + ";");
 
-    if (tileNum != 0) {
-      Text tileNumber = new Text(String.valueOf(tileNum));
-      tileNumber.setStyle("-fx-fill: #555;");
-      cell.getChildren().add(tileNumber);
+      if (tileNum != 0) {
+        Text tileNumber = new Text(String.valueOf(tileNum));
+        tileNumber.setStyle("-fx-fill: #555;");
+        cell.getChildren().add(tileNumber);
+      }
     }
 
     addOverlayImagesToCell(cell, tileNum);
@@ -173,7 +184,6 @@ public class StarGameView extends GameScreen {
 
     return cell;
   }
-
   private void addOverlayImagesToCell(StackPane cell, int tileNum) {
     StarBoard board = (StarBoard) controller.getBoard();
     board.getBridges().forEach(bridge -> {

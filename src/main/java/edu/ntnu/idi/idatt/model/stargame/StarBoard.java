@@ -30,18 +30,17 @@ public class StarBoard extends AbstractBoard {
   public Star addStar() {
     List<Integer> occupied = new ArrayList<>();
 
-    // Add jail positions
     for (Jail jail : getJailTiles()) {
       occupied.add(jail.getStart());
+      occupied.add(jail.getStart() + 1);
+      occupied.add(jail.getStart() - 1);
     }
 
-    // Add bridges
     for (Bridge bridge : getBridges()) {
       occupied.add(bridge.getStart());
       occupied.add(bridge.getEnd());
     }
 
-    // Add tunnels
     for (Tunnel tunnel : getTunnels()) {
       occupied.add(tunnel.getStart());
       occupied.add(tunnel.getEnd());
@@ -51,7 +50,6 @@ public class StarBoard extends AbstractBoard {
       occupied.add(existingStar.getStart());
     }
 
-    // Build a list of valid tiles
     List<Integer> validTiles = new ArrayList<>();
     for (int i = 1; i <= 73; i++) {
       if (!occupied.contains(i)) {

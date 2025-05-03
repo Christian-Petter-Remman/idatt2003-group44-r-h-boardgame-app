@@ -156,15 +156,19 @@ public class StarGame extends BoardGame {
     logger.info("{} moved to {}", player.getName(), newPosition);
     notifyMoveObservers(player, roll);
 
-    // Handle tunnel teleportation recursively
+    // 💡 First: check for jail BEFORE applying tunnel teleport
+    if (handleJail(player)) return;
+
+    // 💡 Then handle tunnel
     Tunnel tunnel = ((StarBoard) board).getTunnelAt(player.getPosition());
     if (tunnel != null) {
       logger.info("{} landed on tunnel at {} -> teleporting to {}", player.getName(), tunnel.getStart(), tunnel.getEnd());
       player.setPosition(tunnel.getEnd());
       notifyMoveObservers(player, 0);
-    }
 
-    if (handleJail(player)) return;
+      // Re-check jail after tunnel
+      if (handleJail(player)) return;
+    }
 
     if (player.hasWon()) {
       logger.info("🎉 {} has won!", player.getName());
@@ -180,7 +184,7 @@ public class StarGame extends BoardGame {
     if (jail != null) {
       logger.info("{} landed on jail at {} -> jailed for {} turns", player.getName(), jail.getStart(), jail.getJailTurns());
       player.setJailed(jail.getJailTurns());
-      player.setPosition(-1);
+      player.setPosition(100);
       notifyMoveObservers(player, 0);
       advanceTurn();
       return true;
