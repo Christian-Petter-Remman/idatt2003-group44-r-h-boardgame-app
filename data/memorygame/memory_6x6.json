@@ -1,0 +1,74 @@
+[
+  {
+    "id": "bowser",
+    "imagePath": "/player_icons/bowser.png"
+  },
+  {
+    "id": "peach",
+    "imagePath": "/player_icons/peach.png"
+  },
+  {
+    "id": "yoshi",
+    "imagePath": "/player_icons/yoshi.png"
+  },
+  {
+    "id": "toad",
+    "imagePath": "/player_icons/toad.png"
+  },
+  {
+    "id": "mario",
+    "imagePath": "/player_icons/mario.png"
+  },
+  {
+    "id": "luigi",
+    "imagePath": "/player_icons/luigi.png"
+  },
+  {
+    "id": "charmander",
+    "imagePath": "/player_icons/charmander.png"
+  },
+  {
+    "id": "fish",
+    "imagePath": "/player_icons/fish.png"
+  },
+  {
+    "id": "therock",
+    "imagePath": "/player_icons/therock.png"
+  },
+  {
+    "id": "snoopdogg",
+    "imagePath": "/player_icons/snoopdogg.png"
+  },
+  {
+    "id": "cow",
+    "imagePath": "/home_screen/cow.png"
+  },
+  {
+    "id": "duck",
+    "imagePath": "/home_screen/duck.png"
+  },
+  {
+    "id": "mole",
+    "imagePath": "/home_screen/mole.png"
+  },
+  {
+    "id": "sheep",
+    "imagePath": "/home_screen/sheep.png"
+  },
+  {
+    "id": "hen",
+    "imagePath": "/home_screen/hen.png"
+  },
+  {
+    "id": "pig",
+    "imagePath": "/home_screen/pig.png"
+  },
+  {
+    "id": "star",
+    "imagePath": "/home_screen/star.png"
+  },
+  {
+    "id": "farmer",
+    "imagePath": "/home_screen/farmer.png"
+  }
+]
