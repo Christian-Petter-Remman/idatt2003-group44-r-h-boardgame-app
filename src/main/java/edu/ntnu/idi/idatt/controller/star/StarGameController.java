@@ -119,7 +119,6 @@ public class StarGameController implements NavigationHandler {
 
   @Override
   public void navigateBack() {
-    // Implement navigation back logic
   }
 
   @Override
