@@ -2,12 +2,9 @@ package edu.ntnu.idi.idatt.controller.star;
 
 import edu.ntnu.idi.idatt.model.common.AbstractBoard;
 import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.model.model_observers.BoardObserver;
+import edu.ntnu.idi.idatt.model.common.Tile;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
-import edu.ntnu.idi.idatt.model.snl.SNLGame;
-import edu.ntnu.idi.idatt.model.stargame.StarBoard;
-import edu.ntnu.idi.idatt.model.stargame.StarGame;
-import edu.ntnu.idi.idatt.model.stargame.Tunnel;
+import edu.ntnu.idi.idatt.model.stargame.*;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationTarget;
@@ -30,6 +27,7 @@ public class StarGameController implements NavigationHandler {
   public StarGameController(StarGame game) {
     this.game = game;
   }
+
 
   public void registerObserver(GameScreenObserver observer) {
     observers.add(observer);
@@ -58,7 +56,29 @@ public class StarGameController implements NavigationHandler {
     game.playTurn();
   }
 
+
   public String getTileColor(int tileNum) {
+    Tile tile = getBoard().getTile(tileNum);
+
+
+    for (Jail jail : ((StarBoard) getBoard()).getJailTiles()) {
+      if (tileNum == jail.getStart() + 1) {
+        return "red";
+      }
+    }
+
+    if (tile.hasAttribute(Bridge.class)) {
+      return "yellow";
+    } else if (tile.hasAttribute(Tunnel.class)) {
+      return "purple";
+    } else if (tile.hasAttribute(Path.class)) {
+      return "blue";
+    }
+
+    if (tileNum == 1000) {
+      return "black";
+    }
+
     return (tileNum % 2 == 0) ? "#f0f0f0" : "#d0d0d0";
   }
 
@@ -70,10 +90,6 @@ public class StarGameController implements NavigationHandler {
       }
     }
     return playersAtPosition;
-  }
-
-  public void initializeGameScreen() {
-    notifyPlayerPositionChangedAll();
   }
 
   public void notifyPlayerPositionChangedAll() {
@@ -92,7 +108,6 @@ public class StarGameController implements NavigationHandler {
   @Override
   public void navigateTo(String destination) {
 
-    // Implement navigation handling logic
     switch (destination) {
       case "INTRO_SCREEN":
         NavigationManager.getInstance().navigateTo(NavigationTarget.START_SCREEN);
@@ -105,7 +120,6 @@ public class StarGameController implements NavigationHandler {
 
   @Override
   public void navigateBack() {
-    // Implement navigation back logic
   }
 
   @Override

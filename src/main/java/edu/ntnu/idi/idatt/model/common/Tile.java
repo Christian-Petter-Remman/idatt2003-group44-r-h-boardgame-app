@@ -23,6 +23,16 @@ public class Tile {
     return number;
   }
 
+  public boolean hasAttribute(Class<? extends TileAttribute> clazz) {
+    for (TileAttribute attribute : attributes) {
+      if (clazz.isInstance(attribute)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
   public List<TileAttribute> getAttributes(){
     return attributes;
   }

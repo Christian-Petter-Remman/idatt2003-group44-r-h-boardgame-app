@@ -83,6 +83,11 @@ public class SNLGameScreenView extends GameScreen {
   }
 
   @Override
+  protected List<Player> getAllPlayers() {
+    return controller.getPlayers(); // Or however you store them
+  }
+
+  @Override
   protected void handleRoll() {
     controller.handleRoll();
   }

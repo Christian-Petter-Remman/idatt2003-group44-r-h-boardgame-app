@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.view.snl;
+package edu.ntnu.idi.idatt.view.star;
 
 public class BoardCreator {
 
@@ -165,7 +165,7 @@ public class BoardCreator {
       outputTile = 19;
     }
     if(imputTile == 53){
-      outputTile = -1;
+      outputTile = 100; //Jail
     }
     if(imputTile == 54){
       outputTile = 13;
