@@ -28,6 +28,7 @@ public class StarGameController implements NavigationHandler {
     this.game = game;
   }
 
+
   public void registerObserver(GameScreenObserver observer) {
     observers.add(observer);
     game.addMoveObserver(observer);
