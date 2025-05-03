@@ -161,10 +161,8 @@ public class NavigationManager {
   public void navigateToSNLRuleSelection() {
     try {
       ruleSelectionModel = new SNLRuleSelectionModel();
-      SNLRuleSelectionController controller = new SNLRuleSelectionController(ruleSelectionModel,
-          characterSelectionManager);
-      SNLRuleSelectionView view = new SNLRuleSelectionView(ruleSelectionModel, controller);
-      view.initializeUI();
+      SNLRuleSelectionView view = new SNLRuleSelectionView(ruleSelectionModel);
+      SNLRuleSelectionController controller = new SNLRuleSelectionController(ruleSelectionModel, view, characterSelectionManager);
       setRuleSelectionModel(ruleSelectionModel);
       setHandler(controller);
       setRoot(view.getRoot());
