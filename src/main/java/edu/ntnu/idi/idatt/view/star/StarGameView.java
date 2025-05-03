@@ -24,7 +24,7 @@ public class StarGameView extends GameScreen {
   private final int cols = 13;
   private final List<Integer> blankTiles = new ArrayList<>(List.of(0));
 
-  private final Pane tileOverlay = new Pane(); // initialized here directly
+  private final Pane tileOverlay = new Pane();
   private final StarGameController controller;
 
   public StarGameView(StarGameController controller) {
@@ -49,10 +49,12 @@ public class StarGameView extends GameScreen {
 
 
       @Override
-      public void onGameOver(Player winner) {}
+      public void onGameOver(Player winner) {
+      }
 
       @Override
-      public void onGameSaved(String filePath) {}
+      public void onGameSaved(String filePath) {
+      }
     });
 
     createUI();
@@ -113,7 +115,7 @@ public class StarGameView extends GameScreen {
       boardGrid.add(cell, col, row);
     }
 
-    renderOverlay(); // Also refresh overlay
+    renderOverlay();
   }
 
   @Override
@@ -132,10 +134,13 @@ public class StarGameView extends GameScreen {
 
     List<Player> playersOnTile = getPlayersAtPosition(tileNum);
     for (Player player : playersOnTile) {
-      String characterName = (player.getCharacter() != null) ? player.getCharacter().toLowerCase() : "default";
+      String characterName =
+          (player.getCharacter() != null) ? player.getCharacter().toLowerCase() : "default";
       try {
         var url = getClass().getResource("/player_icons/" + characterName + ".png");
-        if (url == null) continue;
+        if (url == null) {
+          continue;
+        }
 
         Image image = new Image(url.toExternalForm(), TILE_SIZE * 0.5, TILE_SIZE * 0.5, true, true);
         ImageView icon = new ImageView(image);
@@ -208,7 +213,7 @@ public class StarGameView extends GameScreen {
         return new double[]{x, y};
       }
     }
-    return new double[]{0, 0}; // Fallback
+    return new double[]{0, 0};
   }
 
   @Override
@@ -234,7 +239,6 @@ public class StarGameView extends GameScreen {
     return controller.getPlayersAtPosition(tileNumber);
   }
 
-  @Override
   protected Pane getOverlay() {
     return tileOverlay;
   }

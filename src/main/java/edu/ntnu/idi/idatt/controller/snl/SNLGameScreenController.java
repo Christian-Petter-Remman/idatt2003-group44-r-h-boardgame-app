@@ -8,47 +8,58 @@ import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationTarget;
 import javafx.scene.Parent;
-
-
+import javafx.scene.image.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
+import java.net.URL;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SNLGameScreenController implements NavigationHandler {
 
   private static final Logger logger = LoggerFactory.getLogger(SNLGameScreenController.class);
-
   private final SNLGame game;
-  private final List<GameScreenObserver> observers = new ArrayList<>();
-  private Parent root;
+  private final String savePath;
 
-  public SNLGameScreenController(SNLGame game) {
+  public SNLGameScreenController(SNLGame game, String savePath) {
     this.game = game;
+    this.savePath = savePath;
   }
 
   public void registerObserver(GameScreenObserver observer) {
-    observers.add(observer);
     game.addMoveObserver(observer);
     game.addTurnObserver(observer);
     game.addWinnerObserver(observer);
+    game.addSaveObserver(observer);
   }
 
-  public List<Player> getPlayers() {
-    return game.getPlayers();
+  public void notifyPlayerPositionChangedAll() {
+    Player current = game.getCurrentPlayer();
+    game.notifyMoveObservers(current, 0);
   }
 
   public AbstractBoard getBoard() {
     return game.getBoard();
   }
 
-  public Player getCurrentPlayer() {
-    return game.getCurrentPlayer();
+  public List<Player> getPlayersAtPosition(int position) {
+    return game.getPlayers().stream()
+        .filter(p -> p.getPosition() == position)
+        .collect(Collectors.toList());
   }
 
-  public SNLGame getGame() {
-    return game;
+  public Image getCurrentPlayerImage() {
+    Player p = game.getCurrentPlayer();
+    if (p != null && p.getCharacter() != null) {
+      String name = p.getCharacter().toLowerCase();
+      URL url = getClass().getResource("/player_icons/" + name + ".png");
+      if (url != null) {
+        return new Image(url.toExternalForm());
+      }
+      logger.warn("No image found for character: {}", name);
+    }
+    return null;
   }
 
   public void handleRoll() {
@@ -56,61 +67,29 @@ public class SNLGameScreenController implements NavigationHandler {
   }
 
   public String getTileColor(int tileNum) {
-    return (tileNum % 2 == 0) ? "#f0f0f0" : "#d0d0d0";  // Light and dark colors
+    return (tileNum % 2 == 0) ? "#f0f0f0" : "#d0d0d0";
   }
 
-  public List<Player> getPlayersAtPosition(int position) {
-    List<Player> playersAtPosition = new ArrayList<>();
-    for (Player player : game.getPlayers()) {
-      if (player.getPosition() == position) {
-        playersAtPosition.add(player);
-      }
-    }
-    return playersAtPosition;
-  }
-
-  public void initializeGameScreen() {
-    notifyPlayerPositionChangedAll();
-  }
-
-  public void notifyPlayerPositionChangedAll() {
-    for (Player player : game.getPlayers()) {
-      int pos = player.getPosition();
-      notifyPlayerPositionChanged(player, pos, pos);
-    }
-  }
-
-  public void notifyPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
-    for (GameScreenObserver observer : observers) {
-      observer.onPlayerPositionChanged(player, oldPosition, newPosition);
-    }
+  public void saveGame() {
+    game.saveGame(savePath);
   }
 
   @Override
   public void navigateTo(String destination) {
-
-    // Implement navigation handling logic
-    switch (destination) {
-      case "INTRO_SCREEN":
-        NavigationManager.getInstance().navigateTo(NavigationTarget.START_SCREEN);
-        break;
-      default:
-        logger.warn("Unknown destination: {}", destination);
-        break;
-    }
+    NavigationManager.getInstance().navigateTo(NavigationTarget.valueOf(destination));
   }
 
   @Override
   public void navigateBack() {
-    // Implement navigation back logic
+    NavigationManager.getInstance().navigateBack();
   }
 
   @Override
   public void setRoot(Parent root) {
-    this.root = root;
+    NavigationManager.getInstance().setRoot(root);
   }
 
-  public Parent getRoot() {
-    return root;
+  public SNLGame getGame() {
+    return game;
   }
 }

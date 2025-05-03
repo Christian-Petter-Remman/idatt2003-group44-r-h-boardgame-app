@@ -89,15 +89,16 @@ public class NavigationManager {
   }
 
   public void setRoot(Parent root) {
-    if (root == null)
+    if (root == null) {
       throw new NullPointerException("Root cannot be null");
+    }
     if (scene != null) {
       scene.setRoot(root);
     }
   }
 
   public void navigateBack() {
-   //TODO: Implement navigateBack
+    //TODO: Implement navigateBack
   }
 
   public void navigateTo(NavigationTarget target) {
@@ -144,7 +145,7 @@ public class NavigationManager {
   public void navigateToStarCharacterSelection() {
     characterSelectionManager = new CharacterSelectionManager();
     StarCharSelectionScreen view = new StarCharSelectionScreen(characterSelectionManager);
-    starCharSelectionController = new StarCharSelectionController(characterSelectionManager,view);
+    starCharSelectionController = new StarCharSelectionController(characterSelectionManager, view);
     setHandler(starCharSelectionController);
     setRoot(view.getView());
   }
@@ -167,7 +168,8 @@ public class NavigationManager {
     try {
       ruleSelectionModel = new SNLRuleSelectionModel();
       SNLRuleSelectionView view = new SNLRuleSelectionView(ruleSelectionModel);
-      SNLRuleSelectionController controller = new SNLRuleSelectionController(ruleSelectionModel, view, characterSelectionManager);
+      SNLRuleSelectionController controller = new SNLRuleSelectionController(ruleSelectionModel,
+          view, characterSelectionManager);
       setRuleSelectionModel(ruleSelectionModel);
       setHandler(controller);
       setRoot(view.getRoot());
@@ -187,7 +189,7 @@ public class NavigationManager {
       StarFactory factory = new StarFactory();
       StarBoard board = factory.loadBoardFromFile(boardpath);
 
-      StarGame game = new StarGame(board,gameState.getPlayers(), gameState.getCurrentTurnIndex());
+      StarGame game = new StarGame(board, gameState.getPlayers(), gameState.getCurrentTurnIndex());
 
       StarGameController controller = new StarGameController(game);
       controller.notifyPlayerPositionChangedAll();
@@ -209,25 +211,26 @@ public class NavigationManager {
       String boardPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + gameState.getBoardFile();
       logger.info("Final board path: {}", boardPath);
 
-      SNLFactory factory = new SNLFactory();
-      SNLBoard board = factory.loadBoardFromFile(boardPath);
+      SNLBoard board = new SNLFactory().loadBoardFromFile(boardPath);
+      SNLGame game = new SNLGame(
+          board,
+          gameState.getPlayers(),
+          gameState.getDiceCount(),
+          gameState.getCurrentTurnIndex()
+      );
 
-      SNLGame game = new SNLGame(board, gameState.getPlayers(), gameState.getDiceCount(),
-          gameState.getCurrentTurnIndex());
-      SNLGameScreenController controller = new SNLGameScreenController(game);
+      SNLGameScreenController controller =
+          new SNLGameScreenController(game, savePath);
+
+      SNLGameScreenView view = new SNLGameScreenView(controller);
 
       controller.notifyPlayerPositionChangedAll();
 
-      SNLGameScreenView gameScreenView = new SNLGameScreenView(controller);
-      gameScreenView.initializeUI();
-
       setHandler(controller);
-      setRoot(gameScreenView.getRoot());
-
+      setRoot(view.getRoot());
       logger.info("Snakes and Ladders game screen initialized successfully.");
     } catch (Exception e) {
-      logger.error("Failed to SNLLoad Snakes and Ladders game from save file", e);
-
+      logger.error("Failed to load Snakes and Ladders game", e);
     }
   }
 
