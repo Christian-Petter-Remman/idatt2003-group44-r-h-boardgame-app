@@ -3,6 +3,7 @@ package edu.ntnu.idi.idatt.view.common.intro;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -19,8 +20,7 @@ public class StarIntroView implements IntroView {
 
   private Parent root;
 
-  public StarIntroView() {
-  }
+  public StarIntroView() {}
 
   public void initializeUI() {
     createUI();
@@ -29,7 +29,7 @@ public class StarIntroView implements IntroView {
   protected void createUI() {
     BorderPane mainContainer = new BorderPane();
 
-    HBox gameSelectionBox = createGameSelectionBox();
+    VBox gameSelectionBox = createGameSelectionBox();
 
     VBox content = new VBox(20, gameSelectionBox);
     content.setAlignment(Pos.CENTER);
@@ -39,20 +39,29 @@ public class StarIntroView implements IntroView {
     root = mainContainer;
   }
 
-
   @Override
   public Parent getRoot() {
     return root;
   }
 
-  private HBox createGameSelectionBox() {
+  private VBox createGameSelectionBox() {
     Image image = new Image("home_screen/star.png");
-    ImageView StarGame = createGameIcon(image, "STAR_GAME");
+    ImageView starGameIcon = createGameIcon(image, "STAR_GAME");
 
-    HBox gameSelectionBox = new HBox(20, StarGame);
-    gameSelectionBox.setAlignment(Pos.CENTER);
-    gameSelectionBox.setPadding(new Insets(10));
-    return gameSelectionBox;
+    Button loadGameButton = new Button("Load Game");
+    loadGameButton.setStyle("-fx-font-size: 16px; -fx-padding: 8px 16px;");
+    loadGameButton.setOnAction(e -> {
+      if (loadGameListener != null) {
+        logger.info("Load game listener triggered.");
+        loadGameListener.run();
+      } else {
+        logger.warn("Load game listener is not set.");
+      }
+    });
+
+    VBox box = new VBox(10, starGameIcon, loadGameButton);
+    box.setAlignment(Pos.CENTER);
+    return box;
   }
 
   private ImageView createGameIcon(Image image, String gameType) {

@@ -102,7 +102,7 @@ public class GameStateCsvLoader {
           String character = parts[1];
           int position = Integer.parseInt(parts[2]);
           int points = Integer.parseInt(parts[3]);
-          state.players.add(new StarPlayer(name, character, position,points));
+          state.players.add(new StarPlayer(name, character, position, points));
         }
       }
     }
@@ -110,5 +110,31 @@ public class GameStateCsvLoader {
     return state;
   }
 
+  public static String StarLoadGetJson(String filePath) throws IOException {
+    GameState state = StarLoad(filePath);
+    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+      String line;
+      while ((line = reader.readLine()) != null) {
+        if (line.startsWith("Board,")) {
+          state.boardFile = line.split(",")[1];
+          return state.getBoardFile();
+        }
 
+      }
+    }
+    return state.getBoardFile();
+  }
+
+  public static int StarLoadIntIndex(String filePath) throws IOException {
+    GameState state = StarLoad(filePath);
+    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+      String line;
+      while ((line = reader.readLine()) != null) {
+        if (line.startsWith("CurrentTurnIndex,")) {
+          state.currentTurnIndex = Integer.parseInt(line.split(",")[1]);
+          return state.currentTurnIndex;
+        }
+      }
+    } return state.currentTurnIndex;
+  }
 }

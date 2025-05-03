@@ -4,6 +4,7 @@ package edu.ntnu.idi.idatt.navigation;
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
 import edu.ntnu.idi.idatt.controller.common.*;
+import edu.ntnu.idi.idatt.controller.common.load.LoadGameController;
 import edu.ntnu.idi.idatt.controller.memorygame.MemoryGameController;
 import edu.ntnu.idi.idatt.controller.memorygame.MemoryRuleSelectionController;
 import edu.ntnu.idi.idatt.controller.snl.*;
@@ -28,6 +29,7 @@ import edu.ntnu.idi.idatt.view.memorygame.MemoryRuleSelectionView;
 import edu.ntnu.idi.idatt.view.snl.SNLGameScreenView;
 
 import edu.ntnu.idi.idatt.view.snl.SNLRuleSelectionView;
+import edu.ntnu.idi.idatt.view.star.LoadGameView;
 import edu.ntnu.idi.idatt.view.star.StarGameView;
 import java.util.Objects;
 import javafx.scene.Parent;
@@ -107,6 +109,7 @@ public class NavigationManager {
       case STAR_CHARACTER_SELECTION -> navigateToStarCharacterSelection();
       case STAR_INTRO -> navigateToStarIntroScreen();
       case STAR_GAME -> navigateToStarGameScreen();
+      case STAR_LOAD_SCREEN -> navigateToStarLoadScreen();
 
       case MEMORY_RULE_SCREEN -> navigateToMemoryRuleScreen();
       case MEMORY_GAME_SCREEN -> navigateToMemoryGame();
@@ -172,6 +175,13 @@ public class NavigationManager {
     } catch (Exception e) {
       logger.error("The RuleSelection module could not be loaded", e);
     }
+  }
+
+  public void navigateToStarLoadScreen() {
+    LoadGameController controller = new LoadGameController();
+    LoadGameView view = new LoadGameView(controller);
+    setHandler(controller);
+    setRoot(view.getRoot());
   }
 
   public void navigateToStarGameScreen() {
