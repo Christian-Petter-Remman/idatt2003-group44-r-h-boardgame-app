@@ -20,7 +20,7 @@ public class SNLLoadController implements NavigationHandler {
   }
 
   /**
-   * Handles the load action given a CSV path.
+   * Handles the SNLLoad action given a CSV path.
    * Opens the game screen if successful, otherwise shows an alert.
    */
 //  public void handleLoad(String csvPath) {
@@ -41,8 +41,8 @@ public class SNLLoadController implements NavigationHandler {
 //      new GameScreenView(new SNLGameScreenController(snakeGame));
 //
 //    } catch (FileReadException | JsonParsingException ex) {
-//      logger.error("Failed to load game: {}", ex.getMessage());
-//      showAlert("Load Error", "Could not load saved game: " + ex.getMessage());
+//      logger.error("Failed to SNLLoad game: {}", ex.getMessage());
+//      showAlert("Load Error", "Could not SNLLoad saved game: " + ex.getMessage());
 //    }
 //  }
 

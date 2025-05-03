@@ -3,6 +3,7 @@ package edu.ntnu.idi.idatt.model.stargame;
 import edu.ntnu.idi.idatt.model.common.AbstractBoard;
 import edu.ntnu.idi.idatt.model.common.Tile;
 import edu.ntnu.idi.idatt.model.common.TileAttribute;
+import edu.ntnu.idi.idatt.model.snl.Snake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,7 @@ public class StarBoard extends AbstractBoard {
   }
 
   public Star addStar() {
-    int start = new Random().nextInt(getSize());
+    int start = new Random().nextInt(73);
     Star star = new Star(start, start);
     getTile(start).addAttribute(star);
     stars.add(star);
@@ -131,6 +132,24 @@ public class StarBoard extends AbstractBoard {
       }
     }
     return null;
+  }
+
+  public List<Bridge> getBridges() {
+    return new ArrayList<>(bridges);
+  }
+
+  public List<Star> getStars() {
+    return new ArrayList<>(stars);
+  }
+
+  public List<Tunnel> getTunnels() {
+    return new ArrayList<>(tunnels);
+  }
+  public List<Path> getPaths() {
+    return new ArrayList<>(paths);
+  }
+  public List<Jail> getJailTiles() {
+    return new ArrayList<>(jailTiles);
   }
 
   public int getJailTile() {

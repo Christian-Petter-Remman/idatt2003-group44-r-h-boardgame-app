@@ -33,6 +33,7 @@ import java.util.Objects;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,8 @@ public class NavigationManager {
   private NavigationHandler currentHandler;
   private CharacterSelectionManager characterSelectionManager;
   private SNLRuleSelectionModel ruleSelectionModel;
+  private StarCharSelectionController starCharSelectionController;
+  private Scene scene;
 
 
   private NavigationManager() {
@@ -60,6 +63,14 @@ public class NavigationManager {
 
   public void initialize(Stage stage) {
     this.primaryStage = stage;
+    this.scene = new Scene(new StackPane());
+
+    // Set up the stage
+    primaryStage.setScene(scene);
+    primaryStage.setFullScreen(true);             // Start in fullscreen
+    primaryStage.setFullScreenExitHint("");       // Hide "Press ESC to exit"
+    primaryStage.setFullScreenExitKeyCombination(null); // Disable ESC key exit
+    primaryStage.setResizable(false);             // Prevent window resizing
   }
 
   public void setHandler(NavigationHandler handler) {
@@ -77,10 +88,8 @@ public class NavigationManager {
   public void setRoot(Parent root) {
     if (root == null)
       throw new NullPointerException("Root cannot be null");
-    if (primaryStage != null) {
-      primaryStage.setScene(new Scene(root));
-    } else if (currentHandler != null) {
-      currentHandler.setRoot(root);
+    if (scene != null) {
+      scene.setRoot(root);
     }
   }
 
@@ -130,9 +139,8 @@ public class NavigationManager {
   public void navigateToStarCharacterSelection() {
     characterSelectionManager = new CharacterSelectionManager();
     StarCharSelectionScreen view = new StarCharSelectionScreen(characterSelectionManager);
-    StarCharSelectionController controller = new StarCharSelectionController(
-        characterSelectionManager, view);
-    setHandler(controller);
+    starCharSelectionController = new StarCharSelectionController(characterSelectionManager,view);
+    setHandler(starCharSelectionController);
     setRoot(view.getView());
   }
 
@@ -169,21 +177,22 @@ public class NavigationManager {
   public void navigateToStarGameScreen() {
     logger.info("Starting Star Game...");
     try {
-      String savePath = "default_players.csv";
-      GameStateCsvLoader.GameState gameState = GameStateCsvLoader.load(savePath);
-      String boardpath = FileManager.STAR_GAME_DIR + "/default.json";
+      String savePath = starCharSelectionController.getSavePath();
+      GameStateCsvLoader.GameState gameState = GameStateCsvLoader.StarLoad(savePath);
+      String boardpath = "default.json";
 
       StarFactory factory = new StarFactory();
       StarBoard board = factory.loadBoardFromFile(boardpath);
 
-      StarGame game = new StarGame(board);
-      game.addPlayer(new StarPlayer("olli", "peach", 1, 0));
-      game.addPlayer(new StarPlayer("123", "bowser", 1, 0));
+      StarGame game = new StarGame(board,gameState.getPlayers(), gameState.getCurrentTurnIndex());
 
       StarGameController controller = new StarGameController(game);
       controller.notifyPlayerPositionChangedAll();
       StarGameView view = new StarGameView(controller);
       view.initializeUI();
+
+      setHandler(controller);
+      setRoot(view.getRoot());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -193,7 +202,7 @@ public class NavigationManager {
     logger.info("Starting Snakes and Ladders game...");
     try {
       String savePath = ruleSelectionModel.getSavePath();
-      GameStateCsvLoader.GameState gameState = GameStateCsvLoader.load(savePath);
+      GameStateCsvLoader.GameState gameState = GameStateCsvLoader.SNLLoad(savePath);
       String boardPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + gameState.getBoardFile();
       logger.info("Final board path: {}", boardPath);
 
@@ -214,7 +223,7 @@ public class NavigationManager {
 
       logger.info("Snakes and Ladders game screen initialized successfully.");
     } catch (Exception e) {
-      logger.error("Failed to load Snakes and Ladders game from save file", e);
+      logger.error("Failed to SNLLoad Snakes and Ladders game from save file", e);
 
     }
   }

@@ -34,6 +34,7 @@ public class StarBoardJsonHandler implements FileHandler<StarBoard> {
   }
 
   public StarBoard loadBoardFromFile(String filePath) throws FileReadException, JsonParsingException {
+    logger.info("Loading board from file {}", filePath);
     try (Reader reader = new FileReader(filePath)) {
       JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
       return parseBoard(jsonObject);
@@ -52,8 +53,8 @@ public class StarBoardJsonHandler implements FileHandler<StarBoard> {
     StarBoard board = new StarBoard(size);
 
     if (jsonObject.has("tunnels")) {
-      JsonArray laddersArray = jsonObject.getAsJsonArray("tunnels");
-      for (JsonElement element : laddersArray) {
+      JsonArray tunnelArray = jsonObject.getAsJsonArray("tunnels");
+      for (JsonElement element : tunnelArray) {
         JsonObject obj = element.getAsJsonObject();
         int start = obj.get("start").getAsInt();
         int end = obj.get("end").getAsInt();
@@ -61,13 +62,44 @@ public class StarBoardJsonHandler implements FileHandler<StarBoard> {
       }
     }
     if (jsonObject.has("bridge")) {
-      JsonArray snakesArray = jsonObject.getAsJsonArray("bridge");
-      for (JsonElement element : snakesArray) {
+      JsonArray bridgeArray = jsonObject.getAsJsonArray("bridge");
+      for (JsonElement element : bridgeArray) {
         JsonObject obj = element.getAsJsonObject();
         int start = obj.get("start").getAsInt();
         int end = obj.get("end").getAsInt();
         board.addBridge(start, end);
       }
+    }
+
+    if (jsonObject.has("jail")) {
+      JsonArray pathArray = jsonObject.getAsJsonArray("jail");
+      for (JsonElement element : pathArray) {
+        JsonObject obj = element.getAsJsonObject();
+        int start = obj.get("start").getAsInt();
+        board.addJail(start);
+      }
+    }
+
+    if (jsonObject.has("star")){
+        board.addStar();
+      }
+
+
+
+
+    if (jsonObject.has("paths")) {
+      JsonArray pathArray = jsonObject.getAsJsonArray("paths");
+      for (JsonElement element : pathArray) {
+        JsonObject obj = element.getAsJsonObject();
+        int start = obj.get("start").getAsInt();
+        int staticEnd = obj.get("staticend").getAsInt();
+        int dynamicEnd = obj.get("dynamicstart").getAsInt();
+        String dir = obj.get("dir").getAsString();
+
+        board.addPath(start,dir,staticEnd,dynamicEnd);
+      }
+
+
     }
 
     return board;

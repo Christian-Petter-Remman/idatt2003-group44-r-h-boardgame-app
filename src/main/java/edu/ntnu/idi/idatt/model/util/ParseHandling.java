@@ -12,7 +12,7 @@ import java.io.Writer;
 
 
 public class ParseHandling {
-  private static final Logger logger = LoggerFactory.getLogger(SNLBoard.class);
+  private static final Logger logger = LoggerFactory.getLogger(ParseHandling.class);
 
   public boolean saveToJson(String filePath) {
     try (Writer writer = new FileWriter(filePath)) {

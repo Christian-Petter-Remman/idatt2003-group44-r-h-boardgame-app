@@ -19,8 +19,13 @@ public class StarGame extends BoardGame {
   private Path pendingPath;
   private boolean gameOver;
 
-  public StarGame(StarBoard board) {
+  public StarGame(StarBoard board, List<Player> players, int currentPlayerIndex) {
     super(board);
+    this.players = players;
+    this.currentPlayerIndex = currentPlayerIndex;
+    this.dice = new Dice(1);
+    initializePlayer(players);
+
     logger.info("StarGame created with board size {}", board.getSize());
   }
 

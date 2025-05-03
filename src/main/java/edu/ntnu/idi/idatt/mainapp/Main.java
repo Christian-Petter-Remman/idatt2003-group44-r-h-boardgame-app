@@ -17,17 +17,17 @@ public class Main extends Application {
   private static final Logger logger = LoggerFactory.getLogger(Main.class);
   private final NavigationManager navigationManager = NavigationManager.getInstance();
 
-  @Override
   public void start(Stage primaryStage) {
-
     try {
       FileManager.ensureApplicationDirectoriesExist();
 
       NavigationManager.getInstance().initialize(primaryStage);
-
       NavigationManager.getInstance().navigateTo(NavigationTarget.START_SCREEN);
       navigationManager.setLogo("/images/logo.png");
 
+      primaryStage.setFullScreen(true);
+      primaryStage.setFullScreenExitHint("");
+      primaryStage.setResizable(true);
 
       primaryStage.show();
     } catch (Exception e) {

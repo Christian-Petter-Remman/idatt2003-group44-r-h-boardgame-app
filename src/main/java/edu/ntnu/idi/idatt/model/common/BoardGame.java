@@ -94,6 +94,7 @@ public abstract class BoardGame {
     for (GameScreenObserver observer : moveObservers) {
       observer.onDiceRolled(roll);
       observer.onPlayerPositionChanged(player, -1, player.getPosition());
+      observer.onPlayerTurnChanged(player);
     }
     for (BoardObserver observer : boardObservers) {
       observer.onPlayerMoved(player, -1, player.getPosition());

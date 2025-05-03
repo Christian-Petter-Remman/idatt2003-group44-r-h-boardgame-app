@@ -5,7 +5,9 @@ import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.BoardObserver;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.snl.SNLGame;
+import edu.ntnu.idi.idatt.model.stargame.StarBoard;
 import edu.ntnu.idi.idatt.model.stargame.StarGame;
+import edu.ntnu.idi.idatt.model.stargame.Tunnel;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationTarget;
@@ -57,7 +59,7 @@ public class StarGameController implements NavigationHandler {
   }
 
   public String getTileColor(int tileNum) {
-    return (tileNum % 2 == 0) ? "#f0f0f0" : "#d0d0d0";  // Light and dark colors
+    return (tileNum % 2 == 0) ? "#f0f0f0" : "#d0d0d0";
   }
 
   public List<Player> getPlayersAtPosition(int position) {

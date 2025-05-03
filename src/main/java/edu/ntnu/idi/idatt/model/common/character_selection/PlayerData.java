@@ -6,12 +6,19 @@ public class PlayerData {
   private CharacterSelectionData selectedCharacter;
   private boolean active;
   private String characterIcon;
-
+  private int points = 0;
 
   public PlayerData(int id) {
     this.id = id;
     this.name = "Player " + id; // default
     this.active = (id <= 2);
+  }
+
+  public void setPoints(int points) {
+    this.points = points;
+  }
+  public int getPoints() {
+    return points;
   }
 
   public void setCharacterIcon(String characterIcon) {

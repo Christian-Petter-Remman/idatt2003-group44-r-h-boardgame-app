@@ -1,6 +1,6 @@
 package edu.ntnu.idi.idatt.controller.snl;
 
-import edu.ntnu.idi.idatt.filehandling.GameStateCsvExporter;
+import edu.ntnu.idi.idatt.filehandling.SNLGameStateCsvExporter;
 import edu.ntnu.idi.idatt.filehandling.SaveFileNameGenerator;
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
 import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
@@ -49,12 +49,12 @@ public class SNLRuleSelectionController implements NavigationHandler {
   }
 
   public void onContinuePressed() {
-    String saveFileName = SaveFileNameGenerator.generateSaveFileName();
+    String saveFileName = SaveFileNameGenerator.SNLgenerateSaveFileName();
     String savePath = "saves/" + saveFileName;
     model.setSavePath(savePath);
 
     List<PlayerData> players = characterSelectionManager.getPlayers();
-    GameStateCsvExporter exporter = new GameStateCsvExporter(model, players, savePath);
+    SNLGameStateCsvExporter exporter = new SNLGameStateCsvExporter(model, players, savePath);
 
     addObserver(exporter);
     notifyObservers();
