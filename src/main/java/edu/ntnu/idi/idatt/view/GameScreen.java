@@ -25,7 +25,6 @@ public abstract class GameScreen {
 
   protected BorderPane root;
   protected GridPane boardGrid;
-  protected VBox playerImagesBox;
   protected Label currentPlayerLabel;
   protected Label positionLabel;
   protected Label diceResultLabel;

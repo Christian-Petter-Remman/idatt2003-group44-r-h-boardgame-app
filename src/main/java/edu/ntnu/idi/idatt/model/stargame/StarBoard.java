@@ -3,7 +3,6 @@ package edu.ntnu.idi.idatt.model.stargame;
 import edu.ntnu.idi.idatt.model.common.AbstractBoard;
 import edu.ntnu.idi.idatt.model.common.Tile;
 import edu.ntnu.idi.idatt.model.common.TileAttribute;
-import edu.ntnu.idi.idatt.model.snl.Snake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
