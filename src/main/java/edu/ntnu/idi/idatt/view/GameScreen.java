@@ -1,6 +1,7 @@
 package edu.ntnu.idi.idatt.view;
 
 import edu.ntnu.idi.idatt.model.common.Player;
+import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -39,7 +40,7 @@ public abstract class GameScreen {
 
     // Left: board
     initializeBoardGrid();
-    initializeOverlay();
+    Platform.runLater(this::initializeOverlay);
 
     StackPane boardWithOverlay = new StackPane();
     boardWithOverlay.getChildren().addAll(boardGrid, getOverlay());
@@ -142,15 +143,21 @@ public abstract class GameScreen {
   }
 
   protected double[] getTileCenter(int tileNum) {
-    int i = tileNum - 1;
-    int row = 9 - (i / BOARD_SIZE);
-    int col = (row % 2 == 0) ? i % BOARD_SIZE : (BOARD_SIZE - 1 - i % BOARD_SIZE);
+    int i   = tileNum - 1;
+    int row = BOARD_SIZE - 1 - (i / BOARD_SIZE);
+    int col = (row % 2 == 0)
+        ? (i % BOARD_SIZE)
+        : (BOARD_SIZE - 1 - (i % BOARD_SIZE));
 
-    double x = col * TILE_SIZE + TILE_SIZE / 2.0;
-    double y = row * TILE_SIZE + TILE_SIZE / 2.0;
+    double hgap = boardGrid.getHgap();
+    double vgap = boardGrid.getVgap();
+    double x    = col * (TILE_SIZE + hgap) + TILE_SIZE / 2.0;
+    double y    = row * (TILE_SIZE + vgap) + TILE_SIZE / 2.0;
 
-    return new double[]{x, y};
+    return new double[]{ x, y };
   }
+
+
 
   protected abstract void handleRoll();
   protected abstract String getTileColor(int tileNumber);
