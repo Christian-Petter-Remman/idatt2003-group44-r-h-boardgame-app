@@ -29,7 +29,6 @@ public class StarGameView extends GameScreen {
   private final int cols = 13;
   private final List<Integer> blankTiles = new ArrayList<>(List.of(0));
 
-  private final Pane tileOverlay = new Pane(); // initialized here directly
   private final StarGameController controller;
 
   public StarGameView(StarGameController controller) {
@@ -57,7 +56,6 @@ public class StarGameView extends GameScreen {
           playerImage.setImage(newImage);
         }
       }
-
 
       @Override
       public void onGameOver(Player winner) {
@@ -118,9 +116,6 @@ public class StarGameView extends GameScreen {
     boardGrid.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
     boardGrid.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
-    tileOverlay.setPrefSize(TILE_SIZE * cols, TILE_SIZE * rows);
-    tileOverlay.getChildren().clear();
-
     for (int i = 0; i < cols; i++) {
       ColumnConstraints colConst = new ColumnConstraints(TILE_SIZE);
       colConst.setHalignment(HPos.CENTER);
@@ -142,8 +137,6 @@ public class StarGameView extends GameScreen {
 
       boardGrid.add(cell, col, row);
     }
-
-    renderOverlay();
   }
 
   @Override
@@ -152,14 +145,15 @@ public class StarGameView extends GameScreen {
     cell.setPrefSize(TILE_SIZE, TILE_SIZE);
 
     String borderColor = isBlank(tileNum) ? "white" : "black";
-    cell.setStyle("-fx-border-color: " + borderColor+";" + "-fx-background-color:"+getTileColor(tileNum)+";" );
-
+    cell.setStyle("-fx-border-color: " + borderColor + ";" + "-fx-background-color:" + getTileColor(tileNum) + ";");
 
     if (tileNum != 0) {
       Text tileNumber = new Text(String.valueOf(tileNum));
       tileNumber.setStyle("-fx-fill: #555;");
       cell.getChildren().add(tileNumber);
     }
+
+    addOverlayImagesToCell(cell, tileNum);
 
     List<Player> playersOnTile = getPlayersAtPosition(tileNum);
     for (Player player : playersOnTile) {
@@ -180,38 +174,26 @@ public class StarGameView extends GameScreen {
     return cell;
   }
 
-  private boolean isBlank(int tileNum) {
-    return blankTiles.contains(tileNum);
-  }
-
-  private void renderOverlay() {
+  private void addOverlayImagesToCell(StackPane cell, int tileNum) {
     StarBoard board = (StarBoard) controller.getBoard();
-
-    board.getBridges().forEach(bridge -> renderBridges(bridge.getStart(), bridge.getEnd()));
-    board.getTunnels().forEach(tunnel -> renderTunnels(tunnel.getStart(), tunnel.getEnd()));
-    board.getStars().forEach(star -> renderStars(star.getStart()));
+    board.getBridges().forEach(bridge -> {
+      if (bridge.getStart() == tileNum || bridge.getEnd() == tileNum) {
+        addImageToCell(cell, "bridge.png");
+      }
+    });
+    board.getTunnels().forEach(tunnel -> {
+      if (tunnel.getStart() == tileNum || tunnel.getEnd() == tileNum) {
+        addImageToCell(cell, "tunnel.png");
+      }
+    });
+    board.getStars().forEach(star -> {
+      if (star.getStart() == tileNum) {
+        addImageToCell(cell, "star.png");
+      }
+    });
   }
 
-  private void renderBridges(int tileStart, int tileEnd) {
-    double[] startPos = getTileCenter(tileStart);
-    double[] endPos = getTileCenter(tileEnd);
-    addImageToOverlay("bridge.png", startPos[0], startPos[1]);
-    addImageToOverlay("bridge.png", endPos[0], endPos[1]);
-  }
-
-  private void renderTunnels(int tileStart, int tileEnd) {
-    double[] startPos = getTileCenter(tileStart);
-    double[] endPos = getTileCenter(tileEnd);
-    addImageToOverlay("tunnel.png", startPos[0], startPos[1]);
-    addImageToOverlay("tunnel.png", endPos[0], endPos[1]);
-  }
-
-  private void renderStars(int tileStart) {
-    double[] startPos = getTileCenter(tileStart);
-    addImageToOverlay("star.png", startPos[0], startPos[1]);
-  }
-
-  private void addImageToOverlay(String imageFileName, double x, double y) {
+  private void addImageToCell(StackPane cell, String imageFileName) {
     try {
       var url = getClass().getResource("/images/" + imageFileName);
       if (url == null) {
@@ -221,38 +203,24 @@ public class StarGameView extends GameScreen {
 
       Image image = new Image(url.toExternalForm(), TILE_SIZE * 0.8, TILE_SIZE * 0.8, true, true);
       ImageView icon = new ImageView(image);
-      icon.setLayoutX(x - TILE_SIZE * 0.4);
-      icon.setLayoutY(y - TILE_SIZE * 0.4);
-      tileOverlay.getChildren().add(icon);
+      cell.getChildren().add(icon);
     } catch (Exception e) {
       logger.error("Failed to load image: {}", imageFileName, e);
     }
   }
 
-  public double[] getTileCenter(int tileNum) {
-    for (int i = 0; i < rows * cols; i++) {
-      if (BoardCreator.StarGame(i) == tileNum) {
-        int row = rows - 1 - (i / cols);
-        int col = (row % 2 == 0) ? (i % cols) : (cols - 1 - (i % cols));
-        double x = col * TILE_SIZE + TILE_SIZE / 2.0;
-        double y = row * TILE_SIZE + TILE_SIZE / 2.0;
-        return new double[]{x, y};
-      }
-    }
-    return new double[]{0, 0}; // Fallback
+  private boolean isBlank(int tileNum) {
+    return blankTiles.contains(tileNum);
   }
 
   @Override
   protected List<Player> getAllPlayers() {
-    return controller.getPlayers(); // Or however you store them
+    return controller.getPlayers();
   }
 
   @Override
   public void initializeOverlay() {
-    tileOverlay.setPickOnBounds(false);
-    tileOverlay.setMouseTransparent(true);
-    tileOverlay.setPrefSize(TILE_SIZE * cols, TILE_SIZE * rows);
-    renderOverlay();
+    // No longer needed since overlays are added per cell
   }
 
   @Override
@@ -272,6 +240,6 @@ public class StarGameView extends GameScreen {
 
   @Override
   protected Pane getOverlay() {
-    return tileOverlay;
+    return new Pane(); // Overlay no longer used
   }
 }
