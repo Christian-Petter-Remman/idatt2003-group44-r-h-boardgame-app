@@ -1,3 +1,4 @@
+// StarGame.java
 package edu.ntnu.idi.idatt.model.stargame;
 
 import edu.ntnu.idi.idatt.model.common.BoardGame;
@@ -13,7 +14,6 @@ import java.util.List;
 public class StarGame extends BoardGame {
 
   private static final Logger logger = LoggerFactory.getLogger(StarGame.class);
-
 
   private boolean pendingPathDecision = false;
   private Path pendingPath;
@@ -42,6 +42,8 @@ public class StarGame extends BoardGame {
   }
 
   public void playTurn() {
+    if (gameOver) return;
+
     StarPlayer player = (StarPlayer) getCurrentPlayer();
     logger.info("It's {}'s turn (pos: {}, points: {}, jailed: {})",
             player.getName(), player.getPosition(), player.getPoints(), player.isJailed());
@@ -56,9 +58,7 @@ public class StarGame extends BoardGame {
 
     int newPosition = handleMovementAndSpecialTiles(player, roll);
 
-    if (newPosition == -1) {
-      return;
-    }
+    if (newPosition == -1) return;
 
     movePlayerAndHandleTile(player, newPosition, roll);
   }
@@ -72,19 +72,19 @@ public class StarGame extends BoardGame {
       player.releaseFromJail();
       player.setPosition(1);
       notifyMoveObservers(player, 0);
-      playTurn();
     } else {
       player.decreaseJailTurns();
       if (!player.isJailed()) {
         logger.info("{} finished jail term", player.getName());
         player.setPosition(1);
         notifyMoveObservers(player, 0);
-        playTurn();
       } else {
         logger.info("{} remains jailed ({} turns left)", player.getName(), player.getJailTurnsLeft());
         advanceTurn();
+        return;
       }
     }
+    advanceTurn();
   }
 
   private int handleMovementAndSpecialTiles(StarPlayer player, int roll) {
@@ -94,8 +94,7 @@ public class StarGame extends BoardGame {
       if (checkForBridge(player, i, roll)) {
         return player.getPosition();
       }
-      if (checkForStar(player, i)) {
-      }
+      checkForStar(player, i);
       if (checkForPathDuringPass(player, i)) {
         return -1;
       }
@@ -124,7 +123,6 @@ public class StarGame extends BoardGame {
     }
     return false;
   }
-
 
   private boolean checkForBridge(StarPlayer player, int tile, int originalRoll) {
     Bridge bridge = ((StarBoard) board).getBridgeAt(tile);
@@ -158,7 +156,14 @@ public class StarGame extends BoardGame {
     logger.info("{} moved to {}", player.getName(), newPosition);
     notifyMoveObservers(player, roll);
 
-    if (handleTunnel(player)) return;
+    // Handle tunnel teleportation recursively
+    Tunnel tunnel = ((StarBoard) board).getTunnelAt(player.getPosition());
+    if (tunnel != null) {
+      logger.info("{} landed on tunnel at {} -> teleporting to {}", player.getName(), tunnel.getStart(), tunnel.getEnd());
+      player.setPosition(tunnel.getEnd());
+      notifyMoveObservers(player, 0);
+    }
+
     if (handleJail(player)) return;
 
     if (player.hasWon()) {
@@ -168,17 +173,6 @@ public class StarGame extends BoardGame {
     } else {
       advanceTurn();
     }
-  }
-
-  private boolean handleTunnel(StarPlayer player) {
-    Tunnel tunnel = ((StarBoard) board).getTunnelAt(player.getPosition());
-    if (tunnel != null) {
-      logger.info("{} landed on tunnel at {} -> teleporting to {}", player.getName(), tunnel.getStart(), tunnel.getEnd());
-      player.setPosition(tunnel.getEnd());
-      notifyMoveObservers(player, 0);
-      return true;
-    }
-    return false;
   }
 
   private boolean handleJail(StarPlayer player) {
