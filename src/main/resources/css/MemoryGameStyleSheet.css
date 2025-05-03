@@ -1,0 +1,73 @@
+/* MemoryGameStyles.css */
+.memory-root {
+  -fx-background-color: beige;
+}
+.header {
+  -fx-font-size: 24px;
+  -fx-font-family: "Comic Sans MS";
+  -fx-font-weight: bold;
+  -fx-text-fill: purple;
+  -fx-background-color: plum;
+  -fx-padding: 8 16;
+  -fx-background-radius: 5;
+}
+.grid { -fx-padding: 20; }
+.card {
+  -fx-cursor: hand;
+  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 4, 0, 2, 2);
+}
+.scoreboard-box {
+  -fx-background-color: lavenderblush;
+  -fx-border-color: purple;
+  -fx-border-width: 2;
+  -fx-background-radius: 5;
+  -fx-border-radius: 5;
+  -fx-pref-width: 250;
+  -fx-font-family: "Comic Sans MS";
+  -fx-font-size: 14px;
+  -fx-text-fill: darkslateblue;
+}
+.player-box {
+  -fx-background-color: white;
+  -fx-background-radius: 4;
+  -fx-padding: 6;
+}
+.sb-pairs { -fx-padding: 4; }
+.turn-label {
+  -fx-text-fill: crimson;
+  -fx-font-family: "Comic Sans MS";
+  -fx-font-weight: bold;
+}
+.instr-box {
+  -fx-background-color: honeydew;
+  -fx-border-color: darkgreen;
+  -fx-border-width: 2;
+  -fx-padding: 8;
+  -fx-background-radius: 5;
+  -fx-border-radius: 5;
+}
+.instr-title {
+  -fx-font-size: 16px;
+  -fx-font-family: "Comic Sans MS";
+  -fx-font-weight: bold;
+  -fx-text-fill: darkgreen;
+}
+.instr-text {
+  -fx-font-size: 14px;
+  -fx-font-family: "Comic Sans MS";
+  -fx-text-fill: black;
+}
+.restart-button, .quit-button {
+  -fx-background-color: mediumpurple;
+  -fx-text-fill: white;
+  -fx-font-family: "Comic Sans MS";
+  -fx-font-weight: bold;
+  -fx-padding: 6 12;
+  -fx-background-radius: 4;
+}
+.restart-button:hover, .quit-button:hover {
+  -fx-background-color: slateblue;
+}
+.footer-box {
+  -fx-background-color: lavender;
+}

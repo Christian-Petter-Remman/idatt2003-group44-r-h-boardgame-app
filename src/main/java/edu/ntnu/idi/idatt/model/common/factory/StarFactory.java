@@ -1,10 +1,8 @@
 package edu.ntnu.idi.idatt.model.common.factory;
 
-import edu.ntnu.idi.idatt.filehandling.StarBoardJsonHandler;
-import edu.ntnu.idi.idatt.model.common.BoardGame;
+import edu.ntnu.idi.idatt.filehandling.handlers.StarBoardJsonHandler;
 import edu.ntnu.idi.idatt.model.common.BoardGameFactory;
 import edu.ntnu.idi.idatt.model.stargame.StarBoard;
-import edu.ntnu.idi.idatt.model.stargame.StarGame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
