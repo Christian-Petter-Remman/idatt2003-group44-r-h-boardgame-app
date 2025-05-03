@@ -3,15 +3,20 @@ package edu.ntnu.idi.idatt.controller.paint;
 
 import edu.ntnu.idi.idatt.model.paint.PaintModel;
 import edu.ntnu.idi.idatt.model.paint.Stroke;
+import edu.ntnu.idi.idatt.navigation.NavigationHandler;
+import edu.ntnu.idi.idatt.navigation.NavigationManager;
+import edu.ntnu.idi.idatt.navigation.NavigationTarget;
 import edu.ntnu.idi.idatt.view.paint.PaintCanvasView;
 import javafx.geometry.Point2D;
+import javafx.scene.Parent;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PaintCanvasController implements PaintModel.Observer {
+public class PaintCanvasController implements PaintModel.Observer, NavigationHandler {
+
   public enum ToolType { PENCIL, ERASER }
 
   private final PaintModel model;
@@ -106,4 +111,20 @@ public class PaintCanvasController implements PaintModel.Observer {
       }
     }
   }
+
+  @Override
+  public void navigateTo(String destination) {
+    NavigationManager.getInstance().navigateTo(NavigationTarget.PAINT_CANVAS_SCREEN);
+  }
+
+  @Override
+  public void navigateBack() {
+    NavigationManager.getInstance().navigateBack();
+  }
+
+  @Override
+  public void setRoot(Parent root) {
+    NavigationManager.getInstance().setRoot(root);
+  }
+
 }
