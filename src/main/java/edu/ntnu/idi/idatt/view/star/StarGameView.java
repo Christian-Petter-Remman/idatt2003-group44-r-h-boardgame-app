@@ -73,7 +73,7 @@ public class StarGameView extends GameScreen {
       if (url != null) {
         return new Image(url.toExternalForm());
       } else {
-        logger.warn("No image found for character: {}", characterName);
+        //logger.warn("No image found for character: {}", characterName);
       }
     }
     return null;
@@ -118,7 +118,6 @@ public class StarGameView extends GameScreen {
     renderOverlay();
   }
 
-  @Override
   public StackPane createTile(int tileNum) {
     StackPane cell = new StackPane();
     cell.setPrefSize(TILE_SIZE, TILE_SIZE);
@@ -147,7 +146,7 @@ public class StarGameView extends GameScreen {
         icon.setTranslateY(TILE_SIZE * 0.15 * playersOnTile.indexOf(player));
         cell.getChildren().add(icon);
       } catch (Exception e) {
-        logger.error("Error loading image for character: {}", characterName, e);
+        //logger.error("Error loading image for character: {}", characterName, e);
       }
     }
 
@@ -189,7 +188,7 @@ public class StarGameView extends GameScreen {
     try {
       var url = getClass().getResource("/images/" + imageFileName);
       if (url == null) {
-        logger.warn("Image not found: {}", imageFileName);
+        //logger.warn("Image not found: {}", imageFileName);
         return;
       }
 
@@ -199,7 +198,7 @@ public class StarGameView extends GameScreen {
       icon.setLayoutY(y - TILE_SIZE * 0.4);
       tileOverlay.getChildren().add(icon);
     } catch (Exception e) {
-      logger.error("Failed to load image: {}", imageFileName, e);
+      //logger.error("Failed to load image: {}", imageFileName, e);
     }
   }
 
