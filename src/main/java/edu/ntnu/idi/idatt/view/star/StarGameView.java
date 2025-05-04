@@ -92,7 +92,6 @@ public class StarGameView extends GameScreen {
     });
   }
 
-  @Override
   protected Image getCurrentPlayerImage() {
     Player currentPlayer = controller.getCurrentPlayer();
     if (currentPlayer != null && currentPlayer.getCharacter() != null) {
@@ -225,6 +224,11 @@ public class StarGameView extends GameScreen {
     return controller.getPlayers();
   }
 
+  @Override
+  protected Image getPlayerImage(Player player) {
+    return null;
+  }
+
   public void initializeOverlay() {}
 
   @Override
@@ -242,7 +246,6 @@ public class StarGameView extends GameScreen {
     return controller.getPlayersAtPosition(tileNumber);
   }
 
-  @Override
   protected Pane getOverlay() {
     return new Pane();
   }

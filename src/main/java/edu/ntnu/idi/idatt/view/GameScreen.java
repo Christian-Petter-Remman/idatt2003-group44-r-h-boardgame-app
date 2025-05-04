@@ -1,3 +1,4 @@
+// GameScreen.java
 package edu.ntnu.idi.idatt.view;
 
 import edu.ntnu.idi.idatt.model.common.Player;
@@ -21,6 +22,7 @@ import java.util.List;
 public abstract class GameScreen implements GameScreenObserver {
   protected static final int TILE_SIZE = 60;
   protected static final int BOARD_SIZE = 10;
+
   protected BorderPane root;
   protected GridPane boardGrid;
   protected Pane overlayPane;
@@ -38,37 +40,7 @@ public abstract class GameScreen implements GameScreenObserver {
 
   protected void createUI() {
     root = new BorderPane();
-    initializeBoardGrid();
-    overlayPane = new Pane();
-    overlayPane.setPickOnBounds(false);
-    overlayPane.setMouseTransparent(true);
-    overlayPane.prefWidthProperty().bind(boardGrid.widthProperty());
-    overlayPane.prefHeightProperty().bind(boardGrid.heightProperty());
-    boardWithOverlay = new StackPane(boardGrid, overlayPane);
-    StackPane.setAlignment(boardGrid, Pos.TOP_LEFT);
-    StackPane.setAlignment(overlayPane, Pos.TOP_LEFT);
-    root.setLeft(boardWithOverlay);
-    currentPlayerLabel = new Label("Current turn:");
-    playerImage = new ImageView();
-    playerImage.setFitWidth(70);
-    playerImage.setFitHeight(70);
-    VBox currentBox = new VBox(5, currentPlayerLabel, playerImage);
-    currentBox.setAlignment(Pos.CENTER);
-    playerInfoList = new VBox(10);
-    playerInfoList.setAlignment(Pos.CENTER_LEFT);
-    positionLabel = new Label("Position:");
-    diceResultLabel = new Label("Roll result:");
-    rollButton = new Button("Roll Dice");
-    rollButton.setOnAction(e -> handleRoll());
-    VBox bottomBox = new VBox(5, positionLabel, diceResultLabel, rollButton);
-    bottomBox.setAlignment(Pos.CENTER);
-    VBox infoPanel = new VBox(20, currentBox, playerInfoList, bottomBox);
-    infoPanel.setAlignment(Pos.TOP_CENTER);
-    root.setRight(infoPanel);
-    updatePlayerImages();
-  }
 
-  protected void initializeBoardGrid() {
     boardGrid = new GridPane();
     boardGrid.setHgap(2);
     boardGrid.setVgap(2);
@@ -83,6 +55,42 @@ public abstract class GameScreen implements GameScreenObserver {
       boardGrid.getRowConstraints().add(rc);
     }
     renderBoardGrid();
+
+    overlayPane = new Pane();
+    overlayPane.setPickOnBounds(false);
+    overlayPane.setMouseTransparent(true);
+    overlayPane.prefWidthProperty().bind(boardGrid.widthProperty());
+    overlayPane.prefHeightProperty().bind(boardGrid.heightProperty());
+
+    boardWithOverlay = new StackPane(boardGrid, overlayPane);
+    StackPane.setAlignment(boardGrid, Pos.TOP_LEFT);
+    StackPane.setAlignment(overlayPane, Pos.TOP_LEFT);
+    root.setLeft(boardWithOverlay);
+
+    currentPlayerLabel = new Label("Current turn:");
+    playerImage = new ImageView();
+    playerImage.setFitWidth(70);
+    playerImage.setFitHeight(70);
+    VBox currentBox = new VBox(5, currentPlayerLabel, playerImage);
+    currentBox.setAlignment(Pos.CENTER);
+
+    playerInfoList = new VBox(10);
+    playerInfoList.setAlignment(Pos.CENTER_LEFT);
+
+    positionLabel = new Label("Position:");
+    diceResultLabel = new Label("Roll result:");
+    rollButton = new Button("Roll Dice");
+    rollButton.setOnAction(e -> handleRoll());
+    VBox bottomBox = new VBox(5, positionLabel, diceResultLabel, rollButton);
+    bottomBox.setAlignment(Pos.CENTER);
+
+    VBox infoPanel = new VBox(20, currentBox, playerInfoList, bottomBox);
+    infoPanel.setAlignment(Pos.TOP_CENTER);
+    infoPanel.setPrefWidth(200);
+    infoPanel.setMaxWidth(200);
+    root.setRight(infoPanel);
+
+    updatePlayerImages();
   }
 
   protected void renderBoardGrid() {
@@ -90,21 +98,24 @@ public abstract class GameScreen implements GameScreenObserver {
     for (int i = 1; i <= BOARD_SIZE * BOARD_SIZE; i++) {
       StackPane cell = new StackPane();
       cell.setPrefSize(TILE_SIZE, TILE_SIZE);
-      cell.setStyle("-fx-border-color: black; -fx-background-color: " + getTileColor(i));
+      cell.setStyle("-fx-border-color: black; -fx-background-color: " + getTileColor(i) + ";");
       Text txt = new Text(String.valueOf(i));
       txt.setStyle("-fx-fill: #555;");
       cell.getChildren().add(txt);
+
       List<Player> players = getPlayersAtPosition(i);
       for (int idx = 0; idx < players.size(); idx++) {
-        Image img = getCurrentPlayerImage();
-        if (img != null) {
-          ImageView iv = new ImageView(img);
-          iv.setFitWidth(TILE_SIZE * 0.5);
-          iv.setFitHeight(TILE_SIZE * 0.5);
-          iv.setTranslateY(10 * idx);
-          cell.getChildren().add(iv);
-        }
+        Player p = players.get(idx);
+        Image img = getPlayerImage(p);
+        if (img == null) continue;
+        ImageView iv = new ImageView(img);
+        iv.setFitWidth(TILE_SIZE * 0.5);
+        iv.setFitHeight(TILE_SIZE * 0.5);
+        iv.setPreserveRatio(true);
+        iv.setTranslateY(10 * idx);
+        cell.getChildren().add(iv);
       }
+
       int row = BOARD_SIZE - 1 - ((i - 1) / BOARD_SIZE);
       int col = (row % 2 == 0)
           ? ((i - 1) % BOARD_SIZE)
@@ -132,26 +143,32 @@ public abstract class GameScreen implements GameScreenObserver {
   protected void updatePlayerImages() {
     playerInfoList.getChildren().clear();
     for (Player p : getAllPlayers()) {
+      Image img = getPlayerImage(p);
+      if (img == null) continue;
+      ImageView iv = new ImageView(img);
+      iv.setFitWidth(40);
+      iv.setFitHeight(40);
+      iv.setPreserveRatio(true);
       Label name = new Label(p.getName());
       Label pos = new Label("Pos: " + p.getPosition());
-      HBox row = new HBox(5, name, pos);
+      HBox row = new HBox(5, iv, name, pos);
+      row.setAlignment(Pos.CENTER_LEFT);
       playerInfoList.getChildren().add(row);
     }
   }
 
   @Override public void onPlayerPositionChanged(Player player, int oldPos, int newPos) {}
-  @Override public void onDiceRolled(int result) { diceResultLabel.setText("Roll result: " + result); }
+  @Override public void onDiceRolled(int result)    { diceResultLabel.setText("Roll result: " + result); }
   @Override public void onPlayerTurnChanged(Player current) {
     currentPlayerLabel.setText("Current turn: " + current.getName());
     positionLabel.setText("Position: " + current.getPosition());
   }
-  @Override public void onGameOver(Player winner) {}
-  @Override public void onGameSaved(String path) {}
+  @Override public void onGameOver(Player winner)   {}
+  @Override public void onGameSaved(String path)    {}
 
   protected abstract List<Player> getAllPlayers();
-  protected abstract Image getCurrentPlayerImage();
+  protected abstract Image getPlayerImage(Player player);
   protected abstract void handleRoll();
   protected abstract String getTileColor(int tileNumber);
   protected abstract List<Player> getPlayersAtPosition(int tileNumber);
-  protected abstract Pane getOverlay();
 }
