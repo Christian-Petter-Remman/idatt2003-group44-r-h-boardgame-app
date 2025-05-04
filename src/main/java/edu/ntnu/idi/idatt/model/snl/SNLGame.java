@@ -5,6 +5,7 @@ import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.model.common.BoardGame;
 import edu.ntnu.idi.idatt.model.model_observers.BoardObserver;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
+import java.util.concurrent.ThreadLocalRandom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,7 @@ public class SNLGame extends BoardGame {
   private final List<GameScreenObserver> winnerObservers = new ArrayList<>();
   private final List<GameScreenObserver> saveObservers = new ArrayList<>();
   private final List<BoardObserver> boardObservers = new ArrayList<>();
+  private int diceCount = 1;
 
   public SNLGame(SNLBoard board, List<Player> players, int diceCount, int currentTurnIndex) {
     super(board);
@@ -145,5 +147,23 @@ public class SNLGame extends BoardGame {
 
   public boolean isGameOver() {
     return gameOver;
+  }
+
+  public void setDiceCount(int diceCount) {
+    if (diceCount < 1) {
+      diceCount = 1;
+    }
+    if (diceCount > 2) {
+      diceCount = 2;
+    }
+    this.diceCount = diceCount;
+  }
+
+  public int rollDice() {
+    int total = 0;
+    for (int i = 0; i < diceCount; i++) {
+      total += ThreadLocalRandom.current().nextInt(1, 7);
+    }
+    return total;
   }
 }
