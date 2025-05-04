@@ -220,7 +220,7 @@ public class NavigationManager {
       );
 
       SNLGameScreenController controller =
-          new SNLGameScreenController(game, savePath);
+          new SNLGameScreenController(game);
 
       SNLGameScreenView view = new SNLGameScreenView(controller);
 

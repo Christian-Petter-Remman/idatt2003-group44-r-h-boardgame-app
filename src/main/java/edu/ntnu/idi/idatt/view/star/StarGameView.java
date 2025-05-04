@@ -4,10 +4,16 @@ import edu.ntnu.idi.idatt.controller.star.StarGameController;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.stargame.StarBoard;
+import edu.ntnu.idi.idatt.model.stargame.StarPlayer;
+import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.GameScreen;
 import edu.ntnu.idi.idatt.view.snl.BoardCreator;
+import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -24,7 +30,6 @@ public class StarGameView extends GameScreen {
   private final int cols = 13;
   private final List<Integer> blankTiles = new ArrayList<>(List.of(0));
 
-  private final Pane tileOverlay = new Pane();
   private final StarGameController controller;
 
   public StarGameView(StarGameController controller) {
@@ -45,16 +50,23 @@ public class StarGameView extends GameScreen {
       public void onPlayerTurnChanged(Player currentPlayer) {
         currentPlayerLabel.setText("Current turn: " + currentPlayer.getName());
         positionLabel.setText("Position: " + currentPlayer.getPosition());
-      }
+        updatePlayerImages();
 
+        Image newImage = getCurrentPlayerImage();
+        if (newImage != null) {
+          playerImage.setImage(newImage);
+        }
+      }
 
       @Override
       public void onGameOver(Player winner) {
+        if (winner instanceof StarPlayer starPlayer) {
+          Platform.runLater(() -> showWinnerDialog(starPlayer));
+        }
       }
 
       @Override
-      public void onGameSaved(String filePath) {
-      }
+      public void onGameSaved(String filePath) {}
     });
 
     createUI();
@@ -62,6 +74,22 @@ public class StarGameView extends GameScreen {
 
   public void initializeUI() {
     createUI();
+  }
+
+  private void showWinnerDialog(StarPlayer winner) {
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.setTitle("Game Over!");
+    alert.setHeaderText(winner.getName() + " has won the game, getting " + winner.getPoints() + " stars!");
+    alert.setContentText("Press home to continue");
+
+    ButtonType okButton = new ButtonType("Home Page", ButtonBar.ButtonData.OK_DONE);
+    alert.getButtonTypes().setAll(okButton);
+
+    alert.showAndWait().ifPresent(response -> {
+      if (response == okButton) {
+        NavigationManager.getInstance().navigateToStartScreen();
+      }
+    });
   }
 
   @Override
@@ -72,13 +100,10 @@ public class StarGameView extends GameScreen {
       URL url = getClass().getResource("/player_icons/" + characterName + ".png");
       if (url != null) {
         return new Image(url.toExternalForm());
-      } else {
-        //logger.warn("No image found for character: {}", characterName);
       }
     }
     return null;
   }
-
 
   @Override
   public void renderBoardGrid() {
@@ -89,9 +114,6 @@ public class StarGameView extends GameScreen {
     boardGrid.setPrefSize(TILE_SIZE * cols, TILE_SIZE * rows);
     boardGrid.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
     boardGrid.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-
-    tileOverlay.setPrefSize(TILE_SIZE * cols, TILE_SIZE * rows);
-    tileOverlay.getChildren().clear();
 
     for (int i = 0; i < cols; i++) {
       ColumnConstraints colConst = new ColumnConstraints(TILE_SIZE);
@@ -114,32 +136,38 @@ public class StarGameView extends GameScreen {
 
       boardGrid.add(cell, col, row);
     }
-
-    renderOverlay();
   }
 
   public StackPane createTile(int tileNum) {
     StackPane cell = new StackPane();
     cell.setPrefSize(TILE_SIZE, TILE_SIZE);
 
-    String borderColor = isBlank(tileNum) ? "white" : "black";
-    cell.setStyle("-fx-border-color: " + borderColor + "; -fx-background-color: white;");
+    if (tileNum == 100) {
+      var url = getClass().getResource("/images/jailTile.png");
+      if (url != null) {
+        cell.setStyle("-fx-border-color: black; -fx-background-image: url('" + url.toExternalForm() + "'); -fx-background-size: cover;");
+      } else {
+        cell.setStyle("-fx-border-color: black; -fx-background-color: black;");
+      }
+    } else {
+      String borderColor = isBlank(tileNum) ? "white" : "black";
+      cell.setStyle("-fx-border-color: " + borderColor + "; -fx-background-color:" + getTileColor(tileNum) + ";");
 
-    if (tileNum != 0) {
-      Text tileNumber = new Text(String.valueOf(tileNum));
-      tileNumber.setStyle("-fx-fill: #555;");
-      cell.getChildren().add(tileNumber);
+      if (tileNum != 0) {
+        Text tileNumber = new Text(String.valueOf(tileNum));
+        tileNumber.setStyle("-fx-fill: #555;");
+        cell.getChildren().add(tileNumber);
+      }
     }
+
+    addOverlayImagesToCell(cell, tileNum);
 
     List<Player> playersOnTile = getPlayersAtPosition(tileNum);
     for (Player player : playersOnTile) {
-      String characterName =
-          (player.getCharacter() != null) ? player.getCharacter().toLowerCase() : "default";
+      String characterName = player.getCharacter() != null ? player.getCharacter().toLowerCase() : "default";
       try {
         var url = getClass().getResource("/player_icons/" + characterName + ".png");
-        if (url == null) {
-          continue;
-        }
+        if (url == null) continue;
 
         Image image = new Image(url.toExternalForm(), TILE_SIZE * 0.5, TILE_SIZE * 0.5, true, true);
         ImageView icon = new ImageView(image);
@@ -153,38 +181,26 @@ public class StarGameView extends GameScreen {
     return cell;
   }
 
-  private boolean isBlank(int tileNum) {
-    return blankTiles.contains(tileNum);
-  }
-
-  private void renderOverlay() {
+  private void addOverlayImagesToCell(StackPane cell, int tileNum) {
     StarBoard board = (StarBoard) controller.getBoard();
-
-    board.getBridges().forEach(bridge -> renderBridges(bridge.getStart(), bridge.getEnd()));
-    board.getTunnels().forEach(tunnel -> renderTunnels(tunnel.getStart(), tunnel.getEnd()));
-    board.getStars().forEach(star -> renderStars(star.getStart()));
+    board.getBridges().forEach(bridge -> {
+      if (bridge.getStart() == tileNum || bridge.getEnd() == tileNum) {
+        addImageToCell(cell, "bridge.png");
+      }
+    });
+    board.getTunnels().forEach(tunnel -> {
+      if (tunnel.getStart() == tileNum || tunnel.getEnd() == tileNum) {
+        addImageToCell(cell, "tunnel.png");
+      }
+    });
+    board.getStars().forEach(star -> {
+      if (star.getStart() == tileNum) {
+        addImageToCell(cell, "star.png");
+      }
+    });
   }
 
-  private void renderBridges(int tileStart, int tileEnd) {
-    double[] startPos = getTileCenter(tileStart);
-    double[] endPos = getTileCenter(tileEnd);
-    addImageToOverlay("bridge.png", startPos[0], startPos[1]);
-    addImageToOverlay("bridge.png", endPos[0], endPos[1]);
-  }
-
-  private void renderTunnels(int tileStart, int tileEnd) {
-    double[] startPos = getTileCenter(tileStart);
-    double[] endPos = getTileCenter(tileEnd);
-    addImageToOverlay("tunnel.png", startPos[0], startPos[1]);
-    addImageToOverlay("tunnel.png", endPos[0], endPos[1]);
-  }
-
-  private void renderStars(int tileStart) {
-    double[] startPos = getTileCenter(tileStart);
-    addImageToOverlay("star.png", startPos[0], startPos[1]);
-  }
-
-  private void addImageToOverlay(String imageFileName, double x, double y) {
+  private void addImageToCell(StackPane cell, String imageFileName) {
     try {
       var url = getClass().getResource("/images/" + imageFileName);
       if (url == null) {
@@ -194,34 +210,22 @@ public class StarGameView extends GameScreen {
 
       Image image = new Image(url.toExternalForm(), TILE_SIZE * 0.8, TILE_SIZE * 0.8, true, true);
       ImageView icon = new ImageView(image);
-      icon.setLayoutX(x - TILE_SIZE * 0.4);
-      icon.setLayoutY(y - TILE_SIZE * 0.4);
-      tileOverlay.getChildren().add(icon);
+      cell.getChildren().add(icon);
     } catch (Exception e) {
       //logger.error("Failed to load image: {}", imageFileName, e);
     }
   }
 
-  public double[] getTileCenter(int tileNum) {
-    for (int i = 0; i < rows * cols; i++) {
-      if (BoardCreator.StarGame(i) == tileNum) {
-        int row = rows - 1 - (i / cols);
-        int col = (row % 2 == 0) ? (i % cols) : (cols - 1 - (i % cols));
-        double x = col * TILE_SIZE + TILE_SIZE / 2.0;
-        double y = row * TILE_SIZE + TILE_SIZE / 2.0;
-        return new double[]{x, y};
-      }
-    }
-    return new double[]{0, 0};
+  private boolean isBlank(int tileNum) {
+    return blankTiles.contains(tileNum);
   }
 
   @Override
-  public void initializeOverlay() {
-    tileOverlay.setPickOnBounds(false);
-    tileOverlay.setMouseTransparent(true);
-    tileOverlay.setPrefSize(TILE_SIZE * cols, TILE_SIZE * rows);
-    renderOverlay();
+  protected List<Player> getAllPlayers() {
+    return controller.getPlayers();
   }
+
+  public void initializeOverlay() {}
 
   @Override
   protected void handleRoll() {
@@ -238,7 +242,8 @@ public class StarGameView extends GameScreen {
     return controller.getPlayersAtPosition(tileNumber);
   }
 
+  @Override
   protected Pane getOverlay() {
-    return tileOverlay;
+    return new Pane();
   }
 }

@@ -13,51 +13,53 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SNLGameScreenController implements NavigationHandler {
-
   private static final Logger logger = LoggerFactory.getLogger(SNLGameScreenController.class);
-  private final SNLGame game;
-  private final String savePath;
 
-  public SNLGameScreenController(SNLGame game, String savePath) {
+  private final SNLGame game;
+  private final List<GameScreenObserver> observers = new ArrayList<>();
+  private Parent root;
+
+  public SNLGameScreenController(SNLGame game) {
     this.game = game;
-    this.savePath = savePath;
   }
 
   public void registerObserver(GameScreenObserver observer) {
+    observers.add(observer);
     game.addMoveObserver(observer);
     game.addTurnObserver(observer);
     game.addWinnerObserver(observer);
-    game.addSaveObserver(observer);
   }
 
-  public void notifyPlayerPositionChangedAll() {
-    Player current = game.getCurrentPlayer();
-    game.notifyMoveObservers(current, 0);
+  public List<Player> getPlayers() {
+    return game.getPlayers();
   }
 
   public AbstractBoard getBoard() {
     return game.getBoard();
   }
 
-  public List<Player> getPlayersAtPosition(int position) {
-    return game.getPlayers().stream()
-        .filter(p -> p.getPosition() == position)
-        .collect(Collectors.toList());
+  public Player getCurrentPlayer() {
+    return game.getCurrentPlayer();
   }
 
+  /**
+   * Returns the image for the current player's token,
+   * or null if none.
+   */
   public Image getCurrentPlayerImage() {
-    Player p = game.getCurrentPlayer();
+    Player p = getCurrentPlayer();
     if (p != null && p.getCharacter() != null) {
       String name = p.getCharacter().toLowerCase();
       URL url = getClass().getResource("/player_icons/" + name + ".png");
       if (url != null) {
         return new Image(url.toExternalForm());
+      } else {
+        logger.warn("No icon found for character '{}'", name);
       }
-      logger.warn("No image found for character: {}", name);
     }
     return null;
   }
@@ -70,26 +72,31 @@ public class SNLGameScreenController implements NavigationHandler {
     return (tileNum % 2 == 0) ? "#f0f0f0" : "#d0d0d0";
   }
 
-  public void saveGame() {
-    game.saveGame(savePath);
+  public List<Player> getPlayersAtPosition(int pos) {
+    List<Player> out = new ArrayList<>();
+    for (Player p : game.getPlayers()) {
+      if (p.getPosition() == pos) out.add(p);
+    }
+    return out;
   }
 
-  @Override
-  public void navigateTo(String destination) {
-    NavigationManager.getInstance().navigateTo(NavigationTarget.valueOf(destination));
+  // fire off a full update to position for each player
+  public void notifyPlayerPositionChangedAll() {
+    for (Player p : game.getPlayers()) {
+      for (GameScreenObserver o : observers) {
+        o.onPlayerPositionChanged(p, p.getPosition(), p.getPosition());
+      }
+    }
   }
 
-  @Override
-  public void navigateBack() {
-    NavigationManager.getInstance().navigateBack();
+  @Override public void navigateTo(String destination) {
+    if ("INTRO_SCREEN".equals(destination)) {
+      NavigationManager.getInstance().navigateTo(NavigationTarget.START_SCREEN);
+    } else {
+      logger.warn("Unknown destination: {}", destination);
+    }
   }
-
-  @Override
-  public void setRoot(Parent root) {
-    NavigationManager.getInstance().setRoot(root);
-  }
-
-  public SNLGame getGame() {
-    return game;
-  }
+  @Override public void navigateBack() {}
+  @Override public void setRoot(Parent root) { this.root = root; }
+  public Parent getRoot() { return root; }
 }

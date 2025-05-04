@@ -1,49 +1,36 @@
-
 package edu.ntnu.idi.idatt.view;
 
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
-import javafx.animation.TranslateTransition;
-import javafx.application.Platform;
+import javafx.geometry.Bounds;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.geometry.Point2D;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
-import javafx.util.Duration;
 
 import java.util.List;
 
 public abstract class GameScreen implements GameScreenObserver {
   protected static final int TILE_SIZE = 60;
   protected static final int BOARD_SIZE = 10;
-
   protected BorderPane root;
   protected GridPane boardGrid;
-  protected StackPane overlayPane = new StackPane();
+  protected Pane overlayPane;
+  protected StackPane boardWithOverlay;
   protected Label currentPlayerLabel;
   protected Label positionLabel;
   protected Label diceResultLabel;
   protected Button rollButton;
-
-  protected abstract Image getCurrentPlayerImage();
-  protected abstract String getTileColor(int tileNumber);
-  protected abstract List<Player> getPlayersAtPosition(int tileNumber);
-  protected abstract void initializeOverlay();
-  protected abstract void handleRoll();
+  protected ImageView playerImage;
+  protected VBox playerInfoList;
 
   public Parent getRoot() {
     return root;
@@ -51,38 +38,34 @@ public abstract class GameScreen implements GameScreenObserver {
 
   protected void createUI() {
     root = new BorderPane();
-    root.setStyle("-fx-padding: 30;");
-
     initializeBoardGrid();
-    Platform.runLater(() -> {
-      boardGrid.applyCss();
-      boardGrid.layout();
-      initializeOverlay();
-    });
-
-    StackPane boardWithOverlay = new StackPane(boardGrid, overlayPane);
-    overlayPane.toFront();
-    boardGrid.toBack();
+    overlayPane = new Pane();
+    overlayPane.setPickOnBounds(false);
+    overlayPane.setMouseTransparent(true);
+    overlayPane.prefWidthProperty().bind(boardGrid.widthProperty());
+    overlayPane.prefHeightProperty().bind(boardGrid.heightProperty());
+    boardWithOverlay = new StackPane(boardGrid, overlayPane);
+    StackPane.setAlignment(boardGrid, Pos.TOP_LEFT);
+    StackPane.setAlignment(overlayPane, Pos.TOP_LEFT);
     root.setLeft(boardWithOverlay);
-
-    VBox infoBox = new VBox(20);
-    infoBox.setAlignment(Pos.TOP_CENTER);
     currentPlayerLabel = new Label("Current turn:");
+    playerImage = new ImageView();
+    playerImage.setFitWidth(70);
+    playerImage.setFitHeight(70);
+    VBox currentBox = new VBox(5, currentPlayerLabel, playerImage);
+    currentBox.setAlignment(Pos.CENTER);
+    playerInfoList = new VBox(10);
+    playerInfoList.setAlignment(Pos.CENTER_LEFT);
     positionLabel = new Label("Position:");
     diceResultLabel = new Label("Roll result:");
-    ImageView playerImage = new ImageView();
-    playerImage.setFitWidth(60);
-    playerImage.setFitHeight(60);
-    playerImage.setPreserveRatio(true);
-    Image image = getCurrentPlayerImage();
-    if (image != null) playerImage.setImage(image);
-    infoBox.getChildren().addAll(playerImage, currentPlayerLabel, positionLabel, diceResultLabel);
-    root.setRight(infoBox);
-
     rollButton = new Button("Roll Dice");
     rollButton.setOnAction(e -> handleRoll());
-    BorderPane.setAlignment(rollButton, Pos.CENTER);
-    root.setBottom(rollButton);
+    VBox bottomBox = new VBox(5, positionLabel, diceResultLabel, rollButton);
+    bottomBox.setAlignment(Pos.CENTER);
+    VBox infoPanel = new VBox(20, currentBox, playerInfoList, bottomBox);
+    infoPanel.setAlignment(Pos.TOP_CENTER);
+    root.setRight(infoPanel);
+    updatePlayerImages();
   }
 
   protected void initializeBoardGrid() {
@@ -91,7 +74,6 @@ public abstract class GameScreen implements GameScreenObserver {
     boardGrid.setVgap(2);
     boardGrid.setAlignment(Pos.CENTER);
     boardGrid.setPrefSize(TILE_SIZE * BOARD_SIZE, TILE_SIZE * BOARD_SIZE);
-
     for (int i = 0; i < BOARD_SIZE; i++) {
       ColumnConstraints cc = new ColumnConstraints(TILE_SIZE);
       cc.setHalignment(HPos.CENTER);
@@ -100,100 +82,76 @@ public abstract class GameScreen implements GameScreenObserver {
       rc.setValignment(VPos.CENTER);
       boardGrid.getRowConstraints().add(rc);
     }
-
     renderBoardGrid();
   }
 
   protected void renderBoardGrid() {
     boardGrid.getChildren().clear();
-    for (int i = 0; i < BOARD_SIZE * BOARD_SIZE; i++) {
-      int tileNum = i + 1;
+    for (int i = 1; i <= BOARD_SIZE * BOARD_SIZE; i++) {
       StackPane cell = new StackPane();
       cell.setPrefSize(TILE_SIZE, TILE_SIZE);
-      cell.setStyle("-fx-border-color: black; -fx-background-color: " + getTileColor(tileNum) + ";");
-      Text t = new Text(String.valueOf(tileNum));
-      t.setStyle("-fx-fill: #555;");
-      cell.getChildren().add(t);
-      List<Player> players = getPlayersAtPosition(tileNum);
+      cell.setStyle("-fx-border-color: black; -fx-background-color: " + getTileColor(i));
+      Text txt = new Text(String.valueOf(i));
+      txt.setStyle("-fx-fill: #555;");
+      cell.getChildren().add(txt);
+      List<Player> players = getPlayersAtPosition(i);
       for (int idx = 0; idx < players.size(); idx++) {
-        Player p = players.get(idx);
-        String cn = p.getCharacter() != null ? p.getCharacter().toLowerCase() : "default";
-        var url = getClass().getResource("/player_icons/" + cn + ".png");
-        if (url == null) continue;
-        Image pi = new Image(url.toExternalForm(), TILE_SIZE * 0.5, TILE_SIZE * 0.5, true, true);
-        ImageView iv = new ImageView(pi);
-        iv.setTranslateY(TILE_SIZE * 0.15 * idx);
-        cell.getChildren().add(iv);
+        Image img = getCurrentPlayerImage();
+        if (img != null) {
+          ImageView iv = new ImageView(img);
+          iv.setFitWidth(TILE_SIZE * 0.5);
+          iv.setFitHeight(TILE_SIZE * 0.5);
+          iv.setTranslateY(10 * idx);
+          cell.getChildren().add(iv);
+        }
       }
-      int row = BOARD_SIZE - 1 - (i / BOARD_SIZE);
-      int col = (row % 2 == 0) ? (i % BOARD_SIZE) : (BOARD_SIZE - 1 - (i % BOARD_SIZE));
+      int row = BOARD_SIZE - 1 - ((i - 1) / BOARD_SIZE);
+      int col = (row % 2 == 0)
+          ? ((i - 1) % BOARD_SIZE)
+          : (BOARD_SIZE - 1 - ((i - 1) % BOARD_SIZE));
       boardGrid.add(cell, col, row);
     }
   }
 
-  protected void animatePlayerMove(int fromTile, int toTile) {
-    Image avatar = getCurrentPlayerImage();
-    if (avatar == null) return;
-    Point2D start = getCellCenter(fromTile);
-    Point2D end   = getCellCenter(toTile);
-    ImageView icon = new ImageView(avatar);
-    icon.setFitWidth(TILE_SIZE * 0.5);
-    icon.setFitHeight(TILE_SIZE * 0.5);
-    icon.setLayoutX(start.getX() - TILE_SIZE * 0.25);
-    icon.setLayoutY(start.getY() - TILE_SIZE * 0.25);
-    overlayPane.getChildren().add(icon);
-    TranslateTransition tt = new TranslateTransition(Duration.millis(400), icon);
-    tt.setByX(end.getX() - start.getX());
-    tt.setByY(end.getY() - start.getY());
-    tt.setOnFinished(e -> Platform.runLater(() -> {
-      overlayPane.getChildren().remove(icon);
-      boardGrid.applyCss();
-      boardGrid.layout();
-      initializeOverlay();
-    }));
-    tt.play();
-  }
-
   protected Point2D getCellCenter(int tileNum) {
-    int i = tileNum - 1;
-    int row = BOARD_SIZE - 1 - (i / BOARD_SIZE);
-    int col = (row % 2 == 0) ? (i % BOARD_SIZE) : (BOARD_SIZE - 1 - (i % BOARD_SIZE));
-    for (var node : boardGrid.getChildren()) {
-      Integer r = GridPane.getRowIndex(node), c = GridPane.getColumnIndex(node);
+    int idx = tileNum - 1;
+    int row = BOARD_SIZE - 1 - (idx / BOARD_SIZE);
+    int col = (row % 2 == 0)
+        ? (idx % BOARD_SIZE)
+        : (BOARD_SIZE - 1 - (idx % BOARD_SIZE));
+    for (Node n : boardGrid.getChildren()) {
+      Integer r = GridPane.getRowIndex(n), c = GridPane.getColumnIndex(n);
       if (r != null && c != null && r == row && c == col) {
-        var b = node.localToParent(node.getBoundsInLocal());
-        return new Point2D(b.getMinX() + b.getWidth()/2, b.getMinY() + b.getHeight()/2);
+        Bounds b = n.localToParent(n.getBoundsInLocal());
+        return new Point2D(b.getMinX() + b.getWidth() / 2, b.getMinY() + b.getHeight() / 2);
       }
     }
-    return new Point2D(0,0);
+    return new Point2D(0, 0);
   }
 
-  @Override public void onPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
-    animatePlayerMove(oldPosition, newPosition);
+  protected void updatePlayerImages() {
+    playerInfoList.getChildren().clear();
+    for (Player p : getAllPlayers()) {
+      Label name = new Label(p.getName());
+      Label pos = new Label("Pos: " + p.getPosition());
+      HBox row = new HBox(5, name, pos);
+      playerInfoList.getChildren().add(row);
+    }
   }
-  @Override public void onDiceRolled(int result) {
-    diceResultLabel.setText("Roll result: " + result);
+
+  @Override public void onPlayerPositionChanged(Player player, int oldPos, int newPos) {}
+  @Override public void onDiceRolled(int result) { diceResultLabel.setText("Roll result: " + result); }
+  @Override public void onPlayerTurnChanged(Player current) {
+    currentPlayerLabel.setText("Current turn: " + current.getName());
+    positionLabel.setText("Position: " + current.getPosition());
   }
-  @Override public void onPlayerTurnChanged(Player currentPlayer) {
-    currentPlayerLabel.setText("Current turn: " + currentPlayer.getName());
-    positionLabel.setText("Position: " + currentPlayer.getPosition());
-  }
-  @Override public void onGameOver(Player winner) {
-    Alert gameOverAlert = new Alert(Alert.AlertType.INFORMATION);
-    gameOverAlert.initOwner(root.getScene().getWindow());
-    gameOverAlert.initModality(Modality.WINDOW_MODAL);
-    gameOverAlert.setTitle("Game Over");
-    gameOverAlert.setHeaderText("Winner!");
-    gameOverAlert.setContentText(winner.getName() + " has won the game.");
-    gameOverAlert.showAndWait();
-  }
-  @Override public void onGameSaved(String filePath) {
-    Alert savedGameAlert = new Alert(Alert.AlertType.INFORMATION);
-    savedGameAlert.initOwner(root.getScene().getWindow());
-    savedGameAlert.initModality(Modality.WINDOW_MODAL);
-    savedGameAlert.setTitle("Game Saved");
-    savedGameAlert.setHeaderText("Game Saved");
-    savedGameAlert.setContentText("Saved to: " + filePath);
-    savedGameAlert.showAndWait();
-  }
+  @Override public void onGameOver(Player winner) {}
+  @Override public void onGameSaved(String path) {}
+
+  protected abstract List<Player> getAllPlayers();
+  protected abstract Image getCurrentPlayerImage();
+  protected abstract void handleRoll();
+  protected abstract String getTileColor(int tileNumber);
+  protected abstract List<Player> getPlayersAtPosition(int tileNumber);
+  protected abstract Pane getOverlay();
 }
