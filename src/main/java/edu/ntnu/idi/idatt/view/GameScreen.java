@@ -1,4 +1,3 @@
-// GameScreen.java
 package edu.ntnu.idi.idatt.view;
 
 import edu.ntnu.idi.idatt.model.common.Player;
