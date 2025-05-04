@@ -1,5 +1,6 @@
 package edu.ntnu.idi.idatt.controller.star;
 
+import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.model.common.AbstractBoard;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.common.Tile;
@@ -12,6 +13,7 @@ import javafx.scene.Parent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,6 +105,10 @@ public class StarGameController implements NavigationHandler {
     for (GameScreenObserver observer : observers) {
       observer.onPlayerPositionChanged(player, oldPosition, newPosition);
     }
+  }
+
+  public void saveGame(File tempFile, String filename) {
+    FileManager.saveGameToPermanent(tempFile,"star",filename);
   }
 
   @Override

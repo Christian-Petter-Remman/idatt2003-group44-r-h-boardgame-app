@@ -59,7 +59,7 @@ public class StarCharSelectionController implements NavigationHandler {
 
   public void onStart(){
     String saveFileName = SaveFileNameGenerator.StargenerateSaveFileName();
-    savePath = "saves/" + saveFileName;
+    savePath = "saves/temp/" + saveFileName;
     List<PlayerData> players = getPlayrDataList();
     StarGameStateExporter exporter = new StarGameStateExporter(players, savePath);
 

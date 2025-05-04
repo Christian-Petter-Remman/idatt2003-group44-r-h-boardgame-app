@@ -1,5 +1,6 @@
 package edu.ntnu.idi.idatt.controller.snl;
 
+import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.model.common.AbstractBoard;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
@@ -13,6 +14,7 @@ import javafx.scene.Parent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,6 +90,10 @@ public class SNLGameScreenController implements NavigationHandler {
     for (GameScreenObserver observer : observers) {
       observer.onPlayerPositionChanged(player, oldPosition, newPosition);
     }
+  }
+
+  public void saveGame(File tempFile, String filename) {
+    FileManager.saveGameToPermanent(tempFile,"snl",filename);
   }
 
   @Override
