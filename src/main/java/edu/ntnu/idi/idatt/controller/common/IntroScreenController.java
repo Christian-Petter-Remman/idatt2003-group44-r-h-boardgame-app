@@ -15,11 +15,17 @@ public class IntroScreenController implements NavigationHandler {
   public IntroScreenController() {
     this.view = new IntroScreenView();
     this.view.setStartGameListener(this::startSnakesAndLadders);
+    this.view.setLoadGameListener(this::loadSNLGame);
   }
 
   private void startSnakesAndLadders() {
       navigateTo("CHARACTER_SELECTION");
       logger.info("Starting game: {}", "Snakes and Ladders");
+  }
+
+  private void loadSNLGame() {
+    navigateTo("SNL_LOAD_SCREEN");
+    logger.info("Navigating to Load Game screen");
   }
 
 

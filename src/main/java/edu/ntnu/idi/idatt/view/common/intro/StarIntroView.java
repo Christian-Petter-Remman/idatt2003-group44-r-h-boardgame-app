@@ -5,10 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +26,17 @@ public class StarIntroView implements IntroView {
   protected void createUI() {
     BorderPane mainContainer = new BorderPane();
 
+    // Set background image
+    BackgroundImage bgImage = new BackgroundImage(
+            new Image(getClass().getResource("/home_screen/stargame1.png").toExternalForm(),
+                    0, 0, true, true),
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundPosition.CENTER,
+            new BackgroundSize(1.0, 1.0, true, true, false, false)
+    );
+    mainContainer.setBackground(new Background(bgImage));
+
     VBox gameSelectionBox = createGameSelectionBox();
 
     VBox content = new VBox(20, gameSelectionBox);
@@ -44,12 +52,24 @@ public class StarIntroView implements IntroView {
     return root;
   }
 
+
+
   private VBox createGameSelectionBox() {
-    Image image = new Image("home_screen/star.png");
-    ImageView starGameIcon = createGameIcon(image, "STAR_GAME");
+    Button newGameButton = new Button("New Game");
+    styleGameButton(newGameButton, "#ffca28", "#ff9800");
 
     Button loadGameButton = new Button("Load Game");
-    loadGameButton.setStyle("-fx-font-size: 16px; -fx-padding: 8px 16px;");
+    styleGameButton(loadGameButton, "#81d4fa", "#039be5");
+
+    newGameButton.setOnAction(e -> {
+      if (startGameListener != null) {
+        logger.info("Start game listener triggered.");
+        startGameListener.run();
+      } else {
+        logger.warn("Start Game listener is not set.");
+      }
+    });
+
     loadGameButton.setOnAction(e -> {
       if (loadGameListener != null) {
         logger.info("Load game listener triggered.");
@@ -59,31 +79,49 @@ public class StarIntroView implements IntroView {
       }
     });
 
-    VBox box = new VBox(10, starGameIcon, loadGameButton);
+    VBox box = new VBox(20, newGameButton, loadGameButton);
     box.setAlignment(Pos.CENTER);
+    box.setPadding(new Insets(20));
     return box;
   }
 
-  private ImageView createGameIcon(Image image, String gameType) {
-    ImageView imageView = new ImageView(image);
-    imageView.setFitHeight(150);
-    imageView.setFitWidth(200);
-    imageView.setPreserveRatio(false);
+  private void styleGameButton(Button button, String baseColor, String hoverColor) {
+    button.setStyle(
+            "-fx-font-size: 20px;" +
+                    "-fx-font-weight: bold;" +
+                    "-fx-text-fill: white;" +
+                    "-fx-background-color: " + baseColor + ";" +
+                    "-fx-background-radius: 20;" +
+                    "-fx-padding: 12px 28px;" +
+                    "-fx-cursor: hand;" +
+                    "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 4, 0.3, 0, 2);"
+    );
 
-    if (gameType != null) {
-      logger.info("Game type: {}", gameType);
-      imageView.setOnMouseClicked(e -> {
-        if (startGameListener != null) {
-          startGameListener.run();
-          logger.info("Start game listener executed for game type: {}", gameType);
-        } else {
-          logger.warn("Start game listener is not set");
-        }
-      });
-      imageView.setStyle("-fx-cursor: hand;");
-    }
+    button.setOnMouseEntered(e ->
+            button.setStyle(
+                    "-fx-font-size: 20px;" +
+                            "-fx-font-weight: bold;" +
+                            "-fx-text-fill: white;" +
+                            "-fx-background-color: " + hoverColor + ";" +
+                            "-fx-background-radius: 20;" +
+                            "-fx-padding: 12px 28px;" +
+                            "-fx-cursor: hand;" +
+                            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 6, 0.3, 0, 3);"
+            )
+    );
 
-    return imageView;
+    button.setOnMouseExited(e ->
+            button.setStyle(
+                    "-fx-font-size: 20px;" +
+                            "-fx-font-weight: bold;" +
+                            "-fx-text-fill: white;" +
+                            "-fx-background-color: " + baseColor + ";" +
+                            "-fx-background-radius: 20;" +
+                            "-fx-padding: 12px 28px;" +
+                            "-fx-cursor: hand;" +
+                            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 4, 0.3, 0, 2);"
+            )
+    );
   }
 
   @Override
