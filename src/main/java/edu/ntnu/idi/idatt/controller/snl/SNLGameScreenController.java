@@ -1,5 +1,6 @@
 package edu.ntnu.idi.idatt.controller.snl;
 
+import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.model.common.AbstractBoard;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
@@ -13,6 +14,7 @@ import javafx.scene.Parent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,9 +25,11 @@ public class SNLGameScreenController implements NavigationHandler {
   private final SNLGame game;
   private final List<GameScreenObserver> observers = new ArrayList<>();
   private Parent root;
+  private final File csvFile;
 
-  public SNLGameScreenController(SNLGame game) {
+  public SNLGameScreenController(SNLGame game, File csvFile) {
     this.game = game;
+    this.csvFile = csvFile;
   }
 
   public void registerObserver(GameScreenObserver observer) {
@@ -33,6 +37,10 @@ public class SNLGameScreenController implements NavigationHandler {
     game.addMoveObserver(observer);
     game.addTurnObserver(observer);
     game.addWinnerObserver(observer);
+  }
+
+  public File getCsvFile() {
+    return csvFile;
   }
 
   public List<Player> getPlayers() {
@@ -88,6 +96,10 @@ public class SNLGameScreenController implements NavigationHandler {
     for (GameScreenObserver observer : observers) {
       observer.onPlayerPositionChanged(player, oldPosition, newPosition);
     }
+  }
+
+  public void saveGame(File tempFile, String filename) {
+    FileManager.saveGameToPermanent(tempFile,"snl",filename);
   }
 
   @Override

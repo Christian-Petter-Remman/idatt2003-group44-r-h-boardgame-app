@@ -1,5 +1,6 @@
 package edu.ntnu.idi.idatt.controller.star;
 
+import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.model.common.AbstractBoard;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.common.Tile;
@@ -12,6 +13,7 @@ import javafx.scene.Parent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,9 +25,11 @@ public class StarGameController implements NavigationHandler {
   private final StarGame game;
   private final List<GameScreenObserver> observers = new ArrayList<>();
   private Parent root;
+  private final File csvFile;
 
-  public StarGameController(StarGame game) {
+  public StarGameController(StarGame game, File csvFile) {
     this.game = game;
+    this.csvFile = csvFile;
   }
 
 
@@ -34,6 +38,10 @@ public class StarGameController implements NavigationHandler {
     game.addMoveObserver(observer);
     game.addTurnObserver(observer);
     game.addWinnerObserver(observer);
+  }
+
+  public File getCsvFile() {
+    return csvFile;
   }
 
   public List<Player> getPlayers() {
@@ -103,6 +111,10 @@ public class StarGameController implements NavigationHandler {
     for (GameScreenObserver observer : observers) {
       observer.onPlayerPositionChanged(player, oldPosition, newPosition);
     }
+  }
+
+  public void saveGame(File tempFile, String filename) {
+    FileManager.saveGameToPermanent(tempFile,"star",filename);
   }
 
   @Override

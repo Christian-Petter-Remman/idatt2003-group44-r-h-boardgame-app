@@ -36,6 +36,10 @@ public class GameStateCsvLoader {
       logger.info("Board file set to {}", boardFile);
     }
 
+    public String getBoardFileName() {
+      return boardFile;
+    }
+
     public int getDiceCount() {
       return diceCount;
     }
@@ -108,33 +112,5 @@ public class GameStateCsvLoader {
     }
 
     return state;
-  }
-
-  public static String StarLoadGetJson(String filePath) throws IOException {
-    GameState state = StarLoad(filePath);
-    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-      String line;
-      while ((line = reader.readLine()) != null) {
-        if (line.startsWith("Board,")) {
-          state.boardFile = line.split(",")[1];
-          return state.getBoardFile();
-        }
-
-      }
-    }
-    return state.getBoardFile();
-  }
-
-  public static int StarLoadIntIndex(String filePath) throws IOException {
-    GameState state = StarLoad(filePath);
-    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-      String line;
-      while ((line = reader.readLine()) != null) {
-        if (line.startsWith("CurrentTurnIndex,")) {
-          state.currentTurnIndex = Integer.parseInt(line.split(",")[1]);
-          return state.currentTurnIndex;
-        }
-      }
-    } return state.currentTurnIndex;
   }
 }

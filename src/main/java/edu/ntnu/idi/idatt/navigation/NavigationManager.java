@@ -4,7 +4,8 @@ package edu.ntnu.idi.idatt.navigation;
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
 import edu.ntnu.idi.idatt.controller.common.*;
-import edu.ntnu.idi.idatt.controller.common.load.LoadGameController;
+import edu.ntnu.idi.idatt.controller.common.load.SNLLoadGameController;
+import edu.ntnu.idi.idatt.controller.common.load.StarLoadGameController;
 import edu.ntnu.idi.idatt.controller.memorygame.MemoryGameController;
 import edu.ntnu.idi.idatt.controller.memorygame.MemoryRuleSelectionController;
 import edu.ntnu.idi.idatt.controller.snl.*;
@@ -20,7 +21,6 @@ import edu.ntnu.idi.idatt.model.memorygame.MemoryGameSettings;
 import edu.ntnu.idi.idatt.model.snl.*;
 import edu.ntnu.idi.idatt.model.stargame.StarBoard;
 import edu.ntnu.idi.idatt.model.stargame.StarGame;
-import edu.ntnu.idi.idatt.model.stargame.StarPlayer;
 import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
 
 import edu.ntnu.idi.idatt.view.common.character.StarCharSelectionScreen;
@@ -28,10 +28,14 @@ import edu.ntnu.idi.idatt.view.common.intro.StartScreenView;
 import edu.ntnu.idi.idatt.view.memorygame.MemoryRuleSelectionView;
 import edu.ntnu.idi.idatt.view.snl.SNLGameScreenView;
 
+import edu.ntnu.idi.idatt.view.snl.SNLLoadGameView;
 import edu.ntnu.idi.idatt.view.snl.SNLRuleSelectionView;
-import edu.ntnu.idi.idatt.view.star.LoadGameView;
 import edu.ntnu.idi.idatt.view.star.StarGameView;
+
+import java.io.File;
 import java.util.Objects;
+
+import edu.ntnu.idi.idatt.view.star.StarLoadGameView;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -66,13 +70,11 @@ public class NavigationManager {
   public void initialize(Stage stage) {
     this.primaryStage = stage;
     this.scene = new Scene(new StackPane());
-
-    // Set up the stage
     primaryStage.setScene(scene);
-    primaryStage.setFullScreen(true);             // Start in fullscreen
-    primaryStage.setFullScreenExitHint("");       // Hide "Press ESC to exit"
-    primaryStage.setFullScreenExitKeyCombination(null); // Disable ESC key exit
-    primaryStage.setResizable(false);             // Prevent window resizing
+    primaryStage.setFullScreen(true);
+    primaryStage.setFullScreenExitHint("");
+    primaryStage.setFullScreenExitKeyCombination(null);
+    primaryStage.setResizable(false);
   }
 
   public void setHandler(NavigationHandler handler) {
@@ -110,6 +112,7 @@ public class NavigationManager {
       case STAR_INTRO -> navigateToStarIntroScreen();
       case STAR_GAME -> navigateToStarGameScreen();
       case STAR_LOAD_SCREEN -> navigateToStarLoadScreen();
+      case SNL_LOAD_SCREEN -> navigateToSnlLoadScreen();
 
       case MEMORY_RULE_SCREEN -> navigateToMemoryRuleScreen();
       case MEMORY_GAME_SCREEN -> navigateToMemoryGame();
@@ -177,9 +180,16 @@ public class NavigationManager {
     }
   }
 
+  public void navigateToSnlLoadScreen() {
+    SNLLoadGameController controller = new SNLLoadGameController();
+    SNLLoadGameView view = new SNLLoadGameView(controller);
+    setHandler(controller);
+    setRoot(view.getRoot());
+  }
+
   public void navigateToStarLoadScreen() {
-    LoadGameController controller = new LoadGameController();
-    LoadGameView view = new LoadGameView(controller);
+    StarLoadGameController controller = new StarLoadGameController();
+    StarLoadGameView view = new StarLoadGameView(controller);
     setHandler(controller);
     setRoot(view.getRoot());
   }
@@ -188,6 +198,7 @@ public class NavigationManager {
     logger.info("Starting Star Game...");
     try {
       String savePath = starCharSelectionController.getSavePath();
+      File saveFile = new File(savePath);
       GameStateCsvLoader.GameState gameState = GameStateCsvLoader.StarLoad(savePath);
       String boardpath = "default.json";
 
@@ -196,7 +207,7 @@ public class NavigationManager {
 
       StarGame game = new StarGame(board,gameState.getPlayers(), gameState.getCurrentTurnIndex());
 
-      StarGameController controller = new StarGameController(game);
+      StarGameController controller = new StarGameController(game,saveFile);
       controller.notifyPlayerPositionChangedAll();
       StarGameView view = new StarGameView(controller);
       view.initializeUI();
@@ -212,6 +223,7 @@ public class NavigationManager {
     logger.info("Starting Snakes and Ladders game...");
     try {
       String savePath = ruleSelectionModel.getSavePath();
+      File saveFile = new File(savePath);
       GameStateCsvLoader.GameState gameState = GameStateCsvLoader.SNLLoad(savePath);
       String boardPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + gameState.getBoardFile();
       logger.info("Final board path: {}", boardPath);
@@ -221,7 +233,7 @@ public class NavigationManager {
 
       SNLGame game = new SNLGame(board, gameState.getPlayers(), gameState.getDiceCount(),
           gameState.getCurrentTurnIndex());
-      SNLGameScreenController controller = new SNLGameScreenController(game);
+      SNLGameScreenController controller = new SNLGameScreenController(game,saveFile);
 
       controller.notifyPlayerPositionChangedAll();
 

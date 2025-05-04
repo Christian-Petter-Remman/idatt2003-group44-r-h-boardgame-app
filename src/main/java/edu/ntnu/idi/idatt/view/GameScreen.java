@@ -23,6 +23,9 @@ public abstract class GameScreen {
   protected static final int TILE_SIZE = 60;
   protected static final int BOARD_SIZE = 10;
 
+  protected Runnable saveListener;
+  protected Runnable backListener;
+
   protected BorderPane root;
   protected GridPane boardGrid;
   protected Label currentPlayerLabel;
@@ -68,17 +71,39 @@ public abstract class GameScreen {
     diceResultLabel = new Label("Roll result:");
     rollButton = new Button("Roll Dice");
     rollButton.setOnAction(e -> handleRoll());
-    bottomBox.setAlignment(Pos.CENTER);
-    bottomBox.getChildren().addAll(positionLabel, diceResultLabel, rollButton);
 
-    // 📦 Assemble info panel (right side)
+    Button saveButton = new Button("Save Game");
+    saveButton.setOnAction(e -> {
+      if (saveListener != null) {
+        saveListener.run();
+      }
+    });
+
+    Button homeButton = new Button("Home");
+    homeButton.setOnAction(e -> {
+      if (backListener != null) {
+        backListener.run();
+      }
+    });
+    homeButton.setStyle(
+            "-fx-font-size: 14px;" +
+                    "-fx-background-color: #cccccc;" +
+                    "-fx-text-fill: black;" +
+                    "-fx-background-radius: 12;" +
+                    "-fx-padding: 6 14;" +
+                    "-fx-cursor: hand;"
+    );
+
+    bottomBox.setAlignment(Pos.CENTER);
+    bottomBox.getChildren().addAll(positionLabel, diceResultLabel, rollButton, saveButton, homeButton);
+
     VBox infoPanel = new VBox(30);
     infoPanel.setAlignment(Pos.TOP_CENTER);
     infoPanel.getChildren().addAll(currentPlayerBox, playerInfoList, bottomBox);
     root.setRight(infoPanel);
     updatePlayerImages();
-  }
 
+  }
 
   protected void updatePlayerImages() {
     playerInfoList.getChildren().clear();
@@ -177,6 +202,14 @@ public abstract class GameScreen {
     double y = row * TILE_SIZE + TILE_SIZE / 2.0;
 
     return new double[]{x, y};
+  }
+
+  public void setSaveListener(Runnable listener) {
+    this.saveListener = listener;
+  }
+
+  public void setBackListener(Runnable listener) {
+    this.backListener = listener;
   }
 
   protected abstract void handleRoll();

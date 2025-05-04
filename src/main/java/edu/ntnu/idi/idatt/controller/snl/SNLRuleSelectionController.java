@@ -50,7 +50,7 @@ public class SNLRuleSelectionController implements NavigationHandler {
 
   public void onContinuePressed() {
     String saveFileName = SaveFileNameGenerator.SNLgenerateSaveFileName();
-    String savePath = "saves/" + saveFileName;
+    String savePath = "saves/temp/" + saveFileName;
     model.setSavePath(savePath);
 
     List<PlayerData> players = characterSelectionManager.getPlayers();
