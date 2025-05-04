@@ -20,21 +20,25 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class SNLGameScreenView extends GameScreen {
   private final SNLGameScreenController controller;
-  private final Pane overlayPane = new Pane();
-  private final Label diceResultLabel = new Label("Last roll: -");
-  private final Map<Player, Label> playerPosMap = new HashMap<>();
-  private final Map<Player, ImageView> playerTokens = new HashMap<>();
-  private final Map<Player, Integer> tokenPositions = new HashMap<>();
-  private int lastRoll = 0;
+  private final Pane overlay = new Pane();
+  private final Label lastRollLabel = new Label("Last roll: -");
+  private final Map<Player, Label> playerPositionLabels = new HashMap<>();
+  private final Map<Player, ImageView> playerTokenViews = new HashMap<>();
+  private final Map<Player, Integer> playerTokenPositions = new HashMap<>();
+  private final ImageView currentTurnImageView = new ImageView();
+  private Button rollDiceButton;
+  private int lastRollValue = 0;
 
   public SNLGameScreenView(SNLGameScreenController controller) {
     this.controller = controller;
@@ -42,7 +46,6 @@ public class SNLGameScreenView extends GameScreen {
 
     root = new BorderPane();
 
-    // Board grid
     boardGrid = new GridPane();
     boardGrid.setHgap(2);
     boardGrid.setVgap(2);
@@ -58,225 +61,322 @@ public class SNLGameScreenView extends GameScreen {
     }
     renderBoardGrid();
 
-    overlayPane.setPickOnBounds(false);
-    overlayPane.setMouseTransparent(true);
-    overlayPane.prefWidthProperty().bind(boardGrid.widthProperty());
-    overlayPane.prefHeightProperty().bind(boardGrid.heightProperty());
-    boardWithOverlay = new StackPane(boardGrid, overlayPane);
+    overlay.setPickOnBounds(false);
+    overlay.setMouseTransparent(true);
+    overlay.prefWidthProperty().bind(boardGrid.widthProperty());
+    overlay.prefHeightProperty().bind(boardGrid.heightProperty());
+
+    boardWithOverlay = new StackPane(boardGrid, overlay);
     StackPane.setAlignment(boardGrid, Pos.TOP_LEFT);
-    StackPane.setAlignment(overlayPane, Pos.TOP_LEFT);
+    StackPane.setAlignment(overlay, Pos.TOP_LEFT);
     root.setCenter(boardWithOverlay);
 
-    // Place tokens and record their starting positions
-    for (Player p : controller.getPlayers()) {
-      Image img = getPlayerImage(p);
-      if (img == null) continue;
-      ImageView token = new ImageView(img);
-      token.setFitWidth(TILE_SIZE * 0.6);
-      token.setFitHeight(TILE_SIZE * 0.6);
-      Point2D c = getCellCenter(p.getPosition());
-      token.setLayoutX(c.getX() - token.getFitWidth()/2);
-      token.setLayoutY(c.getY() - token.getFitHeight()/2);
-      overlayPane.getChildren().add(token);
-      playerTokens.put(p, token);
-      tokenPositions.put(p, p.getPosition());
-    }
-
-    root.setLeft(buildLeftPanel());
-    root.setRight(buildRightPanel());
+    root.setLeft(createLeftPanel());
+    root.setRight(createRightPanel());
 
     root.getStylesheets().add(
-        getClass().getResource("/css/SNLGameScreenStyleSheet.css").toExternalForm()
+        Objects.requireNonNull(getClass()
+                .getResource("/css/SNLGameScreenStyleSheet.css"))
+            .toExternalForm()
     );
 
-    boardGrid.widthProperty().addListener((o,old,n) -> Platform.runLater(this::initializeOverlay));
-    boardGrid.heightProperty().addListener((o,old,n) -> Platform.runLater(this::initializeOverlay));
+    boardGrid.widthProperty().addListener((obs, old, nw) ->
+        Platform.runLater(this::initializeOverlay)
+    );
+    boardGrid.heightProperty().addListener((obs, old, nw) ->
+        Platform.runLater(this::initializeOverlay)
+    );
 
     Platform.runLater(() -> {
       initializeOverlay();
-      highlightCurrentPlayer();
+      updateCurrentPlayerDisplay();
+      initializeTokens();
     });
   }
 
-  private VBox buildLeftPanel() {
-    VBox left = new VBox(10);
-    left.getStyleClass().add("snl-left-panel");
-    left.setPrefWidth(220);
-    left.setAlignment(Pos.TOP_CENTER);
+  private VBox createLeftPanel() {
+    VBox leftPanel = new VBox(10);
+    leftPanel.getStyleClass().add("snl-left-panel");
+    leftPanel.setPrefWidth(220);
+    leftPanel.setAlignment(Pos.TOP_CENTER);
 
-    Label turnHeader = new Label("Current Turn");
-    turnHeader.getStyleClass().add("title");
+    Label currentTurnHeader = new Label("Current Turn");
+    currentTurnHeader.getStyleClass().add("title");
 
-    ImageView currentImage = new ImageView(controller.getCurrentPlayerImage());
-    currentImage.setFitWidth(50);
-    currentImage.setFitHeight(50);
+    currentTurnImageView.setFitWidth(50);
+    currentTurnImageView.setFitHeight(50);
 
     currentPlayerLabel = new Label();
     currentPlayerLabel.getStyleClass().add("info");
-    left.getChildren().addAll(turnHeader, currentImage, currentPlayerLabel);
 
-    for (Player p : controller.getPlayers()) {
-      HBox row = new HBox(5);
-      row.getStyleClass().add("player-info-row");
-      ImageView iv = new ImageView(getPlayerImage(p));
-      iv.setFitWidth(30);
-      iv.setFitHeight(30);
-      Label name = new Label(p.getName());
-      Label pos = new Label("Tile: " + p.getPosition());
-      pos.getStyleClass().add("info");
-      playerPosMap.put(p, pos);
-      row.getChildren().addAll(iv, name, pos);
-      left.getChildren().add(row);
+    leftPanel.getChildren().addAll(
+        currentTurnHeader,
+        currentTurnImageView,
+        currentPlayerLabel
+    );
+
+    for (Player player : controller.getPlayers()) {
+      HBox infoRow = new HBox(5);
+      infoRow.getStyleClass().add("player-info-row");
+      ImageView avatar = new ImageView(getPlayerImage(player));
+      avatar.setFitWidth(30);
+      avatar.setFitHeight(30);
+      Label nameLabel = new Label(player.getName());
+      Label positionLabel = new Label("Tile: " + player.getPosition());
+      positionLabel.getStyleClass().add("info");
+      playerPositionLabels.put(player, positionLabel);
+      infoRow.getChildren().addAll(avatar, nameLabel, positionLabel);
+      leftPanel.getChildren().add(infoRow);
     }
 
     Region spacer = new Region();
     VBox.setVgrow(spacer, Priority.ALWAYS);
-    left.getChildren().add(spacer);
+    leftPanel.getChildren().add(spacer);
 
-    rollButton = new Button("Roll Dice");
-    rollButton.getStyleClass().add("button");
-    rollButton.setOnAction(e -> controller.handleRoll());
+    rollDiceButton = new Button("Roll Dice");
+    rollDiceButton.getStyleClass().add("button");
+    rollDiceButton.setOnAction(e -> {
+      rollDiceButton.setDisable(true);
+      controller.handleRoll();
+    });
 
-    Button quit = new Button("Quit to Menu");
-    quit.getStyleClass().add("button");
-    quit.setOnAction(e -> controller.navigateTo("INTRO_SCREEN"));
+    Button quitButton = new Button("Quit to Menu");
+    quitButton.getStyleClass().add("button");
+    quitButton.setOnAction(e -> controller.navigateTo("INTRO_SCREEN"));
 
-    left.getChildren().addAll(rollButton, diceResultLabel, quit);
-    return left;
+    leftPanel.getChildren().addAll(
+        rollDiceButton,
+        lastRollLabel,
+        quitButton
+    );
+    return leftPanel;
   }
 
-  private VBox buildRightPanel() {
-    VBox right = new VBox(10);
-    right.getStyleClass().add("snl-right-panel");
-    right.setPrefWidth(200);
-    right.setAlignment(Pos.CENTER);
+  private VBox createRightPanel() {
+    VBox rightPanel = new VBox(10);
+    rightPanel.getStyleClass().add("snl-right-panel");
+    rightPanel.setPrefWidth(200);
+    rightPanel.setAlignment(Pos.CENTER);
     Region topSpacer = new Region();
     Region bottomSpacer = new Region();
     VBox.setVgrow(topSpacer, Priority.ALWAYS);
     VBox.setVgrow(bottomSpacer, Priority.ALWAYS);
 
-    Label instr = new Label(
-        "How to play:\n" +
-            "- Roll the dice\n" +
-            "- Climb ladders\n" +
-            "- Avoid snakes\n" +
-            "- First to 100 wins"
+    Label instructions = new Label(
+        """
+            How to play:
+            - Roll the dice
+            - Climb ladders
+            - Avoid snakes
+            - First to 100 wins"""
     );
-    instr.getStyleClass().add("instructions-box");
+    instructions.getStyleClass().add("instructions-box");
 
     Button saveButton = new Button("Save Game");
     saveButton.getStyleClass().add("button");
 
-    right.getChildren().addAll(topSpacer, instr, saveButton, bottomSpacer);
-    return right;
+    rightPanel.getChildren().addAll(
+        topSpacer,
+        instructions,
+        saveButton,
+        bottomSpacer
+    );
+    return rightPanel;
+  }
+
+  private void initializeTokens() {
+    for (Player player : controller.getPlayers()) {
+      ImageView tokenView = playerTokenViews.get(player);
+      if (tokenView == null) {
+        Image tokenImage = getPlayerImage(player);
+        if (tokenImage == null) continue;
+        tokenView = new ImageView(tokenImage);
+        tokenView.setFitWidth(TILE_SIZE * 0.6);
+        tokenView.setFitHeight(TILE_SIZE * 0.6);
+        overlay.getChildren().add(tokenView);
+        playerTokenViews.put(player, tokenView);
+      }
+      int startPos = player.getPosition();
+      playerTokenPositions.put(player, startPos);
+      Point2D center = getCellCenter(startPos);
+      tokenView.setLayoutX(center.getX() - tokenView.getFitWidth() / 2);
+      tokenView.setLayoutY(center.getY() - tokenView.getFitHeight() / 2);
+    }
   }
 
   @Override
-  protected Image getPlayerImage(Player p) {
-    if (p.getCharacter() == null) return null;
-    String c = p.getCharacter().toLowerCase();
-    URL url = getClass().getResource("/player_icons/" + c + ".png");
+  protected Image getPlayerImage(Player player) {
+    if (player.getCharacter() == null) return null;
+    URL url = getClass().getResource(
+        "/player_icons/" + player.getCharacter().toLowerCase() + ".png"
+    );
     return url == null ? null : new Image(url.toExternalForm());
   }
 
   @Override
   public void onDiceRolled(int result) {
-    lastRoll = result;
-    Platform.runLater(() -> diceResultLabel.setText("Last roll: " + result));
+    lastRollValue = result;
+    Platform.runLater(() ->
+        lastRollLabel.setText("Last roll: " + result)
+    );
   }
 
   @Override
   public void onPlayerTurnChanged(Player current) {
-    Platform.runLater(this::highlightCurrentPlayer);
+    Platform.runLater(this::updateCurrentPlayerDisplay);
   }
 
-  private void highlightCurrentPlayer() {
-    currentPlayerLabel.setText(controller.getCurrentPlayer().getName());
+  private void updateCurrentPlayerDisplay() {
+    Player p = controller.getCurrentPlayer();
+    currentPlayerLabel.setText(p.getName());
+    currentTurnImageView.setImage(controller.getCurrentPlayerImage());
   }
 
   @Override
   public void onPlayerPositionChanged(Player player, int oldPos, int newPos) {
     Platform.runLater(() -> {
-      ImageView token = playerTokens.get(player);
-      if (token == null) return;
+      ImageView tokenView = playerTokenViews.get(player);
+      if (tokenView == null) return;
 
-      int start = tokenPositions.get(player);
-      int mid = Math.min(start + lastRoll, BOARD_SIZE * BOARD_SIZE);
-      boolean hasModifier = (mid != newPos);
+      int startPos = playerTokenPositions.get(player);
+      int landingPos = startPos + lastRollValue;
+      boolean hasModifier = (landingPos != newPos);
 
-      Timeline tl = new Timeline();
+      int stepDuration = 200;
+      int pauseDuration = 750;
+      Timeline timeline = new Timeline();
 
-      for (int i = 1; i <= lastRoll; i++) {
-        final int tile = start + i;
-        KeyFrame kf = new KeyFrame(Duration.millis(200 * i), e -> {
-          Point2D c = getCellCenter(tile);
-          token.setLayoutX(c.getX() - token.getFitWidth()/2);
-          token.setLayoutY(c.getY() - token.getFitHeight()/2);
-          playerPosMap.get(player).setText("Tile: " + tile);
-        });
-        tl.getKeyFrames().add(kf);
+      for (int i = 1; i <= lastRollValue; i++) {
+        int tile = startPos + i;
+        timeline.getKeyFrames().add(new KeyFrame(
+            Duration.millis(stepDuration * i),
+            e -> moveToken(tokenView, player, tile)
+        ));
       }
 
       if (hasModifier) {
-        int pauseTime = 200 * lastRoll + 500;
-        tl.getKeyFrames().add(new KeyFrame(Duration.millis(pauseTime)));
 
-        KeyFrame jump = new KeyFrame(Duration.millis(pauseTime + 200), e -> {
-          Point2D c = getCellCenter(newPos);
-          token.setLayoutX(c.getX() - token.getFitWidth()/2);
-          token.setLayoutY(c.getY() - token.getFitHeight()/2);
-          playerPosMap.get(player).setText("Tile: " + newPos);
-        });
-        tl.getKeyFrames().add(jump);
+
+        timeline.getKeyFrames().add(new KeyFrame(
+            Duration.millis(stepDuration * lastRollValue),
+            e -> moveToken(tokenView, player, landingPos)
+        ));
+        timeline.getKeyFrames().add(new KeyFrame(
+            Duration.millis(stepDuration * lastRollValue + pauseDuration),
+            e -> moveToken(tokenView, player, newPos)
+        ));
       }
-      tl.play();
 
-      tokenPositions.put(player, newPos);
-      lastRoll = 0;
+      timeline.setOnFinished(e -> rollDiceButton.setDisable(false));
+      timeline.play();
+
+      playerTokenPositions.put(player, newPos);
+      lastRollValue = 0;
     });
   }
 
+  private void moveToken(ImageView tokenView, Player player, int tile) {
+    Point2D center = getCellCenter(tile);
+    tokenView.setLayoutX(center.getX() - tokenView.getFitWidth() / 2);
+    tokenView.setLayoutY(center.getY() - tokenView.getFitHeight() / 2);
+    playerPositionLabels.get(player).setText("Tile: " + tile);
+  }
 
   protected void initializeOverlay() {
-    overlayPane.getChildren().removeIf(n -> !playerTokens.containsValue(n));
-    SNLBoard b = (SNLBoard) controller.getBoard();
-    for (var l : b.getLadders()) drawLadder(l.getStart(), l.getEnd());
-    for (var s : b.getSnakes())  drawSnake(s.getStart(), s.getEnd());
+    overlay.getChildren().retainAll(playerTokenViews.values());
+    SNLBoard board = (SNLBoard) controller.getBoard();
+    for (var ladder : board.getLadders()) {
+      drawLadder(ladder.getStart(), ladder.getEnd());
+    }
+    for (var snake : board.getSnakes()) {
+      drawSnake(snake.getStart(), snake.getEnd());
+    }
   }
 
   private void drawLadder(int start, int end) {
-    Point2D s = getCellCenter(start), e = getCellCenter(end);
-    double dx = e.getX()-s.getX(), dy = e.getY()-s.getY(), dist = Math.hypot(dx,dy);
-    double perpX = -dy/dist, perpY = dx/dist, w = Math.min(10,dist/20), ox = perpX*w, oy = perpY*w;
-    Line l1 = new Line(s.getX()+ox, s.getY()+oy, e.getX()+ox, e.getY()+oy);
-    Line l2 = new Line(s.getX()-ox, s.getY()-oy, e.getX()-ox, e.getY()-oy);
-    l1.setStrokeWidth(3); l2.setStrokeWidth(3);
-    l1.setStroke(Color.BURLYWOOD); l2.setStroke(Color.BURLYWOOD);
-    overlayPane.getChildren().addAll(l1,l2);
-    int steps = (int)(dist/15);
-    for(int i=1;i<steps;i++){
-      double t=i/(double)steps, cx=s.getX()+dx*t, cy=s.getY()+dy*t;
-      Line rung=new Line(cx-ox,cy-oy,cx+ox,cy+oy);
+    Point2D src = getCellCenter(start), dst = getCellCenter(end);
+    double dx = dst.getX() - src.getX(), dy = dst.getY() - src.getY();
+    double dist = Math.hypot(dx, dy);
+    double perpX = -dy / dist, perpY = dx / dist;
+    double width = Math.min(10, dist / 20), offX = perpX * width, offY = perpY * width;
+
+    Line rail1 = new Line(
+        src.getX() + offX, src.getY() + offY,
+        dst.getX() + offX, dst.getY() + offY
+    );
+    Line rail2 = new Line(
+        src.getX() - offX, src.getY() - offY,
+        dst.getX() - offX, dst.getY() - offY
+    );
+    rail1.setStrokeWidth(3); rail2.setStrokeWidth(3);
+    rail1.setStroke(Color.BURLYWOOD); rail2.setStroke(Color.BURLYWOOD);
+    overlay.getChildren().addAll(rail1, rail2);
+
+    int steps = (int)(dist / 15);
+    for (int i = 1; i < steps; i++) {
+      double t = i / (double)steps;
+      double cx = src.getX() + dx * t, cy = src.getY() + dy * t;
+      Line rung = new Line(cx - offX, cy - offY, cx + offX, cy + offY);
       rung.setStrokeWidth(2); rung.setStroke(Color.SADDLEBROWN);
-      overlayPane.getChildren().add(rung);
+      overlay.getChildren().add(rung);
     }
   }
 
   private void drawSnake(int start, int end) {
-    Point2D s = getCellCenter(start), e = getCellCenter(end);
-    double dx=e.getX()-s.getX(), dy=e.getY()-s.getY(), dist=Math.hypot(dx,dy);
-    double amp=Math.min(dist*0.2,25), perpX=-dy/dist, perpY=dx/dist;
-    double c1x=s.getX()+dx*0.3+perpX*amp, c1y=s.getY()+dy*0.3+perpY*amp;
-    double c2x=s.getX()+dx*0.7-perpX*amp, c2y=s.getY()+dy*0.7-perpY*amp;
-    CubicCurve curve=new CubicCurve(s.getX(),s.getY(),c1x,c1y,c2x,c2y,e.getX(),e.getY());
-    curve.setStrokeWidth(4); curve.setStroke(Color.DARKRED); curve.setFill(null);
-    Circle head=new Circle(s.getX(),s.getY(),6,Color.DARKRED);
-    Circle tail=new Circle(e.getX(),e.getY(),4,Color.DARKRED);
-    overlayPane.getChildren().addAll(curve,head,tail);
+    Point2D src = getCellCenter(start), dst = getCellCenter(end);
+    CubicCurve body = getBody(dst, src);
+    body.setStrokeWidth(4);
+    body.setStroke(Color.DARKRED);
+    body.setFill(null);
+
+    Circle head = new Circle(src.getX(), src.getY(), 6, Color.DARKRED);
+    Circle tail = new Circle(dst.getX(), dst.getY(), 4, Color.DARKRED);
+
+    overlay.getChildren().addAll(body, head, tail);
   }
 
-  @Override protected String getTileColor(int t)            { return controller.getTileColor(t); }
-  @Override protected List<Player> getPlayersAtPosition(int t){ return controller.getPlayersAtPosition(t); }
-  @Override protected void handleRoll()                      { controller.handleRoll(); }
-  @Override protected List<Player> getAllPlayers()           { return controller.getPlayers(); }
+  private CubicCurve getBody(Point2D dst, Point2D src) {
+    double dx = dst.getX() - src.getX(), dy = dst.getY() - src.getY();
+    double dist = Math.hypot(dx, dy);
+    double amp = Math.min(dist * 0.2, 25), perpX = -dy / dist, perpY = dx / dist;
+
+    double c1x = src.getX() + dx * 0.3 + perpX * amp,
+        c1y = src.getY() + dy * 0.3 + perpY * amp;
+    double c2x = src.getX() + dx * 0.7 - perpX * amp,
+        c2y = src.getY() + dy * 0.7 - perpY * amp;
+
+    return new CubicCurve(
+        src.getX(), src.getY(),
+        c1x, c1y, c2x, c2y,
+        dst.getX(), dst.getY()
+    );
+  }
+
+  @Override protected String getTileColor(int tile)            { return controller.getTileColor(tile); }
+  @Override protected List<Player> getPlayersAtPosition(int t)  { return controller.getPlayersAtPosition(t); }
+  @Override protected void handleRoll()                         { controller.handleRoll(); }
+  @Override protected List<Player> getAllPlayers()              { return controller.getPlayers(); }
+
+  @Override
+  protected void renderBoardGrid() {
+    boardGrid.getChildren().clear();
+    for (int i = 1; i <= BOARD_SIZE * BOARD_SIZE; i++) {
+      StackPane cell = new StackPane();
+      cell.setPrefSize(TILE_SIZE, TILE_SIZE);
+      cell.setStyle(
+          "-fx-border-color: black; " +
+              "-fx-background-color: " + getTileColor(i) + ";"
+      );
+
+      Text number = new Text(String.valueOf(i));
+      number.setStyle("-fx-fill: #555;");
+      cell.getChildren().add(number);
+
+      int row = BOARD_SIZE - 1 - ((i - 1) / BOARD_SIZE);
+      int col = ((row % 2) == 0)
+          ? ((i - 1) % BOARD_SIZE)
+          : (BOARD_SIZE - 1 - ((i - 1) % BOARD_SIZE));
+      boardGrid.add(cell, col, row);
+    }
+  }
 }
