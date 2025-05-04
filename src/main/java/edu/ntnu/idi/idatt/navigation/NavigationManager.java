@@ -31,6 +31,8 @@ import edu.ntnu.idi.idatt.view.snl.SNLGameScreenView;
 import edu.ntnu.idi.idatt.view.snl.SNLLoadGameView;
 import edu.ntnu.idi.idatt.view.snl.SNLRuleSelectionView;
 import edu.ntnu.idi.idatt.view.star.StarGameView;
+
+import java.io.File;
 import java.util.Objects;
 
 import edu.ntnu.idi.idatt.view.star.StarLoadGameView;
@@ -196,6 +198,7 @@ public class NavigationManager {
     logger.info("Starting Star Game...");
     try {
       String savePath = starCharSelectionController.getSavePath();
+      File saveFile = new File(savePath);
       GameStateCsvLoader.GameState gameState = GameStateCsvLoader.StarLoad(savePath);
       String boardpath = "default.json";
 
@@ -204,7 +207,7 @@ public class NavigationManager {
 
       StarGame game = new StarGame(board,gameState.getPlayers(), gameState.getCurrentTurnIndex());
 
-      StarGameController controller = new StarGameController(game);
+      StarGameController controller = new StarGameController(game,saveFile);
       controller.notifyPlayerPositionChangedAll();
       StarGameView view = new StarGameView(controller);
       view.initializeUI();
@@ -220,6 +223,7 @@ public class NavigationManager {
     logger.info("Starting Snakes and Ladders game...");
     try {
       String savePath = ruleSelectionModel.getSavePath();
+      File saveFile = new File(savePath);
       GameStateCsvLoader.GameState gameState = GameStateCsvLoader.SNLLoad(savePath);
       String boardPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + gameState.getBoardFile();
       logger.info("Final board path: {}", boardPath);
@@ -229,7 +233,7 @@ public class NavigationManager {
 
       SNLGame game = new SNLGame(board, gameState.getPlayers(), gameState.getDiceCount(),
           gameState.getCurrentTurnIndex());
-      SNLGameScreenController controller = new SNLGameScreenController(game);
+      SNLGameScreenController controller = new SNLGameScreenController(game,saveFile);
 
       controller.notifyPlayerPositionChangedAll();
 

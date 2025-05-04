@@ -6,8 +6,10 @@ import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.snl.Ladder;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import edu.ntnu.idi.idatt.model.snl.Snake;
+import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.GameScreen;
 import javafx.scene.Parent;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -19,6 +21,7 @@ import javafx.scene.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.net.URL;
 import java.util.List;
 
@@ -60,7 +63,23 @@ public class SNLGameScreenView extends GameScreen {
       }
     });
 
-    createUI(); // Call after controller is ready
+    createUI();
+    setBackListener(() -> {
+      NavigationManager.getInstance().navigateToStartScreen();
+    });
+    setSaveListener(() -> {
+
+      File tempFile = controller.getCsvFile();
+      TextInputDialog dialog = new TextInputDialog("star_save_" + System.currentTimeMillis());
+      dialog.setTitle("Save Game");
+      dialog.setHeaderText("Name your save file:");
+      dialog.setContentText("Filename:");
+
+      dialog.showAndWait().ifPresent(filename -> {
+        controller.saveGame(tempFile, filename + ".csv");
+      });
+
+    });
   }
 
   public void initializeUI() {

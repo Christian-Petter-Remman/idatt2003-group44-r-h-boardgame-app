@@ -20,7 +20,7 @@ public class SNLLoadGameView {
     this.controller = controller;
     this.root = new StackPane();
 
-    // 🖼️ Background image
+
     Image backgroundImage = new Image(getClass().getResource("/home_screen/snakesandladders.png").toExternalForm());
     BackgroundImage bgImage = new BackgroundImage(
             backgroundImage,
@@ -32,7 +32,7 @@ public class SNLLoadGameView {
     Region background = new Region();
     background.setBackground(new Background(bgImage));
 
-    // 📦 Foreground content
+
     VBox content = new VBox(20);
     content.setAlignment(Pos.TOP_CENTER);
     content.setPadding(new Insets(100, 20, 40, 20));
@@ -43,7 +43,8 @@ public class SNLLoadGameView {
 
     File[] recentFiles = controller.getRecentSaveFiles(8);
     for (File file : recentFiles) {
-      Button fileButton = new Button(file.getName());
+      String displayName = file.getName().replaceFirst("\\.csv$", "");
+      Button fileButton = new Button(displayName);
       fileButton.setPrefWidth(320);
       fileButton.setStyle(
               "-fx-font-size: 18px;" +

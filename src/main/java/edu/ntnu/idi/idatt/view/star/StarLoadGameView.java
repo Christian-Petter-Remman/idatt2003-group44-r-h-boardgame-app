@@ -43,7 +43,8 @@ public class StarLoadGameView {
 
     File[] recentFiles = controller.getRecentSaveFiles(8);
     for (File file : recentFiles) {
-      Button fileButton = new Button(file.getName());
+      String displayName = file.getName().replaceFirst("\\.csv$", "");
+      Button fileButton = new Button(displayName);
       fileButton.setPrefWidth(320);
       fileButton.setStyle(
               "-fx-font-size: 18px;" +

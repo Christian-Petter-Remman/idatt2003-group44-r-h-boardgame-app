@@ -25,9 +25,11 @@ public class StarGameController implements NavigationHandler {
   private final StarGame game;
   private final List<GameScreenObserver> observers = new ArrayList<>();
   private Parent root;
+  private final File csvFile;
 
-  public StarGameController(StarGame game) {
+  public StarGameController(StarGame game, File csvFile) {
     this.game = game;
+    this.csvFile = csvFile;
   }
 
 
@@ -36,6 +38,10 @@ public class StarGameController implements NavigationHandler {
     game.addMoveObserver(observer);
     game.addTurnObserver(observer);
     game.addWinnerObserver(observer);
+  }
+
+  public File getCsvFile() {
+    return csvFile;
   }
 
   public List<Player> getPlayers() {

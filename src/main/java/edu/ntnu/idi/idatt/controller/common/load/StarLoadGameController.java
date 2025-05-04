@@ -22,7 +22,7 @@ import java.util.Comparator;
 public class StarLoadGameController implements NavigationHandler {
 
   private static final Logger logger = LoggerFactory.getLogger(StarLoadGameController.class);
-  private static final String SAVE_DIR = "data/saved_games/star";
+  private static final String SAVE_DIR = "saves/load/star";
 
   public File[] getRecentSaveFiles(int count) {
     File saveFolder = new File(SAVE_DIR);
@@ -46,7 +46,7 @@ public class StarLoadGameController implements NavigationHandler {
       StarFactory factory = new StarFactory();
       StarBoard board = factory.loadBoardFromFile(gameState.getBoardFile());
       StarGame game = new StarGame(board,gameState.getPlayers(), gameState.getCurrentTurnIndex());
-      StarGameController controller = new StarGameController(game);
+      StarGameController controller = new StarGameController(game,file);
       StarGameView view = new StarGameView(controller);
       view.initializeUI();
       NavigationManager.getInstance().setHandler(controller);

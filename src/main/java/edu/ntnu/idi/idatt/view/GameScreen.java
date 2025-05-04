@@ -23,7 +23,8 @@ public abstract class GameScreen {
   protected static final int TILE_SIZE = 60;
   protected static final int BOARD_SIZE = 10;
 
-  protected Runnable saveListener; // 👈 Add this
+  protected Runnable saveListener;
+  protected Runnable backListener;
 
   protected BorderPane root;
   protected GridPane boardGrid;
@@ -77,17 +78,32 @@ public abstract class GameScreen {
         saveListener.run();
       }
     });
-    bottomBox.setAlignment(Pos.CENTER);
-    bottomBox.getChildren().addAll(positionLabel, diceResultLabel, rollButton, saveButton);
 
-    // 📦 Assemble info panel (right side)
+    Button homeButton = new Button("Home");
+    homeButton.setOnAction(e -> {
+      if (backListener != null) {
+        backListener.run();
+      }
+    });
+    homeButton.setStyle(
+            "-fx-font-size: 14px;" +
+                    "-fx-background-color: #cccccc;" +
+                    "-fx-text-fill: black;" +
+                    "-fx-background-radius: 12;" +
+                    "-fx-padding: 6 14;" +
+                    "-fx-cursor: hand;"
+    );
+
+    bottomBox.setAlignment(Pos.CENTER);
+    bottomBox.getChildren().addAll(positionLabel, diceResultLabel, rollButton, saveButton, homeButton);
+
     VBox infoPanel = new VBox(30);
     infoPanel.setAlignment(Pos.TOP_CENTER);
     infoPanel.getChildren().addAll(currentPlayerBox, playerInfoList, bottomBox);
     root.setRight(infoPanel);
     updatePlayerImages();
-  }
 
+  }
 
   protected void updatePlayerImages() {
     playerInfoList.getChildren().clear();
@@ -190,6 +206,10 @@ public abstract class GameScreen {
 
   public void setSaveListener(Runnable listener) {
     this.saveListener = listener;
+  }
+
+  public void setBackListener(Runnable listener) {
+    this.backListener = listener;
   }
 
   protected abstract void handleRoll();

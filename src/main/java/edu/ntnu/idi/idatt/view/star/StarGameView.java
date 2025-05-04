@@ -38,6 +38,7 @@ public class StarGameView extends GameScreen {
   public StarGameView(StarGameController controller) {
     this.controller = controller;
 
+
     controller.registerObserver(new GameScreenObserver() {
       @Override
       public void onPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
@@ -73,26 +74,21 @@ public class StarGameView extends GameScreen {
     });
 
     createUI();
+    setBackListener(() -> {
+      NavigationManager.getInstance().navigateToStartScreen();
+    });
     setSaveListener(() -> {
-      try {
 
-        File tempFile = GameStateCsvSaver.saveStarGameToTemp(controller.getGame());
-        TextInputDialog dialog = new TextInputDialog("star_save_" + System.currentTimeMillis());
-        dialog.setTitle("Save Game");
-        dialog.setHeaderText("Name your save file:");
-        dialog.setContentText("Filename:");
+      File tempFile = controller.getCsvFile();
+      TextInputDialog dialog = new TextInputDialog("star_save_" + System.currentTimeMillis());
+      dialog.setTitle("Save Game");
+      dialog.setHeaderText("Name your save file:");
+      dialog.setContentText("Filename:");
 
-        dialog.showAndWait().ifPresent(filename -> {
-          controller.saveGame(, filename + ".csv");
-        });
+      dialog.showAndWait().ifPresent(filename -> {
+        controller.saveGame(tempFile, filename + ".csv");
+      });
 
-      } catch (IOException e) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Save Error");
-        alert.setHeaderText("Could not save the game.");
-        alert.setContentText("Try again.");
-        alert.showAndWait();
-      }
     });
   }
 

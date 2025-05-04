@@ -23,7 +23,7 @@ import java.util.Comparator;
 public class SNLLoadGameController implements NavigationHandler {
 
   private static final Logger logger = LoggerFactory.getLogger(SNLLoadGameController.class);
-  private static final String SAVE_DIR = "data/saved_games/snl";
+  private static final String SAVE_DIR = "saves/load/snl";
 
   public File[] getRecentSaveFiles(int count) {
     File saveFolder = new File(SAVE_DIR);
@@ -51,7 +51,7 @@ public class SNLLoadGameController implements NavigationHandler {
       SNLBoard board = factory.loadBoardFromFile(boardPath);
 
       SNLGame game = new SNLGame(board, gameState.getPlayers(), gameState.diceCount, gameState.getCurrentTurnIndex());
-      SNLGameScreenController controller = new SNLGameScreenController(game);
+      SNLGameScreenController controller = new SNLGameScreenController(game,file);
       SNLGameScreenView view = new SNLGameScreenView(controller);
       view.initializeUI();
 

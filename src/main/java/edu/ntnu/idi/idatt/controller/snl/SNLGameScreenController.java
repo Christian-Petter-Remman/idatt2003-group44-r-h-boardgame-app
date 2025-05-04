@@ -25,9 +25,11 @@ public class SNLGameScreenController implements NavigationHandler {
   private final SNLGame game;
   private final List<GameScreenObserver> observers = new ArrayList<>();
   private Parent root;
+  private final File csvFile;
 
-  public SNLGameScreenController(SNLGame game) {
+  public SNLGameScreenController(SNLGame game, File csvFile) {
     this.game = game;
+    this.csvFile = csvFile;
   }
 
   public void registerObserver(GameScreenObserver observer) {
@@ -37,6 +39,9 @@ public class SNLGameScreenController implements NavigationHandler {
     game.addWinnerObserver(observer);
   }
 
+  public File getCsvFile() {
+    return csvFile;
+  }
 
   public List<Player> getPlayers() {
     return game.getPlayers();
