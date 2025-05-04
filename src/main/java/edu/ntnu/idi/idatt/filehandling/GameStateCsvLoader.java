@@ -36,6 +36,10 @@ public class GameStateCsvLoader {
       logger.info("Board file set to {}", boardFile);
     }
 
+    public String getBoardFileName() {
+      return boardFile;
+    }
+
     public int getDiceCount() {
       return diceCount;
     }

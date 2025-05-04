@@ -23,6 +23,8 @@ public abstract class GameScreen {
   protected static final int TILE_SIZE = 60;
   protected static final int BOARD_SIZE = 10;
 
+  protected Runnable saveListener; // 👈 Add this
+
   protected BorderPane root;
   protected GridPane boardGrid;
   protected Label currentPlayerLabel;
@@ -68,8 +70,15 @@ public abstract class GameScreen {
     diceResultLabel = new Label("Roll result:");
     rollButton = new Button("Roll Dice");
     rollButton.setOnAction(e -> handleRoll());
+
+    Button saveButton = new Button("Save Game");
+    saveButton.setOnAction(e -> {
+      if (saveListener != null) {
+        saveListener.run();
+      }
+    });
     bottomBox.setAlignment(Pos.CENTER);
-    bottomBox.getChildren().addAll(positionLabel, diceResultLabel, rollButton);
+    bottomBox.getChildren().addAll(positionLabel, diceResultLabel, rollButton, saveButton);
 
     // 📦 Assemble info panel (right side)
     VBox infoPanel = new VBox(30);
@@ -177,6 +186,10 @@ public abstract class GameScreen {
     double y = row * TILE_SIZE + TILE_SIZE / 2.0;
 
     return new double[]{x, y};
+  }
+
+  public void setSaveListener(Runnable listener) {
+    this.saveListener = listener;
   }
 
   protected abstract void handleRoll();

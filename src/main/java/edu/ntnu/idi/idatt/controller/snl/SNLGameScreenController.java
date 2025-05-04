@@ -37,6 +37,7 @@ public class SNLGameScreenController implements NavigationHandler {
     game.addWinnerObserver(observer);
   }
 
+
   public List<Player> getPlayers() {
     return game.getPlayers();
   }
