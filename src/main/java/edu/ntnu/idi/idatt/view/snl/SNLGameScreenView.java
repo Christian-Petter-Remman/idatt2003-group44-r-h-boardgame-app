@@ -23,8 +23,8 @@ public class SNLGameScreenView extends GameScreen {
     this.controller = controller;
     controller.registerObserver(this);
     createUI();
-    ladderSnakeOverlay.prefWidthProperty().bind(boardGrid.widthProperty());
-    ladderSnakeOverlay.prefHeightProperty().bind(boardGrid.heightProperty());
+    boardGrid.widthProperty().addListener((obs, o, n) -> Platform.runLater(this::initializeOverlay));
+    boardGrid.heightProperty().addListener((obs, o, n) -> Platform.runLater(this::initializeOverlay));
     boardWithOverlay.getChildren().add(ladderSnakeOverlay);
     Platform.runLater(this::initializeOverlay);
   }
