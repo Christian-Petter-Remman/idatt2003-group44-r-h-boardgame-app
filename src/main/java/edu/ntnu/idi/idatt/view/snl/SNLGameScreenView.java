@@ -5,6 +5,8 @@ import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import edu.ntnu.idi.idatt.view.GameScreen;
 import javafx.application.Platform;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -18,6 +20,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -29,6 +32,9 @@ public class SNLGameScreenView extends GameScreen {
   private final Pane overlayPane = new Pane();
   private final Label diceResultLabel = new Label("Last roll: -");
   private final Map<Player, Label> playerPosMap = new HashMap<>();
+  private final Map<Player, ImageView> playerTokens = new HashMap<>();
+  private final Map<Player, Integer> tokenPositions = new HashMap<>();
+  private int lastRoll = 0;
 
   public SNLGameScreenView(SNLGameScreenController controller) {
     this.controller = controller;
@@ -36,6 +42,7 @@ public class SNLGameScreenView extends GameScreen {
 
     root = new BorderPane();
 
+    // Board grid
     boardGrid = new GridPane();
     boardGrid.setHgap(2);
     boardGrid.setVgap(2);
@@ -55,12 +62,43 @@ public class SNLGameScreenView extends GameScreen {
     overlayPane.setMouseTransparent(true);
     overlayPane.prefWidthProperty().bind(boardGrid.widthProperty());
     overlayPane.prefHeightProperty().bind(boardGrid.heightProperty());
-
     boardWithOverlay = new StackPane(boardGrid, overlayPane);
     StackPane.setAlignment(boardGrid, Pos.TOP_LEFT);
     StackPane.setAlignment(overlayPane, Pos.TOP_LEFT);
     root.setCenter(boardWithOverlay);
 
+    // Place tokens and record their starting positions
+    for (Player p : controller.getPlayers()) {
+      Image img = getPlayerImage(p);
+      if (img == null) continue;
+      ImageView token = new ImageView(img);
+      token.setFitWidth(TILE_SIZE * 0.6);
+      token.setFitHeight(TILE_SIZE * 0.6);
+      Point2D c = getCellCenter(p.getPosition());
+      token.setLayoutX(c.getX() - token.getFitWidth()/2);
+      token.setLayoutY(c.getY() - token.getFitHeight()/2);
+      overlayPane.getChildren().add(token);
+      playerTokens.put(p, token);
+      tokenPositions.put(p, p.getPosition());
+    }
+
+    root.setLeft(buildLeftPanel());
+    root.setRight(buildRightPanel());
+
+    root.getStylesheets().add(
+        getClass().getResource("/css/SNLGameScreenStyleSheet.css").toExternalForm()
+    );
+
+    boardGrid.widthProperty().addListener((o,old,n) -> Platform.runLater(this::initializeOverlay));
+    boardGrid.heightProperty().addListener((o,old,n) -> Platform.runLater(this::initializeOverlay));
+
+    Platform.runLater(() -> {
+      initializeOverlay();
+      highlightCurrentPlayer();
+    });
+  }
+
+  private VBox buildLeftPanel() {
     VBox left = new VBox(10);
     left.getStyleClass().add("snl-left-panel");
     left.setPrefWidth(220);
@@ -73,9 +111,8 @@ public class SNLGameScreenView extends GameScreen {
     currentImage.setFitWidth(50);
     currentImage.setFitHeight(50);
 
-    currentPlayerLabel = new Label(controller.getCurrentPlayer().getName());
+    currentPlayerLabel = new Label();
     currentPlayerLabel.getStyleClass().add("info");
-
     left.getChildren().addAll(turnHeader, currentImage, currentPlayerLabel);
 
     for (Player p : controller.getPlayers()) {
@@ -105,8 +142,10 @@ public class SNLGameScreenView extends GameScreen {
     quit.setOnAction(e -> controller.navigateTo("INTRO_SCREEN"));
 
     left.getChildren().addAll(rollButton, diceResultLabel, quit);
-    root.setLeft(left);
+    return left;
+  }
 
+  private VBox buildRightPanel() {
     VBox right = new VBox(10);
     right.getStyleClass().add("snl-right-panel");
     right.setPrefWidth(200);
@@ -127,21 +166,9 @@ public class SNLGameScreenView extends GameScreen {
 
     Button saveButton = new Button("Save Game");
     saveButton.getStyleClass().add("button");
+
     right.getChildren().addAll(topSpacer, instr, saveButton, bottomSpacer);
-
-    root.setRight(right);
-
-    root.getStylesheets().add(
-        getClass().getResource("/css/SNLGameScreenStyleSheet.css").toExternalForm()
-    );
-
-    boardGrid.widthProperty().addListener((o,old,n) -> Platform.runLater(this::initializeOverlay));
-    boardGrid.heightProperty().addListener((o,old,n) -> Platform.runLater(this::initializeOverlay));
-
-    Platform.runLater(() -> {
-      initializeOverlay();
-      highlightCurrentPlayer();
-    });
+    return right;
   }
 
   @Override
@@ -150,6 +177,12 @@ public class SNLGameScreenView extends GameScreen {
     String c = p.getCharacter().toLowerCase();
     URL url = getClass().getResource("/player_icons/" + c + ".png");
     return url == null ? null : new Image(url.toExternalForm());
+  }
+
+  @Override
+  public void onDiceRolled(int result) {
+    lastRoll = result;
+    Platform.runLater(() -> diceResultLabel.setText("Last roll: " + result));
   }
 
   @Override
@@ -164,23 +197,48 @@ public class SNLGameScreenView extends GameScreen {
   @Override
   public void onPlayerPositionChanged(Player player, int oldPos, int newPos) {
     Platform.runLater(() -> {
-      for (Map.Entry<Player, Label> e : playerPosMap.entrySet()) {
-        e.getValue().setText("Tile: " + e.getKey().getPosition());
+      ImageView token = playerTokens.get(player);
+      if (token == null) return;
+
+      int start = tokenPositions.get(player);
+      int mid = Math.min(start + lastRoll, BOARD_SIZE * BOARD_SIZE);
+      boolean hasModifier = (mid != newPos);
+
+      Timeline tl = new Timeline();
+
+      for (int i = 1; i <= lastRoll; i++) {
+        final int tile = start + i;
+        KeyFrame kf = new KeyFrame(Duration.millis(200 * i), e -> {
+          Point2D c = getCellCenter(tile);
+          token.setLayoutX(c.getX() - token.getFitWidth()/2);
+          token.setLayoutY(c.getY() - token.getFitHeight()/2);
+          playerPosMap.get(player).setText("Tile: " + tile);
+        });
+        tl.getKeyFrames().add(kf);
       }
-      renderBoardGrid();
-      boardGrid.applyCss();
-      boardGrid.layout();
-      initializeOverlay();
+
+      if (hasModifier) {
+        int pauseTime = 200 * lastRoll + 500;
+        tl.getKeyFrames().add(new KeyFrame(Duration.millis(pauseTime)));
+
+        KeyFrame jump = new KeyFrame(Duration.millis(pauseTime + 200), e -> {
+          Point2D c = getCellCenter(newPos);
+          token.setLayoutX(c.getX() - token.getFitWidth()/2);
+          token.setLayoutY(c.getY() - token.getFitHeight()/2);
+          playerPosMap.get(player).setText("Tile: " + newPos);
+        });
+        tl.getKeyFrames().add(jump);
+      }
+      tl.play();
+
+      tokenPositions.put(player, newPos);
+      lastRoll = 0;
     });
   }
 
-  @Override
-  public void onDiceRolled(int result) {
-    Platform.runLater(() -> diceResultLabel.setText("Last roll: " + result));
-  }
 
   protected void initializeOverlay() {
-    overlayPane.getChildren().clear();
+    overlayPane.getChildren().removeIf(n -> !playerTokens.containsValue(n));
     SNLBoard b = (SNLBoard) controller.getBoard();
     for (var l : b.getLadders()) drawLadder(l.getStart(), l.getEnd());
     for (var s : b.getSnakes())  drawSnake(s.getStart(), s.getEnd());
@@ -190,8 +248,8 @@ public class SNLGameScreenView extends GameScreen {
     Point2D s = getCellCenter(start), e = getCellCenter(end);
     double dx = e.getX()-s.getX(), dy = e.getY()-s.getY(), dist = Math.hypot(dx,dy);
     double perpX = -dy/dist, perpY = dx/dist, w = Math.min(10,dist/20), ox = perpX*w, oy = perpY*w;
-    Line l1 = new Line(s.getX()+ox,s.getY()+oy,e.getX()+ox,e.getY()+oy);
-    Line l2 = new Line(s.getX()-ox,s.getY()-oy,e.getX()-ox,e.getY()-oy);
+    Line l1 = new Line(s.getX()+ox, s.getY()+oy, e.getX()+ox, e.getY()+oy);
+    Line l2 = new Line(s.getX()-ox, s.getY()-oy, e.getX()-ox, e.getY()-oy);
     l1.setStrokeWidth(3); l2.setStrokeWidth(3);
     l1.setStroke(Color.BURLYWOOD); l2.setStroke(Color.BURLYWOOD);
     overlayPane.getChildren().addAll(l1,l2);
@@ -210,32 +268,15 @@ public class SNLGameScreenView extends GameScreen {
     double amp=Math.min(dist*0.2,25), perpX=-dy/dist, perpY=dx/dist;
     double c1x=s.getX()+dx*0.3+perpX*amp, c1y=s.getY()+dy*0.3+perpY*amp;
     double c2x=s.getX()+dx*0.7-perpX*amp, c2y=s.getY()+dy*0.7-perpY*amp;
-    CubicCurve curve=new CubicCurve(
-        s.getX(),s.getY(),c1x,c1y,c2x,c2y,e.getX(),e.getY()
-    );
+    CubicCurve curve=new CubicCurve(s.getX(),s.getY(),c1x,c1y,c2x,c2y,e.getX(),e.getY());
     curve.setStrokeWidth(4); curve.setStroke(Color.DARKRED); curve.setFill(null);
     Circle head=new Circle(s.getX(),s.getY(),6,Color.DARKRED);
     Circle tail=new Circle(e.getX(),e.getY(),4,Color.DARKRED);
     overlayPane.getChildren().addAll(curve,head,tail);
   }
 
-  @Override
-  protected String getTileColor(int t) {
-    return controller.getTileColor(t);
-  }
-
-  @Override
-  protected List<Player> getPlayersAtPosition(int t) {
-    return controller.getPlayersAtPosition(t);
-  }
-
-  @Override
-  protected void handleRoll() {
-    controller.handleRoll();
-  }
-
-  @Override
-  protected List<Player> getAllPlayers() {
-    return controller.getPlayers();
-  }
+  @Override protected String getTileColor(int t)            { return controller.getTileColor(t); }
+  @Override protected List<Player> getPlayersAtPosition(int t){ return controller.getPlayersAtPosition(t); }
+  @Override protected void handleRoll()                      { controller.handleRoll(); }
+  @Override protected List<Player> getAllPlayers()           { return controller.getPlayers(); }
 }
