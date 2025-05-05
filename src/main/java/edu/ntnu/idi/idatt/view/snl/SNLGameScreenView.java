@@ -5,7 +5,9 @@ import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.snl.Ladder;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import edu.ntnu.idi.idatt.model.snl.Snake;
+import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.GameScreen;
+
 import javafx.application.Platform;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -15,6 +17,10 @@ import javafx.geometry.VPos;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+
+import javafx.scene.Parent;
+import javafx.scene.control.TextInputDialog;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -25,6 +31,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -142,6 +149,7 @@ public class SNLGameScreenView extends GameScreen {
       controller.handleRoll();
     });
 
+
     Button quitButton = new Button("Quit to Menu");
     quitButton.getStyleClass().add("button");
     quitButton.setOnAction(e -> controller.navigateTo("INTRO_SCREEN"));
@@ -152,6 +160,25 @@ public class SNLGameScreenView extends GameScreen {
         quitButton
     );
     return leftPanel;
+
+    createUI();
+    setBackListener(() -> {
+      NavigationManager.getInstance().navigateToStartScreen();
+    });
+    setSaveListener(() -> {
+
+      File tempFile = controller.getCsvFile();
+      TextInputDialog dialog = new TextInputDialog("star_save_" + System.currentTimeMillis());
+      dialog.setTitle("Save Game");
+      dialog.setHeaderText("Name your save file:");
+      dialog.setContentText("Filename:");
+
+      dialog.showAndWait().ifPresent(filename -> {
+        controller.saveGame(tempFile, filename + ".csv");
+      });
+
+    });
+
   }
 
   private VBox createRightPanel() {
@@ -207,12 +234,22 @@ public class SNLGameScreenView extends GameScreen {
   }
 
   @Override
+
   protected Image getPlayerImage(Player player) {
     if (player.getCharacter() == null) return null;
     URL url = getClass().getResource(
         "/player_icons/" + player.getCharacter().toLowerCase() + ".png"
     );
     return url == null ? null : new Image(url.toExternalForm());
+
+  protected List<Player> getAllPlayers() {
+    return controller.getPlayers(); // Or however you store them
+  }
+
+  @Override
+  protected void handleRoll() {
+    controller.handleRoll();
+
   }
 
   @Override

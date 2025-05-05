@@ -33,7 +33,7 @@ public class MemoryGameController implements NavigationHandler {
 
   @Override
   public void navigateBack() {
-    NavigationManager.getInstance().navigateBack();
+    NavigationManager.getInstance().navigateToStartScreen();
   }
 
   @Override

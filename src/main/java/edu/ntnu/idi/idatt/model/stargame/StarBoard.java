@@ -3,7 +3,6 @@ package edu.ntnu.idi.idatt.model.stargame;
 import edu.ntnu.idi.idatt.model.common.AbstractBoard;
 import edu.ntnu.idi.idatt.model.common.Tile;
 import edu.ntnu.idi.idatt.model.common.TileAttribute;
-import edu.ntnu.idi.idatt.model.snl.Snake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,11 +27,45 @@ public class StarBoard extends AbstractBoard {
   }
 
   public Star addStar() {
-    int start = new Random().nextInt(73);
-    Star star = new Star(start, start);
-    getTile(start).addAttribute(star);
+    List<Integer> occupied = new ArrayList<>();
+
+    for (Jail jail : getJailTiles()) {
+      occupied.add(jail.getStart());
+      occupied.add(jail.getStart() + 1);
+      occupied.add(jail.getStart() - 1);
+    }
+
+    for (Bridge bridge : getBridges()) {
+      occupied.add(bridge.getStart());
+      occupied.add(bridge.getEnd());
+    }
+
+    for (Tunnel tunnel : getTunnels()) {
+      occupied.add(tunnel.getStart());
+      occupied.add(tunnel.getEnd());
+    }
+
+    for (Star existingStar : stars) {
+      occupied.add(existingStar.getStart());
+    }
+
+    List<Integer> validTiles = new ArrayList<>();
+    for (int i = 1; i <= 73; i++) {
+      if (!occupied.contains(i)) {
+        validTiles.add(i);
+      }
+    }
+
+    if (validTiles.isEmpty()) {
+      logger.warn("No valid tiles left to place a Star.");
+      return null;
+    }
+
+    int selected = validTiles.get(new Random().nextInt(validTiles.size()));
+    Star star = new Star(selected, selected);
+    getTile(selected).addAttribute(star);
     stars.add(star);
-    logger.info("Star placed at tile {}", start);
+    logger.info("Star placed at tile {}", selected);
     return star;
   }
 

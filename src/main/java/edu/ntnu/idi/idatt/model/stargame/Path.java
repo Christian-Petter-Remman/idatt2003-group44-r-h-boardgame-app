@@ -36,7 +36,7 @@ public class Path implements TileAttribute {
 
   @Override
   public void onLand(Player player, AbstractBoard board) {
-    // TODO: Define behavior for "Path" if needed (move player? bonus?)
+
   }
 }
 

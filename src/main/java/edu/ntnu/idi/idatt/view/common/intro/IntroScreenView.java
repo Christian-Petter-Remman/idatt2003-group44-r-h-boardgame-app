@@ -3,26 +3,22 @@ package edu.ntnu.idi.idatt.view.common.intro;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
+import javafx.scene.layout.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class IntroScreenView implements IntroView {
+
   private Runnable startGameListener;
   private Runnable loadGameListener;
 
-  Logger logger = LoggerFactory.getLogger(IntroScreenView.class);
+  private static final Logger logger = LoggerFactory.getLogger(IntroScreenView.class);
 
   private Parent root;
 
-  public IntroScreenView() {
-  }
+  public IntroScreenView() {}
 
   public void initializeUI() {
     createUI();
@@ -31,13 +27,20 @@ public class IntroScreenView implements IntroView {
   protected void createUI() {
     BorderPane mainContainer = new BorderPane();
 
-    Label titleLabel = new Label("The BoardGame App");
-    titleLabel.setFont(Font.font("Century Gothic", 32));
-    titleLabel.setAlignment(Pos.CENTER);
+    // Background image
+    BackgroundImage bgImage = new BackgroundImage(
+            new Image(getClass().getResource("/home_screen/snakesandladders.png").toExternalForm(),
+                    0, 0, true, true),
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundPosition.CENTER,
+            new BackgroundSize(1.0, 1.0, true, true, false, false)
+    );
+    mainContainer.setBackground(new Background(bgImage));
 
-    HBox gameSelectionBox = createGameSelectionBox();
+    VBox gameSelectionBox = createGameSelectionBox();
 
-    VBox content = new VBox(20, titleLabel, gameSelectionBox);
+    VBox content = new VBox(20, gameSelectionBox);
     content.setAlignment(Pos.CENTER);
     content.setPadding(new Insets(10));
 
@@ -45,42 +48,77 @@ public class IntroScreenView implements IntroView {
     root = mainContainer;
   }
 
+  private VBox createGameSelectionBox() {
+    Button newGameButton = new Button("New Game");
+    styleGameButton(newGameButton,"#ffca28", "#ff9800");
+    newGameButton.setOnAction(e -> {
+      if (startGameListener != null) {
+        logger.info("Start game listener triggered.");
+        startGameListener.run();
+      } else {
+        logger.warn("Start Game listener is not set.");
+      }
+    });
+
+    Button loadGameButton = new Button("Load Game");
+    styleGameButton(loadGameButton,"#81d4fa", "#039be5");
+    loadGameButton.setOnAction(e -> {
+      if (loadGameListener != null) {
+        logger.info("Load game listener triggered.");
+        loadGameListener.run();
+      } else {
+        logger.warn("Load Game listener is not set.");
+      }
+    });
+
+    VBox box = new VBox(10, newGameButton, loadGameButton);
+    box.setAlignment(Pos.CENTER);
+    return box;
+  }
+
+  private void styleGameButton(Button button, String baseColor, String hoverColor) {
+    button.setStyle(
+            "-fx-font-size: 20px;" +
+                    "-fx-font-weight: bold;" +
+                    "-fx-text-fill: white;" +
+                    "-fx-background-color: " + baseColor + ";" +
+                    "-fx-background-radius: 20;" +
+                    "-fx-padding: 12px 28px;" +
+                    "-fx-cursor: hand;" +
+                    "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 4, 0.3, 0, 2);"
+    );
+
+    button.setOnMouseEntered(e ->
+            button.setStyle(
+                    "-fx-font-size: 20px;" +
+                            "-fx-font-weight: bold;" +
+                            "-fx-text-fill: white;" +
+                            "-fx-background-color: " + hoverColor + ";" +
+                            "-fx-background-radius: 20;" +
+                            "-fx-padding: 12px 28px;" +
+                            "-fx-cursor: hand;" +
+                            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 6, 0.3, 0, 3);"
+            )
+    );
+
+    button.setOnMouseExited(e ->
+            button.setStyle(
+                    "-fx-font-size: 20px;" +
+                            "-fx-font-weight: bold;" +
+                            "-fx-text-fill: white;" +
+                            "-fx-background-color: " + baseColor + ";" +
+                            "-fx-background-radius: 20;" +
+                            "-fx-padding: 12px 28px;" +
+                            "-fx-cursor: hand;" +
+                            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 4, 0.3, 0, 2);"
+            )
+    );
+  }
+
 
   @Override
   public Parent getRoot() {
     return root;
-  }
-
-  private HBox createGameSelectionBox() {
-    Image snakesAndLaddersImage = new Image("images/snakesnladders.png");
-    ImageView snakesAndLaddersView = createGameIcon(snakesAndLaddersImage, "SNAKES_AND_LADDERS");
-
-    HBox gameSelectionBox = new HBox(20, snakesAndLaddersView);
-    gameSelectionBox.setAlignment(Pos.CENTER);
-    gameSelectionBox.setPadding(new Insets(10));
-    return gameSelectionBox;
-  }
-
-  private ImageView createGameIcon(Image image, String gameType) {
-    ImageView imageView = new ImageView(image);
-    imageView.setFitHeight(150);
-    imageView.setFitWidth(200);
-    imageView.setPreserveRatio(false);
-
-    if (gameType != null) {
-      logger.info("Game type: {}", gameType);
-      imageView.setOnMouseClicked(e -> {
-        if (startGameListener != null) {
-          startGameListener.run();
-          logger.info("Start game listener executed for game type: {}", gameType);
-        } else {
-          logger.warn("Start game listener is not set");
-        }
-      });
-      imageView.setStyle("-fx-cursor: hand;");
-    }
-
-    return imageView;
   }
 
   @Override

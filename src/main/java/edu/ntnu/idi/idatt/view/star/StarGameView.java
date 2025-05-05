@@ -1,24 +1,33 @@
 package edu.ntnu.idi.idatt.view.star;
 
 import edu.ntnu.idi.idatt.controller.star.StarGameController;
+import edu.ntnu.idi.idatt.filehandling.GameStateCsvLoader;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.stargame.StarBoard;
 import edu.ntnu.idi.idatt.model.stargame.StarPlayer;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.GameScreen;
+
 import edu.ntnu.idi.idatt.view.snl.BoardCreator;
+
 import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+
+
+import javafx.scene.control.TextInputDialog;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +43,7 @@ public class StarGameView extends GameScreen {
 
   public StarGameView(StarGameController controller) {
     this.controller = controller;
+
 
     controller.registerObserver(new GameScreenObserver() {
       @Override
@@ -70,6 +80,22 @@ public class StarGameView extends GameScreen {
     });
 
     createUI();
+    setBackListener(() -> {
+      NavigationManager.getInstance().navigateToStartScreen();
+    });
+    setSaveListener(() -> {
+
+      File tempFile = controller.getCsvFile();
+      TextInputDialog dialog = new TextInputDialog("star_save_" + System.currentTimeMillis());
+      dialog.setTitle("Save Game");
+      dialog.setHeaderText("Name your save file:");
+      dialog.setContentText("Filename:");
+
+      dialog.showAndWait().ifPresent(filename -> {
+        controller.saveGame(tempFile, filename + ".csv");
+      });
+
+    });
   }
 
   public void initializeUI() {
@@ -91,6 +117,8 @@ public class StarGameView extends GameScreen {
       }
     });
   }
+
+  @Override
 
   protected Image getCurrentPlayerImage() {
     Player currentPlayer = controller.getCurrentPlayer();
@@ -144,13 +172,21 @@ public class StarGameView extends GameScreen {
     if (tileNum == 100) {
       var url = getClass().getResource("/images/jailTile.png");
       if (url != null) {
+
         cell.setStyle("-fx-border-color: black; -fx-background-image: url('" + url.toExternalForm() + "'); -fx-background-size: cover;");
+        cell.setStyle("-fx-border-color: black; -fx-background-image: url('" + url.toExternalForm() + "'); " +
+                "-fx-background-size: cover;");
       } else {
         cell.setStyle("-fx-border-color: black; -fx-background-color: black;");
       }
     } else {
       String borderColor = isBlank(tileNum) ? "white" : "black";
+
       cell.setStyle("-fx-border-color: " + borderColor + "; -fx-background-color:" + getTileColor(tileNum) + ";");
+
+      cell.setStyle("-fx-border-color: " + borderColor + ";" +
+              "-fx-background-color:" + getTileColor(tileNum) + ";");
+
 
       if (tileNum != 0) {
         Text tileNumber = new Text(String.valueOf(tileNum));
@@ -179,7 +215,7 @@ public class StarGameView extends GameScreen {
 
     return cell;
   }
-
+  
   private void addOverlayImagesToCell(StackPane cell, int tileNum) {
     StarBoard board = (StarBoard) controller.getBoard();
     board.getBridges().forEach(bridge -> {
@@ -215,6 +251,7 @@ public class StarGameView extends GameScreen {
     }
   }
 
+
   private boolean isBlank(int tileNum) {
     return blankTiles.contains(tileNum);
   }
@@ -222,6 +259,20 @@ public class StarGameView extends GameScreen {
   @Override
   protected List<Player> getAllPlayers() {
     return controller.getPlayers();
+
+
+  private boolean isBlank(int tileNum) {
+    return blankTiles.contains(tileNum);
+  }
+
+  @Override
+  protected List<Player> getAllPlayers() {
+    return controller.getPlayers();
+  }
+
+  @Override
+  public void initializeOverlay() {
+    // No longer needed since overlays are added per cell
   }
 
   @Override

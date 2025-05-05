@@ -44,8 +44,18 @@ public class SNLRuleSelectionController implements NavigationHandler {
     view.getContinueBtn().setOnAction(e -> onContinue());
   }
 
+
   private void onContinue() {
     String savePath = "saves/" + SaveFileNameGenerator.SNLgenerateSaveFileName();
+
+  public int getSelectedDiceCount() {
+    return model.getDiceCount();
+  }
+
+  public void onContinuePressed() {
+    String saveFileName = SaveFileNameGenerator.SNLgenerateSaveFileName();
+    String savePath = "saves/temp/" + saveFileName;
+
     model.setSavePath(savePath);
     List<PlayerData> players = characterSelectionManager.getPlayers();
     SNLGameStateCsvExporter exporter = new SNLGameStateCsvExporter(model, players, savePath);
