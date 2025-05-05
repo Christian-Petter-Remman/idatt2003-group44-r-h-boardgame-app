@@ -1,0 +1,6 @@
+Board,default.json
+DiceCount,1
+CurrentTurnIndex,0
+Players:
+Player 1,TheRock,1
+Player 2,SnoopDogg,1

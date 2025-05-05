@@ -1,4 +1,3 @@
-// PaintCanvasController.java
 package edu.ntnu.idi.idatt.controller.paint;
 
 import edu.ntnu.idi.idatt.model.paint.PaintModel;
@@ -27,33 +26,28 @@ public class PaintCanvasController implements PaintModel.Observer {
     this.view = view;
     model.addObserver(this);
     initView();
-    onModelChanged();  // set initial undo/redo state
+    onModelChanged();
   }
 
   private void initView() {
     final GraphicsContext gc = view.getCanvas().getGraphicsContext2D();
 
-    // 1) Tool toggles
     view.getToolButtons().forEach((type, btn) ->
         btn.setOnAction(e -> currentTool = type)
     );
 
-    // 2) Color picker (only for pencil)
     view.getColorPicker().setOnAction(e ->
         currentColor = view.getColorPicker().getValue()
     );
 
-    // 3) Width slider
     view.getSizeSlider().valueProperty().addListener((obs, oldVal, newVal) ->
         currentWidth = newVal.doubleValue()
     );
 
-    // 4) Undo / Redo / Clear
     view.getUndoButton().setOnAction(e -> model.undo());
     view.getRedoButton().setOnAction(e -> model.redo());
     view.getClearButton().setOnAction(e -> model.clear());
 
-    // 5) Freehand drawing
     view.getCanvas().setOnMousePressed(e -> {
       currentPoints = new ArrayList<>();
       currentPoints.add(new Point2D(e.getX(), e.getY()));

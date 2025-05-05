@@ -2,237 +2,381 @@ package edu.ntnu.idi.idatt.view.snl;
 
 import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
 import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
-import edu.ntnu.idi.idatt.model.snl.Ladder;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
-import edu.ntnu.idi.idatt.model.snl.Snake;
-import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.GameScreen;
-import javafx.scene.Parent;
-import javafx.scene.control.TextInputDialog;
+import javafx.application.Platform;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.geometry.HPos;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
+import javafx.geometry.Point2D;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.*;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
-import javafx.scene.shape.Line;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javafx.util.Duration;
 
-import java.io.File;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class SNLGameScreenView extends GameScreen {
-
-  private static final Logger logger = LoggerFactory.getLogger(SNLGameScreenView.class);
-
   private final SNLGameScreenController controller;
-  private Pane ladderSnakeOverlay;
+  private final Pane overlay = new Pane();
+  private final Label lastRollLabel = new Label("Last roll: -");
+  private final Map<Player, Label> playerPositionLabels = new HashMap<>();
+  private final Map<Player, ImageView> playerTokenViews = new HashMap<>();
+  private final Map<Player, Integer> playerTokenPositions = new HashMap<>();
+  private final ImageView currentTurnImageView = new ImageView();
+  private Button rollDiceButton;
+  private int lastRollValue = 0;
 
   public SNLGameScreenView(SNLGameScreenController controller) {
     this.controller = controller;
+    controller.registerObserver(this);
 
-    controller.registerObserver(new GameScreenObserver() {
-      @Override
-      public void onPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
-        renderBoardGrid();
-      }
+    root = new BorderPane();
 
-      @Override
-      public void onDiceRolled(int result) {
-        diceResultLabel.setText("Roll result: " + result);
-      }
-
-      @Override
-      public void onPlayerTurnChanged(Player currentPlayer) {
-        currentPlayerLabel.setText("Current turn: " + currentPlayer.getName());
-        positionLabel.setText("Position: " + currentPlayer.getPosition());
-      }
-
-      @Override
-      public void onGameOver(Player winner) {
-        showGameOverAlert(winner);
-      }
-
-      @Override
-      public void onGameSaved(String filePath) {
-        showGameSavedAlert(filePath);
-      }
-    });
-
-    createUI();
-    setBackListener(() -> {
-      NavigationManager.getInstance().navigateToStartScreen();
-    });
-    setSaveListener(() -> {
-
-      File tempFile = controller.getCsvFile();
-      TextInputDialog dialog = new TextInputDialog("star_save_" + System.currentTimeMillis());
-      dialog.setTitle("Save Game");
-      dialog.setHeaderText("Name your save file:");
-      dialog.setContentText("Filename:");
-
-      dialog.showAndWait().ifPresent(filename -> {
-        controller.saveGame(tempFile, filename + ".csv");
-      });
-
-    });
-  }
-
-  public void initializeUI() {
-    createUI();
-  }
-
-  @Override
-  protected Image getCurrentPlayerImage() {
-    Player currentPlayer = controller.getCurrentPlayer();
-    if (currentPlayer != null && currentPlayer.getCharacter() != null) {
-      String characterName = currentPlayer.getCharacter().toLowerCase();
-      URL url = getClass().getResource("/player_icons/" + characterName + ".png");
-      if (url != null) {
-        return new Image(url.toExternalForm());
-      } else {
-        logger.warn("No image found for character: {}", characterName);
-      }
+    boardGrid = new GridPane();
+    boardGrid.setHgap(2);
+    boardGrid.setVgap(2);
+    boardGrid.setAlignment(Pos.CENTER);
+    boardGrid.setPrefSize(TILE_SIZE * BOARD_SIZE, TILE_SIZE * BOARD_SIZE);
+    for (int i = 0; i < BOARD_SIZE; i++) {
+      ColumnConstraints cc = new ColumnConstraints(TILE_SIZE);
+      cc.setHalignment(HPos.CENTER);
+      boardGrid.getColumnConstraints().add(cc);
+      RowConstraints rc = new RowConstraints(TILE_SIZE);
+      rc.setValignment(VPos.CENTER);
+      boardGrid.getRowConstraints().add(rc);
     }
-    return null;
+    renderBoardGrid();
+
+    overlay.setPickOnBounds(false);
+    overlay.setMouseTransparent(true);
+    overlay.prefWidthProperty().bind(boardGrid.widthProperty());
+    overlay.prefHeightProperty().bind(boardGrid.heightProperty());
+
+    boardWithOverlay = new StackPane(boardGrid, overlay);
+    StackPane.setAlignment(boardGrid, Pos.TOP_LEFT);
+    StackPane.setAlignment(overlay, Pos.TOP_LEFT);
+    root.setCenter(boardWithOverlay);
+
+    root.setLeft(createLeftPanel());
+    root.setRight(createRightPanel());
+
+    root.getStylesheets().add(
+        Objects.requireNonNull(getClass()
+                .getResource("/css/SNLGameScreenStyleSheet.css"))
+            .toExternalForm()
+    );
+
+    boardGrid.widthProperty().addListener((obs, old, nw) ->
+        Platform.runLater(this::initializeOverlay)
+    );
+    boardGrid.heightProperty().addListener((obs, old, nw) ->
+        Platform.runLater(this::initializeOverlay)
+    );
+
+    Platform.runLater(() -> {
+      initializeOverlay();
+      updateCurrentPlayerDisplay();
+      initializeTokens();
+    });
+  }
+
+  private VBox createLeftPanel() {
+    VBox leftPanel = new VBox(10);
+    leftPanel.getStyleClass().add("snl-left-panel");
+    leftPanel.setPrefWidth(220);
+    leftPanel.setAlignment(Pos.TOP_CENTER);
+
+    Label currentTurnHeader = new Label("Current Turn");
+    currentTurnHeader.getStyleClass().add("title");
+
+    currentTurnImageView.setFitWidth(50);
+    currentTurnImageView.setFitHeight(50);
+
+    currentPlayerLabel = new Label();
+    currentPlayerLabel.getStyleClass().add("info");
+
+    leftPanel.getChildren().addAll(
+        currentTurnHeader,
+        currentTurnImageView,
+        currentPlayerLabel
+    );
+
+    for (Player player : controller.getPlayers()) {
+      HBox infoRow = new HBox(5);
+      infoRow.getStyleClass().add("player-info-row");
+      ImageView avatar = new ImageView(getPlayerImage(player));
+      avatar.setFitWidth(30);
+      avatar.setFitHeight(30);
+      Label nameLabel = new Label(player.getName());
+      Label positionLabel = new Label("Tile: " + player.getPosition());
+      positionLabel.getStyleClass().add("info");
+      playerPositionLabels.put(player, positionLabel);
+      infoRow.getChildren().addAll(avatar, nameLabel, positionLabel);
+      leftPanel.getChildren().add(infoRow);
+    }
+
+    Region spacer = new Region();
+    VBox.setVgrow(spacer, Priority.ALWAYS);
+    leftPanel.getChildren().add(spacer);
+
+    rollDiceButton = new Button("Roll Dice");
+    rollDiceButton.getStyleClass().add("button");
+    rollDiceButton.setOnAction(e -> {
+      rollDiceButton.setDisable(true);
+      controller.handleRoll();
+    });
+
+    Button quitButton = new Button("Quit to Menu");
+    quitButton.getStyleClass().add("button");
+    quitButton.setOnAction(e -> controller.navigateTo("INTRO_SCREEN"));
+
+    leftPanel.getChildren().addAll(
+        rollDiceButton,
+        lastRollLabel,
+        quitButton
+    );
+    return leftPanel;
+  }
+
+  private VBox createRightPanel() {
+    VBox rightPanel = new VBox(10);
+    rightPanel.getStyleClass().add("snl-right-panel");
+    rightPanel.setPrefWidth(200);
+    rightPanel.setAlignment(Pos.CENTER);
+    Region topSpacer = new Region();
+    Region bottomSpacer = new Region();
+    VBox.setVgrow(topSpacer, Priority.ALWAYS);
+    VBox.setVgrow(bottomSpacer, Priority.ALWAYS);
+
+    Label instructions = new Label(
+        """
+            How to play:
+            - Roll the dice
+            - Climb ladders
+            - Avoid snakes
+            - First to 100 wins"""
+    );
+    instructions.getStyleClass().add("instructions-box");
+
+    Button saveButton = new Button("Save Game");
+    saveButton.getStyleClass().add("button");
+
+    rightPanel.getChildren().addAll(
+        topSpacer,
+        instructions,
+        saveButton,
+        bottomSpacer
+    );
+    return rightPanel;
+  }
+
+  private void initializeTokens() {
+    for (Player player : controller.getPlayers()) {
+      ImageView tokenView = playerTokenViews.get(player);
+      if (tokenView == null) {
+        Image tokenImage = getPlayerImage(player);
+        if (tokenImage == null) continue;
+        tokenView = new ImageView(tokenImage);
+        tokenView.setFitWidth(TILE_SIZE * 0.6);
+        tokenView.setFitHeight(TILE_SIZE * 0.6);
+        overlay.getChildren().add(tokenView);
+        playerTokenViews.put(player, tokenView);
+      }
+      int startPos = player.getPosition();
+      playerTokenPositions.put(player, startPos);
+      Point2D center = getCellCenter(startPos);
+      tokenView.setLayoutX(center.getX() - tokenView.getFitWidth() / 2);
+      tokenView.setLayoutY(center.getY() - tokenView.getFitHeight() / 2);
+    }
   }
 
   @Override
-  protected List<Player> getAllPlayers() {
-    return controller.getPlayers(); // Or however you store them
+  protected Image getPlayerImage(Player player) {
+    if (player.getCharacter() == null) return null;
+    URL url = getClass().getResource(
+        "/player_icons/" + player.getCharacter().toLowerCase() + ".png"
+    );
+    return url == null ? null : new Image(url.toExternalForm());
   }
 
   @Override
-  protected void handleRoll() {
-    controller.handleRoll();
+  public void onDiceRolled(int result) {
+    lastRollValue = result;
+    Platform.runLater(() ->
+        lastRollLabel.setText("Last roll: " + result)
+    );
   }
 
   @Override
-  protected String getTileColor(int tileNumber) {
-    return controller.getTileColor(tileNumber);
+  public void onPlayerTurnChanged(Player current) {
+    Platform.runLater(this::updateCurrentPlayerDisplay);
+  }
+
+  private void updateCurrentPlayerDisplay() {
+    Player p = controller.getCurrentPlayer();
+    currentPlayerLabel.setText(p.getName());
+    currentTurnImageView.setImage(controller.getCurrentPlayerImage());
   }
 
   @Override
-  protected List<Player> getPlayersAtPosition(int tileNumber) {
-    return controller.getPlayersAtPosition(tileNumber);
+  public void onPlayerPositionChanged(Player player, int oldPos, int newPos) {
+    Platform.runLater(() -> {
+      ImageView tokenView = playerTokenViews.get(player);
+      if (tokenView == null) return;
+
+      int startPos = playerTokenPositions.get(player);
+      int landingPos = startPos + lastRollValue;
+      boolean hasModifier = (landingPos != newPos);
+
+      int stepDuration = 200;
+      int pauseDuration = 750;
+      Timeline timeline = new Timeline();
+
+      for (int i = 1; i <= lastRollValue; i++) {
+        int tile = startPos + i;
+        timeline.getKeyFrames().add(new KeyFrame(
+            Duration.millis(stepDuration * i),
+            e -> moveToken(tokenView, player, tile)
+        ));
+      }
+
+      if (hasModifier) {
+
+
+        timeline.getKeyFrames().add(new KeyFrame(
+            Duration.millis(stepDuration * lastRollValue),
+            e -> moveToken(tokenView, player, landingPos)
+        ));
+        timeline.getKeyFrames().add(new KeyFrame(
+            Duration.millis(stepDuration * lastRollValue + pauseDuration),
+            e -> moveToken(tokenView, player, newPos)
+        ));
+      }
+
+      timeline.setOnFinished(e -> rollDiceButton.setDisable(false));
+      timeline.play();
+
+      playerTokenPositions.put(player, newPos);
+      lastRollValue = 0;
+    });
   }
 
-  @Override
+  private void moveToken(ImageView tokenView, Player player, int tile) {
+    Point2D center = getCellCenter(tile);
+    tokenView.setLayoutX(center.getX() - tokenView.getFitWidth() / 2);
+    tokenView.setLayoutY(center.getY() - tokenView.getFitHeight() / 2);
+    playerPositionLabels.get(player).setText("Tile: " + tile);
+  }
+
   protected void initializeOverlay() {
-    ladderSnakeOverlay = new Pane();
-    ladderSnakeOverlay.setPickOnBounds(false);
-    ladderSnakeOverlay.setMouseTransparent(true);
-    ladderSnakeOverlay.setPrefSize(TILE_SIZE * BOARD_SIZE, TILE_SIZE * BOARD_SIZE);
-    renderLaddersAndSnakes();
-  }
-
-  @Override
-  protected Pane getOverlay() {
-    return ladderSnakeOverlay;
-  }
-
-  private void renderLaddersAndSnakes() {
-    ladderSnakeOverlay.getChildren().clear();
+    overlay.getChildren().retainAll(playerTokenViews.values());
     SNLBoard board = (SNLBoard) controller.getBoard();
-
-    board.getLadders().forEach(ladder -> drawLadder(ladder.getStart(), ladder.getEnd()));
-    board.getSnakes().forEach(snake -> drawSnake(snake.getStart(), snake.getEnd()));
+    for (var ladder : board.getLadders()) {
+      drawLadder(ladder.getStart(), ladder.getEnd());
+    }
+    for (var snake : board.getSnakes()) {
+      drawSnake(snake.getStart(), snake.getEnd());
+    }
   }
 
   private void drawLadder(int start, int end) {
-    double[] startPos = getTileCenter(start);
-    double[] endPos = getTileCenter(end);
+    Point2D src = getCellCenter(start), dst = getCellCenter(end);
+    double dx = dst.getX() - src.getX(), dy = dst.getY() - src.getY();
+    double dist = Math.hypot(dx, dy);
+    double perpX = -dy / dist, perpY = dx / dist;
+    double width = Math.min(10, dist / 20), offX = perpX * width, offY = perpY * width;
 
-    double dx = endPos[0] - startPos[0];
-    double dy = endPos[1] - startPos[1];
-    double distance = Math.sqrt(dx * dx + dy * dy);
+    Line rail1 = new Line(
+        src.getX() + offX, src.getY() + offY,
+        dst.getX() + offX, dst.getY() + offY
+    );
+    Line rail2 = new Line(
+        src.getX() - offX, src.getY() - offY,
+        dst.getX() - offX, dst.getY() - offY
+    );
+    rail1.setStrokeWidth(3); rail2.setStrokeWidth(3);
+    rail1.setStroke(Color.BURLYWOOD); rail2.setStroke(Color.BURLYWOOD);
+    overlay.getChildren().addAll(rail1, rail2);
 
-    double dirX = dx / distance;
-    double dirY = dy / distance;
-    double perpX = -dirY;
-    double perpY = dirX;
-    double ladderWidth = Math.min(10, Math.max(5, distance / 20));
-
-    double offsetX = perpX * ladderWidth;
-    double offsetY = perpY * ladderWidth;
-
-    Line left = new Line(startPos[0] + offsetX, startPos[1] + offsetY,
-            endPos[0] + offsetX, endPos[1] + offsetY);
-    Line right = new Line(startPos[0] - offsetX, startPos[1] - offsetY,
-            endPos[0] - offsetX, endPos[1] - offsetY);
-
-    left.setStroke(Color.BURLYWOOD);
-    right.setStroke(Color.BURLYWOOD);
-    left.setStrokeWidth(3);
-    right.setStrokeWidth(3);
-
-    ladderSnakeOverlay.getChildren().addAll(left, right);
-
-
-    int steps = (int) (distance / 15);
+    int steps = (int)(dist / 15);
     for (int i = 1; i < steps; i++) {
-      double t = (double) i / steps;
-      double centerX = startPos[0] + dx * t;
-      double centerY = startPos[1] + dy * t;
-
-      Line rung = new Line(centerX - offsetX, centerY - offsetY,
-              centerX + offsetX, centerY + offsetY);
-      rung.setStroke(Color.SADDLEBROWN);
-      rung.setStrokeWidth(2);
-
-      ladderSnakeOverlay.getChildren().add(rung);
+      double t = i / (double)steps;
+      double cx = src.getX() + dx * t, cy = src.getY() + dy * t;
+      Line rung = new Line(cx - offX, cy - offY, cx + offX, cy + offY);
+      rung.setStrokeWidth(2); rung.setStroke(Color.SADDLEBROWN);
+      overlay.getChildren().add(rung);
     }
   }
 
   private void drawSnake(int start, int end) {
-    double[] startPos = getTileCenter(start);
-    double[] endPos = getTileCenter(end);
+    Point2D src = getCellCenter(start), dst = getCellCenter(end);
+    CubicCurve body = getBody(dst, src);
+    body.setStrokeWidth(4);
+    body.setStroke(Color.DARKRED);
+    body.setFill(null);
 
-    double dx = endPos[0] - startPos[0];
-    double dy = endPos[1] - startPos[1];
-    double distance = Math.sqrt(dx * dx + dy * dy);
+    Circle head = new Circle(src.getX(), src.getY(), 6, Color.DARKRED);
+    Circle tail = new Circle(dst.getX(), dst.getY(), 4, Color.DARKRED);
 
-    double curveAmplitude = Math.min(distance * 0.2, 25);
-    double perpX = -dy / distance;
-    double perpY = dx / distance;
+    overlay.getChildren().addAll(body, head, tail);
+  }
 
-    double ctrlX1 = startPos[0] + dx * 0.3 + perpX * curveAmplitude;
-    double ctrlY1 = startPos[1] + dy * 0.3 + perpY * curveAmplitude;
-    double ctrlX2 = startPos[0] + dx * 0.7 - perpX * curveAmplitude;
-    double ctrlY2 = startPos[1] + dy * 0.7 - perpY * curveAmplitude;
+  private CubicCurve getBody(Point2D dst, Point2D src) {
+    double dx = dst.getX() - src.getX(), dy = dst.getY() - src.getY();
+    double dist = Math.hypot(dx, dy);
+    double amp = Math.min(dist * 0.2, 25), perpX = -dy / dist, perpY = dx / dist;
 
-    CubicCurve snake = new CubicCurve(
-            startPos[0], startPos[1],
-            ctrlX1, ctrlY1,
-            ctrlX2, ctrlY2,
-            endPos[0], endPos[1]
+    double c1x = src.getX() + dx * 0.3 + perpX * amp,
+        c1y = src.getY() + dy * 0.3 + perpY * amp;
+    double c2x = src.getX() + dx * 0.7 - perpX * amp,
+        c2y = src.getY() + dy * 0.7 - perpY * amp;
+
+    return new CubicCurve(
+        src.getX(), src.getY(),
+        c1x, c1y, c2x, c2y,
+        dst.getX(), dst.getY()
     );
-    snake.setStroke(Color.DARKRED);
-    snake.setStrokeWidth(4);
-    snake.setFill(null);
-
-    Circle head = new Circle(startPos[0], startPos[1], 6, Color.DARKRED);
-    Circle tail = new Circle(endPos[0], endPos[1], 4, Color.DARKRED);
-
-    ladderSnakeOverlay.getChildren().addAll(snake, head, tail);
   }
 
-
-
-  private void showGameOverAlert(Player winner) {
-    // Optional: JavaFX Alert dialog or modal
-  }
-
-  private void showGameSavedAlert(String filePath) {
-    // Optional: Confirm save with user
-  }
+  @Override protected String getTileColor(int tile)            { return controller.getTileColor(tile); }
+  @Override protected List<Player> getPlayersAtPosition(int t)  { return controller.getPlayersAtPosition(t); }
+  @Override protected void handleRoll()                         { controller.handleRoll(); }
+  @Override protected List<Player> getAllPlayers()              { return controller.getPlayers(); }
 
   @Override
-  public Parent getRoot() {
-    return root;
+  protected void renderBoardGrid() {
+    boardGrid.getChildren().clear();
+    for (int i = 1; i <= BOARD_SIZE * BOARD_SIZE; i++) {
+      StackPane cell = new StackPane();
+      cell.setPrefSize(TILE_SIZE, TILE_SIZE);
+      cell.setStyle(
+          "-fx-border-color: black; " +
+              "-fx-background-color: " + getTileColor(i) + ";"
+      );
+
+      Text number = new Text(String.valueOf(i));
+      number.setStyle("-fx-fill: #555;");
+      cell.getChildren().add(number);
+
+      int row = BOARD_SIZE - 1 - ((i - 1) / BOARD_SIZE);
+      int col = ((row % 2) == 0)
+          ? ((i - 1) % BOARD_SIZE)
+          : (BOARD_SIZE - 1 - ((i - 1) % BOARD_SIZE));
+      boardGrid.add(cell, col, row);
+    }
   }
 }

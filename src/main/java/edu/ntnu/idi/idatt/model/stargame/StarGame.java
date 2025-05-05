@@ -1,4 +1,3 @@
-// StarGame.java
 package edu.ntnu.idi.idatt.model.stargame;
 
 import edu.ntnu.idi.idatt.model.common.BoardGame;

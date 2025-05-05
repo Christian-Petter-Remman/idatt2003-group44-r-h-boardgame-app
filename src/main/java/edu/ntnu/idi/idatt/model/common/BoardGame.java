@@ -23,7 +23,6 @@ public abstract class BoardGame {
   protected final List<GameScreenObserver> winnerObservers = new ArrayList<>();
   protected final List<BoardObserver> boardObservers = new ArrayList<>();
 
-
   public BoardGame(AbstractBoard board) {
     this.board = board;
     this.players = new ArrayList<>();
@@ -116,8 +115,6 @@ public abstract class BoardGame {
       observer.onPathDecisionRequested(player, path);
     }
   }
-
-
 
   public void notifyStarObservers(Player player, int newTile) {
     for (GameObserver observer : observers) {
