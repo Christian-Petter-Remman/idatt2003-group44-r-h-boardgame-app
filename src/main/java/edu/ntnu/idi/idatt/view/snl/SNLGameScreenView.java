@@ -352,6 +352,7 @@ public class SNLGameScreenView extends GameScreen {
     );
   }
 
+
   @Override protected String getTileColor(int tile)            { return controller.getTileColor(tile); }
   @Override protected List<Player> getPlayersAtPosition(int t)  { return controller.getPlayersAtPosition(t); }
   @Override protected void handleRoll()                         { controller.handleRoll(); }
