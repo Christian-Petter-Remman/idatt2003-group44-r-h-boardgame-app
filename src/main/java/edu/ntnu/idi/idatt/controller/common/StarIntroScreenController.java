@@ -3,7 +3,6 @@ package edu.ntnu.idi.idatt.controller.common;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationTarget;
-import edu.ntnu.idi.idatt.view.common.intro.IntroScreenView;
 import edu.ntnu.idi.idatt.view.common.intro.StarIntroView;
 import javafx.scene.Parent;
 import org.slf4j.Logger;
@@ -17,11 +16,17 @@ public class StarIntroScreenController implements NavigationHandler {
   public StarIntroScreenController() {
     this.view = new StarIntroView();
     this.view.setStartGameListener(this::startStarGame);
+    this.view.setLoadGameListener(this::loadStarGame); // 👈 ADDED THIS
   }
 
   private void startStarGame() {
     navigateTo("STAR_CHARACTER_SELECTION");
-    logger.info("Starting game: {}", "Snakes and Ladders");
+    logger.info("Starting game: Star Game");
+  }
+
+  private void loadStarGame() {
+    navigateTo("STAR_LOAD_SCREEN"); // 👈 Make sure this target is defined in NavigationTarget enum
+    logger.info("Navigating to Load Game screen");
   }
 
   @Override
@@ -45,4 +50,3 @@ public class StarIntroScreenController implements NavigationHandler {
     return view;
   }
 }
-

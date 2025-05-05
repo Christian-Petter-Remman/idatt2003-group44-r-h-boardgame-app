@@ -71,6 +71,18 @@ public class StarBoardJsonHandler implements FileHandler<StarBoard> {
       }
     }
 
+    if (jsonObject.has("paths")) {
+      JsonArray pathsArray = jsonObject.getAsJsonArray("paths");
+      for (JsonElement element : pathsArray) {
+        JsonObject obj = element.getAsJsonObject();
+        int start = obj.get("start").getAsInt();
+        String direction = obj.get("dir").getAsString();
+        int endDynamic = obj.get("endDyn").getAsInt();
+        int endStatic = obj.get("endStat").getAsInt();
+        board.addPath(start, direction, endDynamic, endStatic);
+      }
+    }
+
     if (jsonObject.has("jail")) {
       JsonArray pathArray = jsonObject.getAsJsonArray("jail");
       for (JsonElement element : pathArray) {
@@ -83,25 +95,6 @@ public class StarBoardJsonHandler implements FileHandler<StarBoard> {
     if (jsonObject.has("star")){
         board.addStar();
       }
-
-
-
-
-    if (jsonObject.has("paths")) {
-      JsonArray pathArray = jsonObject.getAsJsonArray("paths");
-      for (JsonElement element : pathArray) {
-        JsonObject obj = element.getAsJsonObject();
-        int start = obj.get("start").getAsInt();
-        int staticEnd = obj.get("staticend").getAsInt();
-        int dynamicEnd = obj.get("dynamicstart").getAsInt();
-        String dir = obj.get("dir").getAsString();
-
-        board.addPath(start,dir,staticEnd,dynamicEnd);
-      }
-
-
-    }
-
     return board;
   }
 

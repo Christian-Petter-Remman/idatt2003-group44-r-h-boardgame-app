@@ -11,6 +11,8 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
 
 public class Main extends Application {
 
@@ -20,6 +22,7 @@ public class Main extends Application {
   public void start(Stage primaryStage) {
     try {
       FileManager.ensureApplicationDirectoriesExist();
+      cleanTempSaves();
 
       NavigationManager.getInstance().initialize(primaryStage);
       NavigationManager.getInstance().navigateTo(NavigationTarget.START_SCREEN);
@@ -33,6 +36,16 @@ public class Main extends Application {
     } catch (Exception e) {
       logger.error("Error during startup: {}", e.getMessage(), e);
       showAlert("Startup Error", "Could not start the game");
+    }
+  }
+
+  public static void cleanTempSaves() {
+    File tempDir = new File("saves/temp/");
+    if (tempDir.exists()) {
+      for (File file : tempDir.listFiles()) {
+        file.delete();
+      }
+      logger.info("Cleaned up all temporary saves.");
     }
   }
 

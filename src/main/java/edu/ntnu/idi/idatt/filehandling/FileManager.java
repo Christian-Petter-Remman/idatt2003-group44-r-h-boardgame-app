@@ -3,6 +3,7 @@ package edu.ntnu.idi.idatt.filehandling;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -65,4 +66,28 @@ public class FileManager {
 
     logger.info("All application directories verified successfully");
   }
+
+  public static void saveGameToPermanent(File tempFile, String gamePath, String userInput) {
+    File savedDir = new File("saves/load/" + gamePath+"/");
+    if (!savedDir.exists()) savedDir.mkdirs();
+
+    File newFile = new File("saves/load/"+gamePath+"/" + userInput);
+    boolean success = tempFile.renameTo(newFile);
+    if (success) {
+      //mark as save
+      logger.info("Game permanently saved as: {}", newFile.getName());
+    }
+  }
+
+
+  public static void cleanupIfTemporary(String tempFilePath) {
+    if (tempFilePath != null) {
+      File file = new File(tempFilePath);
+      if (file.exists()) {
+        file.delete();
+        logger.info("Deleted temporary save file: {}", tempFilePath);
+      }
+    }
+  }
+
 }

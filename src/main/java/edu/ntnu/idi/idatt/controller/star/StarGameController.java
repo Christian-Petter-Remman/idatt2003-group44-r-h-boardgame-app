@@ -1,13 +1,11 @@
 package edu.ntnu.idi.idatt.controller.star;
 
+import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.model.common.AbstractBoard;
 import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.model.model_observers.BoardObserver;
+import edu.ntnu.idi.idatt.model.common.Tile;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
-import edu.ntnu.idi.idatt.model.snl.SNLGame;
-import edu.ntnu.idi.idatt.model.stargame.StarBoard;
-import edu.ntnu.idi.idatt.model.stargame.StarGame;
-import edu.ntnu.idi.idatt.model.stargame.Tunnel;
+import edu.ntnu.idi.idatt.model.stargame.*;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationTarget;
@@ -15,6 +13,7 @@ import javafx.scene.Parent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,16 +25,23 @@ public class StarGameController implements NavigationHandler {
   private final StarGame game;
   private final List<GameScreenObserver> observers = new ArrayList<>();
   private Parent root;
+  private final File csvFile;
 
-  public StarGameController(StarGame game) {
+  public StarGameController(StarGame game, File csvFile) {
     this.game = game;
+    this.csvFile = csvFile;
   }
+
 
   public void registerObserver(GameScreenObserver observer) {
     observers.add(observer);
     game.addMoveObserver(observer);
     game.addTurnObserver(observer);
     game.addWinnerObserver(observer);
+  }
+
+  public File getCsvFile() {
+    return csvFile;
   }
 
   public List<Player> getPlayers() {
@@ -58,7 +64,29 @@ public class StarGameController implements NavigationHandler {
     game.playTurn();
   }
 
+
   public String getTileColor(int tileNum) {
+    Tile tile = getBoard().getTile(tileNum);
+
+
+    for (Jail jail : ((StarBoard) getBoard()).getJailTiles()) {
+      if (tileNum == jail.getStart() + 1) {
+        return "red";
+      }
+    }
+
+    if (tile.hasAttribute(Bridge.class)) {
+      return "yellow";
+    } else if (tile.hasAttribute(Tunnel.class)) {
+      return "purple";
+    } else if (tile.hasAttribute(Path.class)) {
+      return "blue";
+    }
+
+    if (tileNum == 1000) {
+      return "black";
+    }
+
     return (tileNum % 2 == 0) ? "#f0f0f0" : "#d0d0d0";
   }
 
@@ -70,10 +98,6 @@ public class StarGameController implements NavigationHandler {
       }
     }
     return playersAtPosition;
-  }
-
-  public void initializeGameScreen() {
-    notifyPlayerPositionChangedAll();
   }
 
   public void notifyPlayerPositionChangedAll() {
@@ -89,10 +113,13 @@ public class StarGameController implements NavigationHandler {
     }
   }
 
+  public void saveGame(File tempFile, String filename) {
+    FileManager.saveGameToPermanent(tempFile,"star",filename);
+  }
+
   @Override
   public void navigateTo(String destination) {
 
-    // Implement navigation handling logic
     switch (destination) {
       case "INTRO_SCREEN":
         NavigationManager.getInstance().navigateTo(NavigationTarget.START_SCREEN);
@@ -105,7 +132,6 @@ public class StarGameController implements NavigationHandler {
 
   @Override
   public void navigateBack() {
-    // Implement navigation back logic
   }
 
   @Override

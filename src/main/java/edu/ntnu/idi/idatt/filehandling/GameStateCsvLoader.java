@@ -36,6 +36,10 @@ public class GameStateCsvLoader {
       logger.info("Board file set to {}", boardFile);
     }
 
+    public String getBoardFileName() {
+      return boardFile;
+    }
+
     public int getDiceCount() {
       return diceCount;
     }
@@ -102,13 +106,11 @@ public class GameStateCsvLoader {
           String character = parts[1];
           int position = Integer.parseInt(parts[2]);
           int points = Integer.parseInt(parts[3]);
-          state.players.add(new StarPlayer(name, character, position,points));
+          state.players.add(new StarPlayer(name, character, position, points));
         }
       }
     }
 
     return state;
   }
-
-
 }
