@@ -1,24 +1,24 @@
 package edu.ntnu.idi.idatt.view;
 
 import edu.ntnu.idi.idatt.model.common.Player;
+import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
+import javafx.geometry.Bounds;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
+import javafx.geometry.Point2D;
 import javafx.scene.Parent;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.net.URL;
 import java.util.List;
 
-public abstract class GameScreen {
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
+public abstract class GameScreen implements GameScreenObserver {
 
   protected static final int TILE_SIZE = 60;
   protected static final int BOARD_SIZE = 10;
@@ -28,6 +28,8 @@ public abstract class GameScreen {
 
   protected BorderPane root;
   protected GridPane boardGrid;
+  protected Pane overlayPane;
+  protected StackPane boardWithOverlay;
   protected Label currentPlayerLabel;
   protected Label positionLabel;
   protected Label diceResultLabel;
@@ -35,13 +37,40 @@ public abstract class GameScreen {
   protected ImageView playerImage;
   protected VBox playerInfoList;
 
-  public GameScreen() {}
+  public Parent getRoot() {
+    return root;
+  }
 
   protected void createUI() {
     root = new BorderPane();
-    root.setStyle("-fx-padding: 30;");
 
-    // 🎮 Board (left)
+    boardGrid = new GridPane();
+    boardGrid.setHgap(2);
+    boardGrid.setVgap(2);
+    boardGrid.setAlignment(Pos.CENTER);
+    boardGrid.setPrefSize(TILE_SIZE * BOARD_SIZE, TILE_SIZE * BOARD_SIZE);
+    for (int i = 0; i < BOARD_SIZE; i++) {
+      ColumnConstraints cc = new ColumnConstraints(TILE_SIZE);
+      cc.setHalignment(HPos.CENTER);
+      boardGrid.getColumnConstraints().add(cc);
+      RowConstraints rc = new RowConstraints(TILE_SIZE);
+      rc.setValignment(VPos.CENTER);
+      boardGrid.getRowConstraints().add(rc);
+    }
+    renderBoardGrid();
+
+    overlayPane = new Pane();
+    overlayPane.setPickOnBounds(false);
+    overlayPane.setMouseTransparent(true);
+    overlayPane.prefWidthProperty().bind(boardGrid.widthProperty());
+    overlayPane.prefHeightProperty().bind(boardGrid.heightProperty());
+
+    boardWithOverlay = new StackPane(boardGrid, overlayPane);
+    StackPane.setAlignment(boardGrid, Pos.TOP_LEFT);
+    StackPane.setAlignment(overlayPane, Pos.TOP_LEFT);
+    root.setLeft(boardWithOverlay);
+
+
     initializeBoardGrid();
     initializeOverlay();
 
@@ -51,21 +80,38 @@ public abstract class GameScreen {
     if (getOverlay() != null) getOverlay().toFront();
     root.setLeft(boardWithOverlay);
 
-    // 🧍‍♂️ Current player (top)
     VBox currentPlayerBox = new VBox(5);
     currentPlayerBox.setAlignment(Pos.CENTER);
+    
+    
+    
+// SPLIT MASTER 
+  
+  
     currentPlayerLabel = new Label("Current turn:");
     playerImage = new ImageView();
     playerImage.setFitWidth(70);
     playerImage.setFitHeight(70);
-    playerImage.setPreserveRatio(true);
-    currentPlayerBox.getChildren().addAll(currentPlayerLabel, playerImage);
+  
+    VBox currentBox = new VBox(5, currentPlayerLabel, playerImage);
+    currentBox.setAlignment(Pos.CENTER);
 
-    // 📊 All players info (middle)
     playerInfoList = new VBox(10);
     playerInfoList.setAlignment(Pos.CENTER_LEFT);
 
-    // 🎲 Roll button (bottom)
+    positionLabel = new Label("Position:");
+    diceResultLabel = new Label("Roll result:");
+    rollButton = new Button("Roll Dice");
+    rollButton.setOnAction(e -> handleRoll());
+    VBox bottomBox = new VBox(5, positionLabel, diceResultLabel, rollButton);
+    bottomBox.setAlignment(Pos.CENTER);
+
+    playerImage.setPreserveRatio(true);
+    currentPlayerBox.getChildren().addAll(currentPlayerLabel, playerImage);
+
+    playerInfoList = new VBox(10);
+    playerInfoList.setAlignment(Pos.CENTER_LEFT);
+
     VBox bottomBox = new VBox(10);
     positionLabel = new Label("Position:");
     diceResultLabel = new Label("Roll result:");
@@ -140,28 +186,65 @@ public abstract class GameScreen {
       colConst.setHalignment(HPos.CENTER);
       boardGrid.getColumnConstraints().add(colConst);
 
-      RowConstraints rowConst = new RowConstraints(TILE_SIZE);
-      rowConst.setValignment(VPos.CENTER);
-      boardGrid.getRowConstraints().add(rowConst);
-    }
 
-    renderBoardGrid();
+    VBox infoPanel = new VBox(20, currentBox, playerInfoList, bottomBox);
+    infoPanel.setAlignment(Pos.TOP_CENTER);
+    infoPanel.setPrefWidth(200);
+    infoPanel.setMaxWidth(200);
+    root.setRight(infoPanel);
+
+    updatePlayerImages();
   }
 
   protected abstract Image getCurrentPlayerImage();
 
   protected void renderBoardGrid() {
     boardGrid.getChildren().clear();
+    for (int i = 1; i <= BOARD_SIZE * BOARD_SIZE; i++) {
+      StackPane cell = new StackPane();
+      cell.setPrefSize(TILE_SIZE, TILE_SIZE);
+      cell.setStyle("-fx-border-color: black; -fx-background-color: " + getTileColor(i) + ";");
+      Text txt = new Text(String.valueOf(i));
+      txt.setStyle("-fx-fill: #555;");
+      cell.getChildren().add(txt);
 
-    for (int i = 0; i < 100; i++) {
-      int tileNum = i + 1;
-      StackPane cell = createTile(tileNum);
+      List<Player> players = getPlayersAtPosition(i);
+      for (int idx = 0; idx < players.size(); idx++) {
+        Player p = players.get(idx);
+        Image img = getPlayerImage(p);
+        if (img == null) {
+          continue;
+        }
+        ImageView iv = new ImageView(img);
+        iv.setFitWidth(TILE_SIZE * 0.5);
+        iv.setFitHeight(TILE_SIZE * 0.5);
+        iv.setPreserveRatio(true);
+        iv.setTranslateY(10 * idx);
+        cell.getChildren().add(iv);
+      }
 
-      int row = 9 - (i / BOARD_SIZE);
-      int col = (row % 2 == 0) ? i % BOARD_SIZE : (BOARD_SIZE - 1 - i % BOARD_SIZE);
-
+      int row = BOARD_SIZE - 1 - ((i - 1) / BOARD_SIZE);
+      int col = (row % 2 == 0)
+          ? ((i - 1) % BOARD_SIZE)
+          : (BOARD_SIZE - 1 - ((i - 1) % BOARD_SIZE));
       boardGrid.add(cell, col, row);
     }
+  }
+
+  protected Point2D getCellCenter(int tileNum) {
+    int idx = tileNum - 1;
+    int row = BOARD_SIZE - 1 - (idx / BOARD_SIZE);
+    int col = (row % 2 == 0)
+        ? (idx % BOARD_SIZE)
+        : (BOARD_SIZE - 1 - (idx % BOARD_SIZE));
+    for (Node n : boardGrid.getChildren()) {
+      Integer r = GridPane.getRowIndex(n), c = GridPane.getColumnIndex(n);
+      if (r != null && c != null && r == row && c == col) {
+        Bounds b = n.localToParent(n.getBoundsInLocal());
+        return new Point2D(b.getMinX() + b.getWidth() / 2, b.getMinY() + b.getHeight() / 2);
+      }
+    }
+    return new Point2D(0, 0);
   }
 
   protected StackPane createTile(int tileNum) {
@@ -181,28 +264,52 @@ public abstract class GameScreen {
         var url = getClass().getResource("/player_icons/" + characterName + ".png");
         if (url == null) continue;
 
-        Image image = new Image(url.toExternalForm(), TILE_SIZE * 0.5, TILE_SIZE * 0.5, true, true);
-        ImageView icon = new ImageView(image);
-        icon.setTranslateY(TILE_SIZE * 0.15 * playersOnTile.indexOf(player));
-        cell.getChildren().add(icon);
-      } catch (Exception e) {
-        logger.error("Error loading image for character: {}", characterName, e);
+
+  protected void updatePlayerImages() {
+    playerInfoList.getChildren().clear();
+    for (Player p : getAllPlayers()) {
+      Image img = getPlayerImage(p);
+      if (img == null) {
+        continue;
       }
+      ImageView iv = new ImageView(img);
+      iv.setFitWidth(40);
+      iv.setFitHeight(40);
+      iv.setPreserveRatio(true);
+      Label name = new Label(p.getName());
+      Label pos = new Label("Pos: " + p.getPosition());
+      HBox row = new HBox(5, iv, name, pos);
+      row.setAlignment(Pos.CENTER_LEFT);
+      playerInfoList.getChildren().add(row);
     }
-
-    return cell;
   }
 
-  protected double[] getTileCenter(int tileNum) {
-    int i = tileNum - 1;
-    int row = 9 - (i / BOARD_SIZE);
-    int col = (row % 2 == 0) ? i % BOARD_SIZE : (BOARD_SIZE - 1 - i % BOARD_SIZE);
-
-    double x = col * TILE_SIZE + TILE_SIZE / 2.0;
-    double y = row * TILE_SIZE + TILE_SIZE / 2.0;
-
-    return new double[]{x, y};
+  @Override
+  public void onPlayerPositionChanged(Player player, int oldPos, int newPos) {
   }
+
+  @Override
+  public void onDiceRolled(int result) {
+    diceResultLabel.setText("Roll result: " + result);
+  }
+
+  @Override
+  public void onPlayerTurnChanged(Player current) {
+    currentPlayerLabel.setText("Current turn: " + current.getName());
+    positionLabel.setText("Position: " + current.getPosition());
+  }
+
+  @Override
+  public void onGameOver(Player winner) {
+  }
+
+  @Override
+  public void onGameSaved(String path) {
+  }
+
+  protected abstract List<Player> getAllPlayers();
+
+  protected abstract Image getPlayerImage(Player player);
 
   public void setSaveListener(Runnable listener) {
     this.saveListener = listener;
@@ -212,14 +319,16 @@ public abstract class GameScreen {
     this.backListener = listener;
   }
 
+
   protected abstract void handleRoll();
+
   protected abstract String getTileColor(int tileNumber);
+
   protected abstract List<Player> getPlayersAtPosition(int tileNumber);
   protected abstract Pane getOverlay();
   protected abstract List<Player> getAllPlayers();  // NEW abstract method
   protected void initializeOverlay() {}
 
-  public Parent getRoot() {
-    return root;
-  }
+
+  protected abstract List<Player> getPlayersAtPosition(int tileNumber);
 }

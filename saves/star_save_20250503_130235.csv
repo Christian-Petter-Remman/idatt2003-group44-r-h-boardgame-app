@@ -1,0 +1,6 @@
+Board,default.json
+DiceCount,2
+CurrentTurnIndex,0
+Players:
+Player 1,Toad,1,0
+Player 2,The Rock,1,0

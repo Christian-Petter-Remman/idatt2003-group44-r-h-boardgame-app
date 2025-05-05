@@ -1,0 +1,5 @@
+Board,default.json
+DiceCount,1
+CurrentTurnIndex,0
+Players:
+Player 1,Yoshi,1

@@ -1,17 +1,21 @@
-// PaintCanvasController.java
 package edu.ntnu.idi.idatt.controller.paint;
 
 import edu.ntnu.idi.idatt.model.paint.PaintModel;
 import edu.ntnu.idi.idatt.model.paint.Stroke;
+import edu.ntnu.idi.idatt.navigation.NavigationHandler;
+import edu.ntnu.idi.idatt.navigation.NavigationManager;
+import edu.ntnu.idi.idatt.navigation.NavigationTarget;
 import edu.ntnu.idi.idatt.view.paint.PaintCanvasView;
 import javafx.geometry.Point2D;
+import javafx.scene.Parent;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PaintCanvasController implements PaintModel.Observer {
+public class PaintCanvasController implements PaintModel.Observer, NavigationHandler {
+
   public enum ToolType { PENCIL, ERASER }
 
   private final PaintModel model;
@@ -97,13 +101,29 @@ public class PaintCanvasController implements PaintModel.Observer {
         view.getCanvas().getHeight()
     );
     for (Stroke s : model.getStrokes()) {
-      gc.setStroke(s.getColor());
-      gc.setLineWidth(s.getWidth());
-      List<Point2D> pts = s.getPoints();
+      gc.setStroke(s.color());
+      gc.setLineWidth(s.width());
+      List<Point2D> pts = s.points();
       for (int i = 1; i < pts.size(); i++) {
         Point2D p0 = pts.get(i - 1), p1 = pts.get(i);
         gc.strokeLine(p0.getX(), p0.getY(), p1.getX(), p1.getY());
       }
     }
   }
+
+  @Override
+  public void navigateTo(String destination) {
+    NavigationManager.getInstance().navigateTo(NavigationTarget.PAINT_CANVAS_SCREEN);
+  }
+
+  @Override
+  public void navigateBack() {
+    NavigationManager.getInstance().navigateBack();
+  }
+
+  @Override
+  public void setRoot(Parent root) {
+    NavigationManager.getInstance().setRoot(root);
+  }
+
 }

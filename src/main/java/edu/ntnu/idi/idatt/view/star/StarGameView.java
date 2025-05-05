@@ -8,13 +8,19 @@ import edu.ntnu.idi.idatt.model.stargame.StarBoard;
 import edu.ntnu.idi.idatt.model.stargame.StarPlayer;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.GameScreen;
+
+import edu.ntnu.idi.idatt.view.snl.BoardCreator;
+
 import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+
+
 import javafx.scene.control.TextInputDialog;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -113,6 +119,7 @@ public class StarGameView extends GameScreen {
   }
 
   @Override
+
   protected Image getCurrentPlayerImage() {
     Player currentPlayer = controller.getCurrentPlayer();
     if (currentPlayer != null && currentPlayer.getCharacter() != null) {
@@ -120,8 +127,6 @@ public class StarGameView extends GameScreen {
       URL url = getClass().getResource("/player_icons/" + characterName + ".png");
       if (url != null) {
         return new Image(url.toExternalForm());
-      } else {
-        logger.warn("No image found for character: {}", characterName);
       }
     }
     return null;
@@ -160,7 +165,6 @@ public class StarGameView extends GameScreen {
     }
   }
 
-  @Override
   public StackPane createTile(int tileNum) {
     StackPane cell = new StackPane();
     cell.setPrefSize(TILE_SIZE, TILE_SIZE);
@@ -168,6 +172,8 @@ public class StarGameView extends GameScreen {
     if (tileNum == 100) {
       var url = getClass().getResource("/images/jailTile.png");
       if (url != null) {
+
+        cell.setStyle("-fx-border-color: black; -fx-background-image: url('" + url.toExternalForm() + "'); -fx-background-size: cover;");
         cell.setStyle("-fx-border-color: black; -fx-background-image: url('" + url.toExternalForm() + "'); " +
                 "-fx-background-size: cover;");
       } else {
@@ -175,8 +181,12 @@ public class StarGameView extends GameScreen {
       }
     } else {
       String borderColor = isBlank(tileNum) ? "white" : "black";
+
+      cell.setStyle("-fx-border-color: " + borderColor + "; -fx-background-color:" + getTileColor(tileNum) + ";");
+
       cell.setStyle("-fx-border-color: " + borderColor + ";" +
               "-fx-background-color:" + getTileColor(tileNum) + ";");
+
 
       if (tileNum != 0) {
         Text tileNumber = new Text(String.valueOf(tileNum));
@@ -189,7 +199,7 @@ public class StarGameView extends GameScreen {
 
     List<Player> playersOnTile = getPlayersAtPosition(tileNum);
     for (Player player : playersOnTile) {
-      String characterName = (player.getCharacter() != null) ? player.getCharacter().toLowerCase() : "default";
+      String characterName = player.getCharacter() != null ? player.getCharacter().toLowerCase() : "default";
       try {
         var url = getClass().getResource("/player_icons/" + characterName + ".png");
         if (url == null) continue;
@@ -199,12 +209,13 @@ public class StarGameView extends GameScreen {
         icon.setTranslateY(TILE_SIZE * 0.15 * playersOnTile.indexOf(player));
         cell.getChildren().add(icon);
       } catch (Exception e) {
-        logger.error("Error loading image for character: {}", characterName, e);
+        //logger.error("Error loading image for character: {}", characterName, e);
       }
     }
 
     return cell;
   }
+  
   private void addOverlayImagesToCell(StackPane cell, int tileNum) {
     StarBoard board = (StarBoard) controller.getBoard();
     board.getBridges().forEach(bridge -> {
@@ -228,7 +239,7 @@ public class StarGameView extends GameScreen {
     try {
       var url = getClass().getResource("/images/" + imageFileName);
       if (url == null) {
-        logger.warn("Image not found: {}", imageFileName);
+        //logger.warn("Image not found: {}", imageFileName);
         return;
       }
 
@@ -236,10 +247,18 @@ public class StarGameView extends GameScreen {
       ImageView icon = new ImageView(image);
       cell.getChildren().add(icon);
     } catch (Exception e) {
-      logger.error("Failed to load image: {}", imageFileName, e);
+      //logger.error("Failed to load image: {}", imageFileName, e);
     }
   }
 
+
+  private boolean isBlank(int tileNum) {
+    return blankTiles.contains(tileNum);
+  }
+
+  @Override
+  protected List<Player> getAllPlayers() {
+    return controller.getPlayers();
 
 
   private boolean isBlank(int tileNum) {
@@ -257,6 +276,13 @@ public class StarGameView extends GameScreen {
   }
 
   @Override
+  protected Image getPlayerImage(Player player) {
+    return null;
+  }
+
+  public void initializeOverlay() {}
+
+  @Override
   protected void handleRoll() {
     controller.handleRoll();
   }
@@ -271,8 +297,7 @@ public class StarGameView extends GameScreen {
     return controller.getPlayersAtPosition(tileNumber);
   }
 
-  @Override
   protected Pane getOverlay() {
-    return new Pane(); // Overlay no longer used
+    return new Pane();
   }
 }
