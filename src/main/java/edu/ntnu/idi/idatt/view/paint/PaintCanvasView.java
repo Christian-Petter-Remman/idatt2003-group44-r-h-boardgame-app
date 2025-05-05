@@ -26,6 +26,7 @@ public class PaintCanvasView {
   private final Map<ToolType, ToggleButton> toolButtons = new EnumMap<>(ToolType.class);
 
   public PaintCanvasView(PaintModel model) {
+    // 1) Build UI
     VBox toolbar = createToolbar();
     StackPane canvasHolder = new StackPane(canvas);
     canvasHolder.getStyleClass().add("canvas-holder");

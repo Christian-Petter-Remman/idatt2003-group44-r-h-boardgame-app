@@ -14,6 +14,7 @@ public class PaintModel {
   private final Deque<Stroke> redoStack = new LinkedList<>();
 
   public void addObserver(Observer o) { observers.add(o); }
+  public void removeObserver(Observer o) { observers.remove(o); }
 
   private void notifyObservers() {
     for (Observer o : observers) o.onModelChanged();

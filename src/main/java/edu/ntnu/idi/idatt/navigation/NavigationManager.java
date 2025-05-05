@@ -8,7 +8,6 @@ import edu.ntnu.idi.idatt.controller.common.load.SNLLoadGameController;
 import edu.ntnu.idi.idatt.controller.common.load.StarLoadGameController;
 import edu.ntnu.idi.idatt.controller.memorygame.MemoryGameController;
 import edu.ntnu.idi.idatt.controller.memorygame.MemoryRuleSelectionController;
-import edu.ntnu.idi.idatt.controller.paint.PaintCanvasController;
 import edu.ntnu.idi.idatt.controller.snl.*;
 import edu.ntnu.idi.idatt.controller.star.StarGameController;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
@@ -19,7 +18,6 @@ import edu.ntnu.idi.idatt.model.common.factory.SNLFactory;
 import edu.ntnu.idi.idatt.model.common.factory.StarFactory;
 import edu.ntnu.idi.idatt.model.common.intro.StartScreenModel;
 import edu.ntnu.idi.idatt.model.memorygame.MemoryGameSettings;
-import edu.ntnu.idi.idatt.model.paint.PaintModel;
 import edu.ntnu.idi.idatt.model.snl.*;
 import edu.ntnu.idi.idatt.model.stargame.StarBoard;
 import edu.ntnu.idi.idatt.model.stargame.StarGame;
@@ -28,7 +26,6 @@ import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
 import edu.ntnu.idi.idatt.view.common.character.StarCharSelectionScreen;
 import edu.ntnu.idi.idatt.view.common.intro.StartScreenView;
 import edu.ntnu.idi.idatt.view.memorygame.MemoryRuleSelectionView;
-import edu.ntnu.idi.idatt.view.paint.PaintCanvasView;
 import edu.ntnu.idi.idatt.view.snl.SNLGameScreenView;
 
 import edu.ntnu.idi.idatt.view.snl.SNLLoadGameView;
@@ -93,16 +90,15 @@ public class NavigationManager {
   }
 
   public void setRoot(Parent root) {
-    if (root == null) {
+    if (root == null)
       throw new NullPointerException("Root cannot be null");
-    }
     if (scene != null) {
       scene.setRoot(root);
     }
   }
 
   public void navigateBack() {
-    //TODO: Implement navigateBack
+   //TODO: Implement navigateBack
   }
 
   public void navigateTo(NavigationTarget target) {
@@ -120,8 +116,6 @@ public class NavigationManager {
 
       case MEMORY_RULE_SCREEN -> navigateToMemoryRuleScreen();
       case MEMORY_GAME_SCREEN -> navigateToMemoryGame();
-
-      case PAINT_CANVAS_SCREEN -> navigateToPaintCanvas();
 
     }
   }
@@ -151,7 +145,7 @@ public class NavigationManager {
   public void navigateToStarCharacterSelection() {
     characterSelectionManager = new CharacterSelectionManager();
     StarCharSelectionScreen view = new StarCharSelectionScreen(characterSelectionManager);
-    starCharSelectionController = new StarCharSelectionController(characterSelectionManager, view);
+    starCharSelectionController = new StarCharSelectionController(characterSelectionManager,view);
     setHandler(starCharSelectionController);
     setRoot(view.getView());
   }
@@ -173,9 +167,10 @@ public class NavigationManager {
   public void navigateToSNLRuleSelection() {
     try {
       ruleSelectionModel = new SNLRuleSelectionModel();
-      SNLRuleSelectionView view = new SNLRuleSelectionView(ruleSelectionModel);
       SNLRuleSelectionController controller = new SNLRuleSelectionController(ruleSelectionModel,
-          view, characterSelectionManager);
+          characterSelectionManager);
+      SNLRuleSelectionView view = new SNLRuleSelectionView(ruleSelectionModel, controller);
+      view.initializeUI();
       setRuleSelectionModel(ruleSelectionModel);
       setHandler(controller);
       setRoot(view.getRoot());
@@ -210,7 +205,7 @@ public class NavigationManager {
       StarFactory factory = new StarFactory();
       StarBoard board = factory.loadBoardFromFile(boardpath);
 
-      StarGame game = new StarGame(board, gameState.getPlayers(), gameState.getCurrentTurnIndex());
+      StarGame game = new StarGame(board,gameState.getPlayers(), gameState.getCurrentTurnIndex());
 
       StarGameController controller = new StarGameController(game,saveFile);
       controller.notifyPlayerPositionChangedAll();
@@ -233,32 +228,25 @@ public class NavigationManager {
       String boardPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + gameState.getBoardFile();
       logger.info("Final board path: {}", boardPath);
 
-      SNLBoard board = new SNLFactory().loadBoardFromFile(boardPath);
-      SNLGame game = new SNLGame(
-          board,
-          gameState.getPlayers(),
-          gameState.getDiceCount(),
-          gameState.getCurrentTurnIndex()
-      );
-
-
-      SNLGameScreenController controller =
-          new SNLGameScreenController(game);
+      SNLFactory factory = new SNLFactory();
+      SNLBoard board = factory.loadBoardFromFile(boardPath);
 
       SNLGame game = new SNLGame(board, gameState.getPlayers(), gameState.getDiceCount(),
           gameState.getCurrentTurnIndex());
       SNLGameScreenController controller = new SNLGameScreenController(game,saveFile);
 
-
-      SNLGameScreenView view = new SNLGameScreenView(controller);
-
       controller.notifyPlayerPositionChangedAll();
 
+      SNLGameScreenView gameScreenView = new SNLGameScreenView(controller);
+      gameScreenView.initializeUI();
+
       setHandler(controller);
-      setRoot(view.getRoot());
+      setRoot(gameScreenView.getRoot());
+
       logger.info("Snakes and Ladders game screen initialized successfully.");
     } catch (Exception e) {
-      logger.error("Failed to load Snakes and Ladders game", e);
+      logger.error("Failed to SNLLoad Snakes and Ladders game from save file", e);
+
     }
   }
 
@@ -293,20 +281,6 @@ public class NavigationManager {
     } catch (Exception e) {
       logger.error("Failed to load Memory Game", e);
       showAlert("Error", "Failed to load Memory Game");
-    }
-  }
-
-  public void navigateToPaintCanvas() {
-    try {
-      PaintModel model = new PaintModel();
-      PaintCanvasView view = new PaintCanvasView(model);
-      PaintCanvasController controller = new PaintCanvasController(model, view);
-      setHandler(controller);
-      setRoot(view.getRoot());
-      logger.info("Navigated to Paint Canvas Screen");
-    } catch (Exception e) {
-      logger.error("Failed to load Paint Canvas", e);
-      showAlert("Error", "Failed to load Paint Canvas");
     }
   }
 
