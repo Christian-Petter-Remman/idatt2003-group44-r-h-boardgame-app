@@ -1,11 +1,10 @@
 package edu.ntnu.idi.idatt.model.snl;
 
-import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.model.common.BoardGame;
+import edu.ntnu.idi.idatt.model.common.Dice;
+import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.BoardObserver;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
-import java.util.concurrent.ThreadLocalRandom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,16 +13,14 @@ import java.util.List;
 
 public class SNLGame extends BoardGame {
 
-  private static final Logger logger = LoggerFactory.getLogger(SNLGame.class);
+  private static final Logger logger = LoggerFactory.getLogger(SNLGame.class.getName());
 
   private boolean gameOver = false;
 
   private final List<GameScreenObserver> turnObservers = new ArrayList<>();
   private final List<GameScreenObserver> moveObservers = new ArrayList<>();
   private final List<GameScreenObserver> winnerObservers = new ArrayList<>();
-  private final List<GameScreenObserver> saveObservers = new ArrayList<>();
   private final List<BoardObserver> boardObservers = new ArrayList<>();
-  private int diceCount = 1;
 
   public SNLGame(SNLBoard board, List<Player> players, int diceCount, int currentTurnIndex) {
     super(board);
@@ -32,8 +29,7 @@ public class SNLGame extends BoardGame {
     this.dice = new Dice(diceCount);
     this.currentPlayerIndex = currentTurnIndex;
     initializePlayer(players);
-    logger.info("Snakes and Ladders created with board size {} and turn index {}", board.getSize(),
-        currentTurnIndex);
+    logger.info("Snakes and Ladders created with board size {} and turn index {}", board.getSize(), currentTurnIndex);
   }
 
   public void playTurn() {
@@ -48,39 +44,46 @@ public class SNLGame extends BoardGame {
     logger.info("{} rolled a {}", player.getName(), roll);
 
     int oldPosition = player.getPosition();
-    int newPosition = Math.min(oldPosition + roll, board.getSize());
-    player.setPosition(newPosition);
+    int newPosition = oldPosition + roll;
 
+    if (newPosition > board.getSize()) {
+      newPosition = board.getSize();
+    }
+
+    player.setPosition(newPosition);
+    logger.info("{} moved to tile {}", player.getName(), newPosition);
     notifyMoveObservers(player, roll);
-    for (BoardObserver o : boardObservers) {
-      o.onPlayerMoved(player, oldPosition, newPosition);
+    for (BoardObserver observer : boardObservers) {
+      observer.onPlayerMoved(player, oldPosition, newPosition);
     }
 
     Integer ladderEnd = ((SNLBoard) board).getLadderEnd(newPosition);
     Integer snakeEnd = ((SNLBoard) board).getSnakeEnd(newPosition);
 
     if (ladderEnd != null) {
-      logger.info("{} hit a ladder at {} → {}", player.getName(), newPosition, ladderEnd);
-      delay();
+      logger.info("{} landed on a ladder at {}! Climbing to {}...", player.getName(), newPosition, ladderEnd);
+      delay(500);
       player.setPosition(ladderEnd);
-      for (BoardObserver o : boardObservers) {
-        o.onSpecialTileActivated(newPosition, ladderEnd, true);
-        o.onPlayerMoved(player, newPosition, ladderEnd);
+      logger.info("{} climbed to {}", player.getName(), ladderEnd);
+      for (BoardObserver observer : boardObservers) {
+        observer.onSpecialTileActivated(newPosition, ladderEnd, true);
+        observer.onPlayerMoved(player, newPosition, ladderEnd);
       }
       notifyMoveObservers(player, 0);
     } else if (snakeEnd != null) {
-      logger.info("{} hit a snake at {} → {}", player.getName(), newPosition, snakeEnd);
-      delay();
+      logger.info("{} landed on a snake at {}! Sliding to {}...", player.getName(), newPosition, snakeEnd);
+      delay(500);
       player.setPosition(snakeEnd);
-      for (BoardObserver o : boardObservers) {
-        o.onSpecialTileActivated(newPosition, snakeEnd, false);
-        o.onPlayerMoved(player, newPosition, snakeEnd);
+      logger.info("{} slid down to {}", player.getName(), snakeEnd);
+      for (BoardObserver observer : boardObservers) {
+        observer.onSpecialTileActivated(newPosition, snakeEnd, false);
+        observer.onPlayerMoved(player, newPosition, snakeEnd);
       }
       notifyMoveObservers(player, 0);
     }
 
     if (player.hasWon()) {
-      logger.info("{} has won!", player.getName());
+      logger.info(" {} has won the game!", player.getName());
       gameOver = true;
       notifyWinnerObservers(player);
     } else {
@@ -88,82 +91,48 @@ public class SNLGame extends BoardGame {
     }
   }
 
-  private void delay() {
+  private void delay(int milliseconds) {
     try {
-      Thread.sleep(500);
+      Thread.sleep(milliseconds);
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
   }
 
-  public void saveGame(String filePath) {
-    notifySaveObservers(filePath);
+  @Override
+  public void addTurnObserver(GameScreenObserver observer) {
+    turnObservers.add(observer);
   }
 
   @Override
-  public void addTurnObserver(GameScreenObserver o) {
-    turnObservers.add(o);
+  public void addMoveObserver(GameScreenObserver observer) {
+    moveObservers.add(observer);
   }
 
   @Override
-  public void addMoveObserver(GameScreenObserver o) {
-    moveObservers.add(o);
+  public void addWinnerObserver(GameScreenObserver observer) {
+    winnerObservers.add(observer);
   }
 
-  @Override
-  public void addWinnerObserver(GameScreenObserver o) {
-    winnerObservers.add(o);
+  public void addMoveObserver(BoardObserver observer) {
+    boardObservers.add(observer);
   }
-
-  public void addSaveObserver(GameScreenObserver o) {
-    saveObservers.add(o);
-  }
-
-  public void addMoveObserver(BoardObserver o) {
-    boardObservers.add(o);
-  }
-
-  @Override
-  public void notifyMoveObservers(Player p, int roll) {
-    for (var o : moveObservers) {
-      o.onDiceRolled(roll);
-      o.onPlayerPositionChanged(p, -1, p.getPosition());
-      o.onPlayerTurnChanged(p);
+ @Override
+  public void notifyMoveObservers(Player player, int roll) {
+    for (GameScreenObserver observer : moveObservers) {
+      observer.onDiceRolled(roll);
+      observer.onPlayerPositionChanged(player, -1, player.getPosition());
+      observer.onPlayerTurnChanged(player);
     }
   }
-
   @Override
-  public void notifyWinnerObservers(Player w) {
-    for (var o : winnerObservers) {
-      o.onGameOver(w);
-    }
-  }
-
-  private void notifySaveObservers(String path) {
-    for (var o : saveObservers) {
-      o.onGameSaved(path);
+  public void notifyWinnerObservers(Player winner) {
+    for (GameScreenObserver observer : winnerObservers) {
+      observer.onGameOver(winner);
     }
   }
 
   public boolean isGameOver() {
     return gameOver;
-  }
-
-  public void setDiceCount(int diceCount) {
-    if (diceCount < 1) {
-      diceCount = 1;
-    }
-    if (diceCount > 2) {
-      diceCount = 2;
-    }
-    this.diceCount = diceCount;
-  }
-
-  public int rollDice() {
-    int total = 0;
-    for (int i = 0; i < diceCount; i++) {
-      total += ThreadLocalRandom.current().nextInt(1, 7);
-    }
-    return total;
   }
 }
