@@ -2,7 +2,9 @@ package edu.ntnu.idi.idatt.view.snl;
 
 import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
 import edu.ntnu.idi.idatt.model.common.Player;
+import edu.ntnu.idi.idatt.model.snl.Ladder;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
+import edu.ntnu.idi.idatt.model.snl.Snake;
 import edu.ntnu.idi.idatt.view.GameScreen;
 import javafx.application.Platform;
 import javafx.animation.KeyFrame;
@@ -285,10 +287,10 @@ public class SNLGameScreenView extends GameScreen {
   protected void initializeOverlay() {
     overlay.getChildren().retainAll(playerTokenViews.values());
     SNLBoard board = (SNLBoard) controller.getBoard();
-    for (var ladder : board.getLadders()) {
+    for (Ladder ladder : board.getLadders()) {
       drawLadder(ladder.getStart(), ladder.getEnd());
     }
-    for (var snake : board.getSnakes()) {
+    for (Snake snake : board.getSnakes()) {
       drawSnake(snake.getStart(), snake.getEnd());
     }
   }

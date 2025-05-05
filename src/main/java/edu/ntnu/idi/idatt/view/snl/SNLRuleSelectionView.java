@@ -43,13 +43,13 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
   }
 
   private Parent buildView() {
-    var background = new ImageView(new Image("/images/snakesbackground.jpg"));
+    ImageView background = new ImageView(new Image("/images/snakesbackground.jpg"));
     background.setFitWidth(800);
     background.setFitHeight(600);
     background.setPreserveRatio(true);
     background.setOpacity(0.3);
 
-    var card = new VBox(20,
+    VBox card = new VBox(20,
         createSpacer(),
         createTitle(),
         createDifficultyBox(),
@@ -66,7 +66,7 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
         Color.gray(0.2, 0.8), new CornerRadii(12), Insets.EMPTY
     )));
 
-    var container = new StackPane(background, card);
+    StackPane container = new StackPane(background, card);
     StackPane.setAlignment(card, Pos.CENTER);
     StackPane.setMargin(card, new Insets(20));
     applyCss(container);
@@ -74,13 +74,13 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
   }
 
   private Region createSpacer() {
-    var spacer = new Region();
+    Region spacer = new Region();
     VBox.setVgrow(spacer, Priority.ALWAYS);
     return spacer;
   }
 
   private Label createTitle() {
-    var title = new Label("Rule Selection");
+    Label title = new Label("Rule Selection");
     title.getStyleClass().add("rs-title");
     return title;
   }
@@ -89,13 +89,13 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
     easyRadio.setUserData("easy.json");
     defaultRadio.setUserData("default.json");
     hardRadio.setUserData("hard.json");
-    for (var rb : new RadioButton[]{easyRadio, defaultRadio, hardRadio}) {
+    for (RadioButton rb : new RadioButton[]{easyRadio, defaultRadio, hardRadio}) {
       rb.getStyleClass().add("rs-diff-rb");
       rb.setToggleGroup(difficultyGroup);
     }
     defaultRadio.setSelected(true);
 
-    var box = new HBox(20, easyRadio, defaultRadio, hardRadio);
+    HBox box = new HBox(20, easyRadio, defaultRadio, hardRadio);
     box.setAlignment(Pos.CENTER);
     box.setPadding(new Insets(5));
     box.setBackground(new Background(new BackgroundFill(
@@ -106,26 +106,26 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
 
   private HBox createRandomButton() {
     randomBtn.getStyleClass().add("rs-random");
-    var icon = new ImageView(new Image("/images/question_mark_icon.png"));
+    ImageView icon = new ImageView(new Image("/images/question_mark_icon.png"));
     icon.setFitWidth(18);
     icon.setFitHeight(18);
     randomBtn.setGraphic(icon);
-    var box = new HBox(randomBtn);
+    HBox box = new HBox(randomBtn);
     box.setAlignment(Pos.CENTER);
     return box;
   }
 
   private HBox createModifierBox() {
-    var modTitle = new Label("Game Modifiers");
+    Label modTitle = new Label("Game Modifiers");
     modTitle.getStyleClass().add("rs-mod-title");
     countLabel.getStyleClass().add("rs-count");
-    var content = new VBox(5, modTitle, countLabel);
+    VBox content = new VBox(5, modTitle, countLabel);
     content.setAlignment(Pos.CENTER);
     content.setPadding(new Insets(10));
     content.setBackground(new Background(new BackgroundFill(
         Color.rgb(106, 13, 173, 0.2), new CornerRadii(8), Insets.EMPTY
     )));
-    var box = new HBox(content);
+    HBox box = new HBox(content);
     box.setAlignment(Pos.CENTER);
     return box;
   }
@@ -146,20 +146,20 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
       }
     });
 
-    var radios = new HBox(20, oneDieRadio, twoDiceRadio);
+    HBox radios = new HBox(20, oneDieRadio, twoDiceRadio);
     radios.setAlignment(Pos.CENTER);
     radios.setPadding(new Insets(5));
     radios.setBackground(new Background(new BackgroundFill(
         Color.rgb(106, 13, 173, 0.1), new CornerRadii(5), Insets.EMPTY
     )));
 
-    var content = new VBox(5, diceLabel, radios);
+    VBox content = new VBox(5, diceLabel, radios);
     content.setAlignment(Pos.CENTER);
     content.setPadding(new Insets(10));
     content.setBackground(new Background(new BackgroundFill(
         Color.rgb(106, 13, 173, 0.2), new CornerRadii(8), Insets.EMPTY
     )));
-    var box = new HBox(content);
+    HBox box = new HBox(content);
     box.setAlignment(Pos.CENTER);
     return box;
   }
@@ -167,7 +167,7 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
   private HBox createNavBox() {
     backBtn.getStyleClass().add("rs-nav");
     continueBtn.getStyleClass().add("rs-nav");
-    var nav = new HBox(10, backBtn, continueBtn);
+    HBox nav = new HBox(10, backBtn, continueBtn);
     nav.setAlignment(Pos.CENTER);
     return nav;
   }

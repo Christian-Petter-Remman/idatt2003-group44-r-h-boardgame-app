@@ -19,6 +19,7 @@ import javafx.scene.text.Text;
 import java.util.List;
 
 public abstract class GameScreen implements GameScreenObserver {
+
   protected static final int TILE_SIZE = 60;
   protected static final int BOARD_SIZE = 10;
 
@@ -106,7 +107,9 @@ public abstract class GameScreen implements GameScreenObserver {
       for (int idx = 0; idx < players.size(); idx++) {
         Player p = players.get(idx);
         Image img = getPlayerImage(p);
-        if (img == null) continue;
+        if (img == null) {
+          continue;
+        }
         ImageView iv = new ImageView(img);
         iv.setFitWidth(TILE_SIZE * 0.5);
         iv.setFitHeight(TILE_SIZE * 0.5);
@@ -143,7 +146,9 @@ public abstract class GameScreen implements GameScreenObserver {
     playerInfoList.getChildren().clear();
     for (Player p : getAllPlayers()) {
       Image img = getPlayerImage(p);
-      if (img == null) continue;
+      if (img == null) {
+        continue;
+      }
       ImageView iv = new ImageView(img);
       iv.setFitWidth(40);
       iv.setFitHeight(40);
@@ -156,18 +161,36 @@ public abstract class GameScreen implements GameScreenObserver {
     }
   }
 
-  @Override public void onPlayerPositionChanged(Player player, int oldPos, int newPos) {}
-  @Override public void onDiceRolled(int result)    { diceResultLabel.setText("Roll result: " + result); }
-  @Override public void onPlayerTurnChanged(Player current) {
+  @Override
+  public void onPlayerPositionChanged(Player player, int oldPos, int newPos) {
+  }
+
+  @Override
+  public void onDiceRolled(int result) {
+    diceResultLabel.setText("Roll result: " + result);
+  }
+
+  @Override
+  public void onPlayerTurnChanged(Player current) {
     currentPlayerLabel.setText("Current turn: " + current.getName());
     positionLabel.setText("Position: " + current.getPosition());
   }
-  @Override public void onGameOver(Player winner)   {}
-  @Override public void onGameSaved(String path)    {}
+
+  @Override
+  public void onGameOver(Player winner) {
+  }
+
+  @Override
+  public void onGameSaved(String path) {
+  }
 
   protected abstract List<Player> getAllPlayers();
+
   protected abstract Image getPlayerImage(Player player);
+
   protected abstract void handleRoll();
+
   protected abstract String getTileColor(int tileNumber);
+
   protected abstract List<Player> getPlayersAtPosition(int tileNumber);
 }
