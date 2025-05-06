@@ -60,7 +60,7 @@ The Cholli App is a JavaFX-based children's entertainment hub developed by Group
 * Use the menu options to create or switch player profiles.
 * Save your current game state anytime; load it later to continue.
 
-> **Note:** There is no in-game pause menu; to pause play, simply save your progress.
+> 
 
 ## Project Structure
 
