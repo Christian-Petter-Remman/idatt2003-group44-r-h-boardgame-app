@@ -31,6 +31,5 @@ public abstract class AbstractBoard {
   }
 
 
-
   public abstract int getSize();
 }
