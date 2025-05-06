@@ -2,7 +2,7 @@ package edu.ntnu.idi.idatt.view.star;
 
 public class BoardCreator {
 
-  public static int StarGame(int imputTile){
+  public static int StarGameCreator(int imputTile){
     int outputTile = 0;
 
     if(imputTile == 0){

@@ -1,11 +1,9 @@
-// StarGame.java
+
 package edu.ntnu.idi.idatt.model.stargame;
 
 import edu.ntnu.idi.idatt.model.common.BoardGame;
 import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.model.model_observers.BoardObserver;
-import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
@@ -26,7 +24,7 @@ public class StarGame extends BoardGame {
     this.dice = new Dice(1);
     initializePlayer(players);
 
-    logger.info("StarGame created with board size {}", board.getSize());
+    logger.info("StarGameCreator created with board size {}", board.getSize());
   }
 
   public void initialize(StarBoard board) {

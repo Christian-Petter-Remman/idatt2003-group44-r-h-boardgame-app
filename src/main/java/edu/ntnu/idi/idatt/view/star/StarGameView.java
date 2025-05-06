@@ -1,7 +1,6 @@
 package edu.ntnu.idi.idatt.view.star;
 
 import edu.ntnu.idi.idatt.controller.star.StarGameController;
-import edu.ntnu.idi.idatt.filehandling.GameStateCsvLoader;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.stargame.StarBoard;
@@ -21,7 +20,6 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -150,7 +148,7 @@ public class StarGameView extends GameScreen {
     }
 
     for (int i = 0; i < rows * cols; i++) {
-      int tileNum = BoardCreator.StarGame(i);
+      int tileNum = BoardCreator.StarGameCreator(i);
       StackPane cell = createTile(tileNum);
 
       int row = rows - 1 - (i / cols);
