@@ -24,8 +24,8 @@ public class CharacterSelectionManager implements Observable {
     availableCharacters.add(new CharacterSelectionData("Luigi", "/player_icons/luigi.png", false, null));
     availableCharacters.add(new CharacterSelectionData("Mario", "/player_icons/mario.png", false, null));
     availableCharacters.add(new CharacterSelectionData("Peach", "/player_icons/peach.png", false, null));
-    availableCharacters.add(new CharacterSelectionData("The Rock", "/player_icons/therock.png", false, null));
-    availableCharacters.add(new CharacterSelectionData("Snoop Dogg", "/player_icons/snoopdogg.png", false, null));
+    availableCharacters.add(new CharacterSelectionData("TheRock", "/player_icons/therock.png", false, null));
+    availableCharacters.add(new CharacterSelectionData("SnoopDogg", "/player_icons/snoopdogg.png", false, null));
     availableCharacters.add(new CharacterSelectionData("Toad", "/player_icons/toad.png", false, null));
     availableCharacters.add(new CharacterSelectionData("Yoshi", "/player_icons/yoshi.png", false, null));
 
