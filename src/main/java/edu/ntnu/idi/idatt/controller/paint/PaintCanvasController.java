@@ -97,9 +97,9 @@ public class PaintCanvasController implements PaintModel.Observer {
         view.getCanvas().getHeight()
     );
     for (Stroke s : model.getStrokes()) {
-      gc.setStroke(s.getColor());
-      gc.setLineWidth(s.getWidth());
-      List<Point2D> pts = s.getPoints();
+      gc.setStroke(s.color());
+      gc.setLineWidth(s.width());
+      List<Point2D> pts = s.points();
       for (int i = 1; i < pts.size(); i++) {
         Point2D p0 = pts.get(i - 1), p1 = pts.get(i);
         gc.strokeLine(p0.getX(), p0.getY(), p1.getX(), p1.getY());

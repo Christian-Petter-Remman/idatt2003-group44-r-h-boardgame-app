@@ -63,7 +63,7 @@
     "funFact": "The earliest known paintings are over 40 000 years old.",
     "imagePath": "/home_screen/paint.png",
     "ctaLabel": "Open Canvas",
-    "ctaAction": "PAINT_CANVAS_SCREEN"
+    "ctaAction": "PAINT_CANVAS"
   },
   {
     "id": "snakeGame",
