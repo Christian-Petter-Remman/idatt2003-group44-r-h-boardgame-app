@@ -3,21 +3,23 @@ package edu.ntnu.idi.idatt.view.snl;
 import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
-import edu.ntnu.idi.idatt.model.snl.Ladder;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
+import edu.ntnu.idi.idatt.model.snl.Ladder;
 import edu.ntnu.idi.idatt.model.snl.Snake;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.GameScreen;
+import javafx.application.Platform;
+import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
-import javafx.scene.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,17 +30,15 @@ import java.util.List;
 public class SNLGameScreenView extends GameScreen {
 
   private static final Logger logger = LoggerFactory.getLogger(SNLGameScreenView.class);
-
   private final SNLGameScreenController controller;
   private Pane ladderSnakeOverlay;
 
   public SNLGameScreenView(SNLGameScreenController controller) {
     this.controller = controller;
-
     controller.registerObserver(new GameScreenObserver() {
       @Override
       public void onPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
-        renderBoardGrid();
+        Platform.runLater(() -> renderBoardGrid());
       }
 
       @Override
@@ -62,23 +62,15 @@ public class SNLGameScreenView extends GameScreen {
         showGameSavedAlert(filePath);
       }
     });
-
     createUI();
-    setBackListener(() -> {
-      NavigationManager.getInstance().navigateToStartScreen();
-    });
+    setBackListener(() -> NavigationManager.getInstance().navigateToStartScreen());
     setSaveListener(() -> {
-
       File tempFile = controller.getCsvFile();
-      TextInputDialog dialog = new TextInputDialog("star_save_" + System.currentTimeMillis());
+      TextInputDialog dialog = new TextInputDialog("save_" + System.currentTimeMillis());
       dialog.setTitle("Save Game");
       dialog.setHeaderText("Name your save file:");
       dialog.setContentText("Filename:");
-
-      dialog.showAndWait().ifPresent(filename -> {
-        controller.saveGame(tempFile, filename + ".csv");
-      });
-
+      dialog.showAndWait().ifPresent(filename -> controller.saveGame(tempFile, filename + ".csv"));
     });
   }
 
@@ -90,12 +82,12 @@ public class SNLGameScreenView extends GameScreen {
   protected Image getCurrentPlayerImage() {
     Player currentPlayer = controller.getCurrentPlayer();
     if (currentPlayer != null && currentPlayer.getCharacter() != null) {
-      String characterName = currentPlayer.getCharacter().toLowerCase();
-      URL url = getClass().getResource("/player_icons/" + characterName + ".png");
+      String name = currentPlayer.getCharacter().toLowerCase();
+      URL url = getClass().getResource("/player_icons/" + name + ".png");
       if (url != null) {
         return new Image(url.toExternalForm());
       } else {
-        logger.warn("No image found for character: {}", characterName);
+        logger.warn("No image for character: {}", name);
       }
     }
     return null;
@@ -103,7 +95,7 @@ public class SNLGameScreenView extends GameScreen {
 
   @Override
   protected List<Player> getAllPlayers() {
-    return controller.getPlayers(); // Or however you store them
+    return controller.getPlayers();
   }
 
   @Override
@@ -127,7 +119,6 @@ public class SNLGameScreenView extends GameScreen {
     ladderSnakeOverlay.setPickOnBounds(false);
     ladderSnakeOverlay.setMouseTransparent(true);
     ladderSnakeOverlay.setPrefSize(TILE_SIZE * BOARD_SIZE, TILE_SIZE * BOARD_SIZE);
-    renderLaddersAndSnakes();
   }
 
   @Override
@@ -135,101 +126,80 @@ public class SNLGameScreenView extends GameScreen {
     return ladderSnakeOverlay;
   }
 
+  @Override
+  protected void renderBoardGrid() {
+    super.renderBoardGrid();
+    Platform.runLater(() -> {
+      boardGrid.applyCss();
+      boardGrid.layout();
+      renderLaddersAndSnakes();
+    });
+  }
+
   private void renderLaddersAndSnakes() {
     ladderSnakeOverlay.getChildren().clear();
     SNLBoard board = (SNLBoard) controller.getBoard();
-
-    board.getLadders().forEach(ladder -> drawLadder(ladder.getStart(), ladder.getEnd()));
-    board.getSnakes().forEach(snake -> drawSnake(snake.getStart(), snake.getEnd()));
+    for (Ladder ladder : board.getLadders()) {
+      drawLadder(ladder.getStart(), ladder.getEnd());
+    }
+    for (Snake snake : board.getSnakes()) {
+      drawSnake(snake.getStart(), snake.getEnd());
+    }
   }
 
   private void drawLadder(int start, int end) {
-    double[] startPos = getTileCenter(start);
-    double[] endPos = getTileCenter(end);
+    StackPane startTile = findTileNode(start);
+    StackPane endTile = findTileNode(end);
 
-    double dx = endPos[0] - startPos[0];
-    double dy = endPos[1] - startPos[1];
-    double distance = Math.sqrt(dx * dx + dy * dy);
+    if (startTile != null && endTile != null) {
+      Bounds startBounds = ladderSnakeOverlay.sceneToLocal(startTile.localToScene(startTile.getBoundsInLocal()));
+      Bounds endBounds = ladderSnakeOverlay.sceneToLocal(endTile.localToScene(endTile.getBoundsInLocal()));
 
-    double dirX = dx / distance;
-    double dirY = dy / distance;
-    double perpX = -dirY;
-    double perpY = dirX;
-    double ladderWidth = Math.min(10, Math.max(5, distance / 20));
-
-    double offsetX = perpX * ladderWidth;
-    double offsetY = perpY * ladderWidth;
-
-    Line left = new Line(startPos[0] + offsetX, startPos[1] + offsetY,
-            endPos[0] + offsetX, endPos[1] + offsetY);
-    Line right = new Line(startPos[0] - offsetX, startPos[1] - offsetY,
-            endPos[0] - offsetX, endPos[1] - offsetY);
-
-    left.setStroke(Color.BURLYWOOD);
-    right.setStroke(Color.BURLYWOOD);
-    left.setStrokeWidth(3);
-    right.setStrokeWidth(3);
-
-    ladderSnakeOverlay.getChildren().addAll(left, right);
-
-
-    int steps = (int) (distance / 15);
-    for (int i = 1; i < steps; i++) {
-      double t = (double) i / steps;
-      double centerX = startPos[0] + dx * t;
-      double centerY = startPos[1] + dy * t;
-
-      Line rung = new Line(centerX - offsetX, centerY - offsetY,
-              centerX + offsetX, centerY + offsetY);
-      rung.setStroke(Color.SADDLEBROWN);
-      rung.setStrokeWidth(2);
-
-      ladderSnakeOverlay.getChildren().add(rung);
+      Line line = new Line(
+          startBounds.getCenterX(), startBounds.getCenterY(),
+          endBounds.getCenterX(), endBounds.getCenterY()
+      );
+      line.setStrokeWidth(4);
+      line.setStroke(Color.BURLYWOOD);
+      ladderSnakeOverlay.getChildren().add(line);
     }
   }
 
   private void drawSnake(int start, int end) {
-    double[] startPos = getTileCenter(start);
-    double[] endPos = getTileCenter(end);
+    StackPane startTile = findTileNode(start);
+    StackPane endTile = findTileNode(end);
 
-    double dx = endPos[0] - startPos[0];
-    double dy = endPos[1] - startPos[1];
-    double distance = Math.sqrt(dx * dx + dy * dy);
+    if (startTile != null && endTile != null) {
+      Bounds startBounds = ladderSnakeOverlay.sceneToLocal(startTile.localToScene(startTile.getBoundsInLocal()));
+      Bounds endBounds = ladderSnakeOverlay.sceneToLocal(endTile.localToScene(endTile.getBoundsInLocal()));
 
-    double curveAmplitude = Math.min(distance * 0.2, 25);
-    double perpX = -dy / distance;
-    double perpY = dx / distance;
-
-    double ctrlX1 = startPos[0] + dx * 0.3 + perpX * curveAmplitude;
-    double ctrlY1 = startPos[1] + dy * 0.3 + perpY * curveAmplitude;
-    double ctrlX2 = startPos[0] + dx * 0.7 - perpX * curveAmplitude;
-    double ctrlY2 = startPos[1] + dy * 0.7 - perpY * curveAmplitude;
-
-    CubicCurve snake = new CubicCurve(
-            startPos[0], startPos[1],
-            ctrlX1, ctrlY1,
-            ctrlX2, ctrlY2,
-            endPos[0], endPos[1]
-    );
-    snake.setStroke(Color.DARKRED);
-    snake.setStrokeWidth(4);
-    snake.setFill(null);
-
-    Circle head = new Circle(startPos[0], startPos[1], 6, Color.DARKRED);
-    Circle tail = new Circle(endPos[0], endPos[1], 4, Color.DARKRED);
-
-    ladderSnakeOverlay.getChildren().addAll(snake, head, tail);
+      CubicCurve curve = new CubicCurve(
+          startBounds.getCenterX(), startBounds.getCenterY(),
+          startBounds.getCenterX(), endBounds.getCenterY(),
+          endBounds.getCenterX(), startBounds.getCenterY(),
+          endBounds.getCenterX(), endBounds.getCenterY()
+      );
+      curve.setStrokeWidth(4);
+      curve.setStroke(Color.DARKRED);
+      curve.setFill(null);
+      ladderSnakeOverlay.getChildren().add(curve);
+    }
   }
 
-
-
-  private void showGameOverAlert(Player winner) {
-    // Optional: JavaFX Alert dialog or modal
+  private StackPane findTileNode(int tileNum) {
+    int i = tileNum - 1;
+    int row = BOARD_SIZE - 1 - (i / BOARD_SIZE);
+    int col = (row % 2 == 0) ? i % BOARD_SIZE : (BOARD_SIZE - 1 - i % BOARD_SIZE);
+    for (Node node : boardGrid.getChildren()) {
+      if (GridPane.getColumnIndex(node) == col && GridPane.getRowIndex(node) == row && node instanceof StackPane)
+        return (StackPane) node;
+    }
+    return null;
   }
 
-  private void showGameSavedAlert(String filePath) {
-    // Optional: Confirm save with user
-  }
+  private void showGameOverAlert(Player winner) {}
+
+  private void showGameSavedAlert(String filePath) {}
 
   @Override
   public Parent getRoot() {
