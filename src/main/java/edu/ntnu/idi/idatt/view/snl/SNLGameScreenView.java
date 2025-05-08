@@ -8,6 +8,8 @@ import edu.ntnu.idi.idatt.model.snl.Ladder;
 import edu.ntnu.idi.idatt.model.snl.Snake;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.GameScreen;
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -20,6 +22,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
+import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +41,7 @@ public class SNLGameScreenView extends GameScreen {
     controller.registerObserver(new GameScreenObserver() {
       @Override
       public void onPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
-        Platform.runLater(() -> renderBoardGrid());
+        animatePlayerMovement(player, oldPosition, newPosition, null);
       }
 
       @Override
@@ -76,6 +79,7 @@ public class SNLGameScreenView extends GameScreen {
 
   public void initializeUI() {
     createUI();
+    getRoot().layoutBoundsProperty().addListener((obs, oldVal, newVal) -> Platform.runLater(this::renderBoardGrid));
   }
 
   @Override
@@ -150,39 +154,43 @@ public class SNLGameScreenView extends GameScreen {
   private void drawLadder(int start, int end) {
     StackPane startTile = findTileNode(start);
     StackPane endTile = findTileNode(end);
-
     if (startTile != null && endTile != null) {
       Bounds startBounds = ladderSnakeOverlay.sceneToLocal(startTile.localToScene(startTile.getBoundsInLocal()));
       Bounds endBounds = ladderSnakeOverlay.sceneToLocal(endTile.localToScene(endTile.getBoundsInLocal()));
-
-      Line line = new Line(
-          startBounds.getCenterX(), startBounds.getCenterY(),
-          endBounds.getCenterX(), endBounds.getCenterY()
-      );
-      line.setStrokeWidth(4);
-      line.setStroke(Color.BURLYWOOD);
-      ladderSnakeOverlay.getChildren().add(line);
+      Line left = new Line(startBounds.getCenterX() - 5, startBounds.getCenterY(), endBounds.getCenterX() - 5, endBounds.getCenterY());
+      Line right = new Line(startBounds.getCenterX() + 5, startBounds.getCenterY(), endBounds.getCenterX() + 5, endBounds.getCenterY());
+      left.setStrokeWidth(3);
+      left.setStroke(Color.BURLYWOOD);
+      right.setStrokeWidth(3);
+      right.setStroke(Color.BURLYWOOD);
+      ladderSnakeOverlay.getChildren().addAll(left, right);
+      int rungs = 5;
+      for (int i = 1; i < rungs; i++) {
+        double t = i / (double) rungs;
+        double rungStartX = (1 - t) * left.getStartX() + t * left.getEndX();
+        double rungStartY = (1 - t) * left.getStartY() + t * left.getEndY();
+        double rungEndX = (1 - t) * right.getStartX() + t * right.getEndX();
+        double rungEndY = (1 - t) * right.getStartY() + t * right.getEndY();
+        Line rung = new Line(rungStartX, rungStartY, rungEndX, rungEndY);
+        rung.setStrokeWidth(2);
+        rung.setStroke(Color.SADDLEBROWN);
+        ladderSnakeOverlay.getChildren().add(rung);
+      }
     }
   }
 
   private void drawSnake(int start, int end) {
     StackPane startTile = findTileNode(start);
     StackPane endTile = findTileNode(end);
-
     if (startTile != null && endTile != null) {
       Bounds startBounds = ladderSnakeOverlay.sceneToLocal(startTile.localToScene(startTile.getBoundsInLocal()));
       Bounds endBounds = ladderSnakeOverlay.sceneToLocal(endTile.localToScene(endTile.getBoundsInLocal()));
-
-      CubicCurve curve = new CubicCurve(
-          startBounds.getCenterX(), startBounds.getCenterY(),
-          startBounds.getCenterX(), endBounds.getCenterY(),
-          endBounds.getCenterX(), startBounds.getCenterY(),
-          endBounds.getCenterX(), endBounds.getCenterY()
-      );
+      CubicCurve curve = new CubicCurve(startBounds.getCenterX(), startBounds.getCenterY(), startBounds.getCenterX(), endBounds.getCenterY(), endBounds.getCenterX(), startBounds.getCenterY(), endBounds.getCenterX(), endBounds.getCenterY());
       curve.setStrokeWidth(4);
       curve.setStroke(Color.DARKRED);
       curve.setFill(null);
-      ladderSnakeOverlay.getChildren().add(curve);
+      javafx.scene.shape.Circle head = new javafx.scene.shape.Circle(startBounds.getCenterX(), startBounds.getCenterY(), 6, Color.DARKRED);
+      ladderSnakeOverlay.getChildren().addAll(curve, head);
     }
   }
 
@@ -191,10 +199,47 @@ public class SNLGameScreenView extends GameScreen {
     int row = BOARD_SIZE - 1 - (i / BOARD_SIZE);
     int col = (row % 2 == 0) ? i % BOARD_SIZE : (BOARD_SIZE - 1 - i % BOARD_SIZE);
     for (Node node : boardGrid.getChildren()) {
-      if (GridPane.getColumnIndex(node) == col && GridPane.getRowIndex(node) == row && node instanceof StackPane)
-        return (StackPane) node;
+      if (GridPane.getColumnIndex(node) == col && GridPane.getRowIndex(node) == row && node instanceof StackPane) return (StackPane) node;
     }
     return null;
+  }
+
+  private void animatePlayerMovement(Player player, int oldPosition, int newPosition, Runnable onComplete) {
+    int current = player.getPosition();
+    if (current == newPosition) {
+      renderBoardGrid();
+      if (onComplete != null) onComplete.run();
+      return;
+    }
+    SequentialTransition sequence = new SequentialTransition();
+    int step = current < newPosition ? 1 : -1;
+    for (int i = current + step; i != newPosition + step; i += step) {
+      final int pos = i;
+      PauseTransition pause = new PauseTransition(Duration.millis(200));
+      pause.setOnFinished(e -> {
+        player.setPosition(pos);
+        renderBoardGrid();
+      });
+      sequence.getChildren().add(pause);
+    }
+    sequence.setOnFinished(e -> {
+      player.setPosition(newPosition);
+      renderBoardGrid();
+      SNLBoard board = (SNLBoard) controller.getBoard();
+      Integer jump = board.getSpecialTiles().get(newPosition);
+      if (jump != null && jump != newPosition) {
+        PauseTransition delay = new PauseTransition(Duration.seconds(1));
+        delay.setOnFinished(ev -> {
+          player.setPosition(jump);
+          renderBoardGrid();
+          if (onComplete != null) onComplete.run();
+        });
+        delay.play();
+      } else if (onComplete != null) {
+        onComplete.run();
+      }
+    });
+    sequence.play();
   }
 
   private void showGameOverAlert(Player winner) {}
