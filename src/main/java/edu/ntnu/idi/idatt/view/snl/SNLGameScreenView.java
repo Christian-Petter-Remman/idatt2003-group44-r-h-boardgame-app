@@ -3,68 +3,41 @@ package edu.ntnu.idi.idatt.view.snl;
 import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
-import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import edu.ntnu.idi.idatt.model.snl.Ladder;
+import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import edu.ntnu.idi.idatt.model.snl.Snake;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.GameScreen;
-import javafx.animation.PauseTransition;
-import javafx.animation.SequentialTransition;
+import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
 import javafx.util.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class SNLGameScreenView extends GameScreen {
+public class SNLGameScreenView extends GameScreen implements GameScreenObserver {
 
-  private static final Logger logger = LoggerFactory.getLogger(SNLGameScreenView.class);
   private final SNLGameScreenController controller;
   private Pane ladderSnakeOverlay;
+  private final Map<Player, Node> playerTokens = new HashMap<>();
 
   public SNLGameScreenView(SNLGameScreenController controller) {
     this.controller = controller;
-    controller.registerObserver(new GameScreenObserver() {
-      @Override
-      public void onPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
-        animatePlayerMovement(player, oldPosition, newPosition, null);
-      }
-
-      @Override
-      public void onDiceRolled(int result) {
-        diceResultLabel.setText("Roll result: " + result);
-      }
-
-      @Override
-      public void onPlayerTurnChanged(Player currentPlayer) {
-        currentPlayerLabel.setText("Current turn: " + currentPlayer.getName());
-        positionLabel.setText("Position: " + currentPlayer.getPosition());
-      }
-
-      @Override
-      public void onGameOver(Player winner) {
-        showGameOverAlert(winner);
-      }
-
-      @Override
-      public void onGameSaved(String filePath) {
-        showGameSavedAlert(filePath);
-      }
-    });
+    controller.registerObserver(this);
     createUI();
     setBackListener(() -> NavigationManager.getInstance().navigateToStartScreen());
     setSaveListener(() -> {
@@ -80,21 +53,58 @@ public class SNLGameScreenView extends GameScreen {
   public void initializeUI() {
     createUI();
     getRoot().layoutBoundsProperty().addListener((obs, oldVal, newVal) -> Platform.runLater(this::renderBoardGrid));
+    Platform.runLater(this::initializePlayerTokens);
+  }
+
+  private void initializePlayerTokens() {
+    controller.getPlayers().forEach(player -> {
+      Image tokenImage = getImageForPlayer(player);
+      if (tokenImage != null) addPlayerToken(player, tokenImage);
+    });
+  }
+
+  private void addPlayerToken(Player player, Image tokenImage) {
+    ImageView token = new ImageView(tokenImage);
+    token.setFitHeight(30);
+    token.setFitWidth(30);
+    StackPane tokenContainer = new StackPane(token);
+    playerTokens.put(player, tokenContainer);
+    getOverlay().getChildren().add(tokenContainer);
+    moveTokenToPixelPosition(tokenContainer, player.getPosition());
+  }
+
+  private Image getImageForPlayer(Player player) {
+    if (player != null && player.getCharacter() != null) {
+      String name = player.getCharacter().toLowerCase();
+      URL url = getClass().getResource("/player_icons/" + name + ".png");
+      if (url != null) return new Image(url.toExternalForm());
+    }
+    return null;
+  }
+
+  private double[] calculateTokenPosition(int position, Node tokenNode) {
+    StackPane tile = findTileNode(position);
+    if (tile == null) return null;
+    Bounds tileBounds = tile.localToScene(tile.getBoundsInLocal());
+    Bounds boardBounds = boardGrid.localToScene(boardGrid.getBoundsInLocal());
+    Bounds tokenBounds = tokenNode.getBoundsInLocal();
+    double x = tileBounds.getMinX() - boardBounds.getMinX() + (tileBounds.getWidth() - tokenBounds.getWidth()) / 2;
+    double y = tileBounds.getMinY() - boardBounds.getMinY() + (tileBounds.getHeight() - tokenBounds.getHeight()) / 2;
+    return new double[]{x, y};
+  }
+
+  private void moveTokenToPixelPosition(Node tokenNode, int position) {
+    double[] pos = calculateTokenPosition(position, tokenNode);
+    if (pos != null) {
+      tokenNode.setLayoutX(pos[0]);
+      tokenNode.setLayoutY(pos[1]);
+    }
   }
 
   @Override
   protected Image getCurrentPlayerImage() {
     Player currentPlayer = controller.getCurrentPlayer();
-    if (currentPlayer != null && currentPlayer.getCharacter() != null) {
-      String name = currentPlayer.getCharacter().toLowerCase();
-      URL url = getClass().getResource("/player_icons/" + name + ".png");
-      if (url != null) {
-        return new Image(url.toExternalForm());
-      } else {
-        logger.warn("No image for character: {}", name);
-      }
-    }
-    return null;
+    return getImageForPlayer(currentPlayer);
   }
 
   @Override
@@ -121,7 +131,7 @@ public class SNLGameScreenView extends GameScreen {
   protected void initializeOverlay() {
     ladderSnakeOverlay = new Pane();
     ladderSnakeOverlay.setPickOnBounds(false);
-    ladderSnakeOverlay.setMouseTransparent(true);
+    ladderSnakeOverlay.setMouseTransparent(false);
     ladderSnakeOverlay.setPrefSize(TILE_SIZE * BOARD_SIZE, TILE_SIZE * BOARD_SIZE);
   }
 
@@ -141,14 +151,13 @@ public class SNLGameScreenView extends GameScreen {
   }
 
   private void renderLaddersAndSnakes() {
-    ladderSnakeOverlay.getChildren().clear();
+    ladderSnakeOverlay.getChildren().removeIf(node ->
+        node instanceof Line || node instanceof CubicCurve || node instanceof Circle
+    );
+
     SNLBoard board = (SNLBoard) controller.getBoard();
-    for (Ladder ladder : board.getLadders()) {
-      drawLadder(ladder.getStart(), ladder.getEnd());
-    }
-    for (Snake snake : board.getSnakes()) {
-      drawSnake(snake.getStart(), snake.getEnd());
-    }
+    for (Ladder ladder : board.getLadders()) drawLadder(ladder.getStart(), ladder.getEnd());
+    for (Snake snake : board.getSnakes()) drawSnake(snake.getStart(), snake.getEnd());
   }
 
   private void drawLadder(int start, int end) {
@@ -159,21 +168,14 @@ public class SNLGameScreenView extends GameScreen {
       Bounds endBounds = ladderSnakeOverlay.sceneToLocal(endTile.localToScene(endTile.getBoundsInLocal()));
       Line left = new Line(startBounds.getCenterX() - 5, startBounds.getCenterY(), endBounds.getCenterX() - 5, endBounds.getCenterY());
       Line right = new Line(startBounds.getCenterX() + 5, startBounds.getCenterY(), endBounds.getCenterX() + 5, endBounds.getCenterY());
-      left.setStrokeWidth(3);
-      left.setStroke(Color.BURLYWOOD);
-      right.setStrokeWidth(3);
-      right.setStroke(Color.BURLYWOOD);
       ladderSnakeOverlay.getChildren().addAll(left, right);
-      int rungs = 5;
-      for (int i = 1; i < rungs; i++) {
-        double t = i / (double) rungs;
+      for (int i = 1; i < 5; i++) {
+        double t = i / 5.0;
         double rungStartX = (1 - t) * left.getStartX() + t * left.getEndX();
         double rungStartY = (1 - t) * left.getStartY() + t * left.getEndY();
         double rungEndX = (1 - t) * right.getStartX() + t * right.getEndX();
         double rungEndY = (1 - t) * right.getStartY() + t * right.getEndY();
         Line rung = new Line(rungStartX, rungStartY, rungEndX, rungEndY);
-        rung.setStrokeWidth(2);
-        rung.setStroke(Color.SADDLEBROWN);
         ladderSnakeOverlay.getChildren().add(rung);
       }
     }
@@ -185,11 +187,14 @@ public class SNLGameScreenView extends GameScreen {
     if (startTile != null && endTile != null) {
       Bounds startBounds = ladderSnakeOverlay.sceneToLocal(startTile.localToScene(startTile.getBoundsInLocal()));
       Bounds endBounds = ladderSnakeOverlay.sceneToLocal(endTile.localToScene(endTile.getBoundsInLocal()));
-      CubicCurve curve = new CubicCurve(startBounds.getCenterX(), startBounds.getCenterY(), startBounds.getCenterX(), endBounds.getCenterY(), endBounds.getCenterX(), startBounds.getCenterY(), endBounds.getCenterX(), endBounds.getCenterY());
+      CubicCurve curve = new CubicCurve(startBounds.getCenterX(), startBounds.getCenterY(),
+          startBounds.getCenterX(), endBounds.getCenterY(),
+          endBounds.getCenterX(), startBounds.getCenterY(),
+          endBounds.getCenterX(), endBounds.getCenterY());
       curve.setStrokeWidth(4);
       curve.setStroke(Color.DARKRED);
       curve.setFill(null);
-      javafx.scene.shape.Circle head = new javafx.scene.shape.Circle(startBounds.getCenterX(), startBounds.getCenterY(), 6, Color.DARKRED);
+      Circle head = new Circle(startBounds.getCenterX(), startBounds.getCenterY(), 6, Color.DARKRED);
       ladderSnakeOverlay.getChildren().addAll(curve, head);
     }
   }
@@ -199,52 +204,64 @@ public class SNLGameScreenView extends GameScreen {
     int row = BOARD_SIZE - 1 - (i / BOARD_SIZE);
     int col = (row % 2 == 0) ? i % BOARD_SIZE : (BOARD_SIZE - 1 - i % BOARD_SIZE);
     for (Node node : boardGrid.getChildren()) {
-      if (GridPane.getColumnIndex(node) == col && GridPane.getRowIndex(node) == row && node instanceof StackPane) return (StackPane) node;
+      if (GridPane.getColumnIndex(node) == col && GridPane.getRowIndex(node) == row && node instanceof StackPane)
+        return (StackPane) node;
     }
     return null;
   }
 
-  private void animatePlayerMovement(Player player, int oldPosition, int newPosition, Runnable onComplete) {
-    int current = player.getPosition();
-    if (current == newPosition) {
-      renderBoardGrid();
-      if (onComplete != null) onComplete.run();
-      return;
-    }
-    SequentialTransition sequence = new SequentialTransition();
-    int step = current < newPosition ? 1 : -1;
-    for (int i = current + step; i != newPosition + step; i += step) {
-      final int pos = i;
-      PauseTransition pause = new PauseTransition(Duration.millis(200));
-      pause.setOnFinished(e -> {
-        player.setPosition(pos);
-        renderBoardGrid();
+  @Override
+  public void onPlayerPositionChanged(Player player, int oldPosition, int newPosition) {
+    Platform.runLater(() -> {
+      Node tokenNode = playerTokens.get(player);
+      if (tokenNode == null) return;
+      double[] newPos = calculateTokenPosition(newPosition, tokenNode);
+      if (newPos == null) return;
+
+      double newX = newPos[0], newY = newPos[1];
+      double oldX = tokenNode.getLayoutX();
+      double oldY = tokenNode.getLayoutY();
+      double deltaX = newX - oldX;
+      double deltaY = newY - oldY;
+
+      tokenNode.setOpacity(0.0);
+
+      FadeTransition fade = new FadeTransition(Duration.millis(300), tokenNode);
+      fade.setFromValue(0.0);
+      fade.setToValue(1.0);
+
+      TranslateTransition move = new TranslateTransition(Duration.millis(300), tokenNode);
+      move.setByX(deltaX);
+      move.setByY(deltaY);
+
+      ParallelTransition transition = new ParallelTransition(move, fade);
+      transition.setOnFinished(e -> {
+        tokenNode.setTranslateX(0);
+        tokenNode.setTranslateY(0);
+        tokenNode.setLayoutX(newX);
+        tokenNode.setLayoutY(newY);
       });
-      sequence.getChildren().add(pause);
-    }
-    sequence.setOnFinished(e -> {
-      player.setPosition(newPosition);
-      renderBoardGrid();
-      SNLBoard board = (SNLBoard) controller.getBoard();
-      Integer jump = board.getSpecialTiles().get(newPosition);
-      if (jump != null && jump != newPosition) {
-        PauseTransition delay = new PauseTransition(Duration.seconds(1));
-        delay.setOnFinished(ev -> {
-          player.setPosition(jump);
-          renderBoardGrid();
-          if (onComplete != null) onComplete.run();
-        });
-        delay.play();
-      } else if (onComplete != null) {
-        onComplete.run();
-      }
+
+      transition.play();
     });
-    sequence.play();
   }
 
-  private void showGameOverAlert(Player winner) {}
+  @Override
+  public void onDiceRolled(int result) {
+    diceResultLabel.setText("Roll result: " + result);
+  }
 
-  private void showGameSavedAlert(String filePath) {}
+  @Override
+  public void onPlayerTurnChanged(Player currentPlayer) {
+    currentPlayerLabel.setText("Current turn: " + currentPlayer.getName());
+    positionLabel.setText("Position: " + currentPlayer.getPosition());
+  }
+
+  @Override
+  public void onGameOver(Player winner) {}
+
+  @Override
+  public void onGameSaved(String filePath) {}
 
   @Override
   public Parent getRoot() {
