@@ -243,7 +243,6 @@ public class NavigationManager {
       controller.notifyPlayerPositionChangedAll();
 
       SNLGameScreenView gameScreenView = new SNLGameScreenView(controller);
-      gameScreenView.initializeUI();
 
       setHandler(controller);
       setRoot(gameScreenView.getRoot());
