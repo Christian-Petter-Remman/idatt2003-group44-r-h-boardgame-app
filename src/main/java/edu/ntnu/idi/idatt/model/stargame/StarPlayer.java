@@ -44,5 +44,4 @@ public class StarPlayer extends Player {
     return 0;
   }
 
-  //Move tilbake??
 }

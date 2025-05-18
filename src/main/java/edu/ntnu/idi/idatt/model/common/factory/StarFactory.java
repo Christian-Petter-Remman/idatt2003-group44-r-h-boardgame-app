@@ -48,7 +48,7 @@ public class StarFactory extends BoardGameFactory {
 
 //  @Override
 //  public boolean saveBoardGameConfiguration(BoardGame game, String configurationName) {
-//    if (!(game instanceof StarGame starGame)) {
+//    if (!(game instanceof StarGameCreator starGame)) {
 //      return false;
 //    }
 //

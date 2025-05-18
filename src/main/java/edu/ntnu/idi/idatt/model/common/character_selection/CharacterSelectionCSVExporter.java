@@ -14,6 +14,10 @@ public class CharacterSelectionCSVExporter implements CharacterSelectionObserver
     manager.addObserver(this);
   }
 
+  public List<String[]> getPlayerCharacterData() {
+    return playerCharacterData;
+  }
+
   @Override
   public void update() {
     playerCharacterData.clear();
@@ -25,9 +29,5 @@ public class CharacterSelectionCSVExporter implements CharacterSelectionObserver
         playerCharacterData.add(new String[]{playerName, characterName});
       }
     }
-  }
-
-  public List<String[]> getPlayerCharacterData() {
-    return playerCharacterData;
   }
 }

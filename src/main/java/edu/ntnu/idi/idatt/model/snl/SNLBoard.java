@@ -16,8 +16,7 @@ public class SNLBoard extends AbstractBoard {
 
   private final List<Ladder> ladders = new ArrayList<>();
   private final List<Snake> snakes = new ArrayList<>();
-  SNLFactory snlFactory = new SNLFactory();
-  String filename;
+
 
   public SNLBoard(int size) {
     super(size);

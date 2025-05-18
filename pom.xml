@@ -26,14 +26,6 @@
     <logback.version>1.5.13</logback.version>
   </properties>
 
-  <!--
-    Project dependencies:
-    - JUnit for testing
-    - JavaFX modules (controls, fxml, media)
-    - Logging via SLF4J + Logback
-    - Jansi for colored console output
-    - Gson for JSON handling
-  -->
   <dependencies>
     <!-- JUnit -->
     <dependency>

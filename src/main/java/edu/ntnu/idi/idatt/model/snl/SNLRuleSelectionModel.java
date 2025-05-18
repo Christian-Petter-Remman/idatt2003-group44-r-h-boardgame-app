@@ -30,7 +30,6 @@ public class SNLRuleSelectionModel {
     }
   }
 
-
   public String getSavePath() {
     return savePath;
   }
@@ -99,12 +98,6 @@ public class SNLRuleSelectionModel {
       observer.onRuleSelectionChanged();
     }
   }
-
-//  public Board loadSelectedBoard() throws FileReadException, JsonParsingException {
-//    String path = FileManager.SNAKES_LADDERS_BOARDS_DIR + File.separator + selectedBoardFile;
-//    BoardJsonHandler handler = new BoardJsonHandler();
-//    return handler.loadBoardFromFile(path);
-//  }
 
   public static String getDisplayName(String boardFile) {
     if (boardFile == null) return "";

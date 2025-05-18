@@ -16,50 +16,6 @@ public class SNLFactory extends BoardGameFactory {
   private final SNLBoardJsonHandler boardJsonHandler = new SNLBoardJsonHandler();
 
 
-
-
-//  public String[] getAvailableConfigurations() {
-//    return new String[]{"default", "easy", "hard"};
-//  }
-////
-//  @Override
-//  public <T extends BoardGame> T createBoardGameFromConfiguration(String configurationName, Class<T> gameClass) {
-//    SNLBoard board;
-//
-//    if ("random".equalsIgnoreCase(configurationName)) {
-//      board = new SNLBoard(100);
-//      board.initializeEmptyBoard();
-//      logger.info("Created empty board for random configuration");
-//    } else {
-//      board = loadBoardFromFile(configurationName + ".json");
-//
-//      if (board == null) {
-//        logger.warn("Failed to SNLLoad board for configuration: {}, using default", configurationName);
-//        board = loadBoardFromFile("default.json");
-//      }
-//    }
-//
-//    try {
-//      T gameInstance = gameClass.getDeclaredConstructor().newInstance();
-//      gameInstance.setBoard(board);
-//      gameInstance.initialize(board);
-//      return gameInstance;
-//    } catch (Exception e) {
-//      logger.error("Could not instantiate game of type " + gameClass.getSimpleName(), e);
-//      throw new RuntimeException("Failed to create game instance", e);
-//    }
-//  }
-//
-//  @Override
-//  public boolean saveBoardGameConfiguration(BoardGame game, String configurationName) {
-//    if (!(game instanceof SNLGame SNLGame)) {
-//      return false;
-//    }
-//
-//    SNLBoard board = SNLGame.getBoard();
-//    return saveBoardToFile(board, configurationName);
-//  }
-
   public SNLBoard loadBoardFromFile(String fileName) {
 
     File file = new File(fileName);
