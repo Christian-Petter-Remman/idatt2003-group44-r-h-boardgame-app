@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+
+import edu.ntnu.idi.idatt.view.common.intro.dialogs.WinnerDialogs;
 import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -181,14 +183,8 @@ public class MemoryGameView implements MemoryGameObserver {
 
   @Override
   public void onGameOver(List<MemoryPlayer> winners) {
-    Platform.runLater(() -> {
-      Alert a = new Alert(Alert.AlertType.INFORMATION);
-      a.setHeaderText(winners.size() > 1 ? "Winners" : "Winner");
-      StringBuilder sb = new StringBuilder();
-      winners.forEach(p -> sb.append(p.getName()).append(" "));
-      a.setContentText(sb.toString());
-      a.showAndWait();
-    });
+    WinnerDialogs dialogs = new WinnerDialogs();
+    dialogs.showMemoryWinnerDialog(winners);
   }
 
   public void render(MemoryBoardGame board) {

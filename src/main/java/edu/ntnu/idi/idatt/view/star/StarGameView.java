@@ -7,12 +7,10 @@ import edu.ntnu.idi.idatt.model.stargame.StarBoard;
 import edu.ntnu.idi.idatt.model.stargame.StarPlayer;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.GameScreen;
+import edu.ntnu.idi.idatt.view.common.intro.dialogs.WinnerDialogs;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -63,7 +61,7 @@ public class StarGameView extends GameScreen {
       @Override
       public void onGameOver(Player winner) {
         if (winner instanceof StarPlayer starPlayer) {
-          Platform.runLater(() -> showWinnerDialog(starPlayer));
+          Platform.runLater(() -> showWinner(starPlayer));
         }
       }
 
@@ -86,7 +84,6 @@ public class StarGameView extends GameScreen {
       dialog.showAndWait().ifPresent(filename -> {
         controller.saveGame(tempFile, filename + ".csv");
       });
-
     });
   }
 
@@ -94,20 +91,9 @@ public class StarGameView extends GameScreen {
     createUI();
   }
 
-  private void showWinnerDialog(StarPlayer winner) {
-    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-    alert.setTitle("Game Over!");
-    alert.setHeaderText(winner.getName() + " has won the game, getting " + winner.getPoints() + " stars!");
-    alert.setContentText("Press home to continue");
-
-    ButtonType okButton = new ButtonType("Home Page", ButtonBar.ButtonData.OK_DONE);
-    alert.getButtonTypes().setAll(okButton);
-
-    alert.showAndWait().ifPresent(response -> {
-      if (response == okButton) {
-        NavigationManager.getInstance().navigateToStartScreen();
-      }
-    });
+  private void showWinner(StarPlayer winner) {
+    WinnerDialogs dialogs = new WinnerDialogs();
+    dialogs.showWinnerDialog(winner);
   }
 
   @Override

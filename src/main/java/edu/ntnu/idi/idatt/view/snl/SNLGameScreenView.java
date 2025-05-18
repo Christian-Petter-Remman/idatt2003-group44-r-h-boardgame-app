@@ -5,9 +5,11 @@ import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.snl.Ladder;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
+import edu.ntnu.idi.idatt.model.snl.SNLPlayer;
 import edu.ntnu.idi.idatt.model.snl.Snake;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.GameScreen;
+import edu.ntnu.idi.idatt.view.common.intro.dialogs.WinnerDialogs;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
@@ -265,12 +267,25 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
     });
   }
 
+  @Override public void onGameOver(Player winner){
+    if (winner instanceof SNLPlayer SNLPlayer) {
+      Platform.runLater(() -> showWinner(SNLPlayer));
+    }
+  }
+
+  private void showWinner(SNLPlayer winner) {
+    WinnerDialogs dialogs = new WinnerDialogs();
+    dialogs.showWinnerDialog(winner);
+  }
+
+
+
   @Override public void onDiceRolled(int r)      { diceResultLabel.setText("Roll result: " + r); }
   @Override public void onPlayerTurnChanged(Player c) {
     currentPlayerLabel.setText("Current turn: " + c.getName());
     positionLabel.setText("Position: "   + c.getPosition());
   }
-  @Override public void onGameOver(Player w)      {}
+
   @Override public void onGameSaved(String f)     {}
 
   @Override protected Image getCurrentPlayerImage()         { return getImageForPlayer(controller.getCurrentPlayer()); }
