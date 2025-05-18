@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Random;
 
 public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
+
   private final SNLRuleSelectionModel model;
   private final SNLRuleSelectionController controller;
 
@@ -44,7 +45,8 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
     createUI();
     // Load our CSS
     root.getStylesheets().add(
-        Objects.requireNonNull(getClass().getResource("/css/RuleSelectionStyles.css")).toExternalForm()
+        Objects.requireNonNull(getClass().getResource("/css/RuleSelectionStyles.css"))
+            .toExternalForm()
     );
     setupEventHandlers();
     applyInitialUIState();
@@ -74,9 +76,12 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
     title.getStyleClass().add("rs-title");
 
     difficultyGroup = new ToggleGroup();
-    easyRadio    = new RadioButton("Easy");    easyRadio.setUserData("easy.json");
-    defaultRadio = new RadioButton("Default"); defaultRadio.setUserData("default.json");
-    hardRadio    = new RadioButton("Hard");    hardRadio.setUserData("hard.json");
+    easyRadio = new RadioButton("Easy");
+    easyRadio.setUserData("easy.json");
+    defaultRadio = new RadioButton("Default");
+    defaultRadio.setUserData("default.json");
+    hardRadio = new RadioButton("Hard");
+    hardRadio.setUserData("hard.json");
     for (RadioButton rb : List.of(easyRadio, defaultRadio, hardRadio)) {
       rb.getStyleClass().add("rs-diff-rb");
       rb.setToggleGroup(difficultyGroup);
@@ -85,14 +90,20 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
     diffBox.setAlignment(Pos.CENTER);
 
     diceGroup = new ToggleGroup();
-    oneDiceRadio = new RadioButton("1 Die");  oneDiceRadio.setUserData(1);
-    twoDiceRadio = new RadioButton("2 Dice"); twoDiceRadio.setUserData(2);
+    oneDiceRadio = new RadioButton("1 Die");
+    oneDiceRadio.setUserData(1);
+    twoDiceRadio = new RadioButton("2 Dice");
+    twoDiceRadio.setUserData(2);
     oneDiceRadio.getStyleClass().add("rs-dice-rb");
     twoDiceRadio.getStyleClass().add("rs-dice-rb");
     oneDiceRadio.setToggleGroup(diceGroup);
     twoDiceRadio.setToggleGroup(diceGroup);
-    HBox diceBox = new HBox(10, new Label("Number of Dice:"), oneDiceRadio, twoDiceRadio);
+    Label diceLabel = new Label("Number of Dice:");
+    diceLabel.getStyleClass().add("rs-dice-label");
+    HBox diceBox = new HBox(10, oneDiceRadio, twoDiceRadio);
     diceBox.setAlignment(Pos.CENTER);
+    VBox diceContainer = new VBox(5, diceLabel, diceBox);
+    diceContainer.setAlignment(Pos.CENTER);
 
     randomBtn = new Button("Random");
     randomBtn.getStyleClass().add("rs-random");
@@ -110,8 +121,10 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
     countLabel = new Label();
     countLabel.getStyleClass().add("rs-count");
 
-    backBtn     = new Button("Back");     backBtn.getStyleClass().add("rs-nav");
-    continueBtn = new Button("Continue"); continueBtn.getStyleClass().add("rs-nav");
+    backBtn = new Button("Back");
+    backBtn.getStyleClass().add("rs-nav");
+    continueBtn = new Button("Continue");
+    continueBtn.getStyleClass().add("rs-nav");
     HBox nav = new HBox(10, backBtn, continueBtn);
     nav.setAlignment(Pos.CENTER);
 
@@ -119,7 +132,7 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
         topSpacer,
         title,
         diffBox,
-        diceBox,
+        diceContainer,
         randomBtn,
         modTitle,
         modifiersLabel,
@@ -134,16 +147,22 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
 
   private void setupEventHandlers() {
     difficultyGroup.selectedToggleProperty().addListener((obs, oldT, newT) -> {
-      if (newT != null) controller.setSelectedBoardFile(newT.getUserData().toString());
+      if (newT != null) {
+        controller.setSelectedBoardFile(newT.getUserData().toString());
+      }
     });
     diceGroup.selectedToggleProperty().addListener((obs, oldT, newT) -> {
-      if (newT != null) controller.setDiceCount((int) newT.getUserData());
+      if (newT != null) {
+        controller.setDiceCount((int) newT.getUserData());
+      }
     });
     randomBtn.setOnAction(e -> {
       List<String> r = model.getAvailableBoards().stream()
           .filter(f -> f.toLowerCase().startsWith("random"))
           .toList();
-      if (!r.isEmpty()) controller.setSelectedBoardFile(r.get(new Random().nextInt(r.size())));
+      if (!r.isEmpty()) {
+        controller.setSelectedBoardFile(r.get(new Random().nextInt(r.size())));
+      }
     });
     backBtn.setOnAction(e -> controller.onBackPressed());
     continueBtn.setOnAction(e -> controller.onContinuePressed());
@@ -151,12 +170,19 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
 
   private void applyInitialUIState() {
     String sel = model.getSelectedBoardFile();
-    if ("easy.json".equals(sel))      easyRadio.setSelected(true);
-    else if ("hard.json".equals(sel)) hardRadio.setSelected(true);
-    else                                defaultRadio.setSelected(true);
+    if ("easy.json".equals(sel)) {
+      easyRadio.setSelected(true);
+    } else if ("hard.json".equals(sel)) {
+      hardRadio.setSelected(true);
+    } else {
+      defaultRadio.setSelected(true);
+    }
 
-    if (model.getDiceCount() == 2) twoDiceRadio.setSelected(true);
-    else                            oneDiceRadio.setSelected(true);
+    if (model.getDiceCount() == 2) {
+      twoDiceRadio.setSelected(true);
+    } else {
+      oneDiceRadio.setSelected(true);
+    }
 
     onRuleSelectionChanged();
   }
@@ -164,8 +190,8 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
   @Override
   public void onRuleSelectionChanged() {
     int ladders = model.getLadderCountFromJSON();
-    int snakes  = model.getSnakeCountFromJSON();
-    int dice    = model.getDiceCount();
+    int snakes = model.getSnakeCountFromJSON();
+    int dice = model.getDiceCount();
     modifiersLabel.setText(
         String.format("Ladders: %d   Snakes: %d", ladders, snakes)
     );
