@@ -8,7 +8,6 @@ import edu.ntnu.idi.idatt.model.model_observers.CsvExportObserver;
 import edu.ntnu.idi.idatt.model.snl.SNLRuleSelectionModel;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
-
 import edu.ntnu.idi.idatt.navigation.NavigationTarget;
 import javafx.scene.Parent;
 
@@ -30,17 +29,17 @@ public class SNLRuleSelectionController implements NavigationHandler {
     observers.add(observer);
   }
 
-  public void notifyObservers() {
+  private void notifyObservers() {
     for (CsvExportObserver o : observers) {
       o.onExportRequested();
     }
   }
 
-  public void onBoardSelected(String boardFile) {
+  public void setSelectedBoardFile(String boardFile) {
     model.setSelectedBoardFile(boardFile);
   }
 
-  public void onDiceCountSelected(int diceCount) {
+  public void setDiceCount(int diceCount) {
     model.setDiceCount(diceCount);
   }
 
@@ -59,14 +58,12 @@ public class SNLRuleSelectionController implements NavigationHandler {
     addObserver(exporter);
     notifyObservers();
 
-    NavigationManager.getInstance().navigateToSNLGameScreen();
+    NavigationManager.getInstance().navigateTo(NavigationTarget.SAL_GAME_SCREEN);
   }
 
   public void onBackPressed() {
     NavigationManager.getInstance().navigateBack();
   }
-
-  // === NavigationHandler IMPLEMENTATION ===
 
   @Override
   public void navigateTo(String destination) {

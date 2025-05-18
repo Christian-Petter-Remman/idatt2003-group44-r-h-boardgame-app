@@ -1,17 +1,19 @@
 package edu.ntnu.idi.idatt.model.snl;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
 import edu.ntnu.idi.idatt.filehandling.FileManager;
+import edu.ntnu.idi.idatt.filehandling.handlers.SNLBoardJsonHandler;
+import edu.ntnu.idi.idatt.exceptions.FileReadException;
+import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
 import edu.ntnu.idi.idatt.model.model_observers.CsvExportObserver;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SNLRuleSelectionModel {
 
   public interface Observer {
+
     void onRuleSelectionChanged();
   }
 
@@ -23,10 +25,12 @@ public class SNLRuleSelectionModel {
   private int diceCount = 1;
   private String savePath;
 
+  private final SNLBoardJsonHandler boardHandler = new SNLBoardJsonHandler();
+
   public SNLRuleSelectionModel() {
     this.availableBoards = loadAvailableBoards();
     if (!availableBoards.isEmpty()) {
-      this.selectedBoardFile = availableBoards.getFirst();
+      this.selectedBoardFile = availableBoards.get(0);
     }
   }
 
@@ -79,8 +83,12 @@ public class SNLRuleSelectionModel {
   }
 
   public void setDiceCount(int diceCount) {
-    if (diceCount < 1) diceCount = 1;
-    if (diceCount > 2) diceCount = 2;
+    if (diceCount < 1) {
+      diceCount = 1;
+    }
+    if (diceCount > 2) {
+      diceCount = 2;
+    }
     this.diceCount = diceCount;
     notifyObservers();
   }
@@ -100,14 +108,40 @@ public class SNLRuleSelectionModel {
   }
 
   public static String getDisplayName(String boardFile) {
-    if (boardFile == null) return "";
-    if (boardFile.equalsIgnoreCase("default.json")) return "Default";
-    if (boardFile.equalsIgnoreCase("easy.json")) return "Easy";
-    if (boardFile.equalsIgnoreCase("hard.json")) return "Hard";
+    if (boardFile == null) {
+      return "";
+    }
+    if (boardFile.equalsIgnoreCase("default.json")) {
+      return "Default";
+    }
+    if (boardFile.equalsIgnoreCase("easy.json")) {
+      return "Easy";
+    }
+    if (boardFile.equalsIgnoreCase("hard.json")) {
+      return "Hard";
+    }
     if (boardFile.toLowerCase().startsWith("random")) {
       String num = boardFile.replaceAll("[^0-9]", "");
       return "Random " + num;
     }
     return boardFile.replace(".json", "");
+  }
+
+  public int getLadderCountFromJSON() {
+    try {
+      String path = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + selectedBoardFile;
+      return boardHandler.loadFromFile(path).getLadders().size();
+    } catch (FileReadException | JsonParsingException e) {
+      return 0;
+    }
+  }
+
+  public int getSnakeCountFromJSON() {
+    try {
+      String path = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + selectedBoardFile;
+      return boardHandler.loadFromFile(path).getSnakes().size();
+    } catch (FileReadException | JsonParsingException e) {
+      return 0;
+    }
   }
 }
