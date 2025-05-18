@@ -13,6 +13,8 @@ public enum NavigationTarget {
   SNL_LOAD_SCREEN,
 
   MEMORY_RULE_SCREEN,
-  MEMORY_GAME_SCREEN
+  MEMORY_GAME_SCREEN,
+
+  PAINT_CANVAS
 
 }

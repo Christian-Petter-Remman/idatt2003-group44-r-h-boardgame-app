@@ -1,0 +1,110 @@
+/* styles.css */
+
+/* Root & Layout */
+.root {
+  -fx-font-family: "Courier New", monospace;
+  -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #f2e7d5 0%, #d8c3a5 100%);
+  -fx-padding: 20;
+}
+
+/* Instruction box styling */
+#instruction-box {
+  -fx-background-color: #ffffcc;
+  -fx-border-color: #333333;
+  -fx-border-width: 2;
+  -fx-border-radius: 5;
+  -fx-background-radius: 5;
+  -fx-padding: 15;
+  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);
+}
+#instruction-box Label {
+  -fx-font-size: 16px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #333333;
+}
+
+/* Board Grid styling */
+#boardGrid {
+  -fx-border-color: #333333;
+  -fx-border-width: 3;
+  -fx-border-radius: 8;
+  -fx-background-color: #ffffff;
+  -fx-alignment: center;
+  -fx-hgap: 2;
+  -fx-vgap: 2;
+  -fx-padding: 5;
+}
+
+/* Tile base style */
+.tile {
+  -fx-border-color: #333333;
+  -fx-border-width: 1;
+  -fx-alignment: center;
+  -fx-pref-width: 60;
+  -fx-pref-height: 60;
+  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1);
+}
+
+/* Contrasting retro colors for tiles */
+.tile-even {
+  -fx-background-color: #A0E7E5;
+}
+.tile-odd {
+  -fx-background-color: #B4F8C8;
+}
+
+/* Special tiles coloring */
+.ladder-start {
+  -fx-background-color: #8CE99A;
+}
+.ladder-end {
+  -fx-background-color: #38A169;
+}
+.snake-start {
+  -fx-background-color: #FFADAD;
+}
+.snake-end {
+  -fx-background-color: #E53E3E;
+}
+
+/* Buttons styling */
+.button {
+  -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #ffd34e 0%, #e1a500 100%);
+  -fx-text-fill: #333333;
+  -fx-font-weight: bold;
+  -fx-background-radius: 8;
+  -fx-padding: 10 20;
+  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 4, 0, 0, 2);
+  -fx-cursor: hand;
+}
+.button:hover {
+  -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #ffe67f 0%, #f1b700 100%);
+}
+.button:pressed {
+  -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #e1a500 0%, #ad7f00 100%);
+}
+
+/* MenuBar styling */
+.menu-bar {
+  -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #d4ac0d 0%, #9a7d0a 100%);
+}
+.menu-bar .label {
+  -fx-text-fill: #333333;
+  -fx-font-size: 14px;
+  -fx-font-family: "Courier New", monospace;
+}
+
+/* Status Labels */
+#diceResultLabel,
+#currentPlayerLabel,
+#positionLabel {
+  -fx-font-size: 16px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #333333;
+  -fx-padding: 5 0;
+}
+
+/* Player tokens */
+.player-token {
+  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 4, 0, 0, 2);
+}

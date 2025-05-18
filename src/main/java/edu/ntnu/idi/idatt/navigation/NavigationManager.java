@@ -8,6 +8,7 @@ import edu.ntnu.idi.idatt.controller.common.load.SNLLoadGameController;
 import edu.ntnu.idi.idatt.controller.common.load.StarLoadGameController;
 import edu.ntnu.idi.idatt.controller.memorygame.MemoryGameController;
 import edu.ntnu.idi.idatt.controller.memorygame.MemoryRuleSelectionController;
+import edu.ntnu.idi.idatt.controller.paint.PaintCanvasController;
 import edu.ntnu.idi.idatt.controller.snl.*;
 import edu.ntnu.idi.idatt.controller.star.StarGameController;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
@@ -18,6 +19,7 @@ import edu.ntnu.idi.idatt.model.common.factory.SNLFactory;
 import edu.ntnu.idi.idatt.model.common.factory.StarFactory;
 import edu.ntnu.idi.idatt.model.common.intro.StartScreenModel;
 import edu.ntnu.idi.idatt.model.memorygame.MemoryGameSettings;
+import edu.ntnu.idi.idatt.model.paint.PaintModel;
 import edu.ntnu.idi.idatt.model.snl.*;
 import edu.ntnu.idi.idatt.model.stargame.StarBoard;
 import edu.ntnu.idi.idatt.model.stargame.StarGame;
@@ -26,6 +28,7 @@ import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
 import edu.ntnu.idi.idatt.view.common.character.StarCharSelectionScreen;
 import edu.ntnu.idi.idatt.view.common.intro.StartScreenView;
 import edu.ntnu.idi.idatt.view.memorygame.MemoryRuleSelectionView;
+import edu.ntnu.idi.idatt.view.paint.PaintCanvasView;
 import edu.ntnu.idi.idatt.view.snl.SNLGameScreenView;
 
 import edu.ntnu.idi.idatt.view.snl.SNLLoadGameView;
@@ -116,6 +119,8 @@ public class NavigationManager {
 
       case MEMORY_RULE_SCREEN -> navigateToMemoryRuleScreen();
       case MEMORY_GAME_SCREEN -> navigateToMemoryGame();
+
+      case PAINT_CANVAS -> navigateToPaintCanvas();
 
     }
   }
@@ -238,7 +243,6 @@ public class NavigationManager {
       controller.notifyPlayerPositionChangedAll();
 
       SNLGameScreenView gameScreenView = new SNLGameScreenView(controller);
-      gameScreenView.initializeUI();
 
       setHandler(controller);
       setRoot(gameScreenView.getRoot());
@@ -281,6 +285,18 @@ public class NavigationManager {
     } catch (Exception e) {
       logger.error("Failed to load Memory Game", e);
       showAlert("Error", "Failed to load Memory Game");
+    }
+  }
+
+  public void navigateToPaintCanvas() {
+    try {
+      PaintModel model = new PaintModel();
+      PaintCanvasView view = new PaintCanvasView(model);
+      setRoot(view.getRoot());
+      logger.info("Navigated to Paint Canvas");
+    } catch (Exception e) {
+      logger.error("Failed to load Paint Canvas", e);
+      showAlert("Error", "Failed to load Paint Canvas");
     }
   }
 

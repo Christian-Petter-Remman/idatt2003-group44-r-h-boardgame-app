@@ -41,7 +41,6 @@ public abstract class GameScreen {
     root = new BorderPane();
     root.setStyle("-fx-padding: 30;");
 
-    // 🎮 Board (left)
     initializeBoardGrid();
     initializeOverlay();
 
@@ -51,7 +50,6 @@ public abstract class GameScreen {
     if (getOverlay() != null) getOverlay().toFront();
     root.setLeft(boardWithOverlay);
 
-    // 🧍‍♂️ Current player (top)
     VBox currentPlayerBox = new VBox(5);
     currentPlayerBox.setAlignment(Pos.CENTER);
     currentPlayerLabel = new Label("Current turn:");
@@ -61,11 +59,9 @@ public abstract class GameScreen {
     playerImage.setPreserveRatio(true);
     currentPlayerBox.getChildren().addAll(currentPlayerLabel, playerImage);
 
-    // 📊 All players info (middle)
     playerInfoList = new VBox(10);
     playerInfoList.setAlignment(Pos.CENTER_LEFT);
 
-    // 🎲 Roll button (bottom)
     VBox bottomBox = new VBox(10);
     positionLabel = new Label("Position:");
     diceResultLabel = new Label("Roll result:");
