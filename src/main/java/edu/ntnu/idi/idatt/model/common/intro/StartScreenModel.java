@@ -15,7 +15,7 @@ public class StartScreenModel {
     loadDialogs();
   }
 
-  private void loadDialogs() {
+  public void loadDialogs() {
     this.dialogs = DialogJsonHandler.loadDialogs();
     pcs.firePropertyChange("dialogs", null, dialogs);
   }
