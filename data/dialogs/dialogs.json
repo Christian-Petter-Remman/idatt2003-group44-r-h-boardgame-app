@@ -50,7 +50,7 @@
   {
     "id": "starGame",
     "title": "Star Game",
-    "body": "I’m the star! Connect the numbered dots to see me sparkle in bright colors. Each puzzle helps you practice counting and fine motor skills. Watch as your picture comes to life!",
+    "body": "I’m the star! Play the Star Game with me. Roll the dice and move your token along the path, collect stars and avoid jail!",
     "funFact": "Real stars shine in different colors based on their heat.",
     "imagePath": "/home_screen/star.png",
     "ctaLabel": "Play Star Game",
