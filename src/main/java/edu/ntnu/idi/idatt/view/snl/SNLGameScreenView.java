@@ -124,8 +124,12 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
     GraphicsContext gc = staticCanvas.getGraphicsContext2D();
     gc.clearRect(0, 0, staticCanvas.getWidth(), staticCanvas.getHeight());
     SNLBoard board = (SNLBoard) controller.getBoard();
-    for (Ladder lad : board.getLadders()) drawLadder(gc, lad.getStart(), lad.getEnd());
-    for (Snake sn : board.getSnakes())   drawSnake(gc, sn.getStart(), sn.getEnd());
+    for (Ladder lad : board.getLadders()) {
+      drawLadder(gc, lad.getStart(), lad.getEnd());
+    }
+    for (Snake sn : board.getSnakes()) {
+      drawSnake(gc, sn.getStart(), sn.getEnd());
+    }
   }
 
   private void drawLadder(GraphicsContext gc, int s, int e) {
@@ -135,14 +139,14 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
       Bounds eb = staticCanvas.sceneToLocal(te.localToScene(te.getBoundsInLocal()));
       gc.setStroke(Color.BURLYWOOD);
       gc.setLineWidth(3);
-      gc.strokeLine(sb.getCenterX()-5, sb.getCenterY(), eb.getCenterX()-5, eb.getCenterY());
-      gc.strokeLine(sb.getCenterX()+5, sb.getCenterY(), eb.getCenterX()+5, eb.getCenterY());
-      for (int i=1; i<5; i++){
-        double t = i/5.0;
-        double x1 = (1-t)*(sb.getCenterX()-5) + t*(eb.getCenterX()-5);
-        double y1 = (1-t)*sb.getCenterY()       + t*eb.getCenterY();
-        double x2 = (1-t)*(sb.getCenterX()+5) + t*(eb.getCenterX()+5);
-        double y2 = (1-t)*sb.getCenterY()       + t*eb.getCenterY();
+      gc.strokeLine(sb.getCenterX() - 5, sb.getCenterY(), eb.getCenterX() - 5, eb.getCenterY());
+      gc.strokeLine(sb.getCenterX() + 5, sb.getCenterY(), eb.getCenterX() + 5, eb.getCenterY());
+      for (int i = 1; i < 5; i++) {
+        double t = i / 5.0;
+        double x1 = (1 - t) * (sb.getCenterX() - 5) + t * (eb.getCenterX() - 5);
+        double y1 = (1 - t) * sb.getCenterY() + t * eb.getCenterY();
+        double x2 = (1 - t) * (sb.getCenterX() + 5) + t * (eb.getCenterX() + 5);
+        double y2 = (1 - t) * sb.getCenterY() + t * eb.getCenterY();
         gc.setStroke(Color.SADDLEBROWN);
         gc.setLineWidth(2);
         gc.strokeLine(x1, y1, x2, y2);
@@ -155,18 +159,37 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
     if (ts != null && te != null) {
       Bounds sb = staticCanvas.sceneToLocal(ts.localToScene(ts.getBoundsInLocal()));
       Bounds eb = staticCanvas.sceneToLocal(te.localToScene(te.getBoundsInLocal()));
+
+      double x1 = sb.getCenterX();
+      double y1 = sb.getCenterY();
+      double x2 = eb.getCenterX();
+      double y2 = eb.getCenterY();
+
       gc.setStroke(Color.DARKRED);
       gc.setLineWidth(4);
       gc.beginPath();
-      gc.moveTo(sb.getCenterX(), sb.getCenterY());
-      gc.bezierCurveTo(sb.getCenterX(), eb.getCenterY(),
-          eb.getCenterX(), sb.getCenterY(),
-          eb.getCenterX(), eb.getCenterY());
+      gc.moveTo(x1, y1);
+
+      double dx = x2 - x1;
+      double dy = y2 - y1;
+
+      gc.bezierCurveTo(
+          x1 + dx * 0.25, y1 + dy * 0.1,
+          x1 + dx * 0.25, y1 + dy * 0.4,
+          x1 + dx * 0.5, y1 + dy * 0.5
+      );
+      gc.bezierCurveTo(
+          x1 + dx * 0.75, y1 + dy * 0.6,
+          x1 + dx * 0.75, y1 + dy * 0.9,
+          x2, y2
+      );
       gc.stroke();
+
       gc.setFill(Color.DARKRED);
-      gc.fillOval(sb.getCenterX()-3, sb.getCenterY()-3, 6, 6);
+      gc.fillOval(x1 - 7, y1 - 7, 14, 14);
     }
   }
+
 
   @Override
   protected StackPane createTile(int tileNum) {
@@ -174,11 +197,9 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
     cell.getChildren().removeIf(n -> n instanceof ImageView);
     cell.getStyleClass().add("tile");
     cell.getStyleClass().add(tileNum % 2 == 0 ? "tile-even" : "tile-odd");
-    SNLBoard b = (SNLBoard) controller.getBoard();
-    if (b.getLadderEnd(tileNum) != null) cell.getStyleClass().add("ladder-start");
-    if (b.getSnakeEnd(tileNum)  != null) cell.getStyleClass().add("snake-start");
     return cell;
   }
+
 
   private void initializePlayerTokens() {
     for (Player p : controller.getPlayers()) {
@@ -199,19 +220,23 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
   private Image getImageForPlayer(Player p) {
     if (p.getCharacter() != null) {
       URL u = getClass().getResource("/player_icons/" + p.getCharacter().toLowerCase() + ".png");
-      if (u != null) return new Image(u.toExternalForm());
+      if (u != null) {
+        return new Image(u.toExternalForm());
+      }
     }
     return null;
   }
 
   private void moveToken(Node n, int pos) {
     StackPane t = findTileNode(pos);
-    if (t == null) return;
+    if (t == null) {
+      return;
+    }
     Bounds tb = t.localToScene(t.getBoundsInLocal());
     Bounds bb = boardGrid.localToScene(boardGrid.getBoundsInLocal());
     Bounds nb = n.getBoundsInLocal();
-    double x = tb.getMinX() - bb.getMinX() + (tb.getWidth() - nb.getWidth())/2;
-    double y = tb.getMinY() - bb.getMinY() + (tb.getHeight() - nb.getHeight())/2;
+    double x = tb.getMinX() - bb.getMinX() + (tb.getWidth() - nb.getWidth()) / 2;
+    double y = tb.getMinY() - bb.getMinY() + (tb.getHeight() - nb.getHeight()) / 2;
     n.setLayoutX(x);
     n.setLayoutY(y);
   }
@@ -222,9 +247,10 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
     int col = (row % 2 == 0) ? i % BOARD_SIZE : BOARD_SIZE - 1 - (i % BOARD_SIZE);
     for (Node node : boardGrid.getChildren()) {
       if (GridPane.getColumnIndex(node) == col
-          && GridPane.getRowIndex(node)    == row
-          && node instanceof StackPane)
+          && GridPane.getRowIndex(node) == row
+          && node instanceof StackPane) {
         return (StackPane) node;
+      }
     }
     return null;
   }
@@ -233,7 +259,9 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
   public void onPlayerPositionChanged(Player p, int oldPos, int newPos) {
     Platform.runLater(() -> {
       Node token = playerTokens.get(p);
-      if (token == null) return;
+      if (token == null) {
+        return;
+      }
 
       double oldX = token.getLayoutX();
       double oldY = token.getLayoutY();
@@ -250,7 +278,7 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
       token.setTranslateY(dy);
       token.setOpacity(0);
 
-      FadeTransition fade  = new FadeTransition(Duration.millis(300), token);
+      FadeTransition fade = new FadeTransition(Duration.millis(300), token);
       fade.setFromValue(0);
       fade.setToValue(1);
 
@@ -267,7 +295,8 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
     });
   }
 
-  @Override public void onGameOver(Player winner){
+  @Override
+  public void onGameOver(Player winner) {
     if (winner instanceof SNLPlayer SNLPlayer) {
       Platform.runLater(() -> showWinner(SNLPlayer));
     }
@@ -279,18 +308,43 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
   }
 
 
-
-  @Override public void onDiceRolled(int r)      { diceResultLabel.setText("Roll result: " + r); }
-  @Override public void onPlayerTurnChanged(Player c) {
-    currentPlayerLabel.setText("Current turn: " + c.getName());
-    positionLabel.setText("Position: "   + c.getPosition());
+  @Override
+  public void onDiceRolled(int r) {
+    diceResultLabel.setText("Roll result: " + r);
   }
 
-  @Override public void onGameSaved(String f)     {}
+  @Override
+  public void onPlayerTurnChanged(Player c) {
+    currentPlayerLabel.setText("Current turn: " + c.getName());
+    positionLabel.setText("Position: " + c.getPosition());
+  }
 
-  @Override protected Image getCurrentPlayerImage()         { return getImageForPlayer(controller.getCurrentPlayer()); }
-  @Override protected List<Player> getAllPlayers()          { return controller.getPlayers(); }
-  @Override protected void handleRoll()                     { controller.handleRoll(); }
-  @Override protected String getTileColor(int n)            { return controller.getTileColor(n); }
-  @Override protected List<Player> getPlayersAtPosition(int n) { return controller.getPlayersAtPosition(n); }
+  @Override
+  public void onGameSaved(String f) {
+  }
+
+  @Override
+  protected Image getCurrentPlayerImage() {
+    return getImageForPlayer(controller.getCurrentPlayer());
+  }
+
+  @Override
+  protected List<Player> getAllPlayers() {
+    return controller.getPlayers();
+  }
+
+  @Override
+  protected void handleRoll() {
+    controller.handleRoll();
+  }
+
+  @Override
+  protected String getTileColor(int n) {
+    return controller.getTileColor(n);
+  }
+
+  @Override
+  protected List<Player> getPlayersAtPosition(int n) {
+    return controller.getPlayersAtPosition(n);
+  }
 }

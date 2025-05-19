@@ -53,20 +53,6 @@
   -fx-background-color: #B4F8C8;
 }
 
-/* Special tiles coloring */
-.ladder-start {
-  -fx-background-color: #8CE99A;
-}
-.ladder-end {
-  -fx-background-color: #38A169;
-}
-.snake-start {
-  -fx-background-color: #FFADAD;
-}
-.snake-end {
-  -fx-background-color: #E53E3E;
-}
-
 /* Buttons styling */
 .button {
   -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #ffd34e 0%, #e1a500 100%);
