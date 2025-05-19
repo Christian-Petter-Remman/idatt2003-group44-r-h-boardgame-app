@@ -2,6 +2,7 @@ package edu.ntnu.idi.idatt.view.snl;
 
 import edu.ntnu.idi.idatt.controller.snl.SNLRuleSelectionController;
 import edu.ntnu.idi.idatt.model.snl.SNLRuleSelectionModel;
+import java.util.Objects;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -15,7 +16,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
@@ -26,25 +26,33 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
   private ToggleGroup difficultyGroup;
   private RadioButton easyRadio, defaultRadio, hardRadio;
 
+  private ToggleGroup diceGroup;
+  private RadioButton oneDiceRadio, twoDiceRadio;
+
+  private Label modifiersLabel;
   private Label countLabel;
   private Button backBtn, continueBtn, randomBtn;
 
-  private Parent root;
+  private StackPane root;  // use StackPane for CSS
 
   public SNLRuleSelectionView(SNLRuleSelectionModel model, SNLRuleSelectionController controller) {
     this.model = model;
     this.controller = controller;
     model.addObserver(this);
-    initializeUI();
   }
 
   public void initializeUI() {
     createUI();
+    // Load our CSS
+    root.getStylesheets().add(
+        Objects.requireNonNull(getClass().getResource("/css/RuleSelectionStyles.css"))
+            .toExternalForm()
+    );
     setupEventHandlers();
     applyInitialUIState();
   }
 
-  protected void createUI() {
+  private void createUI() {
     ImageView bg = new ImageView(new Image("/images/snakesbackground.jpg"));
     bg.setFitWidth(800);
     bg.setFitHeight(600);
@@ -74,14 +82,28 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
     defaultRadio.setUserData("default.json");
     hardRadio = new RadioButton("Hard");
     hardRadio.setUserData("hard.json");
-    easyRadio.getStyleClass().add("rs-diff-rb");
-    defaultRadio.getStyleClass().add("rs-diff-rb");
-    hardRadio.getStyleClass().add("rs-diff-rb");
-    easyRadio.setToggleGroup(difficultyGroup);
-    defaultRadio.setToggleGroup(difficultyGroup);
-    hardRadio.setToggleGroup(difficultyGroup);
+    for (RadioButton rb : List.of(easyRadio, defaultRadio, hardRadio)) {
+      rb.getStyleClass().add("rs-diff-rb");
+      rb.setToggleGroup(difficultyGroup);
+    }
     HBox diffBox = new HBox(10, easyRadio, defaultRadio, hardRadio);
     diffBox.setAlignment(Pos.CENTER);
+
+    diceGroup = new ToggleGroup();
+    oneDiceRadio = new RadioButton("1 Die");
+    oneDiceRadio.setUserData(1);
+    twoDiceRadio = new RadioButton("2 Dice");
+    twoDiceRadio.setUserData(2);
+    oneDiceRadio.getStyleClass().add("rs-dice-rb");
+    twoDiceRadio.getStyleClass().add("rs-dice-rb");
+    oneDiceRadio.setToggleGroup(diceGroup);
+    twoDiceRadio.setToggleGroup(diceGroup);
+    Label diceLabel = new Label("Number of Dice:");
+    diceLabel.getStyleClass().add("rs-dice-label");
+    HBox diceBox = new HBox(10, oneDiceRadio, twoDiceRadio);
+    diceBox.setAlignment(Pos.CENTER);
+    VBox diceContainer = new VBox(5, diceLabel, diceBox);
+    diceContainer.setAlignment(Pos.CENTER);
 
     randomBtn = new Button("Random");
     randomBtn.getStyleClass().add("rs-random");
@@ -89,17 +111,12 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
     q.setFitWidth(18);
     q.setFitHeight(18);
     randomBtn.setGraphic(q);
-    randomBtn.setOnAction(e -> {
-      List<String> r = model.getAvailableBoards().stream()
-          .filter(f -> f.toLowerCase().startsWith("random"))
-          .toList();
-      if (!r.isEmpty()) {
-        model.setSelectedBoardFile(r.get(new Random().nextInt(r.size())));
-      }
-    });
 
     Label modTitle = new Label("Game Modifiers");
     modTitle.getStyleClass().add("rs-mod-title");
+
+    modifiersLabel = new Label();
+    modifiersLabel.getStyleClass().add("rs-modifiers");
 
     countLabel = new Label();
     countLabel.getStyleClass().add("rs-count");
@@ -108,41 +125,50 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
     backBtn.getStyleClass().add("rs-nav");
     continueBtn = new Button("Continue");
     continueBtn.getStyleClass().add("rs-nav");
-    HBox nav = new HBox();
-    Region navSpacer = new Region();
-    HBox.setHgrow(navSpacer, Priority.ALWAYS);
-    nav.getChildren().addAll(backBtn, navSpacer, continueBtn);
+    HBox nav = new HBox(10, backBtn, continueBtn);
     nav.setAlignment(Pos.CENTER);
 
-    // Assemble card
     card.getChildren().addAll(
         topSpacer,
         title,
         diffBox,
+        diceContainer,
         randomBtn,
         modTitle,
+        modifiersLabel,
         countLabel,
         nav,
         bottomSpacer
     );
 
-    StackPane container = new StackPane(bg, card);
+    root = new StackPane(bg, card);
     StackPane.setAlignment(card, Pos.CENTER);
-    StackPane.setMargin(card, new Insets(20));
-    root = container;
   }
 
-  protected void setupEventHandlers() {
-    difficultyGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
-      if (newVal != null) {
-        model.setSelectedBoardFile(newVal.getUserData().toString());
+  private void setupEventHandlers() {
+    difficultyGroup.selectedToggleProperty().addListener((obs, oldT, newT) -> {
+      if (newT != null) {
+        controller.setSelectedBoardFile(newT.getUserData().toString());
+      }
+    });
+    diceGroup.selectedToggleProperty().addListener((obs, oldT, newT) -> {
+      if (newT != null) {
+        controller.setDiceCount((int) newT.getUserData());
+      }
+    });
+    randomBtn.setOnAction(e -> {
+      List<String> r = model.getAvailableBoards().stream()
+          .filter(f -> f.toLowerCase().startsWith("random"))
+          .toList();
+      if (!r.isEmpty()) {
+        controller.setSelectedBoardFile(r.get(new Random().nextInt(r.size())));
       }
     });
     backBtn.setOnAction(e -> controller.onBackPressed());
     continueBtn.setOnAction(e -> controller.onContinuePressed());
   }
 
-  protected void applyInitialUIState() {
+  private void applyInitialUIState() {
     String sel = model.getSelectedBoardFile();
     if ("easy.json".equals(sel)) {
       easyRadio.setSelected(true);
@@ -151,12 +177,25 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
     } else {
       defaultRadio.setSelected(true);
     }
+
+    if (model.getDiceCount() == 2) {
+      twoDiceRadio.setSelected(true);
+    } else {
+      oneDiceRadio.setSelected(true);
+    }
+
     onRuleSelectionChanged();
   }
 
-
   @Override
   public void onRuleSelectionChanged() {
+    int ladders = model.getLadderCountFromJSON();
+    int snakes = model.getSnakeCountFromJSON();
+    int dice = model.getDiceCount();
+    modifiersLabel.setText(
+        String.format("Ladders: %d   Snakes: %d", ladders, snakes)
+    );
+    countLabel.setText("Dice count: " + dice);
   }
 
   public Parent getRoot() {

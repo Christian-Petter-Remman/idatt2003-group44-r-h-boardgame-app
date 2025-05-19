@@ -1,67 +1,123 @@
 /* RuleSelectionStyles.css */
 
+/* High-contrast dark background */
+.root {
+  -fx-background-color: linear-gradient(to bottom, #1e1e1e, #121212);
+}
+
+/* Title styling */
 .rs-title {
-  -fx-font-size: 22px;
-  -fx-text-fill: white;
+  -fx-font-size: 24px;
+  -fx-text-fill: #ffffff;
   -fx-font-weight: bold;
+  -fx-font-family: "Segoe UI Semibold", sans-serif;
 }
 
+/* Difficulty radio buttons */
 .rs-diff-rb {
-  -fx-text-fill: white;
-  -fx-font-size: 14px;
-  -fx-padding: 5 15;
+  -fx-font-size: 16px;
+  -fx-text-fill: #ffffff;
+  -fx-padding: 8 20;
   -fx-background-color: transparent;
-  -fx-border-color: white;
-  -fx-border-width: 1;
-  -fx-border-radius: 5;
-  -fx-background-radius: 5;
-}
-
-.rs-diff-rb:selected {
-  -fx-background-color: #6a0dad;
-  -fx-border-color: #6a0dad;
-  -fx-text-fill: white;
-}
-
-.rs-diff-rb:hover {
+  -fx-border-color: #ffffff;
+  -fx-border-width: 2;
+  -fx-border-radius: 6;
+  -fx-background-radius: 6;
   -fx-cursor: hand;
-  -fx-border-color: #cfa0ff;
+}
+.rs-diff-rb:hover {
+  -fx-border-color: #ffc107;
+}
+.rs-diff-rb:selected {
+  -fx-background-color: #ffc107;
+  -fx-border-color: #ffc107;
+  -fx-text-fill: #000000;
+}
+.rs-diff-rb:focused {
+  -fx-focus-color: #00bcd4;
+  -fx-faint-focus-color: transparent;
 }
 
+/* Dice radio buttons */
+.rs-dice-rb {
+  -fx-font-size: 16px;
+  -fx-text-fill: #ffffff;
+  -fx-padding: 8 16;
+  -fx-background-color: transparent;
+  -fx-border-color: #cccccc;
+  -fx-border-width: 1;
+  -fx-border-radius: 6;
+  -fx-background-radius: 6;
+  -fx-cursor: hand;
+}
+.rs-dice-rb:hover {
+  -fx-border-color: #00bcd4;
+}
+.rs-dice-rb:selected {
+  -fx-background-color: #00bcd4;
+  -fx-text-fill: #ffffff;
+}
+.rs-dice-rb:focused {
+  -fx-focus-color: #ff5722;
+  -fx-faint-focus-color: transparent;
+}
+
+/* Random button */
 .rs-random {
-  -fx-background-color: #6a0dad;
-  -fx-text-fill: white;
+  -fx-background-color: #673ab7;
+  -fx-text-fill: #ffffff;
   -fx-font-size: 16px;
   -fx-background-radius: 8;
   -fx-padding: 10 25;
   -fx-graphic-text-gap: 8;
-}
-
-.rs-random:hover {
-  -fx-background-color: #7e33d4;
   -fx-cursor: hand;
 }
+.rs-random:hover {
+  -fx-background-color: #5e35b1;
+}
+.rs-random:focused {
+  -fx-focus-color: #ffeb3b;
+  -fx-faint-focus-color: transparent;
+}
 
+/* Modifiers title */
 .rs-mod-title {
-  -fx-font-size: 18px;
-  -fx-text-fill: white;
+  -fx-font-size: 20px;
+  -fx-text-fill: #ffffff;
   -fx-font-weight: bold;
 }
 
+/* Modifiers values */
+.rs-modifiers {
+  -fx-font-size: 18px;
+  -fx-text-fill: #e0e0e0;
+}
+
+/* Dice count label */
 .rs-count {
   -fx-font-size: 18px;
-  -fx-text-fill: white;
+  -fx-text-fill: #ffffff;
 }
 
+/* Navigation buttons */
 .rs-nav {
-  -fx-background-color: #0275d8;
-  -fx-text-fill: white;
-  -fx-background-radius: 6;
+  -fx-background-color: #0288d1;
+  -fx-text-fill: #ffffff;
+  -fx-font-size: 16px;
   -fx-font-weight: bold;
-  -fx-padding: 8 20;
+  -fx-padding: 10 24;
+  -fx-background-radius: 6;
+  -fx-cursor: hand;
+}
+.rs-nav:hover {
+  -fx-background-color: #0277bd;
+}
+.rs-nav:focused {
+  -fx-focus-color: #ff5722;
+  -fx-faint-focus-color: transparent;
 }
 
-.rs-nav:hover {
-  -fx-background-color: #0056b3;
-  -fx-cursor: hand;
+/* Ensure all interactive controls have visible focus rings for accessibility */
+.radio-button:focused, .button:focused {
+  -fx-effect: dropshadow(gaussian, #ffeb3b, 5, 0.5, 0, 0);
 }
