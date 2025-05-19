@@ -1,20 +1,23 @@
 {
-  "size": 100,
-  "ladders": [
-      {"start": 3, "end": 51},
-      {"start": 15, "end": 67},
-      {"start": 29, "end": 74},
-      {"start": 43, "end": 92},
-      {"start": 64, "end": 85},
-      {"start": 71, "end": 91}
-      ],
-      "snakes": [
-      {"start": 99, "end": 41},
-      {"start": 87, "end": 36},
-      {"start": 75, "end": 28},
-      {"start": 56, "end": 8},
-      {"start": 48, "end": 16},
-      {"start": 25, "end": 2}
-      ]
+    "size": 100,
+    "ladders": [
+        { "start": 2, "end": 23 },
+        { "start": 11, "end": 35 },
+        { "start": 26, "end": 50 },
+        { "start": 38, "end": 67 },
+        { "start": 52, "end": 74 },
+        { "start": 66, "end": 88 }
+    ],
+    "snakes": [
+        { "start": 96, "end": 45 },
+        { "start": 92, "end": 36 },
+        { "start": 87, "end": 40 },
+        { "start": 81, "end": 21 },
+        { "start": 77, "end": 33 },
+        { "start": 69, "end": 19 },
+        { "start": 62, "end": 28 },
+        { "start": 53, "end": 12 },
+        { "start": 47, "end": 5 },
+        { "start": 42, "end": 9 }
+    ]
 }
-
