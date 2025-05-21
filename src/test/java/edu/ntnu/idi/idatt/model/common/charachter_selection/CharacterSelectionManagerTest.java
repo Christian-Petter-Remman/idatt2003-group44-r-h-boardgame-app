@@ -41,7 +41,7 @@ public class CharacterSelectionManagerTest {
   @Test
   public void testDeactivatePlayer_deactivatesOnlyPlayersAbove2() {
     manager.activatePlayer(3);
-    CharacterSelectionData character = manager.getAvailableCharacters().get(0);
+    CharacterSelectionData character = manager.getAvailableCharacters().getFirst();
     manager.selectCharacter(manager.getPlayerById(3), character);
 
     manager.deactivatePlayer(3);
@@ -56,7 +56,7 @@ public class CharacterSelectionManagerTest {
   @Test
   public void testSelectCharacter_assignsCorrectCharacterToPlayer() {
     PlayerData player = manager.getPlayerById(1);
-    CharacterSelectionData character = manager.getAvailableCharacters().get(0);
+    CharacterSelectionData character = manager.getAvailableCharacters().getFirst();
 
     manager.selectCharacter(player, character);
 
@@ -68,7 +68,7 @@ public class CharacterSelectionManagerTest {
 
   @Test
   public void testIsCharacterTaken_returnsTrueIfAssigned() {
-    CharacterSelectionData character = manager.getAvailableCharacters().get(0);
+    CharacterSelectionData character = manager.getAvailableCharacters().getFirst();
     manager.selectCharacter(manager.getPlayerById(1), character);
 
     assertTrue(manager.isCharacterTaken(character));
