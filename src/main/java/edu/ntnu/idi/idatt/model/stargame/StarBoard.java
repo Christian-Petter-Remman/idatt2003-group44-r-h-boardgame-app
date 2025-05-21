@@ -19,7 +19,6 @@ public class StarBoard extends AbstractBoard {
   private final List<Path> paths = new ArrayList<>();
   private final List<Jail> jailTiles = new ArrayList<>();
   private final List<Star> stars = new ArrayList<>();
-  private int jailTile = -1; // default no jail
 
   public StarBoard(int size) {
     super(size);
@@ -27,27 +26,7 @@ public class StarBoard extends AbstractBoard {
   }
 
   public Star addStar() {
-    List<Integer> occupied = new ArrayList<>();
-
-    for (Jail jail : getJailTiles()) {
-      occupied.add(jail.getStart());
-      occupied.add(jail.getStart() + 1);
-      occupied.add(jail.getStart() - 1);
-    }
-
-    for (Bridge bridge : getBridges()) {
-      occupied.add(bridge.getStart());
-      occupied.add(bridge.getEnd());
-    }
-
-    for (Tunnel tunnel : getTunnels()) {
-      occupied.add(tunnel.getStart());
-      occupied.add(tunnel.getEnd());
-    }
-
-    for (Star existingStar : stars) {
-      occupied.add(existingStar.getStart());
-    }
+    List<Integer> occupied = getOccupiedTiles();
 
     List<Integer> validTiles = new ArrayList<>();
     for (int i = 1; i <= 73; i++) {
@@ -69,6 +48,31 @@ public class StarBoard extends AbstractBoard {
     return star;
   }
 
+  private List<Integer> getOccupiedTiles() {
+    List<Integer> occupied = new ArrayList<>();
+
+    for (Jail jail : getJailTiles()) {
+      occupied.add(jail.getStart());
+      occupied.add(jail.getStart() + 1);
+      occupied.add(jail.getStart() - 1);
+    }
+
+    for (Bridge bridge : getBridges()) {
+      occupied.add(bridge.getStart());
+      occupied.add(bridge.getEnd());
+    }
+
+    for (Tunnel tunnel : getTunnels()) {
+      occupied.add(tunnel.getStart());
+      occupied.add(tunnel.getEnd());
+    }
+
+    for (Star existingStar : stars) {
+      occupied.add(existingStar.getStart());
+    }
+    return occupied;
+  }
+
   public int getStarPosition(Star star) {
     return star.getStart();
   }
@@ -87,9 +91,9 @@ public class StarBoard extends AbstractBoard {
   }
 
   public void addBridge(int start, int end) {
-    Bridge bridge = new Bridge(start, end);
-    getTile(start).addAttribute(bridge);
-    bridges.add(bridge);
+    if (getBridgeAt(start) == null) {
+      bridges.add(new Bridge(start, end));
+    }
     logger.info("Bridge placed from tile {} to tile {}", start, end);
   }
 
@@ -108,15 +112,17 @@ public class StarBoard extends AbstractBoard {
   }
 
   public void addJail(int position) {
-    Jail jail = new Jail(position, 5);
-    getTile(position).addAttribute(jail);
-    jailTiles.add(jail);
-    logger.info("Jail placed at tile {}", position);
+    boolean alreadyExists = jailTiles.stream().anyMatch(j -> j.getStart() == position);
+    if (!alreadyExists) {
+      Jail jail = new Jail(position, 5);
+      getTile(position).addAttribute(jail);
+      jailTiles.add(jail);
+      logger.info("Jail placed at tile {}", position);
+    } else {
+      logger.info("Jail already exists at tile {}", position);
+    }
   }
 
-  public void setJailTile(int jailTile) {
-    this.jailTile = jailTile;
-  }
 
   public Star getStarAt(int tileNumber) {
     for (Star star : stars) {
@@ -183,10 +189,6 @@ public class StarBoard extends AbstractBoard {
   }
   public List<Jail> getJailTiles() {
     return new ArrayList<>(jailTiles);
-  }
-
-  public int getJailTile() {
-    return jailTile;
   }
 
   @Override
