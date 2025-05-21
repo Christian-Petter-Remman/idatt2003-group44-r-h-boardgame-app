@@ -74,6 +74,7 @@ public class SNLLoadGameController implements NavigationHandler {
   }
   @Override
   public void navigateBack() {
+    NavigationManager.getInstance().navigateBack();
   }
   @Override
   public void setRoot(Parent root) {

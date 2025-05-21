@@ -146,6 +146,7 @@ public class StarGameController implements NavigationHandler {
 
   @Override
   public void navigateBack() {
+    NavigationManager.getInstance().navigateBack();
   }
 
   @Override

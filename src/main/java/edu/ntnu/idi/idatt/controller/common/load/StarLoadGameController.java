@@ -66,6 +66,7 @@ public class StarLoadGameController implements NavigationHandler {
   }
   @Override
   public void navigateBack() {
+    NavigationManager.getInstance().navigateBack();
   }
   @Override
   public void setRoot(Parent root) {

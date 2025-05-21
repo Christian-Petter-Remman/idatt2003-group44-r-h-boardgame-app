@@ -16,7 +16,7 @@ public class StarIntroScreenController implements NavigationHandler {
   public StarIntroScreenController() {
     this.view = new StarIntroView();
     this.view.setStartGameListener(this::startStarGame);
-    this.view.setLoadGameListener(this::loadStarGame); // 👈 ADDED THIS
+    this.view.setLoadGameListener(this::loadStarGame);
   }
 
   private void startStarGame() {
@@ -25,7 +25,7 @@ public class StarIntroScreenController implements NavigationHandler {
   }
 
   private void loadStarGame() {
-    navigateTo("STAR_LOAD_SCREEN"); // 👈 Make sure this target is defined in NavigationTarget enum
+    navigateTo("STAR_LOAD_SCREEN");
     logger.info("Navigating to Load Game screen");
   }
 

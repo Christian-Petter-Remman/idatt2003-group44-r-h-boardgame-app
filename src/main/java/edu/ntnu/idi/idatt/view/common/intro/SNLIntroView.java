@@ -11,15 +11,16 @@ import javafx.scene.layout.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StarIntroView implements IntroView {
+public class SNLIntroView implements IntroView {
+
   private Runnable startGameListener;
   private Runnable loadGameListener;
 
-  Logger logger = LoggerFactory.getLogger(SNLIntroView.class);
+  private static final Logger logger = LoggerFactory.getLogger(SNLIntroView.class);
 
   private Parent root;
 
-  public StarIntroView() {}
+  public SNLIntroView() {}
 
   public void initializeUI() {
     createUI();
@@ -29,7 +30,8 @@ public class StarIntroView implements IntroView {
     BorderPane mainContainer = new BorderPane();
 
     BackgroundImage bgImage = new BackgroundImage(
-        new Image(Objects.requireNonNull(getClass().getResource("/home_screen/stargame1.png")).toExternalForm(),
+        new Image(
+            Objects.requireNonNull(getClass().getResource("/home_screen/snakesandladders.png")).toExternalForm(),
             0, 0, true, true),
         BackgroundRepeat.NO_REPEAT,
         BackgroundRepeat.NO_REPEAT,
@@ -43,6 +45,7 @@ public class StarIntroView implements IntroView {
     VBox content = new VBox(20, gameSelectionBox);
     content.setAlignment(Pos.CENTER);
     content.setPadding(new Insets(10));
+
     mainContainer.setCenter(content);
 
     Button backButton = new Button("⟵ Back");
@@ -90,24 +93,14 @@ public class StarIntroView implements IntroView {
     HBox backBox = new HBox(backButton);
     backBox.setAlignment(Pos.BOTTOM_LEFT);
     backBox.setPadding(new Insets(0, 0, 28, 28));
-
     mainContainer.setBottom(backBox);
 
     root = mainContainer;
   }
 
-  @Override
-  public Parent getRoot() {
-    return root;
-  }
-
   private VBox createGameSelectionBox() {
     Button newGameButton = new Button("New Game");
-    styleGameButton(newGameButton, "#ffca28", "#ff9800");
-
-    Button loadGameButton = new Button("Load Game");
-    styleGameButton(loadGameButton, "#81d4fa", "#039be5");
-
+    styleGameButton(newGameButton,"#ffca28", "#ff9800");
     newGameButton.setOnAction(e -> {
       if (startGameListener != null) {
         logger.info("Start game listener triggered.");
@@ -117,18 +110,19 @@ public class StarIntroView implements IntroView {
       }
     });
 
+    Button loadGameButton = new Button("Load Game");
+    styleGameButton(loadGameButton,"#81d4fa", "#039be5");
     loadGameButton.setOnAction(e -> {
       if (loadGameListener != null) {
         logger.info("Load game listener triggered.");
         loadGameListener.run();
       } else {
-        logger.warn("Load game listener is not set.");
+        logger.warn("Load Game listener is not set.");
       }
     });
 
-    VBox box = new VBox(20, newGameButton, loadGameButton);
+    VBox box = new VBox(10, newGameButton, loadGameButton);
     box.setAlignment(Pos.CENTER);
-    box.setPadding(new Insets(20));
     return box;
   }
 
@@ -169,6 +163,11 @@ public class StarIntroView implements IntroView {
                 "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 4, 0.3, 0, 2);"
         )
     );
+  }
+
+  @Override
+  public Parent getRoot() {
+    return root;
   }
 
   @Override
