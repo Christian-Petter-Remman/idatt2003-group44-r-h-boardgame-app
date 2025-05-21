@@ -1,5 +1,7 @@
 package edu.ntnu.idi.idatt.view.common.intro;
 
+import edu.ntnu.idi.idatt.navigation.NavigationManager;
+import java.util.Objects;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -13,7 +15,7 @@ public class StarIntroView implements IntroView {
   private Runnable startGameListener;
   private Runnable loadGameListener;
 
-  Logger logger = LoggerFactory.getLogger(IntroScreenView.class);
+  Logger logger = LoggerFactory.getLogger(SNLIntroView.class);
 
   private Parent root;
 
@@ -26,14 +28,13 @@ public class StarIntroView implements IntroView {
   protected void createUI() {
     BorderPane mainContainer = new BorderPane();
 
-    // Set background image
     BackgroundImage bgImage = new BackgroundImage(
-            new Image(getClass().getResource("/home_screen/stargame1.png").toExternalForm(),
-                    0, 0, true, true),
-            BackgroundRepeat.NO_REPEAT,
-            BackgroundRepeat.NO_REPEAT,
-            BackgroundPosition.CENTER,
-            new BackgroundSize(1.0, 1.0, true, true, false, false)
+        new Image(Objects.requireNonNull(getClass().getResource("/home_screen/stargame1.png")).toExternalForm(),
+            0, 0, true, true),
+        BackgroundRepeat.NO_REPEAT,
+        BackgroundRepeat.NO_REPEAT,
+        BackgroundPosition.CENTER,
+        new BackgroundSize(1.0, 1.0, true, true, false, false)
     );
     mainContainer.setBackground(new Background(bgImage));
 
@@ -42,8 +43,56 @@ public class StarIntroView implements IntroView {
     VBox content = new VBox(20, gameSelectionBox);
     content.setAlignment(Pos.CENTER);
     content.setPadding(new Insets(10));
-
     mainContainer.setCenter(content);
+
+    Button backButton = new Button("⟵ Back");
+    backButton.setStyle(
+        "-fx-font-size: 17px;" +
+            "-fx-font-weight: bold;" +
+            "-fx-text-fill: white;" +
+            "-fx-background-color: #5c5470;" +
+            "-fx-background-radius: 18;" +
+            "-fx-border-radius: 18;" +
+            "-fx-padding: 8px 30px;" +
+            "-fx-cursor: hand;" +
+            "-fx-border-color: #c9a7e1;" +
+            "-fx-border-width: 2;" +
+            "-fx-effect: dropshadow(gaussian, #000, 2, 0.1, 0, 2);"
+    );
+    backButton.setOnMouseEntered(e -> backButton.setStyle(
+        "-fx-font-size: 17px;" +
+            "-fx-font-weight: bold;" +
+            "-fx-text-fill: #44276a;" +
+            "-fx-background-color: #c9a7e1;" +
+            "-fx-background-radius: 18;" +
+            "-fx-border-radius: 18;" +
+            "-fx-padding: 8px 30px;" +
+            "-fx-cursor: hand;" +
+            "-fx-border-color: #44276a;" +
+            "-fx-border-width: 2;" +
+            "-fx-effect: dropshadow(gaussian, #000, 2, 0.1, 0, 2);"
+    ));
+    backButton.setOnMouseExited(e -> backButton.setStyle(
+        "-fx-font-size: 17px;" +
+            "-fx-font-weight: bold;" +
+            "-fx-text-fill: white;" +
+            "-fx-background-color: #5c5470;" +
+            "-fx-background-radius: 18;" +
+            "-fx-border-radius: 18;" +
+            "-fx-padding: 8px 30px;" +
+            "-fx-cursor: hand;" +
+            "-fx-border-color: #c9a7e1;" +
+            "-fx-border-width: 2;" +
+            "-fx-effect: dropshadow(gaussian, #000, 2, 0.1, 0, 2);"
+    ));
+    backButton.setOnAction(e -> NavigationManager.getInstance().navigateBack());
+
+    HBox backBox = new HBox(backButton);
+    backBox.setAlignment(Pos.BOTTOM_LEFT);
+    backBox.setPadding(new Insets(0, 0, 28, 28));
+
+    mainContainer.setBottom(backBox);
+
     root = mainContainer;
   }
 
@@ -51,8 +100,6 @@ public class StarIntroView implements IntroView {
   public Parent getRoot() {
     return root;
   }
-
-
 
   private VBox createGameSelectionBox() {
     Button newGameButton = new Button("New Game");
@@ -87,40 +134,40 @@ public class StarIntroView implements IntroView {
 
   private void styleGameButton(Button button, String baseColor, String hoverColor) {
     button.setStyle(
-            "-fx-font-size: 20px;" +
-                    "-fx-font-weight: bold;" +
-                    "-fx-text-fill: white;" +
-                    "-fx-background-color: " + baseColor + ";" +
-                    "-fx-background-radius: 20;" +
-                    "-fx-padding: 12px 28px;" +
-                    "-fx-cursor: hand;" +
-                    "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 4, 0.3, 0, 2);"
+        "-fx-font-size: 20px;" +
+            "-fx-font-weight: bold;" +
+            "-fx-text-fill: white;" +
+            "-fx-background-color: " + baseColor + ";" +
+            "-fx-background-radius: 20;" +
+            "-fx-padding: 12px 28px;" +
+            "-fx-cursor: hand;" +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 4, 0.3, 0, 2);"
     );
 
     button.setOnMouseEntered(e ->
-            button.setStyle(
-                    "-fx-font-size: 20px;" +
-                            "-fx-font-weight: bold;" +
-                            "-fx-text-fill: white;" +
-                            "-fx-background-color: " + hoverColor + ";" +
-                            "-fx-background-radius: 20;" +
-                            "-fx-padding: 12px 28px;" +
-                            "-fx-cursor: hand;" +
-                            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 6, 0.3, 0, 3);"
-            )
+        button.setStyle(
+            "-fx-font-size: 20px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: white;" +
+                "-fx-background-color: " + hoverColor + ";" +
+                "-fx-background-radius: 20;" +
+                "-fx-padding: 12px 28px;" +
+                "-fx-cursor: hand;" +
+                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 6, 0.3, 0, 3);"
+        )
     );
 
     button.setOnMouseExited(e ->
-            button.setStyle(
-                    "-fx-font-size: 20px;" +
-                            "-fx-font-weight: bold;" +
-                            "-fx-text-fill: white;" +
-                            "-fx-background-color: " + baseColor + ";" +
-                            "-fx-background-radius: 20;" +
-                            "-fx-padding: 12px 28px;" +
-                            "-fx-cursor: hand;" +
-                            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 4, 0.3, 0, 2);"
-            )
+        button.setStyle(
+            "-fx-font-size: 20px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: white;" +
+                "-fx-background-color: " + baseColor + ";" +
+                "-fx-background-radius: 20;" +
+                "-fx-padding: 12px 28px;" +
+                "-fx-cursor: hand;" +
+                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 4, 0.3, 0, 2);"
+        )
     );
   }
 

@@ -145,7 +145,7 @@ public class SNLGameScreenController implements NavigationHandler {
 
   @Override
   public void navigateBack() {
-    // Implement navigation back logic
+    NavigationManager.getInstance().navigateBack();
   }
 
   @Override
