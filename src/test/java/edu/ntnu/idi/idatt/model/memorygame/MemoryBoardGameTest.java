@@ -3,6 +3,7 @@ package edu.ntnu.idi.idatt.model.memorygame;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class MemoryBoardGameTest {
@@ -37,7 +38,8 @@ class MemoryBoardGameTest {
     int firstIdx = 0, secondIdx = -1;
     for (int i = 1; i < cards.size(); i++) {
       if (cards.getFirst().getId().equals(cards.get(i).getId())) {
-        secondIdx = i; break;
+        secondIdx = i;
+        break;
       }
     }
     game.flipCard(firstIdx);
@@ -54,7 +56,8 @@ class MemoryBoardGameTest {
     int firstIdx = 0, secondIdx = -1;
     for (int i = 1; i < cards.size(); i++) {
       if (!cards.getFirst().getId().equals(cards.get(i).getId())) {
-        secondIdx = i; break;
+        secondIdx = i;
+        break;
       }
     }
     game.flipCard(firstIdx);
@@ -83,7 +86,8 @@ class MemoryBoardGameTest {
     int firstIdx = 0, secondIdx = -1;
     for (int i = 1; i < cards.size(); i++) {
       if (cards.getFirst().getId().equals(cards.get(i).getId())) {
-        secondIdx = i; break;
+        secondIdx = i;
+        break;
       }
     }
     game.flipCard(firstIdx);
@@ -98,7 +102,9 @@ class MemoryBoardGameTest {
     List<MemoryCard> cards = game.getCards();
     boolean[] matched = new boolean[cards.size()];
     for (int i = 0; i < cards.size(); i++) {
-      if (matched[i]) continue;
+      if (matched[i]) {
+        continue;
+      }
       for (int j = i + 1; j < cards.size(); j++) {
         if (!matched[j] && cards.get(i).getId().equals(cards.get(j).getId())) {
           game.flipCard(i);
@@ -120,8 +126,14 @@ class MemoryBoardGameTest {
     for (int i = 0; i < cards.size(); i++) {
       for (int j = i + 1; j < cards.size(); j++) {
         if (cards.get(i).getId().equals(cards.get(j).getId())) {
-          if (p1[0] == -1) { p1[0] = i; p1[1] = j; }
-          else { p2[0] = i; p2[1] = j; break outer; }
+          if (p1[0] == -1) {
+            p1[0] = i;
+            p1[1] = j;
+          } else {
+            p2[0] = i;
+            p2[1] = j;
+            break outer;
+          }
         }
       }
     }
@@ -190,7 +202,9 @@ class MemoryBoardGameTest {
     List<MemoryCard> cards = game.getCards();
     boolean[] matched = new boolean[cards.size()];
     for (int i = 0; i < cards.size(); i++) {
-      if (matched[i]) continue;
+      if (matched[i]) {
+        continue;
+      }
       for (int j = i + 1; j < cards.size(); j++) {
         if (!matched[j] && cards.get(i).getId().equals(cards.get(j).getId())) {
           game.flipCard(i);
@@ -208,7 +222,8 @@ class MemoryBoardGameTest {
   @Test
   void testSinglePlayerGame() {
     MemoryPlayer solo = new MemoryPlayer("Solo");
-    MemoryGameSettings s = new MemoryGameSettings(MemoryGameSettings.BoardSize.FOUR_BY_FOUR, List.of(solo));
+    MemoryGameSettings s = new MemoryGameSettings(MemoryGameSettings.BoardSize.FOUR_BY_FOUR,
+        List.of(solo));
     MemoryBoardGame soloGame = new MemoryBoardGame(s);
     assertEquals(1, soloGame.getPlayers().size());
     assertEquals(solo, soloGame.getPlayers().getFirst());
@@ -242,11 +257,17 @@ class MemoryBoardGameTest {
   }
 
   static class TestObserver implements MemoryGameObserver {
+
     boolean gameOverCalled = false;
+
     @Override
-    public void onBoardUpdated(MemoryBoardGame game) {}
+    public void onBoardUpdated(MemoryBoardGame game) {
+    }
+
     @Override
-    public void onGameOver(List<MemoryPlayer> winners) { gameOverCalled = true; }
+    public void onGameOver(List<MemoryPlayer> winners) {
+      gameOverCalled = true;
+    }
   }
 
 }

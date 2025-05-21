@@ -31,6 +31,7 @@ class StartScreenModelTest {
     AtomicReference<PropertyChangeEvent> receivedEvent = new AtomicReference<>();
 
     class TestableStartScreenModel extends StartScreenModel {
+
       public void reloadDialogs() {
         super.loadDialogs();
       }

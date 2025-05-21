@@ -4,7 +4,6 @@ import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.filehandling.handlers.SNLBoardJsonHandler;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
-import edu.ntnu.idi.idatt.model.model_observers.CsvExportObserver;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,7 +17,6 @@ public class SNLRuleSelectionModel {
   }
 
   private final List<Observer> observers = new ArrayList<>();
-  private final List<CsvExportObserver> exportObservers = new ArrayList<>();
 
   private final List<String> availableBoards;
   private String selectedBoardFile;
@@ -30,7 +28,7 @@ public class SNLRuleSelectionModel {
   public SNLRuleSelectionModel() {
     this.availableBoards = loadAvailableBoards();
     if (!availableBoards.isEmpty()) {
-      this.selectedBoardFile = availableBoards.get(0);
+      this.selectedBoardFile = availableBoards.getFirst();
     }
   }
 
@@ -40,16 +38,6 @@ public class SNLRuleSelectionModel {
 
   public void setSavePath(String savePath) {
     this.savePath = savePath;
-  }
-
-  public void addExportObserver(CsvExportObserver observer) {
-    exportObservers.add(observer);
-  }
-
-  public void notifyExportObservers() {
-    for (CsvExportObserver observer : exportObservers) {
-      observer.onExportRequested();
-    }
   }
 
   private List<String> loadAvailableBoards() {
@@ -95,10 +83,6 @@ public class SNLRuleSelectionModel {
 
   public void addObserver(Observer observer) {
     observers.add(observer);
-  }
-
-  public void removeObserver(Observer observer) {
-    observers.remove(observer);
   }
 
   private void notifyObservers() {

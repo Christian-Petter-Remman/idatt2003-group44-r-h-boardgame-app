@@ -1,7 +1,6 @@
 package edu.ntnu.idi.idatt.model.snl;
 
 import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.model.model_observers.BoardObserver;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,14 +13,13 @@ class SNLGameTest {
 
   private SNLBoard board;
   private SNLPlayer player1;
-  private SNLPlayer player2;
   private SNLGame game;
 
   @BeforeEach
   void setUp() {
     board = new SNLBoard(100);
     player1 = new SNLPlayer("Olli", "bowser", 1);
-    player2 = new SNLPlayer("Chris", "peach", 2);
+    SNLPlayer player2 = new SNLPlayer("Chris", "peach", 2);
     game = new SNLGame(board, List.of(player1, player2), 1, 0);
   }
 
@@ -96,50 +94,8 @@ class SNLGameTest {
     assertEquals(player1, observer.gameOverWinner);
   }
 
-//  @Test
-//  void testBoardObserverNotifiedOnLadder() {
-//    TestBoardObserver observer = new TestBoardObserver();
-//    game.addBoardObserver(observer);
-//
-//    board.addLadder(2, 10);
-//    board.addLadder(3, 10);
-//    board.addLadder(4, 10);
-//    board.addLadder(5, 10);
-//    board.addLadder(6, 10);
-//    board.addLadder(7, 10);
-//    player1.setPosition(1);
-//
-//    game.playTurn();
-//
-//    assertEquals(2, observer.activatedFrom);
-//    assertEquals(10, observer.activatedTo);
-//    assertTrue(observer.wasLadder);
-//    assertEquals(player1, observer.movedPlayer);
-//    assertEquals(2, observer.movedFrom);
-//    assertEquals(10, observer.movedTo);
-//  }
-
-//  @Test
-//  void testBoardObserverNotifiedOnSnake() {
-//    TestBoardObserver observer = new TestBoardObserver();
-//    game.addBoardObserver(observer);
-//
-//    board.addSnake(5, 1);
-//    player1.setPosition(4);
-//
-//    game.playTurn();
-//
-//    assertEquals(5, observer.activatedFrom);
-//    assertEquals(1, observer.activatedTo);
-//    assertFalse(observer.wasLadder);
-//    assertEquals(player1, observer.movedPlayer);
-//    assertEquals(5, observer.movedFrom);
-//    assertEquals(1, observer.movedTo);
-//  }
-
-  // ======= STUB CLASSES =======
-
   static class TestGameScreenObserver implements GameScreenObserver {
+
     int diceRolled = -1;
     int from = -1;
     int to = -1;
@@ -173,31 +129,4 @@ class SNLGameTest {
     }
   }
 
-  static class TestBoardObserver implements BoardObserver {
-    Player movedPlayer;
-    int movedFrom = -1;
-    int movedTo = -1;
-    int activatedFrom = -1;
-    int activatedTo = -1;
-    boolean wasLadder = false;
-
-    @Override
-    public void onBoardRendered() {
-
-    }
-
-    @Override
-    public void onPlayerMoved(Player player, int from, int to) {
-      this.movedPlayer = player;
-      this.movedFrom = from;
-      this.movedTo = to;
-    }
-
-    @Override
-    public void onSpecialTileActivated(int from, int to, boolean isLadder) {
-      this.activatedFrom = from;
-      this.activatedTo = to;
-      this.wasLadder = isLadder;
-    }
-  }
 }

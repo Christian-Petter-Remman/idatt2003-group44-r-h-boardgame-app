@@ -23,7 +23,8 @@ class MemoryGameSettingsTest {
 
   @Test
   void testSetBoardSize() {
-    MemoryGameSettings settings = new MemoryGameSettings(MemoryGameSettings.BoardSize.FOUR_BY_FOUR, List.of());
+    MemoryGameSettings settings = new MemoryGameSettings(MemoryGameSettings.BoardSize.FOUR_BY_FOUR,
+        List.of());
     assertEquals(MemoryGameSettings.BoardSize.FOUR_BY_FOUR, settings.getBoardSize());
     settings.setBoardSize(MemoryGameSettings.BoardSize.FOUR_BY_FIVE);
     assertEquals(MemoryGameSettings.BoardSize.FOUR_BY_FIVE, settings.getBoardSize());
@@ -32,7 +33,8 @@ class MemoryGameSettingsTest {
   @Test
   void testSetPlayers() {
     MemoryPlayer p = new MemoryPlayer("A");
-    MemoryGameSettings settings = new MemoryGameSettings(MemoryGameSettings.BoardSize.FOUR_BY_FOUR, List.of());
+    MemoryGameSettings settings = new MemoryGameSettings(MemoryGameSettings.BoardSize.FOUR_BY_FOUR,
+        List.of());
     settings.setPlayers(List.of(p));
     assertEquals(1, settings.getPlayers().size());
     assertEquals(p, settings.getPlayers().getFirst());

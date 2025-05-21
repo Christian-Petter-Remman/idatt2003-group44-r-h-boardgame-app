@@ -71,16 +71,6 @@ public class SNLBoard extends AbstractBoard {
     return new ArrayList<>(snakes);
   }
 
-  public Map<Integer, Integer> getSpecialTiles(){
-    Map<Integer, Integer> map = new HashMap<>();
-    for (Ladder ladder : ladders) {
-      map.put(ladder.getStart(), ladder.getEnd());
-    }
-    for (Snake snake : snakes) {
-      map.put(snake.getStart(), snake.getEnd());
-    }
-    return map;
-  }
   @Override
   public int getSize() {
     return tiles.size();

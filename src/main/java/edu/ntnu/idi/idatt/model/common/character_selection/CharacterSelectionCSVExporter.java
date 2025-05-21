@@ -6,7 +6,7 @@ import java.util.List;
 public class CharacterSelectionCSVExporter implements CharacterSelectionObserver {
 
   private final CharacterSelectionManager manager;
-  private List<String[]> playerCharacterData;
+  private final List<String[]> playerCharacterData;
 
   public CharacterSelectionCSVExporter(CharacterSelectionManager manager) {
     this.manager = manager;

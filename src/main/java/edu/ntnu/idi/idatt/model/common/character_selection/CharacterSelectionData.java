@@ -2,7 +2,7 @@ package edu.ntnu.idi.idatt.model.common.character_selection;
 
 public class CharacterSelectionData {
   private String name;
-  private String imagePath;
+  private final String imagePath;
   private boolean selected;
   private PlayerData selectedBy;
 
@@ -23,10 +23,6 @@ public class CharacterSelectionData {
 
   public String getImagePath() {
     return imagePath;
-  }
-
-  public void setImagePath(String imagePath) {
-    this.imagePath = imagePath;
   }
 
   public boolean isSelected() {

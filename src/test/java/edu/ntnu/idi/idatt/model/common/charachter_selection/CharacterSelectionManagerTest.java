@@ -6,6 +6,7 @@ import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionObs
 import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CharacterSelectionManagerTest {
@@ -15,7 +16,6 @@ public class CharacterSelectionManagerTest {
   @BeforeEach
   public void setUp() {
     manager = CharacterSelectionManager.getInstance();
-    // Reset state
     for (PlayerData player : manager.getPlayers()) {
       player.setActive(false);
       player.setSelectedCharacter(null);
@@ -41,7 +41,7 @@ public class CharacterSelectionManagerTest {
   @Test
   public void testDeactivatePlayer_deactivatesOnlyPlayersAbove2() {
     manager.activatePlayer(3);
-    CharacterSelectionData character = manager.getAvailableCharacters().get(0);
+    CharacterSelectionData character = manager.getAvailableCharacters().getFirst();
     manager.selectCharacter(manager.getPlayerById(3), character);
 
     manager.deactivatePlayer(3);
@@ -56,7 +56,7 @@ public class CharacterSelectionManagerTest {
   @Test
   public void testSelectCharacter_assignsCorrectCharacterToPlayer() {
     PlayerData player = manager.getPlayerById(1);
-    CharacterSelectionData character = manager.getAvailableCharacters().get(0);
+    CharacterSelectionData character = manager.getAvailableCharacters().getFirst();
 
     manager.selectCharacter(player, character);
 
@@ -68,14 +68,16 @@ public class CharacterSelectionManagerTest {
 
   @Test
   public void testIsCharacterTaken_returnsTrueIfAssigned() {
-    CharacterSelectionData character = manager.getAvailableCharacters().get(0);
+    CharacterSelectionData character = manager.getAvailableCharacters().getFirst();
     manager.selectCharacter(manager.getPlayerById(1), character);
 
     assertTrue(manager.isCharacterTaken(character));
   }
 
   private static class TestObserver implements CharacterSelectionObserver {
+
     boolean wasUpdated = false;
+
     @Override
     public void update() {
       wasUpdated = true;

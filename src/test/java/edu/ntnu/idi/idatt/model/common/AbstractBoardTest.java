@@ -1,7 +1,5 @@
-package edu.ntnu.idi.idatt.model.common.game;
+package edu.ntnu.idi.idatt.model.common;
 
-import edu.ntnu.idi.idatt.model.common.AbstractBoard;
-import edu.ntnu.idi.idatt.model.common.Tile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +11,7 @@ class AbstractBoardTest {
   private final int BOARD_SIZE = 100;
 
   private static class TestBoard extends AbstractBoard {
+
     private final int size;
 
     public TestBoard(int size) {
@@ -49,9 +48,7 @@ class AbstractBoardTest {
 
   @Test
   void getTile_invalidTileNumber_throwsException() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      board.getTile(BOARD_SIZE + 1);
-    });
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> board.getTile(BOARD_SIZE + 1));
     assertTrue(exception.getMessage().contains("not found"));
   }
 

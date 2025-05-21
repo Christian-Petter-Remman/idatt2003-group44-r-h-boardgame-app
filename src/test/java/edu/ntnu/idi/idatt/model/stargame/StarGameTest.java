@@ -71,7 +71,8 @@ class StarGameTest {
       var field = StarGame.class.getDeclaredField("gameOver");
       field.setAccessible(true);
       field.set(game, true);
-    } catch (Exception ignored) {}
+    } catch (Exception ignored) {
+    }
     int before = player1.getPosition();
     game.playTurn();
     int after = player1.getPosition();
@@ -83,7 +84,9 @@ class StarGameTest {
     int posBefore = player1.getPosition();
     for (int i = 0; i < 5; i++) {
       game.playTurn();
-      if (player1.getPosition() != posBefore) break;
+      if (player1.getPosition() != posBefore) {
+        break;
+      }
     }
     assertNotEquals(posBefore, player1.getPosition());
   }
@@ -96,7 +99,9 @@ class StarGameTest {
     for (int i = 0; i < 10; i++) {
       player1.setPosition(star.getStart() - 1);
       game.playTurn();
-      if (player1.getPoints() > before) break;
+      if (player1.getPoints() > before) {
+        break;
+      }
     }
     assertTrue(player1.getPoints() > before);
   }
@@ -156,7 +161,9 @@ class StarGameTest {
     for (int i = 0; i < 8; i++) {
       player1.setPosition(6);
       game.playTurn();
-      if (game.isAwaitingPathDecision()) break;
+      if (game.isAwaitingPathDecision()) {
+        break;
+      }
     }
     assertTrue(game.isAwaitingPathDecision());
     assertDoesNotThrow(() -> game.continuePathDecision(true));
