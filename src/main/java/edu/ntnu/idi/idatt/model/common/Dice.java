@@ -19,7 +19,7 @@ public class Dice {
 
   public int getDiceCount() {
     int diceCount = 0;
-    for (Die d : dice) {
+    for (Die ignored : dice) {
       diceCount++;
     }
     return diceCount;

@@ -10,12 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BoardGame {
+
   protected List<Player> players;
   protected AbstractBoard board;
   protected Dice dice;
   protected int currentPlayerIndex;
 
-  // Observer lists
   protected final List<GameObserver> observers = new ArrayList<>();
   protected final List<PathDecisionObserver> pathDecisionObservers = new ArrayList<>();
   protected final List<GameScreenObserver> turnObservers = new ArrayList<>();
@@ -33,9 +33,9 @@ public abstract class BoardGame {
 
   public Player getWinner() {
     return players.stream()
-            .filter(Player::hasWon)
-            .findFirst()
-            .orElse(null);
+        .filter(Player::hasWon)
+        .findFirst()
+        .orElse(null);
   }
 
   public void initializePlayer(List<Player> players) {
@@ -72,15 +72,6 @@ public abstract class BoardGame {
     return board;
   }
 
-  //=========== OBSERVER REGISTRATION ============
-
-  public void registerObserver(GameObserver observer) {
-    observers.add(observer);
-  }
-
-  public void registerPathDecisionObserver(PathDecisionObserver observer) {
-    pathDecisionObservers.add(observer);
-  }
 
   public void addTurnObserver(GameScreenObserver observer) {
     turnObservers.add(observer);
@@ -93,12 +84,6 @@ public abstract class BoardGame {
   public void addWinnerObserver(GameScreenObserver observer) {
     winnerObservers.add(observer);
   }
-
-  public void addBoardObserver(BoardObserver observer) {
-    boardObservers.add(observer);
-  }
-
-  //=========== OBSERVER NOTIFICATIONS ============
 
   public void notifyMoveObservers(Player player, int roll) {
     for (GameScreenObserver observer : moveObservers) {

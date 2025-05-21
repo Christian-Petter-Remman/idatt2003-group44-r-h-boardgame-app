@@ -8,7 +8,7 @@ public class Die {
   private final Random random;
 
   public Die(int sides) {
-    if (sides < 1) {
+    if (sides < 2) {
       throw new IllegalArgumentException("A die must have at least 1 side");
     }
     this.sides = sides;
@@ -24,5 +24,7 @@ public class Die {
     faceValue = random.nextInt(sides) + 1;
     return faceValue;
   }
-
+  public int getSides() {
+    return sides;
+  }
 }
