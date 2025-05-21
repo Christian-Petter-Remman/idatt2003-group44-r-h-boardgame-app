@@ -1,7 +1,6 @@
 package edu.ntnu.idi.idatt.model.memorygame;
 
 import edu.ntnu.idi.idatt.model.common.factory.MemoryCardFactory;
-import javafx.application.Platform;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,6 +41,9 @@ public class MemoryBoardGame {
   }
 
   public void flipCard(int index) {
+    if (index < 0 || index >= cards.size()) {
+      throw new IndexOutOfBoundsException("Invalid card index: " + index);
+    }
     MemoryCard card = cards.get(index);
     if (card.isFaceUp() || card.isMatched()) return;
     card.setFaceUp(true);
@@ -68,7 +70,7 @@ public class MemoryBoardGame {
         first.setFaceUp(false);
         second.setFaceUp(false);
         currentPlayerIndex = (prev + 1) % players.size();
-        Platform.runLater(this::notifyBoardUpdated);
+        notifyBoardUpdated();
       }).start();
     }
   }
