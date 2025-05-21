@@ -116,10 +116,8 @@ public class NavigationManager {
       case STAR_GAME -> navigateToStarGameScreen();
       case STAR_LOAD_SCREEN -> navigateToStarLoadScreen();
       case SNL_LOAD_SCREEN -> navigateToSnlLoadScreen();
-
       case MEMORY_RULE_SCREEN -> navigateToMemoryRuleScreen();
       case MEMORY_GAME_SCREEN -> navigateToMemoryGame();
-
       case PAINT_CANVAS -> navigateToPaintCanvas();
 
     }
