@@ -102,6 +102,10 @@ public class SNLGameScreenController implements NavigationHandler {
     FileManager.saveGameToPermanent(tempFile,"snl",filename);
   }
 
+  public void deleteGame(File tempFile) {
+    FileManager.deletePermanentGame(tempFile);
+  }
+
   @Override
   public void navigateTo(String destination) {
 

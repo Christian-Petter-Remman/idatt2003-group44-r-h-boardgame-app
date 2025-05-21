@@ -299,6 +299,8 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
   public void onGameOver(Player winner) {
     if (winner instanceof SNLPlayer SNLPlayer) {
       Platform.runLater(() -> showWinner(SNLPlayer));
+      File gameFile = controller.getCsvFile();
+      controller.deleteGame(gameFile);
     }
   }
 

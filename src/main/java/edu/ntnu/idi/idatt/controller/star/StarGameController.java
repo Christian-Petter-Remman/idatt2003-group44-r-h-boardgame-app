@@ -117,6 +117,12 @@ public class StarGameController implements NavigationHandler {
     FileManager.saveGameToPermanent(tempFile,"star",filename);
   }
 
+  public void deleteGame(File tempFile) {
+    FileManager.deletePermanentGame(tempFile);
+  }
+
+
+
   @Override
   public void navigateTo(String destination) {
 

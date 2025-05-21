@@ -117,8 +117,6 @@ public abstract class BoardGame {
     }
   }
 
-
-
   public void notifyStarObservers(Player player, int newTile) {
     for (GameObserver observer : observers) {
       observer.onStarRespawned(player, newTile);

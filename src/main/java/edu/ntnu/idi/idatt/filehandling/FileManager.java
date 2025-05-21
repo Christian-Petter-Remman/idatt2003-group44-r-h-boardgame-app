@@ -20,9 +20,6 @@ public class FileManager {
   public static final String CUSTOM_BOARDS_DIR = "data/custom_boards";
   public static final String SNAKES_LADDERS_BOARDS_DIR = "data/custom_boards/snakes_and_ladders";
   public static final String STAR_GAME_DIR = "data/custom_boards/star_game";
-
-  public static final String DEFAULT_PLAYERS_FILE = "data/players/default_players.csv";
-  public static final String LAST_GAME_PLAYERS_FILE = "data/players/last_game_players.csv";
   public static final String MEMORYGAME_DIR = "data/memorygame";
 
 
@@ -74,11 +71,16 @@ public class FileManager {
     File newFile = new File("saves/load/"+gamePath+"/" + userInput);
     boolean success = tempFile.renameTo(newFile);
     if (success) {
-      //mark as save
       logger.info("Game permanently saved as: {}", newFile.getName());
     }
   }
 
+  public static void deletePermanentGame(File tempFile) {
+    boolean success = tempFile.delete();
+    if (success) {
+      logger.info("Game permanently deleted as: {}", tempFile.getName());
+    }
+  }
 
   public static void cleanupIfTemporary(String tempFilePath) {
     if (tempFilePath != null) {
