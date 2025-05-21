@@ -51,7 +51,7 @@ public class SNLLoadGameController implements NavigationHandler {
       SNLBoard board = factory.loadBoardFromFile(boardPath);
 
       SNLGame game = new SNLGame(board, gameState.getPlayers(), gameState.diceCount, gameState.getCurrentTurnIndex());
-      SNLGameScreenController controller = new SNLGameScreenController(game,file);
+      SNLGameScreenController controller = new SNLGameScreenController(game,file,boardPath);
       SNLGameScreenView view = new SNLGameScreenView(controller);
 
       NavigationManager.getInstance().setHandler(controller);

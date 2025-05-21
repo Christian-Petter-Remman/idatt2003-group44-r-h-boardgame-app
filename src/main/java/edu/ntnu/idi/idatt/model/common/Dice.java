@@ -17,6 +17,14 @@ public class Dice {
     }
   }
 
+  public int getDiceCount() {
+    int diceCount = 0;
+    for (Die d : dice) {
+      diceCount++;
+    }
+    return diceCount;
+  }
+
   public List<Integer> getLastRolls() {
     List<Integer> rolls = new ArrayList<>();
     for (Die die : dice) {

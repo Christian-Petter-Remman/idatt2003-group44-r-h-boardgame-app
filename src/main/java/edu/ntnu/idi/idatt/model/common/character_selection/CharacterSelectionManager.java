@@ -89,6 +89,12 @@ public class CharacterSelectionManager implements Observable {
     }
   }
 
+  public boolean allActivePlayersHaveSelectedCharacters() {
+    return players.stream()
+            .filter(PlayerData::isActive)
+            .allMatch(p -> p.getSelectedCharacter() != null);
+  }
+
   public boolean isCharacterTaken(CharacterSelectionData character) {
     return players.stream().anyMatch(p -> p.getSelectedCharacter() != null && p.getSelectedCharacter().equals(character));
   }

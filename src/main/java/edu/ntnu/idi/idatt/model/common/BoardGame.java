@@ -55,9 +55,18 @@ public abstract class BoardGame {
     return players.get(currentPlayerIndex);
   }
 
+  public int getDiceCount() {
+    return dice.getDiceCount();
+  }
+
+  public int getCurrentPlayerIndex() {
+    return currentPlayerIndex;
+  }
+
   public void nextTurn() {
     currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
   }
+
 
   public AbstractBoard getBoard() {
     return board;

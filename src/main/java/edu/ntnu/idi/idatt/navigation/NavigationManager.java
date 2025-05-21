@@ -238,7 +238,7 @@ public class NavigationManager {
 
       SNLGame game = new SNLGame(board, gameState.getPlayers(), gameState.getDiceCount(),
           gameState.getCurrentTurnIndex());
-      SNLGameScreenController controller = new SNLGameScreenController(game,saveFile);
+      SNLGameScreenController controller = new SNLGameScreenController(game,saveFile,boardPath);
 
       controller.notifyPlayerPositionChangedAll();
 

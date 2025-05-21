@@ -38,6 +38,8 @@ public class CharacterSelectionController implements NavigationHandler {
     manager.deactivatePlayer(playerId);
   }
 
+
+
   @Override
   public void navigateTo(String destination) {
     NavigationManager.getInstance().navigateTo(NavigationTarget.valueOf(destination));

@@ -73,17 +73,23 @@ public class StarGameView extends GameScreen {
     });
 
     createUI();
-    setBackListener(() -> {
-      NavigationManager.getInstance().navigateToStartScreen();
-    });
+    setBackListener(() -> NavigationManager.getInstance().navigateToStartScreen());
     setSaveListener(() -> {
-
       TextInputDialog dialog = new TextInputDialog("star_save_" + System.currentTimeMillis());
       dialog.setTitle("Save Game");
       dialog.setHeaderText("Name your save file:");
       dialog.setContentText("Filename:");
 
       dialog.showAndWait().ifPresent(filename -> {
+
+        FileManager.writeStarGameStateToCSV(
+                tempFile,
+                controller.getPlayers(),
+                "default.json",
+                controller.getDiceCount(),
+                controller.getCurrentTurn()
+        );
+
         controller.saveGame(tempFile, filename + ".csv");
       });
     });

@@ -52,6 +52,10 @@ public class StarGameController implements NavigationHandler {
     return game.getBoard();
   }
 
+  public int getDiceCount() {
+    return game.getDiceCount();
+  }
+
   public Player getCurrentPlayer() {
     return game.getCurrentPlayer();
   }
@@ -62,6 +66,10 @@ public class StarGameController implements NavigationHandler {
 
   public void handleRoll() {
     game.playTurn();
+  }
+
+  public int getCurrentTurn() {
+    return game.getCurrentPlayerIndex();
   }
 
 
