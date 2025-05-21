@@ -8,7 +8,6 @@ import edu.ntnu.idi.idatt.controller.common.load.SNLLoadGameController;
 import edu.ntnu.idi.idatt.controller.common.load.StarLoadGameController;
 import edu.ntnu.idi.idatt.controller.memorygame.MemoryGameController;
 import edu.ntnu.idi.idatt.controller.memorygame.MemoryRuleSelectionController;
-import edu.ntnu.idi.idatt.controller.paint.PaintCanvasController;
 import edu.ntnu.idi.idatt.controller.snl.*;
 import edu.ntnu.idi.idatt.controller.star.StarGameController;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
@@ -36,6 +35,8 @@ import edu.ntnu.idi.idatt.view.snl.SNLRuleSelectionView;
 import edu.ntnu.idi.idatt.view.star.StarGameView;
 
 import java.io.File;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Objects;
 
 import edu.ntnu.idi.idatt.view.star.StarLoadGameView;
@@ -61,6 +62,7 @@ public class NavigationManager {
   private SNLRuleSelectionModel ruleSelectionModel;
   private StarCharSelectionController starCharSelectionController;
   private Scene scene;
+  private final Deque<Parent> navigationStack = new LinkedList<>();
 
 
   private NavigationManager() {
@@ -93,15 +95,25 @@ public class NavigationManager {
   }
 
   public void setRoot(Parent root) {
-    if (root == null)
+    if (root == null) {
       throw new NullPointerException("Root cannot be null");
+    }
     if (scene != null) {
+      if (scene.getRoot() != null && scene.getRoot() != root) {
+        navigationStack.push(scene.getRoot());
+      }
       scene.setRoot(root);
     }
   }
 
   public void navigateBack() {
-   //TODO: Implement navigateBack
+    if (!navigationStack.isEmpty()) {
+      Parent previousRoot = navigationStack.pop();
+      scene.setRoot(previousRoot);
+    } else {
+      logger.info("Navigation stack is empty – can't go back further.");
+      navigateToStartScreen();
+    }
   }
 
   public void navigateTo(NavigationTarget target) {
@@ -148,7 +160,7 @@ public class NavigationManager {
   public void navigateToStarCharacterSelection() {
     characterSelectionManager = new CharacterSelectionManager();
     StarCharSelectionScreen view = new StarCharSelectionScreen(characterSelectionManager);
-    starCharSelectionController = new StarCharSelectionController(characterSelectionManager,view);
+    starCharSelectionController = new StarCharSelectionController(characterSelectionManager, view);
     setHandler(starCharSelectionController);
     setRoot(view.getView());
   }
@@ -208,9 +220,9 @@ public class NavigationManager {
       StarFactory factory = new StarFactory();
       StarBoard board = factory.loadBoardFromFile(boardpath);
 
-      StarGame game = new StarGame(board,gameState.getPlayers(), gameState.getCurrentTurnIndex());
+      StarGame game = new StarGame(board, gameState.getPlayers(), gameState.getCurrentTurnIndex());
 
-      StarGameController controller = new StarGameController(game,saveFile);
+      StarGameController controller = new StarGameController(game, saveFile);
       controller.notifyPlayerPositionChangedAll();
       StarGameView view = new StarGameView(controller);
       view.initializeUI();
@@ -236,7 +248,7 @@ public class NavigationManager {
 
       SNLGame game = new SNLGame(board, gameState.getPlayers(), gameState.getDiceCount(),
           gameState.getCurrentTurnIndex());
-      SNLGameScreenController controller = new SNLGameScreenController(game,saveFile,boardPath);
+      SNLGameScreenController controller = new SNLGameScreenController(game, saveFile, boardPath);
 
       controller.notifyPlayerPositionChangedAll();
 
