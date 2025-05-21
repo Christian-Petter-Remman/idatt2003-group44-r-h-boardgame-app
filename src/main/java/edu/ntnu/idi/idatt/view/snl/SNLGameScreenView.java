@@ -1,6 +1,7 @@
 package edu.ntnu.idi.idatt.view.snl;
 
 import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
+import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.snl.Ladder;
@@ -48,6 +49,7 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
 
   public SNLGameScreenView(SNLGameScreenController controller) {
     this.controller = controller;
+    File tempFile = controller.getCsvFile();
     controller.registerObserver(this);
     initializeOverlay();
     createUI();
@@ -91,12 +93,23 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
 
     setBackListener(() -> NavigationManager.getInstance().navigateToStartScreen());
     setSaveListener(() -> {
-      File temp = controller.getCsvFile();
-      TextInputDialog dlg = new TextInputDialog("save_" + System.currentTimeMillis());
-      dlg.setTitle("Save Game");
-      dlg.setHeaderText("Name your save file:");
-      dlg.setContentText("Filename:");
-      dlg.showAndWait().ifPresent(name -> controller.saveGame(temp, name + ".csv"));
+      TextInputDialog dialog = new TextInputDialog("star_save_" + System.currentTimeMillis());
+      dialog.setTitle("Save Game");
+      dialog.setHeaderText("Name your save file:");
+      dialog.setContentText("Filename:");
+
+      dialog.showAndWait().ifPresent(filename -> {
+
+        FileManager.writeSNLGameStateToCSV(
+                tempFile,
+                controller.getPlayers(),
+                controller.getShortenBoardPath(controller.getBoardPath()),
+                controller.getDiceCount(),
+                controller.getCurrentPlayerIndex()
+        );
+
+        controller.saveGame(tempFile, filename + ".csv");
+      });
     });
   }
 
@@ -299,6 +312,8 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
   public void onGameOver(Player winner) {
     if (winner instanceof SNLPlayer SNLPlayer) {
       Platform.runLater(() -> showWinner(SNLPlayer));
+      File gameFile = controller.getCsvFile();
+      controller.deleteGame(gameFile);
     }
   }
 

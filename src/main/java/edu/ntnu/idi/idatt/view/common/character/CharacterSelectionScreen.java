@@ -65,7 +65,14 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
     Button back = new Button("Back"), next = new Button("Continue");
     back.getStyleClass().add("button"); next.getStyleClass().add("button");
     back.setOnAction(e -> handler.navigateBack());
-    next.setOnAction(e -> handler.navigateTo("SAL_RULE_SELECTION"));
+    next.setOnAction(e -> {
+      if (manager.allActivePlayersHaveSelectedCharacters()) {
+        handler.navigateTo("SAL_RULE_SELECTION");
+      } else {
+        showCharacterMissingWarning();
+      }
+    });
+
 
     HBox btnRow = new HBox(20, back, new Region(), next);
     btnRow.setAlignment(Pos.CENTER);
@@ -86,6 +93,13 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
     root.getChildren().addAll(bg, wrap);
   }
 
+  private void showCharacterMissingWarning() {
+    javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
+    alert.setTitle("Missing Character");
+    alert.setHeaderText("Each active player must select a character.");
+    alert.setContentText("Please make sure all active players have picked a character before continuing.");
+    alert.showAndWait();
+  }
 
   private final class PlayerPanel {
 

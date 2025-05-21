@@ -1,13 +1,17 @@
 package edu.ntnu.idi.idatt.filehandling;
 
+import edu.ntnu.idi.idatt.model.common.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.Path;
+import java.util.List;
 
 public class FileManager {
 
@@ -20,9 +24,6 @@ public class FileManager {
   public static final String CUSTOM_BOARDS_DIR = "data/custom_boards";
   public static final String SNAKES_LADDERS_BOARDS_DIR = "data/custom_boards/snakes_and_ladders";
   public static final String STAR_GAME_DIR = "data/custom_boards/star_game";
-
-  public static final String DEFAULT_PLAYERS_FILE = "data/players/default_players.csv";
-  public static final String LAST_GAME_PLAYERS_FILE = "data/players/last_game_players.csv";
   public static final String MEMORYGAME_DIR = "data/memorygame";
 
 
@@ -74,8 +75,52 @@ public class FileManager {
     File newFile = new File("saves/load/"+gamePath+"/" + userInput);
     boolean success = tempFile.renameTo(newFile);
     if (success) {
-      //mark as save
       logger.info("Game permanently saved as: {}", newFile.getName());
+    }
+  }
+
+  public static void deletePermanentGame(File tempFile) {
+    boolean success = tempFile.delete();
+    if (success) {
+      logger.info("Game permanently deleted as: {}", tempFile.getName());
+    }
+  }
+
+  public static void writeSNLGameStateToCSV(File file, List<Player> players, String boardPath, int diceCount, int turnIndex) {
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+      writer.write("Board," + boardPath + "\n");
+      writer.write("DiceCount," + diceCount + "\n");
+      writer.write("CurrentTurnIndex," + turnIndex + "\n");
+      writer.write("Players:\n");
+      for (Player p : players) {
+        writer.write(String.format("%s,%s,%d\n",
+                p.getName(),
+                p.getCharacterIcon(),
+                p.getPosition()));
+      }
+      logger.info("Game state written to {}", file.getAbsolutePath());
+    } catch (IOException e) {
+      logger.error("Failed to write game state to CSV", e);
+    }
+  }
+
+  public static void writeStarGameStateToCSV(File file, List<Player> players, String boardPath, int diceCount, int turnIndex) {
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+      writer.write("Board," + boardPath + "\n");
+      writer.write("DiceCount," + diceCount + "\n");
+      writer.write("CurrentTurnIndex," + turnIndex + "\n");
+      writer.write("Players:\n");
+      for (Player p : players) {
+        writer.write(String.format("%s,%s,%d,%d\n",
+                p.getName(),
+                p.getCharacterIcon(),
+                p.getPosition(),
+                p.getPoints())
+        );
+      }
+      logger.info("Game state written to {}", file.getAbsolutePath());
+    } catch (IOException e) {
+      logger.error("Failed to write game state to CSV", e);
     }
   }
 

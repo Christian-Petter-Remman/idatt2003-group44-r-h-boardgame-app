@@ -4,6 +4,7 @@ import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.model.common.AbstractBoard;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
+import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import edu.ntnu.idi.idatt.model.snl.SNLGame;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
@@ -15,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +29,12 @@ public class SNLGameScreenController implements NavigationHandler {
   private final List<GameScreenObserver> observers = new ArrayList<>();
   private Parent root;
   private final File csvFile;
+  private final String boardPath;
 
-  public SNLGameScreenController(SNLGame game, File csvFile) {
+  public SNLGameScreenController(SNLGame game, File csvFile, String boardPath) {
     this.game = game;
     this.csvFile = csvFile;
+    this.boardPath = boardPath;
   }
 
   public void registerObserver(GameScreenObserver observer) {
@@ -54,6 +59,24 @@ public class SNLGameScreenController implements NavigationHandler {
   public Player getCurrentPlayer() {
     return game.getCurrentPlayer();
   }
+
+  public int getCurrentPlayerIndex() {
+    return game.getCurrentPlayerIndex();
+  }
+
+  public int getDiceCount() {
+    return game.getDiceCount();
+  }
+
+  public String getBoardPath() {
+    return boardPath;
+  }
+
+  public String getShortenBoardPath(String boardPath) {
+    Path path = Paths.get(boardPath);
+    return path.getFileName().toString(); // → "default.json"
+  }
+
 
   public List<Player> getAllPlayers() {
     return game.getPlayers();
@@ -100,6 +123,10 @@ public class SNLGameScreenController implements NavigationHandler {
 
   public void saveGame(File tempFile, String filename) {
     FileManager.saveGameToPermanent(tempFile,"snl",filename);
+  }
+
+  public void deleteGame(File tempFile) {
+    FileManager.deletePermanentGame(tempFile);
   }
 
   @Override

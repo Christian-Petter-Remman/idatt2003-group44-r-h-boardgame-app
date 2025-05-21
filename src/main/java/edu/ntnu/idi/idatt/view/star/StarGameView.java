@@ -1,6 +1,7 @@
 package edu.ntnu.idi.idatt.view.star;
 
 import edu.ntnu.idi.idatt.controller.star.StarGameController;
+import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.stargame.StarBoard;
@@ -29,11 +30,12 @@ public class StarGameView extends GameScreen {
   private final int cols = 13;
   private final List<Integer> blankTiles = new ArrayList<>(List.of(0));
 
+
   private final StarGameController controller;
 
   public StarGameView(StarGameController controller) {
     this.controller = controller;
-
+    File tempFile = controller.getCsvFile();
 
     controller.registerObserver(new GameScreenObserver() {
       @Override
@@ -62,6 +64,7 @@ public class StarGameView extends GameScreen {
       public void onGameOver(Player winner) {
         if (winner instanceof StarPlayer starPlayer) {
           Platform.runLater(() -> showWinner(starPlayer));
+          controller.deleteGame(tempFile);
         }
       }
 
@@ -70,18 +73,23 @@ public class StarGameView extends GameScreen {
     });
 
     createUI();
-    setBackListener(() -> {
-      NavigationManager.getInstance().navigateToStartScreen();
-    });
+    setBackListener(() -> NavigationManager.getInstance().navigateToStartScreen());
     setSaveListener(() -> {
-
-      File tempFile = controller.getCsvFile();
       TextInputDialog dialog = new TextInputDialog("star_save_" + System.currentTimeMillis());
       dialog.setTitle("Save Game");
       dialog.setHeaderText("Name your save file:");
       dialog.setContentText("Filename:");
 
       dialog.showAndWait().ifPresent(filename -> {
+
+        FileManager.writeStarGameStateToCSV(
+                tempFile,
+                controller.getPlayers(),
+                "default.json",
+                controller.getDiceCount(),
+                controller.getCurrentTurn()
+        );
+
         controller.saveGame(tempFile, filename + ".csv");
       });
     });

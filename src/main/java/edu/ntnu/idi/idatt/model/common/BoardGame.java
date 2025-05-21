@@ -55,9 +55,18 @@ public abstract class BoardGame {
     return players.get(currentPlayerIndex);
   }
 
+  public int getDiceCount() {
+    return dice.getDiceCount();
+  }
+
+  public int getCurrentPlayerIndex() {
+    return currentPlayerIndex;
+  }
+
   public void nextTurn() {
     currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
   }
+
 
   public AbstractBoard getBoard() {
     return board;
@@ -116,8 +125,6 @@ public abstract class BoardGame {
       observer.onPathDecisionRequested(player, path);
     }
   }
-
-
 
   public void notifyStarObservers(Player player, int newTile) {
     for (GameObserver observer : observers) {
