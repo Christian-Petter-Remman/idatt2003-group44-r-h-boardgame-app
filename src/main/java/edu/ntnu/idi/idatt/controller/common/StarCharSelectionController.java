@@ -23,7 +23,7 @@ import java.util.List;
  * Handles character assignment, observer notification for CSV export, and transitions to the game screen.
  * Implements {@link NavigationHandler} to enable UI transitions.
  *
- * @author Your Name
+ * @author Oliver
  */
 public class StarCharSelectionController implements NavigationHandler {
 

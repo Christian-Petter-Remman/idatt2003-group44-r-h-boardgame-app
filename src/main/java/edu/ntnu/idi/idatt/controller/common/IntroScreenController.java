@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * to character selection or game load screens and coordinating the view's event listeners.
  * Implements {@link NavigationHandler} for navigation responsibilities.
  *
- * @author Your Name
+ * @author Christian
  */
 public class IntroScreenController implements NavigationHandler {
 

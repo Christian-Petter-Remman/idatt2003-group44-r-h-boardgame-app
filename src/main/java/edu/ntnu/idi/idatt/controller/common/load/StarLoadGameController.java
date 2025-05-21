@@ -23,7 +23,7 @@ import java.util.Comparator;
  * Responsible for loading saved Star Game files and initializing the corresponding view and controller.
  * Handles reading from the save directory, parsing CSV files, and transitioning the UI.
  *
- * @author Your Name
+ * @author Christian
  */
 public class StarLoadGameController implements NavigationHandler {
 

@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * It mediates between the CharacterSelectionManager and the UI screen.
  * Implements navigation for transitioning between views.
  *
- * @author Your Name
+ * @author Christian
  */
 public class CharacterSelectionController implements NavigationHandler {
 
