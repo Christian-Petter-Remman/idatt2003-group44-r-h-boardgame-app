@@ -1,7 +1,5 @@
-package edu.ntnu.idi.idatt.model.common.game;
+package edu.ntnu.idi.idatt.model.common;
 
-import edu.ntnu.idi.idatt.model.common.AbstractBoard;
-import edu.ntnu.idi.idatt.model.common.Tile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
