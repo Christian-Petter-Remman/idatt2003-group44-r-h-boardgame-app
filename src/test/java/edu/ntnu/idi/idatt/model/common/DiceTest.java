@@ -1,6 +1,7 @@
 package edu.ntnu.idi.idatt.model.common;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;

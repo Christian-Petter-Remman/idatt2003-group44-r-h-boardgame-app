@@ -3,19 +3,38 @@ package edu.ntnu.idi.idatt.model.snl;
 import edu.ntnu.idi.idatt.model.common.AbstractBoard;
 import edu.ntnu.idi.idatt.model.common.Player;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class SnakeTest {
 
   static class DummyPlayer extends Player {
-    public DummyPlayer(String name, String character) { super(name, character); }
-    @Override public boolean hasWon() { return false; }
-    @Override public int getStartPosition() { return 1; }
+
+    public DummyPlayer(String name, String character) {
+      super(name, character);
+    }
+
+    @Override
+    public boolean hasWon() {
+      return false;
+    }
+
+    @Override
+    public int getStartPosition() {
+      return 1;
+    }
   }
 
   static class DummyBoard extends AbstractBoard {
-    public DummyBoard(int size) { super(size); }
-    @Override public int getSize() { return 100; }
+
+    public DummyBoard(int size) {
+      super(size);
+    }
+
+    @Override
+    public int getSize() {
+      return 100;
+    }
   }
 
   @Test

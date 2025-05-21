@@ -11,6 +11,7 @@ class AbstractBoardTest {
   private final int BOARD_SIZE = 100;
 
   private static class TestBoard extends AbstractBoard {
+
     private final int size;
 
     public TestBoard(int size) {

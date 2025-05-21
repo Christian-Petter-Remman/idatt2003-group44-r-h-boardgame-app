@@ -1,16 +1,22 @@
 package edu.ntnu.idi.idatt.model.common;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerTest {
 
   static class DummyBoard extends AbstractBoard {
-    public DummyBoard(int size) { super(size); }
+
+    public DummyBoard(int size) {
+      super(size);
+    }
+
     @Override
     public Tile getTile(int i) {
       return new DummyTile(i);
     }
+
     @Override
     public int getSize() {
       return 10;
@@ -18,7 +24,11 @@ class PlayerTest {
   }
 
   static class DummyTile extends Tile {
-    public DummyTile(int n) { super(n); }
+
+    public DummyTile(int n) {
+      super(n);
+    }
+
     @Override
     public void onPlayerLanded(Player player, AbstractBoard board) {
       player.addPoints(1);
@@ -26,15 +36,20 @@ class PlayerTest {
   }
 
   static class DummyPlayer extends Player {
-    private boolean won = false;
+
     public DummyPlayer(String name, String character) {
       super(name, character);
     }
+
     @Override
-    public boolean hasWon() { return won; }
-    public void setWon(boolean w) { won = w; }
+    public boolean hasWon() {
+      return false;
+    }
+
     @Override
-    public int getStartPosition() { return 1; }
+    public int getStartPosition() {
+      return 1;
+    }
   }
 
   @Test

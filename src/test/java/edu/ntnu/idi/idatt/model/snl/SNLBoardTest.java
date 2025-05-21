@@ -59,7 +59,8 @@ class SNLBoardTest {
 
   @Test
   void testInitializeBoardFromFileCallsFactory() {
-    SNLBoard loaded = SNLBoard.initializeBoardFromFile("data/custom_boards/snakes_and_ladders/default.json");
+    SNLBoard loaded = SNLBoard.initializeBoardFromFile(
+        "data/custom_boards/snakes_and_ladders/default.json");
     assertNotNull(loaded);
     assertInstanceOf(SNLBoard.class, loaded);
   }

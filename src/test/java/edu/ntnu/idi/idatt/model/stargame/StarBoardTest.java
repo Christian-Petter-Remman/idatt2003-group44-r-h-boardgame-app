@@ -63,7 +63,7 @@ class StarBoardTest {
   @Test
   void testAddJail() {
     board.addJail(12);
-    Jail jail = board.getJailAt(13); // 1 tile ahead
+    Jail jail = board.getJailAt(13);
     assertNotNull(jail);
     assertEquals(12, jail.getStart());
     assertTrue(board.getJailTiles().contains(jail));

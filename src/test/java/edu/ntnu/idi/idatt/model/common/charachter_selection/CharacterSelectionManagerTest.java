@@ -6,6 +6,7 @@ import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionObs
 import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CharacterSelectionManagerTest {
@@ -15,7 +16,6 @@ public class CharacterSelectionManagerTest {
   @BeforeEach
   public void setUp() {
     manager = CharacterSelectionManager.getInstance();
-    // Reset state
     for (PlayerData player : manager.getPlayers()) {
       player.setActive(false);
       player.setSelectedCharacter(null);
@@ -75,7 +75,9 @@ public class CharacterSelectionManagerTest {
   }
 
   private static class TestObserver implements CharacterSelectionObserver {
+
     boolean wasUpdated = false;
+
     @Override
     public void update() {
       wasUpdated = true;

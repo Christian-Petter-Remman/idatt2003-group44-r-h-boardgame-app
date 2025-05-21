@@ -3,12 +3,15 @@ package edu.ntnu.idi.idatt.model.common;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TileTest {
 
   static class DummyAttribute implements TileAttribute {
+
     boolean triggered = false;
+
     @Override
     public void onLand(Player player, AbstractBoard board) {
       triggered = true;
@@ -16,14 +19,32 @@ class TileTest {
   }
 
   static class DummyPlayer extends Player {
-    public DummyPlayer(String name, String character) { super(name, character); }
-    @Override public boolean hasWon() { return false; }
-    @Override public int getStartPosition() { return 1; }
+
+    public DummyPlayer(String name, String character) {
+      super(name, character);
+    }
+
+    @Override
+    public boolean hasWon() {
+      return false;
+    }
+
+    @Override
+    public int getStartPosition() {
+      return 1;
+    }
   }
 
   static class DummyBoard extends AbstractBoard {
-    public DummyBoard(int size) { super(size); }
-    @Override public int getSize() { return 5; }
+
+    public DummyBoard(int size) {
+      super(size);
+    }
+
+    @Override
+    public int getSize() {
+      return 5;
+    }
   }
 
   @Test
