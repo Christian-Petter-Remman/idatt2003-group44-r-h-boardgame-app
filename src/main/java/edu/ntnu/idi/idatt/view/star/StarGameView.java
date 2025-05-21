@@ -12,6 +12,9 @@ import edu.ntnu.idi.idatt.view.common.intro.dialogs.WinnerDialogs;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -74,25 +77,55 @@ public class StarGameView extends GameScreen {
 
     createUI();
     setBackListener(() -> NavigationManager.getInstance().navigateToStartScreen());
-    setSaveListener(() -> {
-      TextInputDialog dialog = new TextInputDialog("star_save_" + System.currentTimeMillis());
-      dialog.setTitle("Save Game");
-      dialog.setHeaderText("Name your save file:");
-      dialog.setContentText("Filename:");
+    setSaveListener(() -> showSaveGamePopup());
+  }
 
-      dialog.showAndWait().ifPresent(filename -> {
+  private void showSaveGamePopup() {
+    javafx.stage.Popup popup = new javafx.stage.Popup();
 
+    VBox content = new VBox(10);
+    content.setStyle("-fx-background-color: #e0f7fa; -fx-padding: 15; -fx-border-color: #00acc1; -fx-border-width: 2;");
+    Label header = new Label("Save Game");
+    header.setStyle("-fx-font-weight: bold; -fx-text-fill: #006064;");
+
+    TextField filenameField = new TextField("star_save_" + System.currentTimeMillis());
+    filenameField.setPrefWidth(220);
+
+    Label feedbackLabel = new Label();
+    feedbackLabel.setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
+    feedbackLabel.setVisible(false);
+
+    Button confirm = new Button("Save");
+    confirm.setStyle("-fx-cursor: hand;");
+    confirm.setOnAction(e -> {
+      String filename = filenameField.getText().trim();
+      if (!filename.isEmpty()) {
         FileManager.writeStarGameStateToCSV(
-                tempFile,
+                controller.getCsvFile(),
                 controller.getPlayers(),
                 "default.json",
                 controller.getDiceCount(),
                 controller.getCurrentTurn()
         );
-
-        controller.saveGame(tempFile, filename + ".csv");
-      });
+        controller.saveGame(controller.getCsvFile(), filename + ".csv");
+        feedbackLabel.setText("Game saved");
+        feedbackLabel.setVisible(true);
+        new Thread(() -> {
+          try {
+            Thread.sleep(1000);
+          } catch (InterruptedException ignored) {}
+          javafx.application.Platform.runLater(popup::hide);
+        }).start();
+      }
     });
+
+    content.getChildren().addAll(header, filenameField, confirm, feedbackLabel);
+    popup.getContent().add(content);
+    popup.setAutoHide(true);
+    popup.setHideOnEscape(true);
+
+    javafx.stage.Window window = root.getScene().getWindow();
+    popup.show(window, window.getX() + window.getWidth() / 2 - 150, window.getY() + window.getHeight() / 2 - 70);
   }
 
   public void initializeUI() {

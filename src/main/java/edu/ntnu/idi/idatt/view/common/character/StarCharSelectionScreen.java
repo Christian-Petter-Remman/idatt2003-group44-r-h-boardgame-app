@@ -97,11 +97,24 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
   }
 
   private void showCharacterMissingWarning() {
-    javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
-    alert.setTitle("Missing Character");
-    alert.setHeaderText("Each active player must select a character.");
-    alert.setContentText("Please make sure all active players have picked a character before continuing.");
-    alert.showAndWait();
+    javafx.stage.Popup popup = new javafx.stage.Popup();
+
+    VBox content = new VBox(10);
+    content.setStyle("-fx-background-color: #f8d7da; -fx-padding: 15; -fx-border-color: #f5c2c7; -fx-border-width: 2;");
+    Label header = new Label("Missing Character");
+    header.setStyle("-fx-font-weight: bold; -fx-text-fill: #721c24;");
+    Label message = new Label("Each active player must select a character before continuing.");
+    message.setStyle("-fx-text-fill: #721c24;");
+
+    content.getChildren().addAll(header, message);
+
+    popup.getContent().add(content);
+    popup.setAutoHide(true); // Close when clicked elsewhere
+    popup.setHideOnEscape(true);
+
+    // Show near the center of the screen or stage
+    javafx.stage.Window window = root.getScene().getWindow();
+    popup.show(window, window.getX() + window.getWidth() / 2 - 150, window.getY() + window.getHeight() / 2 - 50);
   }
 
   private final class PlayerPanel {

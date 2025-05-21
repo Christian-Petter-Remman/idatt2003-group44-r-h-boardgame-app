@@ -146,6 +146,8 @@ public abstract class GameScreen {
 
   protected abstract Image getCurrentPlayerImage();
 
+
+
   protected void renderBoardGrid() {
     boardGrid.getChildren().clear();
 
