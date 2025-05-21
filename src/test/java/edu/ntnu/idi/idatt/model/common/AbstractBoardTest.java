@@ -48,9 +48,7 @@ class AbstractBoardTest {
 
   @Test
   void getTile_invalidTileNumber_throwsException() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      board.getTile(BOARD_SIZE + 1);
-    });
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> board.getTile(BOARD_SIZE + 1));
     assertTrue(exception.getMessage().contains("not found"));
   }
 
