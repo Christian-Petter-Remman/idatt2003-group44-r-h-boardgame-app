@@ -31,7 +31,6 @@ class DieTest {
   @Test
   void testFaceValueUpdatesOnRoll() {
     Die die = new Die(6);
-    int previous = die.getFaceValue();
     die.roll();
     int newVal = die.getFaceValue();
     assertTrue(newVal >= 1 && newVal <= 6);

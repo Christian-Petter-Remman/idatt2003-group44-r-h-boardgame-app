@@ -1,7 +1,6 @@
 package edu.ntnu.idi.idatt.model.snl;
 
 import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.model.model_observers.BoardObserver;
 import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,14 +13,13 @@ class SNLGameTest {
 
   private SNLBoard board;
   private SNLPlayer player1;
-  private SNLPlayer player2;
   private SNLGame game;
 
   @BeforeEach
   void setUp() {
     board = new SNLBoard(100);
     player1 = new SNLPlayer("Olli", "bowser", 1);
-    player2 = new SNLPlayer("Chris", "peach", 2);
+    SNLPlayer player2 = new SNLPlayer("Chris", "peach", 2);
     game = new SNLGame(board, List.of(player1, player2), 1, 0);
   }
 
@@ -131,32 +129,4 @@ class SNLGameTest {
     }
   }
 
-  static class TestBoardObserver implements BoardObserver {
-
-    Player movedPlayer;
-    int movedFrom = -1;
-    int movedTo = -1;
-    int activatedFrom = -1;
-    int activatedTo = -1;
-    boolean wasLadder = false;
-
-    @Override
-    public void onBoardRendered() {
-
-    }
-
-    @Override
-    public void onPlayerMoved(Player player, int from, int to) {
-      this.movedPlayer = player;
-      this.movedFrom = from;
-      this.movedTo = to;
-    }
-
-    @Override
-    public void onSpecialTileActivated(int from, int to, boolean isLadder) {
-      this.activatedFrom = from;
-      this.activatedTo = to;
-      this.wasLadder = isLadder;
-    }
-  }
 }
