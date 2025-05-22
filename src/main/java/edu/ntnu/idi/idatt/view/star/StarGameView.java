@@ -102,7 +102,8 @@ public class StarGameView extends GameScreen {
     javafx.stage.Popup popup = new javafx.stage.Popup();
 
     VBox content = new VBox(10);
-    content.setStyle("-fx-background-color: #e0f7fa; -fx-padding: 15; -fx-border-color: #00acc1; -fx-border-width: 2;");
+    content.setStyle(
+        "-fx-background-color: #e0f7fa; -fx-padding: 15; -fx-border-color: #00acc1; -fx-border-width: 2;");
     Label header = new Label("Save Game");
     header.setStyle("-fx-font-weight: bold; -fx-text-fill: #006064;");
 
@@ -119,11 +120,11 @@ public class StarGameView extends GameScreen {
       String filename = filenameField.getText().trim();
       if (!filename.isEmpty()) {
         FileManager.writeStarGameStateToCSV(
-                controller.getCsvFile(),
-                controller.getPlayers(),
-                "default.json",
-                controller.getDiceCount(),
-                controller.getCurrentTurn()
+            controller.getCsvFile(),
+            controller.getPlayers(),
+            "default.json",
+            controller.getDiceCount(),
+            controller.getCurrentTurn()
         );
         controller.saveGame(controller.getCsvFile(), filename + ".csv");
         feedbackLabel.setText("Game saved");
@@ -131,7 +132,8 @@ public class StarGameView extends GameScreen {
         new Thread(() -> {
           try {
             Thread.sleep(1000);
-          } catch (InterruptedException ignored) {}
+          } catch (InterruptedException ignored) {
+          }
           javafx.application.Platform.runLater(popup::hide);
         }).start();
       }
@@ -143,7 +145,8 @@ public class StarGameView extends GameScreen {
     popup.setHideOnEscape(true);
 
     javafx.stage.Window window = root.getScene().getWindow();
-    popup.show(window, window.getX() + window.getWidth() / 2 - 150, window.getY() + window.getHeight() / 2 - 70);
+    popup.show(window, window.getX() + window.getWidth() / 2 - 150,
+        window.getY() + window.getHeight() / 2 - 70);
   }
 
 
@@ -237,7 +240,8 @@ public class StarGameView extends GameScreen {
     if (tileNum == 100) {
       var url = getClass().getResource("/images/jailTile.png");
       if (url != null) {
-        cell.setStyle("-fx-border-color: black; -fx-background-image: url('" + url.toExternalForm() + "'); " +
+        cell.setStyle(
+            "-fx-border-color: black; -fx-background-image: url('" + url.toExternalForm() + "'); " +
                 "-fx-background-size: cover;");
       } else {
         cell.setStyle("-fx-border-color: black; -fx-background-color: black;");
@@ -245,7 +249,7 @@ public class StarGameView extends GameScreen {
     } else {
       String borderColor = isBlank(tileNum) ? "white" : "black";
       cell.setStyle("-fx-border-color: " + borderColor + ";" +
-              "-fx-background-color:" + getTileColor(tileNum) + ";");
+          "-fx-background-color:" + getTileColor(tileNum) + ";");
 
       if (tileNum != 0) {
         Text tileNumber = new Text(String.valueOf(tileNum));
@@ -258,10 +262,13 @@ public class StarGameView extends GameScreen {
 
     List<Player> playersOnTile = getPlayersAtPosition(tileNum);
     for (Player player : playersOnTile) {
-      String characterName = (player.getCharacter() != null) ? player.getCharacter().toLowerCase() : "default";
+      String characterName =
+          (player.getCharacter() != null) ? player.getCharacter().toLowerCase() : "default";
       try {
         var url = getClass().getResource("/player_icons/" + characterName + ".png");
-        if (url == null) continue;
+        if (url == null) {
+          continue;
+        }
 
         Image image = new Image(url.toExternalForm(), TILE_SIZE * 0.5, TILE_SIZE * 0.5, true, true);
         ImageView icon = new ImageView(image);
@@ -344,7 +351,6 @@ public class StarGameView extends GameScreen {
 
   @Override
   public void initializeOverlay() {
-    // No longer needed since overlays are added per cell
   }
 
   @Override
@@ -364,6 +370,6 @@ public class StarGameView extends GameScreen {
 
   @Override
   protected Pane getOverlay() {
-    return new Pane(); // Overlay no longer used
+    return new Pane();
   }
 }

@@ -6,6 +6,7 @@ import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationTarget;
 import javafx.application.Application;
+import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 
 import org.slf4j.Logger;
@@ -44,7 +45,9 @@ public class Main extends Application {
 
       primaryStage.setFullScreen(true);
       primaryStage.setFullScreenExitHint("");
-      primaryStage.setResizable(true);
+      primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+      primaryStage.setResizable(false);
+
       primaryStage.show();
 
     } catch (Exception e) {

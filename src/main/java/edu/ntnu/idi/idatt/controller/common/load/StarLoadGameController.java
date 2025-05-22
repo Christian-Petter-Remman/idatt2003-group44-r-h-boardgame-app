@@ -1,3 +1,4 @@
+
 package edu.ntnu.idi.idatt.controller.common.load;
 
 import edu.ntnu.idi.idatt.filehandling.GameStateCsvLoader;
@@ -102,7 +103,6 @@ public class StarLoadGameController implements NavigationHandler {
    */
   @Override
   public void navigateTo(String destination) {
-    // Intentionally left blank
   }
 
   /**
@@ -111,7 +111,7 @@ public class StarLoadGameController implements NavigationHandler {
    */
   @Override
   public void navigateBack() {
-    // Intentionally left blank
+    NavigationManager.getInstance().navigateBack();
   }
 
   /**
@@ -122,6 +122,6 @@ public class StarLoadGameController implements NavigationHandler {
    */
   @Override
   public void setRoot(Parent root) {
-    // Intentionally left blank
+
   }
 }

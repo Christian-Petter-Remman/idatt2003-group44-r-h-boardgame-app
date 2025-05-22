@@ -3,7 +3,7 @@ package edu.ntnu.idi.idatt.controller.common;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationTarget;
-import edu.ntnu.idi.idatt.view.common.intro.IntroScreenView;
+import edu.ntnu.idi.idatt.view.common.intro.SNLIntroView;
 import javafx.scene.Parent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +17,7 @@ import org.slf4j.LoggerFactory;
  * @author Christian
  */
 public class IntroScreenController implements NavigationHandler {
-
-  private final IntroScreenView view;
+  private final SNLIntroView view;
   private static final Logger logger = LoggerFactory.getLogger(IntroScreenController.class);
 
   /**
@@ -26,7 +25,7 @@ public class IntroScreenController implements NavigationHandler {
    * Initializes the intro screen and binds event listeners for game start and load buttons.
    */
   public IntroScreenController() {
-    this.view = new IntroScreenView();
+    this.view = new SNLIntroView();
     this.view.setStartGameListener(this::startSnakesAndLadders);
     this.view.setLoadGameListener(this::loadSNLGame);
   }
@@ -86,9 +85,9 @@ public class IntroScreenController implements NavigationHandler {
    * <h2>getView</h2>
    * Returns the associated view for the intro screen.
    *
-   * @return the {@link IntroScreenView} instance
+   * @return the {@link SNLIntroView} instance
    */
-  public IntroScreenView getView() {
+  public SNLIntroView getView() {
     return view;
   }
 }

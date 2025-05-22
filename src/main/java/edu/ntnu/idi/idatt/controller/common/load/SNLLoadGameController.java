@@ -1,3 +1,4 @@
+
 package edu.ntnu.idi.idatt.controller.common.load;
 
 import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
@@ -67,6 +68,7 @@ public class SNLLoadGameController implements NavigationHandler {
   public void loadSNLGame(File file) {
     try {
       GameStateCsvLoader.GameState gameState = GameStateCsvLoader.SNLLoad(file.getAbsolutePath());
+
       String boardPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + gameState.getBoardFile();
 
       SNLBoard board = new SNLFactory().loadBoardFromFile(boardPath);
@@ -98,7 +100,6 @@ public class SNLLoadGameController implements NavigationHandler {
    */
   @Override
   public void navigateTo(String destination) {
-    // No-op
   }
 
   /**
@@ -107,7 +108,7 @@ public class SNLLoadGameController implements NavigationHandler {
    */
   @Override
   public void navigateBack() {
-    // No-op
+    NavigationManager.getInstance().navigateBack();
   }
 
   /**
@@ -118,6 +119,6 @@ public class SNLLoadGameController implements NavigationHandler {
    */
   @Override
   public void setRoot(Parent root) {
-    // No-op
+
   }
 }

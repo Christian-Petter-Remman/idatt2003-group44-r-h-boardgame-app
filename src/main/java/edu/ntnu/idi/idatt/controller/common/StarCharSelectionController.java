@@ -42,6 +42,7 @@ public class StarCharSelectionController implements NavigationHandler {
    */
   public StarCharSelectionController(CharacterSelectionManager manager, StarCharSelectionScreen screen) {
     this.manager = manager;
+    this.savePath = savePath;
     screen.setHandler(this);
   }
 
@@ -55,7 +56,7 @@ public class StarCharSelectionController implements NavigationHandler {
   public void handleCharacterSelection(int playerId, CharacterSelectionData character) {
     PlayerData player = manager.getPlayerById(playerId);
     if (player != null && player.isActive() &&
-            (!character.isSelected() || character.getSelectedBy() == player)) {
+        (!character.isSelected() || character.getSelectedBy() == player)) {
       manager.selectCharacter(player, character);
     }
   }
@@ -113,6 +114,7 @@ public class StarCharSelectionController implements NavigationHandler {
     notifyObservers();
 
     NavigationManager.getInstance().navigateTo(NavigationTarget.STAR_GAME);
+
   }
 
   /**
@@ -143,7 +145,6 @@ public class StarCharSelectionController implements NavigationHandler {
    */
   @Override
   public void navigateTo(String destination) {
-    // Not used
   }
 
   /**

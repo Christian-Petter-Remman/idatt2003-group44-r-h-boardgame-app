@@ -10,6 +10,8 @@ import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationTarget;
 import javafx.scene.Parent;
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,6 +101,7 @@ public class SNLGameScreenController implements NavigationHandler {
     return Paths.get(boardPath).getFileName().toString();
   }
 
+
   public List<Player> getAllPlayers() {
     return game.getPlayers();
   }
@@ -182,6 +185,8 @@ public class SNLGameScreenController implements NavigationHandler {
 
   @Override
   public void navigateTo(String destination) {
+
+    // Implement navigation handling logic
     switch (destination) {
       case "INTRO_SCREEN" -> NavigationManager.getInstance().navigateTo(NavigationTarget.START_SCREEN);
       default -> logger.warn("Unknown destination: {}", destination);
@@ -189,7 +194,9 @@ public class SNLGameScreenController implements NavigationHandler {
   }
 
   @Override
-  public void navigateBack() {}
+  public void navigateBack() {
+    NavigationManager.getInstance().navigateBack();
+  }
 
   @Override
   public void setRoot(Parent root) {
