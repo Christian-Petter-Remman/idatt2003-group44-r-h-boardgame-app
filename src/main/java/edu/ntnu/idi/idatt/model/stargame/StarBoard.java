@@ -10,6 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * <h1>StarBoard</h1>
+ *
+ * Represents the board for the Star game, managing paths, tunnels, jails, bridges, and stars.
+ */
 public class StarBoard extends AbstractBoard {
 
   private static final Logger logger = LoggerFactory.getLogger(StarBoard.class);
@@ -25,10 +30,16 @@ public class StarBoard extends AbstractBoard {
     initializeBoard();
   }
 
+  /**
+   * <h2>addStar</h2>
+   * Adds a new star to a random unoccupied tile.
+   *
+   * @return the created Star instance, or null if no valid tile was found.
+   */
   public Star addStar() {
     List<Integer> occupied = getOccupiedTiles();
-
     List<Integer> validTiles = new ArrayList<>();
+
     for (int i = 1; i <= 73; i++) {
       if (!occupied.contains(i)) {
         validTiles.add(i);
@@ -51,25 +62,24 @@ public class StarBoard extends AbstractBoard {
   private List<Integer> getOccupiedTiles() {
     List<Integer> occupied = new ArrayList<>();
 
-    for (Jail jail : getJailTiles()) {
+    jailTiles.forEach(jail -> {
       occupied.add(jail.getStart());
       occupied.add(jail.getStart() + 1);
       occupied.add(jail.getStart() - 1);
-    }
+    });
 
-    for (Bridge bridge : getBridges()) {
+    bridges.forEach(bridge -> {
       occupied.add(bridge.getStart());
       occupied.add(bridge.getEnd());
-    }
+    });
 
-    for (Tunnel tunnel : getTunnels()) {
+    tunnels.forEach(tunnel -> {
       occupied.add(tunnel.getStart());
       occupied.add(tunnel.getEnd());
-    }
+    });
 
-    for (Star existingStar : stars) {
-      occupied.add(existingStar.getStart());
-    }
+    stars.forEach(star -> occupied.add(star.getStart()));
+
     return occupied;
   }
 
@@ -77,6 +87,13 @@ public class StarBoard extends AbstractBoard {
     return star.getStart();
   }
 
+  /**
+   * <h2>respawnStar</h2>
+   * Removes an existing star and places a new one randomly.
+   *
+   * @param star the star to be removed.
+   * @return the tile number of the newly placed star.
+   */
   public int respawnStar(Star star) {
     removeStar(star);
     Star newStar = addStar();
@@ -123,54 +140,45 @@ public class StarBoard extends AbstractBoard {
     }
   }
 
-
   public Star getStarAt(int tileNumber) {
-    for (Star star : stars) {
-      if (star.getStart() == tileNumber) {
-        return star;
-      }
-    }
-    return null;
+    return stars.stream()
+            .filter(star -> star.getStart() == tileNumber)
+            .findFirst()
+            .orElse(null);
   }
 
   public Bridge getBridgeAt(int tileNumber) {
-    for (Bridge bridge : bridges) {
-      if (bridge.getStart() == tileNumber) {
-        return bridge;
-      }
-    }
-    return null;
+    return bridges.stream()
+            .filter(bridge -> bridge.getStart() == tileNumber)
+            .findFirst()
+            .orElse(null);
   }
 
   public Path getPathAt(int position) {
     Tile tile = getTile(position);
-    for (TileAttribute attr : tile.getAttributes()) {
-      if (attr instanceof Path) {
-        return (Path) attr;
-      }
-    }
-    return null;
+    return tile.getAttributes().stream()
+            .filter(attr -> attr instanceof Path)
+            .map(attr -> (Path) attr)
+            .findFirst()
+            .orElse(null);
   }
 
   public Tunnel getTunnelAt(int tileNumber) {
-    for (Tunnel tunnel : tunnels) {
-      if (tunnel.getStart() == tileNumber) {
-        return tunnel;
-      }
-    }
-    return null;
+    return tunnels.stream()
+            .filter(tunnel -> tunnel.getStart() == tileNumber)
+            .findFirst()
+            .orElse(null);
   }
 
   public Jail getJailAt(int position) {
     if (position <= 0 || position > tiles.size()) {
       return null;
     }
-    for (TileAttribute attribute : tiles.get(position - 1).getAttributes()) {
-      if (attribute instanceof Jail) {
-        return (Jail) attribute;
-      }
-    }
-    return null;
+    return tiles.get(position - 1).getAttributes().stream()
+            .filter(attr -> attr instanceof Jail)
+            .map(attr -> (Jail) attr)
+            .findFirst()
+            .orElse(null);
   }
 
   public List<Bridge> getBridges() {
@@ -184,9 +192,11 @@ public class StarBoard extends AbstractBoard {
   public List<Tunnel> getTunnels() {
     return new ArrayList<>(tunnels);
   }
+
   public List<Path> getPaths() {
     return new ArrayList<>(paths);
   }
+
   public List<Jail> getJailTiles() {
     return new ArrayList<>(jailTiles);
   }

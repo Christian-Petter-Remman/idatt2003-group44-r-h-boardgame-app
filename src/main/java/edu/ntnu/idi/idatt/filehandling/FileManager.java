@@ -13,6 +13,12 @@ import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.util.List;
 
+/**
+ * <h1>FileManager</h1>
+ *
+ * Utility class for managing file operations such as directory creation, saving game states,
+ * deleting files, and exporting game data to CSV.
+ */
 public class FileManager {
 
   private static final Logger logger = LoggerFactory.getLogger(FileManager.class);
@@ -26,7 +32,13 @@ public class FileManager {
   public static final String STAR_GAME_DIR = "data/custom_boards/star_game";
   public static final String MEMORYGAME_DIR = "data/memorygame";
 
-
+  /**
+   * <h2>ensureApplicationDirectoriesExist</h2>
+   *
+   * Creates required application directories if they do not exist, and verifies they are writable.
+   *
+   * @throws IOException If a directory is missing or inaccessible.
+   */
   public static void ensureApplicationDirectoriesExist() throws IOException {
     String[] directories = {
             LOGS_DIR,
@@ -68,17 +80,33 @@ public class FileManager {
     logger.info("All application directories verified successfully");
   }
 
+  /**
+   * <h2>saveGameToPermanent</h2>
+   *
+   * Moves a temporary save file to a permanent location.
+   *
+   * @param tempFile  The temporary file.
+   * @param gamePath  Subdirectory path.
+   * @param userInput New file name.
+   */
   public static void saveGameToPermanent(File tempFile, String gamePath, String userInput) {
-    File savedDir = new File("saves/load/" + gamePath+"/");
+    File savedDir = new File("saves/load/" + gamePath + "/");
     if (!savedDir.exists()) savedDir.mkdirs();
 
-    File newFile = new File("saves/load/"+gamePath+"/" + userInput);
+    File newFile = new File(savedDir, userInput);
     boolean success = tempFile.renameTo(newFile);
     if (success) {
       logger.info("Game permanently saved as: {}", newFile.getName());
     }
   }
 
+  /**
+   * <h2>deletePermanentGame</h2>
+   *
+   * Deletes a permanent save file.
+   *
+   * @param tempFile The file to delete.
+   */
   public static void deletePermanentGame(File tempFile) {
     boolean success = tempFile.delete();
     if (success) {
@@ -86,6 +114,17 @@ public class FileManager {
     }
   }
 
+  /**
+   * <h2>writeSNLGameStateToCSV</h2>
+   *
+   * Writes a Snakes and Ladders game state to a CSV file.
+   *
+   * @param file       Output file.
+   * @param players    List of players.
+   * @param boardPath  Path of the board file used.
+   * @param diceCount  Number of dice used.
+   * @param turnIndex  Current turn index.
+   */
   public static void writeSNLGameStateToCSV(File file, List<Player> players, String boardPath, int diceCount, int turnIndex) {
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
       writer.write("Board," + boardPath + "\n");
@@ -104,6 +143,17 @@ public class FileManager {
     }
   }
 
+  /**
+   * <h2>writeStarGameStateToCSV</h2>
+   *
+   * Writes a Star game state to a CSV file.
+   *
+   * @param file       Output file.
+   * @param players    List of players.
+   * @param boardPath  Path of the board file used.
+   * @param diceCount  Number of dice used.
+   * @param turnIndex  Current turn index.
+   */
   public static void writeStarGameStateToCSV(File file, List<Player> players, String boardPath, int diceCount, int turnIndex) {
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
       writer.write("Board," + boardPath + "\n");
@@ -115,8 +165,7 @@ public class FileManager {
                 p.getName(),
                 p.getCharacterIcon(),
                 p.getPosition(),
-                p.getPoints())
-        );
+                p.getPoints()));
       }
       logger.info("Game state written to {}", file.getAbsolutePath());
     } catch (IOException e) {
@@ -124,7 +173,13 @@ public class FileManager {
     }
   }
 
-
+  /**
+   * <h2>cleanupIfTemporary</h2>
+   *
+   * Deletes the file at the given path if it exists.
+   *
+   * @param tempFilePath Path to the temporary file.
+   */
   public static void cleanupIfTemporary(String tempFilePath) {
     if (tempFilePath != null) {
       File file = new File(tempFilePath);
@@ -134,5 +189,4 @@ public class FileManager {
       }
     }
   }
-
 }

@@ -1,6 +1,5 @@
 package edu.ntnu.idi.idatt.navigation;
 
-
 import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 
 import edu.ntnu.idi.idatt.controller.common.*;
@@ -12,7 +11,6 @@ import edu.ntnu.idi.idatt.controller.snl.*;
 import edu.ntnu.idi.idatt.controller.star.StarGameController;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.filehandling.GameStateCsvLoader;
-
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
 import edu.ntnu.idi.idatt.model.common.factory.SNLFactory;
 import edu.ntnu.idi.idatt.model.common.factory.StarFactory;
@@ -23,55 +21,67 @@ import edu.ntnu.idi.idatt.model.snl.*;
 import edu.ntnu.idi.idatt.model.stargame.StarBoard;
 import edu.ntnu.idi.idatt.model.stargame.StarGame;
 import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
-
 import edu.ntnu.idi.idatt.view.common.character.StarCharSelectionScreen;
 import edu.ntnu.idi.idatt.view.common.intro.StartScreenView;
 import edu.ntnu.idi.idatt.view.memorygame.MemoryRuleSelectionView;
 import edu.ntnu.idi.idatt.view.paint.PaintCanvasView;
 import edu.ntnu.idi.idatt.view.snl.SNLGameScreenView;
-
 import edu.ntnu.idi.idatt.view.snl.SNLLoadGameView;
 import edu.ntnu.idi.idatt.view.snl.SNLRuleSelectionView;
 import edu.ntnu.idi.idatt.view.star.StarGameView;
-
-import java.io.File;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.Objects;
-
 import edu.ntnu.idi.idatt.view.star.StarLoadGameView;
+
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Objects;
 
+/**
+ * <h1>NavigationManager</h1>
+ *
+ * Singleton responsible for handling all view transitions across the application.
+ * Provides centralized navigation logic and maintains a history stack.
+ */
 public class NavigationManager {
 
   private static final Logger logger = LoggerFactory.getLogger(NavigationManager.class);
   private static final NavigationManager instance = new NavigationManager();
 
-
   private Stage primaryStage;
+  private Scene scene;
   private NavigationHandler currentHandler;
   private CharacterSelectionManager characterSelectionManager;
   private SNLRuleSelectionModel ruleSelectionModel;
   private StarCharSelectionController starCharSelectionController;
-  private Scene scene;
+
   private final Deque<Parent> navigationStack = new LinkedList<>();
 
+  private NavigationManager() {}
 
-  private NavigationManager() {
-  }
-
+  /**
+   * <h2>getInstance</h2>
+   * @return Singleton instance of NavigationManager.
+   */
   public static NavigationManager getInstance() {
     return instance;
   }
 
+  /**
+   * <h2>initialize</h2>
+   * Initializes the primary stage and default scene.
+   *
+   * @param stage Main application stage.
+   */
   public void initialize(Stage stage) {
     this.primaryStage = stage;
     this.scene = new Scene(new StackPane());
@@ -95,9 +105,7 @@ public class NavigationManager {
   }
 
   public void setRoot(Parent root) {
-    if (root == null) {
-      throw new NullPointerException("Root cannot be null");
-    }
+    if (root == null) throw new NullPointerException("Root cannot be null");
     if (scene != null) {
       if (scene.getRoot() != null && scene.getRoot() != root) {
         navigationStack.push(scene.getRoot());
@@ -106,16 +114,25 @@ public class NavigationManager {
     }
   }
 
+  /**
+   * <h2>navigateBack</h2>
+   * Navigates back to the previous screen in the stack.
+   */
   public void navigateBack() {
     if (!navigationStack.isEmpty()) {
-      Parent previousRoot = navigationStack.pop();
-      scene.setRoot(previousRoot);
+      scene.setRoot(navigationStack.pop());
     } else {
       logger.info("Navigation stack is empty – can't go back further.");
       navigateToStartScreen();
     }
   }
 
+  /**
+   * <h2>navigateTo</h2>
+   * Navigates to a view based on the specified enum target.
+   *
+   * @param target The destination screen.
+   */
   public void navigateTo(NavigationTarget target) {
     switch (target) {
       case START_SCREEN -> navigateToStartScreen();
@@ -131,23 +148,19 @@ public class NavigationManager {
       case MEMORY_RULE_SCREEN -> navigateToMemoryRuleScreen();
       case MEMORY_GAME_SCREEN -> navigateToMemoryGame();
       case PAINT_CANVAS -> navigateToPaintCanvas();
-
     }
   }
 
   public void navigateToStartScreen() {
-    new StartScreenModel();
     StartScreenView view = new StartScreenView();
     setRoot(view.getRoot());
   }
-
 
   public void navigateToIntroScreen() {
     IntroScreenController controller = new IntroScreenController();
     controller.getView().initializeUI();
     setHandler(controller);
     setRoot(controller.getView().getRoot());
-
   }
 
   public void navigateToStarIntroScreen() {
@@ -165,31 +178,25 @@ public class NavigationManager {
     setRoot(view.getView());
   }
 
-
   public void navigateToSNLCharacterSelection() {
     characterSelectionManager = new CharacterSelectionManager();
     CharacterSelectionScreen view = new CharacterSelectionScreen(characterSelectionManager);
-    CharacterSelectionController controller = new CharacterSelectionController(
-        characterSelectionManager, view);
+    CharacterSelectionController controller = new CharacterSelectionController(characterSelectionManager, view);
     setCharacterSelectionManager(characterSelectionManager);
     setHandler(controller);
     setRoot(view.getView());
-    logger.info("CharacterSelectionManager initialized: {}",
-        characterSelectionManager != null ? "Yes" : "No");
-    logger.info("CharacterSelectionScreen initialized: {}", "Yes");
+    logger.info("Character selection initialized");
   }
 
   public void navigateToSNLRuleSelection() {
     try {
       ruleSelectionModel = new SNLRuleSelectionModel();
-      SNLRuleSelectionController controller = new SNLRuleSelectionController(ruleSelectionModel,
-          characterSelectionManager);
+      SNLRuleSelectionController controller = new SNLRuleSelectionController(ruleSelectionModel, characterSelectionManager);
       SNLRuleSelectionView view = new SNLRuleSelectionView(ruleSelectionModel, controller);
       view.initializeUI();
       setRuleSelectionModel(ruleSelectionModel);
       setHandler(controller);
       setRoot(view.getRoot());
-      logger.info("Navigated to Rule Selection Screen");
     } catch (Exception e) {
       logger.error("The RuleSelection module could not be loaded", e);
     }
@@ -210,23 +217,16 @@ public class NavigationManager {
   }
 
   public void navigateToStarGameScreen() {
-    logger.info("Starting Star Game...");
     try {
       String savePath = starCharSelectionController.getSavePath();
       File saveFile = new File(savePath);
       GameStateCsvLoader.GameState gameState = GameStateCsvLoader.StarLoad(savePath);
-      String boardpath = "default.json";
-
-      StarFactory factory = new StarFactory();
-      StarBoard board = factory.loadBoardFromFile(boardpath);
-
+      StarBoard board = new StarFactory().loadBoardFromFile("default.json");
       StarGame game = new StarGame(board, gameState.getPlayers(), gameState.getCurrentTurnIndex());
-
       StarGameController controller = new StarGameController(game, saveFile);
-      controller.notifyPlayerPositionChangedAll();
       StarGameView view = new StarGameView(controller);
+      controller.notifyPlayerPositionChangedAll();
       view.initializeUI();
-
       setHandler(controller);
       setRoot(view.getRoot());
     } catch (IOException e) {
@@ -235,32 +235,20 @@ public class NavigationManager {
   }
 
   public void navigateToSNLGameScreen() {
-    logger.info("Starting Snakes and Ladders game...");
     try {
       String savePath = ruleSelectionModel.getSavePath();
       File saveFile = new File(savePath);
       GameStateCsvLoader.GameState gameState = GameStateCsvLoader.SNLLoad(savePath);
       String boardPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + gameState.getBoardFile();
-      logger.info("Final board path: {}", boardPath);
-
-      SNLFactory factory = new SNLFactory();
-      SNLBoard board = factory.loadBoardFromFile(boardPath);
-
-      SNLGame game = new SNLGame(board, gameState.getPlayers(), gameState.getDiceCount(),
-          gameState.getCurrentTurnIndex());
+      SNLBoard board = new SNLFactory().loadBoardFromFile(boardPath);
+      SNLGame game = new SNLGame(board, gameState.getPlayers(), gameState.getDiceCount(), gameState.getCurrentTurnIndex());
       SNLGameScreenController controller = new SNLGameScreenController(game, saveFile, boardPath);
-
       controller.notifyPlayerPositionChangedAll();
-
-      SNLGameScreenView gameScreenView = new SNLGameScreenView(controller);
-
+      SNLGameScreenView view = new SNLGameScreenView(controller);
       setHandler(controller);
-      setRoot(gameScreenView.getRoot());
-
-      logger.info("Snakes and Ladders game screen initialized successfully.");
+      setRoot(view.getRoot());
     } catch (Exception e) {
-      logger.error("Failed to SNLLoad Snakes and Ladders game from save file", e);
-
+      logger.error("Failed to load Snakes and Ladders game from save file", e);
     }
   }
 
@@ -271,7 +259,6 @@ public class NavigationManager {
       view.initializeUI();
       setHandler(controller);
       setRoot(view.getRoot());
-      logger.info("Navigated to Memory Game Rule Selection Screen");
     } catch (Exception e) {
       logger.error("Failed to load Memory Rule Selection", e);
       showAlert("Error", "Failed to load Memory Rule Selection");
@@ -289,9 +276,6 @@ public class NavigationManager {
       MemoryGameController gameCtrl = new MemoryGameController(settings);
       setHandler(gameCtrl);
       setRoot(gameCtrl.getView().getRoot());
-      logger.info("Navigated to Memory Game Screen");
-    } catch (ClassCastException e) {
-      showAlert("Error", "Internal navigation error: wrong handler type.");
     } catch (Exception e) {
       logger.error("Failed to load Memory Game", e);
       showAlert("Error", "Failed to load Memory Game");
@@ -303,20 +287,27 @@ public class NavigationManager {
       PaintModel model = new PaintModel();
       PaintCanvasView view = new PaintCanvasView(model);
       setRoot(view.getRoot());
-      logger.info("Navigated to Paint Canvas");
     } catch (Exception e) {
       logger.error("Failed to load Paint Canvas", e);
       showAlert("Error", "Failed to load Paint Canvas");
     }
   }
 
+  /**
+   * <h2>getPrimaryStage</h2>
+   * @return The primary application stage.
+   */
   public Stage getPrimaryStage() {
     return primaryStage;
   }
 
+  /**
+   * <h2>setLogo</h2>
+   * Sets the application window icon.
+   *
+   * @param path Path to the image resource.
+   */
   public void setLogo(String path) {
-    primaryStage.getIcons().add(new Image(
-        Objects.requireNonNull(getClass().getResourceAsStream(path))));
+    primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(path))));
   }
 }
-

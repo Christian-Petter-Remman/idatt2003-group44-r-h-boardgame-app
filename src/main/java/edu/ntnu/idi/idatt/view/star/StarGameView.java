@@ -26,6 +26,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * <h1>StarGameView</h1>
+ * JavaFX implementation of the game screen for the Star game.
+ * Handles rendering of the board, displaying player positions,
+ * and observing game state changes via the GameScreenObserver interface.
+ */
+
 public class StarGameView extends GameScreen {
 
   private final int TILE_SIZE = 75;
@@ -36,6 +43,13 @@ public class StarGameView extends GameScreen {
 
   private final StarGameController controller;
 
+
+  /**
+   * <h2>Constructor</h2>
+   * Initializes the game screen, sets up listeners, and creates the UI.
+   *
+   * @param controller the controller handling game logic and player state
+   */
   public StarGameView(StarGameController controller) {
     this.controller = controller;
     File tempFile = controller.getCsvFile();
@@ -72,8 +86,7 @@ public class StarGameView extends GameScreen {
       }
 
       @Override
-      public void onGameSaved(String filePath) {
-      }
+      public void onGameSaved(String filePath) {}
     });
 
     createUI();
@@ -81,6 +94,10 @@ public class StarGameView extends GameScreen {
     setSaveListener(() -> showSaveGamePopup());
   }
 
+  /**
+   * <h2>showSaveGamePopup</h2>
+   * Displays a popup allowing the player to name and save the current game state.
+   */
   private void showSaveGamePopup() {
     javafx.stage.Popup popup = new javafx.stage.Popup();
 
@@ -132,15 +149,29 @@ public class StarGameView extends GameScreen {
         window.getY() + window.getHeight() / 2 - 70);
   }
 
+
   public void initializeUI() {
     createUI();
   }
 
+  /**
+   * <h2>showWinner</h2>
+   * Displays the winner dialog.
+   *
+   * @param winner the player who won the game
+   */
   private void showWinner(StarPlayer winner) {
     WinnerDialogs dialogs = new WinnerDialogs();
     dialogs.showWinnerDialog(winner);
   }
 
+
+  /**
+   * <h2>getCurrentPlayerImage</h2>
+   * Returns the current player's character icon as an Image.
+   *
+   * @return Image of current player's icon or null if not available
+   */
   @Override
   protected Image getCurrentPlayerImage() {
     Player currentPlayer = controller.getCurrentPlayer();
@@ -156,6 +187,10 @@ public class StarGameView extends GameScreen {
     return null;
   }
 
+  /**
+   * <h2>renderBoardGrid</h2>
+   * Draws the board grid using the tile mapping from BoardCreator.
+   */
   @Override
   public void renderBoardGrid() {
     boardGrid.getChildren().clear();
@@ -188,6 +223,14 @@ public class StarGameView extends GameScreen {
       boardGrid.add(cell, col, row);
     }
   }
+
+  /**
+   * <h2>createTile</h2>
+   * Creates a tile on the board with styling and player icons.
+   *
+   * @param tileNum logical number of the tile
+   * @return configured StackPane representing the tile
+   */
 
   @Override
   public StackPane createTile(int tileNum) {
@@ -239,6 +282,13 @@ public class StarGameView extends GameScreen {
     return cell;
   }
 
+  /**
+   * <h2>addOverlayImagesToCell</h2>
+   * Adds stars, tunnels, and bridges on top of the tile if present.
+   *
+   * @param cell     the tile pane
+   * @param tileNum  the tile number
+   */
   private void addOverlayImagesToCell(StackPane cell, int tileNum) {
     StarBoard board = (StarBoard) controller.getBoard();
     board.getBridges().forEach(bridge -> {
@@ -258,6 +308,14 @@ public class StarGameView extends GameScreen {
     });
   }
 
+  /**
+   * <h2>addImageToCell</h2>
+   * Adds an image overlay to a tile.
+   *
+   * @param cell          tile container
+   * @param imageFileName name of the image file to add
+   */
+
   private void addImageToCell(StackPane cell, String imageFileName) {
     try {
       var url = getClass().getResource("/images/" + imageFileName);
@@ -274,6 +332,13 @@ public class StarGameView extends GameScreen {
     }
   }
 
+  /**
+   * <h2>isBlank</h2>
+   * Checks if a tile is considered blank.
+   *
+   * @param tileNum tile number
+   * @return true if blank
+   */
 
   private boolean isBlank(int tileNum) {
     return blankTiles.contains(tileNum);

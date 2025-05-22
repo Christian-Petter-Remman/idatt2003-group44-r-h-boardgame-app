@@ -49,6 +49,14 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
   private Pane tokenLayer;
   private Canvas staticCanvas;
 
+  /**
+   * <h1>SNLGameScreenView</h1>
+   *
+   * View class for the Snakes and Ladders game. Extends the common {@link GameScreen} class and implements the
+   * {@link GameScreenObserver} interface to reflect game state changes. This class handles rendering of ladders,
+   * snakes, player movement animations, and game instructions.
+   */
+
   public SNLGameScreenView(SNLGameScreenController controller) {
     this.controller = controller;
     File tempFile = controller.getCsvFile();

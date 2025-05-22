@@ -13,11 +13,25 @@ import javafx.scene.layout.*;
 
 import java.io.File;
 
+/**
+ * <h1>StarLoadGameView</h1>
+ * JavaFX view that displays a list of recent saved games
+ * for the Star game and allows the user to load one of them.
+ */
 public class StarLoadGameView {
 
+  private final StarLoadGameController controller;
   private final StackPane root;
 
+  /**
+   * <h2>Constructor</h2>
+   * Creates the view and sets up the background, UI layout,
+   * recent save file buttons, and a back navigation button.
+   *
+   * @param controller the controller responsible for loading Star game saves
+   */
   public StarLoadGameView(StarLoadGameController controller) {
+    this.controller = controller;
     this.root = new StackPane();
 
     Image backgroundImage = new Image(
@@ -134,6 +148,12 @@ public class StarLoadGameView {
     return fileButton;
   }
 
+  /**
+   * <h2>getRoot</h2>
+   * Returns the root node of this view.
+   *
+   * @return root StackPane
+   */
   public Parent getRoot() {
     return root;
   }

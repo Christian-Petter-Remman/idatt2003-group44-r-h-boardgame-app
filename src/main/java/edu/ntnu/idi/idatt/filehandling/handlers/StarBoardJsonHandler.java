@@ -12,19 +12,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * <h1>StarBoardJsonHandler</h1>
+ *
+ * Handles loading and saving of StarBoard objects using JSON format.
+ * Supports both generic and strongly typed board loading, board file generation, and error handling.
+ */
 public class StarBoardJsonHandler implements FileHandler<StarBoard> {
-  
+
   private static final Logger logger = LoggerFactory.getLogger(StarBoardJsonHandler.class);
   private final Gson gson;
   private static final String BOARDS_DIR = FileManager.STAR_GAME_DIR;
 
+  /**
+   * <h2>Constructor</h2>
+   * Initializes a new Gson instance with exclusion strategies for serialization and deserialization.
+   */
   public StarBoardJsonHandler() {
     this.gson = new GsonBuilder()
             .setPrettyPrinting()
@@ -33,6 +38,15 @@ public class StarBoardJsonHandler implements FileHandler<StarBoard> {
             .create();
   }
 
+  /**
+   * <h2>loadBoardFromFile</h2>
+   * Loads a StarBoard from the specified JSON file.
+   *
+   * @param filePath Path to the JSON board file.
+   * @return Parsed StarBoard.
+   * @throws FileReadException    if file is not found or IO error occurs.
+   * @throws JsonParsingException if JSON is malformed.
+   */
   public StarBoard loadBoardFromFile(String filePath) throws FileReadException, JsonParsingException {
     logger.info("Loading board from file {}", filePath);
     try (Reader reader = new FileReader(filePath)) {
@@ -47,63 +61,80 @@ public class StarBoardJsonHandler implements FileHandler<StarBoard> {
     }
   }
 
-
+  /**
+   * <h2>parseBoard</h2>
+   * Parses a StarBoard object from a JsonObject.
+   *
+   * @param jsonObject JSON object representing the board.
+   * @return StarBoard with attributes applied.
+   */
   private StarBoard parseBoard(JsonObject jsonObject) {
     int size = jsonObject.get("size").getAsInt();
     StarBoard board = new StarBoard(size);
 
     if (jsonObject.has("tunnels")) {
-      JsonArray tunnelArray = jsonObject.getAsJsonArray("tunnels");
-      for (JsonElement element : tunnelArray) {
+      jsonObject.getAsJsonArray("tunnels").forEach(element -> {
         JsonObject obj = element.getAsJsonObject();
-        int start = obj.get("start").getAsInt();
-        int end = obj.get("end").getAsInt();
-        board.addTunnel(start, end);
-      }
+        board.addTunnel(obj.get("start").getAsInt(), obj.get("end").getAsInt());
+      });
     }
+
     if (jsonObject.has("bridge")) {
-      JsonArray bridgeArray = jsonObject.getAsJsonArray("bridge");
-      for (JsonElement element : bridgeArray) {
+      jsonObject.getAsJsonArray("bridge").forEach(element -> {
         JsonObject obj = element.getAsJsonObject();
-        int start = obj.get("start").getAsInt();
-        int end = obj.get("end").getAsInt();
-        board.addBridge(start, end);
-      }
+        board.addBridge(obj.get("start").getAsInt(), obj.get("end").getAsInt());
+      });
     }
 
     if (jsonObject.has("paths")) {
-      JsonArray pathsArray = jsonObject.getAsJsonArray("paths");
-      for (JsonElement element : pathsArray) {
+      jsonObject.getAsJsonArray("paths").forEach(element -> {
         JsonObject obj = element.getAsJsonObject();
-        int start = obj.get("start").getAsInt();
-        String direction = obj.get("dir").getAsString();
-        int endDynamic = obj.get("endDyn").getAsInt();
-        int endStatic = obj.get("endStat").getAsInt();
-        board.addPath(start, direction, endDynamic, endStatic);
-      }
+        board.addPath(
+                obj.get("start").getAsInt(),
+                obj.get("dir").getAsString(),
+                obj.get("endDyn").getAsInt(),
+                obj.get("endStat").getAsInt()
+        );
+      });
     }
 
     if (jsonObject.has("jail")) {
-      JsonArray pathArray = jsonObject.getAsJsonArray("jail");
-      for (JsonElement element : pathArray) {
-        JsonObject obj = element.getAsJsonObject();
-        int start = obj.get("start").getAsInt();
-        board.addJail(start);
-      }
+      jsonObject.getAsJsonArray("jail").forEach(element ->
+              board.addJail(element.getAsJsonObject().get("start").getAsInt())
+      );
     }
 
-    if (jsonObject.has("star")){
-        board.addStar();
-      }
+    if (jsonObject.has("star")) {
+      board.addStar();
+    }
+
     return board;
   }
 
+  /**
+   * <h2>loadGameFromFile</h2>
+   * Loads a board and creates a game instance using the provided creator function.
+   *
+   * @param filePath    Path to board file.
+   * @param gameCreator Function to create a game instance from board.
+   * @return The created game instance.
+   * @param <T> Type of the BoardGame.
+   * @throws FileReadException    if file access fails.
+   * @throws JsonParsingException if parsing fails.
+   */
   public <T extends BoardGame> T loadGameFromFile(String filePath, Function<StarBoard, T> gameCreator)
           throws FileReadException, JsonParsingException {
-    StarBoard board = loadBoardFromFile(filePath);
-    return gameCreator.apply(board);
+    return gameCreator.apply(loadBoardFromFile(filePath));
   }
 
+  /**
+   * <h2>saveToFile</h2>
+   * Saves a StarBoard to a JSON file.
+   *
+   * @param object   Board to save.
+   * @param fileName Destination file path.
+   * @throws Exception if writing fails.
+   */
   @Override
   public void saveToFile(StarBoard object, String fileName) throws Exception {
     try (Writer writer = new FileWriter(fileName)) {
@@ -112,6 +143,15 @@ public class StarBoardJsonHandler implements FileHandler<StarBoard> {
     }
   }
 
+  /**
+   * <h2>loadFromFile</h2>
+   * Loads a StarBoard from file (deserialization).
+   *
+   * @param fileName File name to read from.
+   * @return Loaded StarBoard.
+   * @throws FileReadException    on file error.
+   * @throws JsonParsingException on JSON parse error.
+   */
   @Override
   public StarBoard loadFromFile(String fileName) throws FileReadException, JsonParsingException {
     try (Reader reader = new FileReader(fileName)) {
@@ -123,137 +163,5 @@ public class StarBoardJsonHandler implements FileHandler<StarBoard> {
     } catch (JsonSyntaxException | IllegalStateException e) {
       throw new JsonParsingException("Invalid JSON in board file: " + fileName, e);
     }
-  }
-
-  public void generateBoardFiles() throws IOException {
-    logger.info("Starting board files generation check");
-
-    Path dirPath = Paths.get(BOARDS_DIR);
-
-    try {
-      if (!Files.exists(dirPath)) {
-        logger.error("Boards directory does not exist: {}", BOARDS_DIR);
-        throw new IOException("Boards directory does not exist: " + BOARDS_DIR);
-      }
-
-      if (!Files.isDirectory(dirPath)) {
-        logger.error("Boards path exists but is not a directory: {}", BOARDS_DIR);
-        throw new IOException("Boards path exists but is not a directory: " + BOARDS_DIR);
-      }
-
-      if (!Files.isWritable(dirPath)) {
-        logger.error("Boards directory is not writable: {}", BOARDS_DIR);
-        throw new IOException("Boards directory is not writable: " + BOARDS_DIR);
-      }
-    } catch (SecurityException e) {
-      logger.error("Security exception when accessing boards directory: {}", e.getMessage());
-      throw new IOException("Security exception when accessing boards directory", e);
-    }
-
-    Path defaultBoardPath = dirPath.resolve("default.json");
-    if (Files.exists(defaultBoardPath)) {
-      logger.info("Default board file already exists, checking if all board files are present");
-
-      boolean allBoardsExist = true;
-      String[] requiredBoards = {
-              "default.json", "easy.json", "hard.json",
-      };
-
-      for (String boardName : requiredBoards) {
-        if (!Files.exists(dirPath.resolve(boardName))) {
-          logger.warn("StarBoard file missing: {}", boardName);
-          allBoardsExist = false;
-          break;
-        }
-      }
-
-      if (allBoardsExist) {
-        logger.info("All board files already exist, skipping generation");
-        return;
-      } else {
-        logger.info("Some board files are missing, will generate all boards");
-      }
-    }
-
-    logger.info("Generating Snakes and Ladders board files...");
-
-    Map<String, String> boards = createBoardsMap();
-
-    int existingFiles = 0;
-    int createdFiles = 0;
-    int failedFiles = 0;
-
-    for (Map.Entry<String, String> entry : boards.entrySet()) {
-      String filename = entry.getKey();
-      String content = entry.getValue();
-
-      Path boardFilePath = dirPath.resolve(filename);
-
-      try {
-        if (Files.exists(boardFilePath)) {
-          logger.debug("StarBoard file already exists, skipping: {}", filename);
-          existingFiles++;
-          continue;
-        }
-
-        try (FileWriter writer = new FileWriter(boardFilePath.toFile())) {
-          writer.write(content);
-        }
-
-        if (!Files.exists(boardFilePath) || Files.size(boardFilePath) == 0) {
-          logger.error("Failed to create board file or file is empty: {}", filename);
-          failedFiles++;
-          continue;
-        }
-
-        logger.info("Successfully generated board file: {}", filename);
-        createdFiles++;
-      } catch (IOException e) {
-        logger.error("Error writing board file {}: {}", filename, e.getMessage());
-        failedFiles++;
-      } catch (SecurityException e) {
-        logger.error("Security exception when writing board file {}: {}", filename, e.getMessage());
-        failedFiles++;
-      }
-    }
-
-    if (failedFiles > 0) {
-      logger.warn("StarBoard file generation completed with issues: {} existing, {} created, {} failed",
-              existingFiles, createdFiles, failedFiles);
-      throw new IOException("Failed to generate " + failedFiles + " board files");
-    } else if (createdFiles > 0) {
-      logger.info("StarBoard file generation completed successfully: {} existing, {} created",
-              existingFiles, createdFiles);
-    } else {
-      logger.info("All board files already exist. No new files were created.");
-    }
-  }
-
-  private Map<String, String> createBoardsMap() {
-    Map<String, String> boards = new HashMap<>();
-
-    String defaultBoard = """
-        {
-          "size": 130,
-        }""";
-
-    String hardBoard = """
-        {
-          "size": 130,
-    
-        }""";
-
-    String easyBoard = """
-        {
-          "size": 130,
-         
-        }""";
-
-
-    boards.put("default.json", defaultBoard);
-    boards.put("easy.json", easyBoard);
-    boards.put("hard.json", hardBoard);
-
-    return boards;
   }
 }
