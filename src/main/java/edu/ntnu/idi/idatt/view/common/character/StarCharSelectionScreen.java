@@ -1,6 +1,5 @@
 package edu.ntnu.idi.idatt.view.common.character;
 
-import edu.ntnu.idi.idatt.controller.common.CharacterSelectionController;
 import edu.ntnu.idi.idatt.controller.common.StarCharSelectionController;
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionData;
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
@@ -20,7 +19,16 @@ import javafx.scene.text.Font;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+/**
+ * <h1>StarCharSelectionScreen</h1>
+ * <p>
+ * JavaFX UI screen for character selection in the Star board game.
+ * Allows activating/deactivating players, naming them, and assigning unique character icons.
+ * </p>
+ */
 public class StarCharSelectionScreen implements CharacterSelectionObserver {
 
   private final CharacterSelectionManager manager;
@@ -30,44 +38,78 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
   private final GridPane grid = new GridPane();
   private final List<PlayerPanel> panels = new ArrayList<>();
 
+  /**
+   * <h2>Constructor</h2>
+   *
+   * @param manager the shared character selection manager instance
+   */
   public StarCharSelectionScreen(CharacterSelectionManager manager) {
     this.manager = manager;
     manager.addObserver(this);
     buildRoot();
-    root.getStylesheets().add(
-            Objects.requireNonNull(
-                            getClass().getResource("/css/CharacterSelectionScreenStyles.css"))
-                    .toExternalForm());
+    root.getStylesheets().add(Objects.requireNonNull(
+            getClass().getResource("/css/CharacterSelectionScreenStyles.css")).toExternalForm());
   }
 
+  /**
+   * <h2>setHandler</h2>
+   * Assigns the controller handling player activation and character selection logic.
+   *
+   * @param handler the StarCharSelectionController
+   */
   public void setHandler(StarCharSelectionController handler) {
     this.handler = handler;
     panels.forEach(p -> p.setHandler(handler));
     update();
   }
 
-  public Parent getView() { return root; }
+  /**
+   * <h2>getView</h2>
+   *
+   * @return root layout node for this view
+   */
+  public Parent getView() {
+    return root;
+  }
 
-  @Override public void update() { panels.forEach(PlayerPanel::syncWithModel); }
+  /**
+   * <h2>update</h2>
+   * Refreshes the UI state from the underlying model.
+   */
+  @Override
+  public void update() {
+    panels.forEach(PlayerPanel::syncWithModel);
+  }
 
+  /**
+   * <h2>buildRoot</h2>
+   * Initializes the root layout and UI elements.
+   */
   private void buildRoot() {
-
     ImageView bg = new ImageView(new Image("/home_screen/star.png"));
-    bg.setFitWidth(1280); bg.setFitHeight(800); bg.setOpacity(0.15);
+    bg.setFitWidth(1280);
+    bg.setFitHeight(800);
+    bg.setOpacity(0.15);
 
-    grid.setHgap(40); grid.setVgap(40); grid.setAlignment(Pos.CENTER);
+    grid.setHgap(40);
+    grid.setVgap(40);
+    grid.setAlignment(Pos.CENTER);
 
-    for(int i=0;i<4;i++){
-      PlayerPanel p = new PlayerPanel(manager.getPlayers().get(i));
-      panels.add(p);
-      grid.add(p.node, i%2, i/2);
-    }
+    IntStream.range(0, 4).forEach(i -> {
+      PlayerPanel panel = new PlayerPanel(manager.getPlayers().get(i));
+      panels.add(panel);
+      grid.add(panel.node, i % 2, i / 2);
+    });
 
     Label title = new Label("Character Selection");
-    title.setFont(Font.font(24)); title.setStyle("-fx-text-fill:#333;");
+    title.setFont(Font.font(24));
+    title.setStyle("-fx-text-fill:#333;");
 
-    Button back = new Button("Back"), next = new Button("Continue");
-    back.getStyleClass().add("button"); next.getStyleClass().add("button");
+    Button back = new Button("Back");
+    Button next = new Button("Continue");
+    back.getStyleClass().add("button");
+    next.getStyleClass().add("button");
+
     back.setOnAction(e -> handler.navigateBack());
     next.setOnAction(e -> {
       if (manager.allActivePlayersHaveSelectedCharacters()) {
@@ -86,8 +128,7 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
     card.setAlignment(Pos.CENTER);
     card.setPadding(new Insets(40));
     card.setMaxWidth(1000);
-    card.setStyle("-fx-background-color:rgba(204,204,204,0.8);" +
-            "-fx-background-radius:20;");
+    card.setStyle("-fx-background-color:rgba(204,204,204,0.8); -fx-background-radius:20;");
 
     VBox wrap = new VBox(card);
     wrap.setAlignment(Pos.CENTER);
@@ -96,6 +137,10 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
     root.getChildren().addAll(bg, wrap);
   }
 
+  /**
+   * <h2>showCharacterMissingWarning</h2>
+   * Displays a warning popup if not all active players have selected characters.
+   */
   private void showCharacterMissingWarning() {
     javafx.stage.Popup popup = new javafx.stage.Popup();
 
@@ -105,81 +150,96 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
     header.setStyle("-fx-font-weight: bold; -fx-text-fill: #721c24;");
     Label message = new Label("Each active player must select a character before continuing.");
     message.setStyle("-fx-text-fill: #721c24;");
-
     content.getChildren().addAll(header, message);
 
     popup.getContent().add(content);
-    popup.setAutoHide(true); // Close when clicked elsewhere
+    popup.setAutoHide(true);
     popup.setHideOnEscape(true);
 
-    // Show near the center of the screen or stage
     javafx.stage.Window window = root.getScene().getWindow();
     popup.show(window, window.getX() + window.getWidth() / 2 - 150, window.getY() + window.getHeight() / 2 - 50);
   }
 
+  /**
+   * <h1>PlayerPanel</h1>
+   *
+   * UI panel for a single player in the character selection screen.
+   */
   private final class PlayerPanel {
-
     private final PlayerData player;
     private StarCharSelectionController handler;
 
     private final StackPane node = new StackPane();
-    private final VBox  activeBox = new VBox(10);
-    private final HBox  row1 = new HBox(10), row2 = new HBox(10);
-    private final ImageView plusIcon   = new ImageView(
-            new Image("/images/plus_icon.png"));
+    private final VBox activeBox = new VBox(10);
+    private final HBox row1 = new HBox(10), row2 = new HBox(10);
     private final Button removeBtn = new Button("X");
 
     private boolean shownActive = false;
     private final List<VBox> portraits = new ArrayList<>();
 
-    PlayerPanel(PlayerData p){
-      this.player = p;
-
+    /**
+     * <h2>Constructor</h2>
+     *
+     * @param player the PlayerData instance
+     */
+    PlayerPanel(PlayerData player) {
+      this.player = player;
       node.getStyleClass().add("player-slot");
-      node.setPrefSize(300,250);
-
-      plusIcon.setFitWidth(60); plusIcon.setFitHeight(60);
-      plusIcon.setStyle("-fx-cursor:hand;");
+      node.setPrefSize(300, 250);
 
       removeBtn.getStyleClass().add("remove-button");
 
-      TextField name = new TextField(p.getName());
-      name.textProperty().addListener((obs, oldVal, newVal) -> {
-        player.setName(newVal);
-      });
-      name.setFont(Font.font(16));
-      name.getStyleClass().add("player-name-field");
+      TextField nameField = new TextField(player.getName());
+      nameField.textProperty().addListener((obs, oldVal, newVal) -> player.setName(newVal));
+      nameField.setFont(Font.font(16));
+      nameField.getStyleClass().add("player-name-field");
+
       activeBox.setAlignment(Pos.CENTER);
       activeBox.setPadding(new Insets(10));
-      activeBox.getChildren().addAll(name,row1,row2);
+      activeBox.getChildren().addAll(nameField, row1, row2);
 
       manager.getAvailableCharacters().forEach(c -> {
-        VBox port = createPortrait(c);
-        portraits.add(port);
-        if(row1.getChildren().size()<5) row1.getChildren().add(port);
-        else                            row2.getChildren().add(port);
+        VBox portrait = createPortrait(c);
+        portraits.add(portrait);
+        if (row1.getChildren().size() < 5) row1.getChildren().add(portrait);
+        else row2.getChildren().add(portrait);
       });
 
       rebuildOuter();
       applyStylesAndListeners();
     }
 
-    void setHandler(StarCharSelectionController h){ this.handler = h; }
+    /**
+     * <h2>setHandler</h2>
+     *
+     * @param handler controller responsible for interaction callbacks
+     */
+    void setHandler(StarCharSelectionController handler) {
+      this.handler = handler;
+    }
 
-    void syncWithModel(){
-      if(player.isActive()!=shownActive){
+    /**
+     * <h2>syncWithModel</h2>
+     * Updates panel appearance and interaction logic based on current player state.
+     */
+    void syncWithModel() {
+      if (player.isActive() != shownActive) {
         shownActive = player.isActive();
         rebuildOuter();
       }
       applyStylesAndListeners();
     }
 
-    private void rebuildOuter(){
+    /**
+     * <h2>rebuildOuter</h2>
+     * Switches between active and inactive player layout.
+     */
+    private void rebuildOuter() {
       node.getChildren().clear();
-      if(shownActive){
+      if (shownActive) {
         node.getStyleClass().remove("inactive-player");
         StackPane active = new StackPane(activeBox);
-        if(player.getId()>2) {
+        if (player.getId() > 2) {
           active.getChildren().add(removeBtn);
           StackPane.setAlignment(removeBtn, Pos.TOP_RIGHT);
         }
@@ -190,12 +250,9 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
         VBox box = new VBox(10);
         box.setAlignment(Pos.CENTER);
 
-        ImageView plus = new ImageView(
-                new Image("/images/plus_icon.png", 80, 80, true, true));
-
+        ImageView plus = new ImageView(new Image("/images/plus_icon.png", 80, 80, true, true));
         Label txt = new Label("Activate");
         txt.setStyle("-fx-text-fill:#333; -fx-font-size:18;");
-
         box.getChildren().addAll(plus, txt);
 
         box.setOnMouseClicked(e -> {
@@ -205,60 +262,59 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
 
         node.getChildren().add(box);
       }
-
     }
 
-    private void applyStylesAndListeners(){
-
-      if(!shownActive && handler!=null){
-        plusIcon.setOnMouseClicked(e -> {
-          handler.activatePlayer(player.getId());
-          manager.notifyObservers();
-        });
-      }
-
-      if(shownActive && player.getId()>2 && handler!=null){
+    /**
+     * <h2>applyStylesAndListeners</h2>
+     * Applies visual state (selected, disabled) and click listeners to each character portrait.
+     */
+    private void applyStylesAndListeners() {
+      if (shownActive && player.getId() > 2 && handler != null) {
         removeBtn.setOnAction(e -> {
           handler.deactivatePlayer(player.getId());
           manager.notifyObservers();
         });
       }
 
-      for(VBox portrait: portraits){
-        CharacterSelectionData data =
-                (CharacterSelectionData) portrait.getUserData();
+      portraits.forEach(portrait -> {
+        CharacterSelectionData data = (CharacterSelectionData) portrait.getUserData();
 
-        portrait.getStyleClass()
-                .removeAll("selected-character","disabled-character");
+        portrait.getStyleClass().removeAll("selected-character", "disabled-character");
 
         boolean taken = manager.isCharacterTaken(data);
 
-        if(player.getSelectedCharacter()!=null &&
-                player.getSelectedCharacter().equals(data)){
+        if (player.getSelectedCharacter() != null && player.getSelectedCharacter().equals(data)) {
           portrait.getStyleClass().add("selected-character");
-        }else if(taken){
+        } else if (taken) {
           portrait.getStyleClass().add("disabled-character");
         }
 
-        if(!taken && handler!=null){
+        if (!taken && handler != null) {
           portrait.setOnMouseClicked(e -> {
-            handler.handleCharacterSelection(player.getId(),data);
+            handler.handleCharacterSelection(player.getId(), data);
             manager.notifyObservers();
           });
-        }else{
+        } else {
           portrait.setOnMouseClicked(null);
         }
-      }
+      });
     }
 
-    private VBox createPortrait(CharacterSelectionData c){
+    /**
+     * <h2>createPortrait</h2>
+     *
+     * @param character character data
+     * @return VBox containing the image for the character
+     */
+    private VBox createPortrait(CharacterSelectionData character) {
       VBox box = new VBox();
       box.setAlignment(Pos.CENTER);
       box.getStyleClass().add("character-container");
-      box.setUserData(c);
-      ImageView img = new ImageView(
-              new Image(c.getImagePath(),60,60,true,true));
+      box.setUserData(character);
+
+      ImageView img = new ImageView(new Image(character.getImagePath(), 60, 60, true, true));
       box.getChildren().add(img);
+
       return box;
     }
   }

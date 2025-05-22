@@ -25,11 +25,21 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
+/**
+ * <h1>WinnerDialogs</h1>
+ * Utility class that displays a styled winner screen for the different game modes (Star, SNL, Memory).
+ */
 public class WinnerDialogs {
 
-  Logger logger = LoggerFactory.getLogger(WinnerDialogs.class);
+  private static final Logger logger = LoggerFactory.getLogger(WinnerDialogs.class);
 
+  /**
+   * Displays a winner dialog based on the type of game player.
+   *
+   * @param winner the player who has won the game
+   */
   public void showWinnerDialog(Player winner) {
     if (winner instanceof StarPlayer starPlayer) {
       showWinnerScreen("Star Game", starPlayer.getName(), "They earned " + starPlayer.getPoints() + " stars!", starPlayer.getCharacterIcon());
@@ -38,17 +48,29 @@ public class WinnerDialogs {
     }
   }
 
+  /**
+   * Displays a winner dialog for the Memory Game with multiple winners.
+   *
+   * @param winners list of players who tied in the memory game
+   */
   public void showMemoryWinnerDialog(List<MemoryPlayer> winners) {
-    StringBuilder names = new StringBuilder();
-    winners.forEach(p -> names.append(p.getName()).append(", "));
-    String nameList = names.substring(0, names.length() - 2);
+    String nameList = winners.stream()
+            .map(MemoryPlayer::getName)
+            .collect(Collectors.joining(", "));
     showWinnerScreen("Memory Game", "Winners!", nameList, "null.png");
   }
 
+  /**
+   * Creates and shows a styled winner screen for the specified game.
+   *
+   * @param gameTitle      title of the game
+   * @param winnerName     name of the winning player(s)
+   * @param message        custom message to display
+   * @param characterIcon  name of the icon image file for the player
+   */
   private void showWinnerScreen(String gameTitle, String winnerName, String message, String characterIcon) {
     Stage dialogStage = new Stage(StageStyle.UNDECORATED);
     dialogStage.initModality(Modality.APPLICATION_MODAL);
-
     Stage ownerStage = NavigationManager.getInstance().getPrimaryStage();
     if (ownerStage != null) {
       dialogStage.initOwner(ownerStage);
@@ -58,11 +80,11 @@ public class WinnerDialogs {
     container.setAlignment(Pos.CENTER);
     container.setPadding(new Insets(40));
     container.setStyle(
-        "-fx-background-color: linear-gradient(to bottom, #fefefe, #d9e6f2);" +
-            "-fx-border-color: #333333;" +
-            "-fx-border-width: 3;" +
-            "-fx-border-radius: 15;" +
-            "-fx-background-radius: 15;"
+            "-fx-background-color: linear-gradient(to bottom, #fefefe, #d9e6f2);" +
+                    "-fx-border-color: #333333;" +
+                    "-fx-border-width: 3;" +
+                    "-fx-border-radius: 15;" +
+                    "-fx-background-radius: 15;"
     );
 
     Label title = new Label(gameTitle);
@@ -79,7 +101,8 @@ public class WinnerDialogs {
 
     ImageView imageView = new ImageView();
     try {
-      Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/player_icons/" + characterIcon.toLowerCase() + ".png")));
+      Image image = new Image(Objects.requireNonNull(
+              getClass().getResourceAsStream("/player_icons/" + characterIcon.toLowerCase() + ".png")));
       imageView.setImage(image);
       imageView.setFitHeight(180);
       imageView.setPreserveRatio(true);
@@ -90,10 +113,10 @@ public class WinnerDialogs {
     Button homeButton = new Button("Home Page");
     homeButton.setFont(Font.font("Arial", FontWeight.BOLD, 16));
     homeButton.setStyle(
-        "-fx-background-color: #4CAF50;" +
-            "-fx-text-fill: white;" +
-            "-fx-background-radius: 10;" +
-            "-fx-padding: 12 28;"
+            "-fx-background-color: #4CAF50;" +
+                    "-fx-text-fill: white;" +
+                    "-fx-background-radius: 10;" +
+                    "-fx-padding: 12 28;"
     );
     homeButton.setOnAction(e -> {
       dialogStage.close();

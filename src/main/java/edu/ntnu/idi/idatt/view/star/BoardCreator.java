@@ -2,6 +2,13 @@ package edu.ntnu.idi.idatt.view.star;
 
 public class BoardCreator {
 
+  /**
+   * <h1>BoardCreator</h1>
+   *
+   * Utility class for mapping tile transitions in the Star game.
+   * Given an input tile number, it returns a predefined output tile number
+   * based on board logic or redirects (e.g., ladders, warps, penalties).
+   */
   public static int StarGameCreator(int imputTile){
     int outputTile = 0;
 
