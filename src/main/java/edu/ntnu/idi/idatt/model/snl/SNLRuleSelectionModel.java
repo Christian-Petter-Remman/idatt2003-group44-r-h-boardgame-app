@@ -1,10 +1,9 @@
 package edu.ntnu.idi.idatt.model.snl;
 
-import edu.ntnu.idi.idatt.filehandling.FileManager;
-import edu.ntnu.idi.idatt.filehandling.handlers.SNLBoardJsonHandler;
 import edu.ntnu.idi.idatt.exceptions.FileReadException;
 import edu.ntnu.idi.idatt.exceptions.JsonParsingException;
-
+import edu.ntnu.idi.idatt.filehandling.FileManager;
+import edu.ntnu.idi.idatt.filehandling.handlers.SNLBoardJsonHandler;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,17 +13,26 @@ import java.util.stream.Collectors;
 /**
  * <h1>SNLRuleSelectionModel</h1>
  *
- * Handles logic related to rule selection for Snakes and Ladders,
- * including available boards, dice count, and observer notification.
+ * <p>Handles logic related to rule selection for Snakes and Ladders, including available boards,
+ * dice
+ * count, and observer notification.
  */
 public class SNLRuleSelectionModel {
 
   /**
    * <h2>Observer</h2>
    *
-   * Interface for views or controllers that need to react to changes in rule selection.
+   * <p>Interface for views or controllers that need to react to changes in rule selection.
    */
   public interface Observer {
+
+    /**
+     * <h2>onRuleSelectionChanged</h2>
+     *
+     * <p>Called when the rule selection changes, such as when a new board is selected or dice
+     * count
+     * is modified.
+     */
     void onRuleSelectionChanged();
   }
 
@@ -39,7 +47,7 @@ public class SNLRuleSelectionModel {
   /**
    * <h2>Constructor</h2>
    *
-   * Initializes the model and loads available board files.
+   * <p>Initializes the model and loads available board files.
    */
   public SNLRuleSelectionModel() {
     this.availableBoards = loadAvailableBoards();
@@ -49,7 +57,7 @@ public class SNLRuleSelectionModel {
   }
 
   /**
-   * <h2>getSavePath</h2>
+   * <h2>getSavePath.</h2>
    *
    * @return Path where game state should be saved.
    */
@@ -58,7 +66,7 @@ public class SNLRuleSelectionModel {
   }
 
   /**
-   * <h2>setSavePath</h2>
+   * <h2>setSavePath.</h2>
    *
    * @param savePath The path to save game state.
    */
@@ -69,23 +77,25 @@ public class SNLRuleSelectionModel {
   /**
    * <h2>loadAvailableBoards</h2>
    *
-   * Scans the board directory and returns a sorted list of JSON board filenames.
+   * <p>Scans the board directory and returns a sorted list of JSON board filenames.
    *
    * @return List of board filenames.
    */
   private List<String> loadAvailableBoards() {
     File dir = new File(FileManager.SNAKES_LADDERS_BOARDS_DIR);
     File[] files = dir.listFiles((d, name) -> name.toLowerCase().endsWith(".json"));
-    if (files == null) return new ArrayList<>();
+    if (files == null) {
+      return new ArrayList<>();
+    }
 
     return Arrays.stream(files)
-            .map(File::getName)
-            .sorted(String::compareToIgnoreCase)
-            .collect(Collectors.toList());
+        .map(File::getName)
+        .sorted(String::compareToIgnoreCase)
+        .collect(Collectors.toList());
   }
 
   /**
-   * <h2>getAvailableBoards</h2>
+   * <h2>getAvailableBoards.</h2>
    *
    * @return List of available board filenames.
    */
@@ -94,7 +104,7 @@ public class SNLRuleSelectionModel {
   }
 
   /**
-   * <h2>getSelectedBoardFile</h2>
+   * <h2>getSelectedBoardFile.</h2>
    *
    * @return The currently selected board filename.
    */
@@ -105,7 +115,7 @@ public class SNLRuleSelectionModel {
   /**
    * <h2>setSelectedBoardFile</h2>
    *
-   * Sets the currently selected board and notifies observers.
+   * <p>Sets the currently selected board and notifies observers.
    *
    * @param boardFile Filename to set.
    */
@@ -115,7 +125,7 @@ public class SNLRuleSelectionModel {
   }
 
   /**
-   * <h2>getDiceCount</h2>
+   * <h2>getDiceCount.</h2>
    *
    * @return The number of dice set.
    */
@@ -126,7 +136,7 @@ public class SNLRuleSelectionModel {
   /**
    * <h2>setDiceCount</h2>
    *
-   * Sets the dice count (limited to 1–2) and notifies observers.
+   * <p>Sets the dice count (limited to 1–2) and notifies observers.
    *
    * @param diceCount Dice count value.
    */
@@ -138,7 +148,7 @@ public class SNLRuleSelectionModel {
   /**
    * <h2>addObserver</h2>
    *
-   * Registers an observer to be notified on rule changes.
+   * <p>Registers an observer to be notified on rule changes.
    *
    * @param observer The observer to add.
    */
@@ -149,7 +159,7 @@ public class SNLRuleSelectionModel {
   /**
    * <h2>notifyObservers</h2>
    *
-   * Notifies all registered observers about rule changes.
+   * <p>Notifies all registered observers about rule changes.
    */
   private void notifyObservers() {
     observers.forEach(Observer::onRuleSelectionChanged);
@@ -158,16 +168,24 @@ public class SNLRuleSelectionModel {
   /**
    * <h2>getDisplayName</h2>
    *
-   * Converts board filename to a user-friendly name.
+   * <p>Converts board filename to a user-friendly name.
    *
    * @param boardFile The filename.
    * @return Display name for UI.
    */
   public static String getDisplayName(String boardFile) {
-    if (boardFile == null) return "";
-    if (boardFile.equalsIgnoreCase("default.json")) return "Default";
-    if (boardFile.equalsIgnoreCase("easy.json")) return "Easy";
-    if (boardFile.equalsIgnoreCase("hard.json")) return "Hard";
+    if (boardFile == null) {
+      return "";
+    }
+    if (boardFile.equalsIgnoreCase("default.json")) {
+      return "Default";
+    }
+    if (boardFile.equalsIgnoreCase("easy.json")) {
+      return "Easy";
+    }
+    if (boardFile.equalsIgnoreCase("hard.json")) {
+      return "Hard";
+    }
     if (boardFile.toLowerCase().startsWith("random")) {
       String num = boardFile.replaceAll("[^0-9]", "");
       return "Random " + num;
@@ -176,7 +194,7 @@ public class SNLRuleSelectionModel {
   }
 
   /**
-   * <h2>getLadderCountFromJSON</h2>
+   * <h2>getLadderCountFromJSON.</h2>
    *
    * @return Number of ladders in the selected board.
    */
@@ -190,7 +208,7 @@ public class SNLRuleSelectionModel {
   }
 
   /**
-   * <h2>getSnakeCountFromJSON</h2>
+   * <h2>getSnakeCountFromJSON.</h2>
    *
    * @return Number of snakes in the selected board.
    */

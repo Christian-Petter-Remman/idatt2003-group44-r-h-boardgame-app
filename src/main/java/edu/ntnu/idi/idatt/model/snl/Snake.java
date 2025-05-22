@@ -7,32 +7,28 @@ import edu.ntnu.idi.idatt.model.common.TileAttribute;
 /**
  * <h1>Snake</h1>
  *
- * Represents a snake tile attribute in the Snakes and Ladders game.
- * When a player lands on this tile, they are moved backward to the end tile.
+ * <p>Represents a snake tile attribute in the Snakes and Ladders game. When a player lands on this
+ * tile, they are moved backward to the end tile.
  */
-public class Snake implements TileAttribute {
-
-  private final int start;
-  private final int end;
+public record Snake(int start, int end) implements TileAttribute {
 
   /**
    * <h2>Snake</h2>
    *
-   * Constructs a Snake with a start and end position.
+   * <p>Constructs a Snake with a start and end position.
    *
    * @param start the tile number where the snake begins
    * @param end   the tile number where the snake ends
    */
-  public Snake(int start, int end) {
-    this.start = start;
-    this.end = end;
+  public Snake {
   }
 
   /**
    * <h2>onLand</h2>
    *
-   * Executes the snake effect when a player lands on its starting tile,
-   * moving them down to the end tile.
+   * <p>Executes the snake effect when a player lands on its starting tile, moving them down to the
+   * end
+   * tile.
    *
    * @param player the player who landed on the tile
    * @param board  the game board
@@ -43,20 +39,22 @@ public class Snake implements TileAttribute {
   }
 
   /**
-   * <h2>getStart</h2>
+   * <h2>getStart.</h2>
    *
    * @return the starting tile of the snake
    */
-  public int getStart() {
+  @Override
+  public int start() {
     return start;
   }
 
   /**
-   * <h2>getEnd</h2>
+   * <h2>getEnd.</h2>
    *
    * @return the ending tile of the snake
    */
-  public int getEnd() {
+  @Override
+  public int end() {
     return end;
   }
 }

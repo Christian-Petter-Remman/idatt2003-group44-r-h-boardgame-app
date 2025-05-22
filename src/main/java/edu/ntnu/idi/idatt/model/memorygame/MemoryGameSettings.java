@@ -5,14 +5,15 @@ import java.util.List;
 /**
  * <h1>MemoryGameSettings</h1>
  *
- * Represents configuration settings for a Memory game, including board size and participating players.
+ * <p>Represents configuration settings for a Memory game, including board size and participating
+ * players.
  */
 public class MemoryGameSettings {
 
   /**
    * <h2>BoardSize</h2>
    *
-   * Enum representing the available board dimensions for the Memory game.
+   * <p>Enum representing the available board dimensions for the Memory game.
    */
   public enum BoardSize {
     FOUR_BY_FOUR(4, 4),
@@ -30,7 +31,7 @@ public class MemoryGameSettings {
     /**
      * <h3>getFileName</h3>
      *
-     * Generates the corresponding file name based on board dimensions.
+     * <p>Generates the corresponding file name based on board dimensions.
      *
      * @return the JSON filename for the board configuration.
      */
@@ -39,7 +40,7 @@ public class MemoryGameSettings {
     }
 
     /**
-     * <h3>getRows</h3>
+     * <h3>getRows.</h3>
      *
      * @return the number of rows on the board.
      */
@@ -48,7 +49,7 @@ public class MemoryGameSettings {
     }
 
     /**
-     * <h3>getCols</h3>
+     * <h3>getCols.</h3>
      *
      * @return the number of columns on the board.
      */
@@ -63,10 +64,10 @@ public class MemoryGameSettings {
   /**
    * <h2>Constructor</h2>
    *
-   * Constructs a game settings instance with a board size and player list.
+   * <p>Constructs a game settings instance with a board size and player list.
    *
    * @param boardSize the board size (e.g. 4x4, 6x6)
-   * @param players the list of participating players
+   * @param players   the list of participating players
    */
   public MemoryGameSettings(BoardSize boardSize, List<MemoryPlayer> players) {
     this.boardSize = boardSize;
@@ -74,7 +75,7 @@ public class MemoryGameSettings {
   }
 
   /**
-   * <h2>getBoardSize</h2>
+   * <h2>getBoardSize.</h2>
    *
    * @return the selected board size
    */
@@ -85,7 +86,7 @@ public class MemoryGameSettings {
   /**
    * <h2>setBoardSize</h2>
    *
-   * Sets the board size for the game.
+   * <p>Sets the board size for the game.
    *
    * @param boardSize the new board size
    */
@@ -94,7 +95,7 @@ public class MemoryGameSettings {
   }
 
   /**
-   * <h2>getPlayers</h2>
+   * <h2>getPlayers.</h2>
    *
    * @return the list of players participating in the game
    */
@@ -105,7 +106,7 @@ public class MemoryGameSettings {
   /**
    * <h2>setPlayers</h2>
    *
-   * Sets the list of players for the game.
+   * <p>Sets the list of players for the game.
    *
    * @param players the players to assign to the game
    */

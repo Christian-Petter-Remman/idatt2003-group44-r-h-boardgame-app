@@ -1,10 +1,10 @@
 package edu.ntnu.idi.idatt.view.common.character;
 
 import edu.ntnu.idi.idatt.controller.common.StarCharSelectionController;
-import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionData;
-import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
-import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionObserver;
-import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
+import edu.ntnu.idi.idatt.model.common.characterselection.CharacterSelectionData;
+import edu.ntnu.idi.idatt.model.common.characterselection.CharacterSelectionManager;
+import edu.ntnu.idi.idatt.model.common.characterselection.CharacterSelectionObserver;
+import edu.ntnu.idi.idatt.model.common.characterselection.PlayerData;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -19,7 +19,6 @@ import javafx.scene.text.Font;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**

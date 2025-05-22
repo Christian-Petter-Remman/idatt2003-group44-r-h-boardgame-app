@@ -1,13 +1,12 @@
 package edu.ntnu.idi.idatt.model.stargame;
 
-import edu.ntnu.idi.idatt.model.common.AbstractBoard;
 import edu.ntnu.idi.idatt.model.common.Player;
 
 /**
  * <h1>StarPlayer</h1>
  *
- * Represents a player in the Star board game. Holds information such as name, character,
- * current position on the board, and collected points.
+ * <p>Represents a player in the Star board game. Holds information such as name, character, current
+ * position on the board, and collected points.
  */
 public class StarPlayer extends Player {
 
@@ -15,7 +14,7 @@ public class StarPlayer extends Player {
   private int points;
 
   /**
-   * <h2>Constructor</h2>
+   * <h2>Constructor.</h2>
    * Creates a new StarPlayer instance with initial attributes.
    *
    * @param name      The name of the player.
@@ -30,7 +29,8 @@ public class StarPlayer extends Player {
   }
 
   /**
-   * <h2>getPosition</h2>
+   * <h2>getPosition.</h2>
+   *
    * @return Current tile position of the player.
    */
   public int getPosition() {
@@ -38,7 +38,8 @@ public class StarPlayer extends Player {
   }
 
   /**
-   * <h2>setPosition</h2>
+   * <h2>setPosition.</h2>
+   *
    * @param position New tile position to assign to the player.
    */
   public void setPosition(int position) {
@@ -46,7 +47,8 @@ public class StarPlayer extends Player {
   }
 
   /**
-   * <h2>getPoints</h2>
+   * <h2>getPoints.</h2>
+   *
    * @return Current points the player has.
    */
   public int getPoints() {
@@ -54,7 +56,8 @@ public class StarPlayer extends Player {
   }
 
   /**
-   * <h2>setPoints</h2>
+   * <h2>setPoints.</h2>
+   *
    * @param points The new points value to set.
    */
   public void setPoints(int points) {
@@ -83,7 +86,8 @@ public class StarPlayer extends Player {
   }
 
   /**
-   * <h2>getStartPosition</h2>
+   * <h2>getStartPosition.</h2>
+   *
    * @return The default starting position for the player.
    */
   @Override

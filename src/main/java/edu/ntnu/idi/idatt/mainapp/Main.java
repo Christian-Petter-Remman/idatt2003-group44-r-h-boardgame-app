@@ -5,20 +5,18 @@ import static edu.ntnu.idi.idatt.util.AlertUtil.showAlert;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationTarget;
+import java.io.File;
 import javafx.application.Application;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.util.Arrays;
 
 /**
  * <h1>Main</h1>
  *
- * Entry point for the JavaFX application. Initializes directory structure, navigation, and main UI.
+ * <p>Entry point for the JavaFX application. Initializes directory structure, navigation, and main
+ * UI.
  * Also handles startup exceptions and cleanup of temporary saved games.
  */
 public class Main extends Application {
@@ -29,7 +27,7 @@ public class Main extends Application {
   /**
    * <h2>start</h2>
    *
-   * Launches the JavaFX application. Sets up directories, UI, and navigation.
+   * <p>Launches the JavaFX application. Sets up directories, UI, and navigation.
    *
    * @param primaryStage the primary stage provided by JavaFX.
    */
@@ -59,23 +57,35 @@ public class Main extends Application {
   /**
    * <h2>cleanTempSaves</h2>
    *
-   * Deletes all files in the `saves/temp/` directory to ensure no leftover temporary save files exist.
+   * <p>Deletes all files in the `saves/temp/` directory to ensure no leftover temporary save files
+   * exist.
    */
   public static void cleanTempSaves() {
     File tempDir = new File("saves/temp/");
     if (tempDir.exists() && tempDir.isDirectory()) {
       File[] files = tempDir.listFiles();
       if (files != null) {
-        Arrays.stream(files).forEach(File::delete);
-        logger.info("Cleaned up all temporary saves.");
+        int deleted = 0;
+        int failed = 0;
+        for (File file : files) {
+          boolean success = file.delete();
+          if (success) {
+            deleted++;
+          } else {
+            failed++;
+            logger.warn("Failed to delete temporary save file: {}", file.getAbsolutePath());
+          }
+        }
+        logger.info("Cleaned up temporary saves. Deleted: {}, Failed: {}", deleted, failed);
       }
     }
   }
 
+
   /**
    * <h2>main</h2>
    *
-   * Main method for launching the application via `Application.launch`.
+   * <p>Main method for launching the application via `Application.launch`.
    *
    * @param args command-line arguments (not used).
    */

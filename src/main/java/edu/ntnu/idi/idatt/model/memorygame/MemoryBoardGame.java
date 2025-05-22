@@ -1,16 +1,17 @@
 package edu.ntnu.idi.idatt.model.memorygame;
 
 import edu.ntnu.idi.idatt.model.common.factory.MemoryCardFactory;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>MemoryBoardGame</h1>
- * Manages the state and logic of a memory card matching game.
- * It tracks player turns, card flips, scorekeeping, and notifies observers of game events.
+ * Manages the state and logic of a memory card matching game. It tracks player turns, card flips,
+ * scorekeeping, and notifies observers of game events.
  */
 public class MemoryBoardGame {
 
@@ -20,6 +21,7 @@ public class MemoryBoardGame {
   private final List<MemoryGameObserver> observers = new ArrayList<>();
   private int currentPlayerIndex;
   private MemoryCard firstSelected;
+  private static final Logger logger = LoggerFactory.getLogger(MemoryBoardGame.class);
 
   /**
    * <h2>Constructor</h2>
@@ -82,7 +84,9 @@ public class MemoryBoardGame {
     }
 
     MemoryCard card = cards.get(index);
-    if (card.isFaceUp() || card.isMatched()) return;
+    if (card.isFaceUp() || card.isMatched()) {
+      return;
+    }
 
     card.setFaceUp(true);
     if (firstSelected == null) {
@@ -92,15 +96,16 @@ public class MemoryBoardGame {
     }
 
     notifyBoardUpdated();
-    MemoryCard second = card;
 
-    if (firstSelected.getId().equals(second.getId())) {
+    if (firstSelected.getId().equals(card.getId())) {
       firstSelected.setMatched(currentPlayerIndex);
-      second.setMatched(currentPlayerIndex);
+      card.setMatched(currentPlayerIndex);
       players.get(currentPlayerIndex).incrementScore();
       firstSelected = null;
       notifyBoardUpdated();
-      if (isGameOver()) notifyGameOver();
+      if (isGameOver()) {
+        notifyGameOver();
+      }
     } else {
       MemoryCard first = firstSelected;
       int prevPlayer = currentPlayerIndex;
@@ -108,9 +113,12 @@ public class MemoryBoardGame {
       new Thread(() -> {
         try {
           Thread.sleep(500);
-        } catch (InterruptedException ignored) {}
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          logger.warn("MemoryCard flip delay interrupted: {}", e.getMessage());
+        }
         first.setFaceUp(false);
-        second.setFaceUp(false);
+        card.setFaceUp(false);
         currentPlayerIndex = (prevPlayer + 1) % players.size();
         notifyBoardUpdated();
       }).start();
@@ -135,13 +143,13 @@ public class MemoryBoardGame {
    */
   public List<MemoryPlayer> getWinners() {
     int maxScore = players.stream()
-            .mapToInt(MemoryPlayer::getScore)
-            .max()
-            .orElse(0);
+        .mapToInt(MemoryPlayer::getScore)
+        .max()
+        .orElse(0);
 
     return players.stream()
-            .filter(p -> p.getScore() == maxScore)
-            .collect(Collectors.toList());
+        .filter(p -> p.getScore() == maxScore)
+        .collect(Collectors.toList());
   }
 
   /**

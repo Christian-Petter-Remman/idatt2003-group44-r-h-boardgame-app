@@ -1,7 +1,7 @@
 package edu.ntnu.idi.idatt.view.common.character;
 
 import edu.ntnu.idi.idatt.controller.common.CharacterSelectionController;
-import edu.ntnu.idi.idatt.model.common.character_selection.*;
+import edu.ntnu.idi.idatt.model.common.characterselection.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;

@@ -1,7 +1,6 @@
-package edu.ntnu.idi.idatt.model.common.character_selection;
+package edu.ntnu.idi.idatt.model.common.characterselection;
 
 import edu.ntnu.idi.idatt.model.common.Observable;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +8,7 @@ import java.util.Optional;
 /**
  * <h1>CharacterSelectionManager</h1>
  *
- * Manages the available characters and player selections during the character selection phase.
+ * <p>Manages the available characters and player selections during the character selection phase.
  * Implements the Observable pattern to notify views or handlers of state changes.
  */
 public class CharacterSelectionManager implements Observable {
@@ -37,16 +36,26 @@ public class CharacterSelectionManager implements Observable {
    * Initializes the character list and four default players.
    */
   public CharacterSelectionManager() {
-    availableCharacters.add(new CharacterSelectionData("Bowser", "/player_icons/bowser.png", false, null));
-    availableCharacters.add(new CharacterSelectionData("Charmander", "/player_icons/charmander.png", false, null));
-    availableCharacters.add(new CharacterSelectionData("Fish", "/player_icons/fish.png", false, null));
-    availableCharacters.add(new CharacterSelectionData("Luigi", "/player_icons/luigi.png", false, null));
-    availableCharacters.add(new CharacterSelectionData("Mario", "/player_icons/mario.png", false, null));
-    availableCharacters.add(new CharacterSelectionData("Peach", "/player_icons/peach.png", false, null));
-    availableCharacters.add(new CharacterSelectionData("TheRock", "/player_icons/therock.png", false, null));
-    availableCharacters.add(new CharacterSelectionData("SnoopDogg", "/player_icons/snoopdogg.png", false, null));
-    availableCharacters.add(new CharacterSelectionData("Toad", "/player_icons/toad.png", false, null));
-    availableCharacters.add(new CharacterSelectionData("Yoshi", "/player_icons/yoshi.png", false, null));
+    availableCharacters.add(
+        new CharacterSelectionData("Bowser", "/player_icons/bowser.png", false, null));
+    availableCharacters.add(
+        new CharacterSelectionData("Charmander", "/player_icons/charmander.png", false, null));
+    availableCharacters.add(
+        new CharacterSelectionData("Fish", "/player_icons/fish.png", false, null));
+    availableCharacters.add(
+        new CharacterSelectionData("Luigi", "/player_icons/luigi.png", false, null));
+    availableCharacters.add(
+        new CharacterSelectionData("Mario", "/player_icons/mario.png", false, null));
+    availableCharacters.add(
+        new CharacterSelectionData("Peach", "/player_icons/peach.png", false, null));
+    availableCharacters.add(
+        new CharacterSelectionData("TheRock", "/player_icons/therock.png", false, null));
+    availableCharacters.add(
+        new CharacterSelectionData("SnoopDogg", "/player_icons/snoopdogg.png", false, null));
+    availableCharacters.add(
+        new CharacterSelectionData("Toad", "/player_icons/toad.png", false, null));
+    availableCharacters.add(
+        new CharacterSelectionData("Yoshi", "/player_icons/yoshi.png", false, null));
 
     players = new ArrayList<>();
     for (int i = 1; i <= 4; i++) {
@@ -55,7 +64,8 @@ public class CharacterSelectionManager implements Observable {
   }
 
   /**
-   * <h2>getAvailableCharacters</h2>
+   * <h2>getAvailableCharacters.</h2>
+   *
    * @return list of all available characters
    */
   public List<CharacterSelectionData> getAvailableCharacters() {
@@ -63,7 +73,8 @@ public class CharacterSelectionManager implements Observable {
   }
 
   /**
-   * <h2>getPlayers</h2>
+   * <h2>getPlayers.</h2>
+   *
    * @return list of all players
    */
   public List<PlayerData> getPlayers() {
@@ -79,9 +90,9 @@ public class CharacterSelectionManager implements Observable {
    */
   public PlayerData getPlayerById(int playerId) {
     return players.stream()
-            .filter(p -> p.getId() == playerId)
-            .findFirst()
-            .orElse(null);
+        .filter(p -> p.getId() == playerId)
+        .findFirst()
+        .orElse(null);
   }
 
   /**
@@ -113,16 +124,16 @@ public class CharacterSelectionManager implements Observable {
    */
   public void activatePlayer(int playerId) {
     Optional.ofNullable(getPlayerById(playerId))
-            .ifPresent(player -> {
-              player.setActive(true);
-              notifyObservers();
-            });
+        .ifPresent(player -> {
+          player.setActive(true);
+          notifyObservers();
+        });
   }
 
   /**
    * <h2>deactivatePlayer</h2>
-   * Deactivates a player and unselects their character (if any).
-   * Only players with ID > 2 can be deactivated.
+   * Deactivates a player and unselects their character (if any). Only players with ID > 2 can be
+   * deactivated.
    *
    * @param playerId ID of the player to deactivate
    */
@@ -140,13 +151,14 @@ public class CharacterSelectionManager implements Observable {
   }
 
   /**
-   * <h2>allActivePlayersHaveSelectedCharacters</h2>
+   * <h2>allActivePlayersHaveSelectedCharacters.</h2>
+   *
    * @return true if all active players have selected characters, false otherwise
    */
   public boolean allActivePlayersHaveSelectedCharacters() {
     return players.stream()
-            .filter(PlayerData::isActive)
-            .allMatch(p -> p.getSelectedCharacter() != null);
+        .filter(PlayerData::isActive)
+        .allMatch(p -> p.getSelectedCharacter() != null);
   }
 
   /**
@@ -158,7 +170,7 @@ public class CharacterSelectionManager implements Observable {
    */
   public boolean isCharacterTaken(CharacterSelectionData character) {
     return players.stream()
-            .anyMatch(p -> character.equals(p.getSelectedCharacter()));
+        .anyMatch(p -> character.equals(p.getSelectedCharacter()));
   }
 
   /**

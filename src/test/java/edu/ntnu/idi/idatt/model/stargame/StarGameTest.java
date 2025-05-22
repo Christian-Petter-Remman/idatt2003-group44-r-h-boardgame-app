@@ -94,10 +94,10 @@ class StarGameTest {
   @Test
   void testPlayerCollectsStarDuringTurn() {
     Star star = board.addStar();
-    player1.setPosition(star.getStart() - 1);
+    player1.setPosition(star.start() - 1);
     int before = player1.getPoints();
     for (int i = 0; i < 10; i++) {
-      player1.setPosition(star.getStart() - 1);
+      player1.setPosition(star.start() - 1);
       game.playTurn();
       if (player1.getPoints() > before) {
         break;

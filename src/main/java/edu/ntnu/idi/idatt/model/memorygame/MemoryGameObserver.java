@@ -5,15 +5,15 @@ import java.util.List;
 /**
  * <h1>MemoryGameObserver</h1>
  *
- * Interface for observing state changes in the Memory game.
- * Implementers are notified of board updates and game-over events.
+ * <p>Interface for observing state changes in the Memory game. Implementers are notified of board
+ * updates and game-over events.
  */
 public interface MemoryGameObserver {
 
   /**
    * <h2>onBoardUpdated</h2>
    *
-   * Called when the game board has changed, such as after a card flip or reset.
+   * <p>Called when the game board has changed, such as after a card flip or reset.
    *
    * @param board the updated memory game board
    */
@@ -22,7 +22,7 @@ public interface MemoryGameObserver {
   /**
    * <h2>onGameOver</h2>
    *
-   * Called when the game has ended and winners have been determined.
+   * <p>Called when the game has ended and winners have been determined.
    *
    * @param winners a list of players who have the highest score
    */

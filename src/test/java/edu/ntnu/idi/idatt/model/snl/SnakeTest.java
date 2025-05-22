@@ -40,8 +40,8 @@ class SnakeTest {
   @Test
   void testConstructorAndGetters() {
     Snake snake = new Snake(16, 6);
-    assertEquals(16, snake.getStart());
-    assertEquals(6, snake.getEnd());
+    assertEquals(16, snake.start());
+    assertEquals(6, snake.end());
   }
 
   @Test

@@ -3,7 +3,7 @@ package edu.ntnu.idi.idatt.view.star;
 import edu.ntnu.idi.idatt.controller.star.StarGameController;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
+import edu.ntnu.idi.idatt.model.modelobservers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.stargame.StarBoard;
 import edu.ntnu.idi.idatt.model.stargame.StarPlayer;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
@@ -15,7 +15,6 @@ import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -85,8 +84,6 @@ public class StarGameView extends GameScreen {
         }
       }
 
-      @Override
-      public void onGameSaved(String filePath) {}
     });
 
     createUI();
@@ -292,17 +289,17 @@ public class StarGameView extends GameScreen {
   private void addOverlayImagesToCell(StackPane cell, int tileNum) {
     StarBoard board = (StarBoard) controller.getBoard();
     board.getBridges().forEach(bridge -> {
-      if (bridge.getStart() == tileNum || bridge.getEnd() == tileNum) {
+      if (bridge.start() == tileNum || bridge.end() == tileNum) {
         addImageToCell(cell, "bridge.png");
       }
     });
     board.getTunnels().forEach(tunnel -> {
-      if (tunnel.getStart() == tileNum || tunnel.getEnd() == tileNum) {
+      if (tunnel.start() == tileNum || tunnel.end() == tileNum) {
         addImageToCell(cell, "tunnel.png");
       }
     });
     board.getStars().forEach(star -> {
-      if (star.getStart() == tileNum) {
+      if (star.start() == tileNum) {
         addImageToCell(cell, "star.png");
       }
     });

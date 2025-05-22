@@ -7,8 +7,8 @@ import java.util.stream.IntStream;
 /**
  * <h1>Dice</h1>
  *
- * Represents a collection of dice used in a board game.
- * Provides functionality to roll multiple dice and retrieve their results.
+ * <p>Represents a collection of dice used in a board game. Provides functionality to roll multiple
+ * dice and retrieve their results.
  */
 public class Dice {
 
@@ -17,10 +17,10 @@ public class Dice {
   /**
    * <h2>Constructor</h2>
    *
-   * Initializes the Dice object with a given number of six-sided dice.
+   * <p>Initializes the Dice object with a given number of six-sided dice.
    *
    * @param numberOfDice the number of dice to include.
-   * @throws IllegalArgumentException if the number of dice is less than 1.
+   * @throws IllegalArgumentException if the number of dice is lower than 1.
    */
   public Dice(int numberOfDice) {
     if (numberOfDice < 1) {
@@ -28,14 +28,14 @@ public class Dice {
     }
 
     this.dice = IntStream.range(0, numberOfDice)
-            .mapToObj(i -> new Die(6))
-            .collect(Collectors.toList());
+        .mapToObj(i -> new Die(6))
+        .collect(Collectors.toList());
   }
 
   /**
    * <h2>getDiceCount</h2>
    *
-   * Returns the number of dice.
+   * <p>Returns the number of dice.
    *
    * @return the number of dice in this set.
    */
@@ -46,26 +46,26 @@ public class Dice {
   /**
    * <h2>getLastRolls</h2>
    *
-   * Returns a list of the most recent face values for each die.
+   * <p>Returns a list of the most recent face values for each die.
    *
    * @return list of integers representing the last rolled values.
    */
   public List<Integer> getLastRolls() {
     return dice.stream()
-            .map(Die::getFaceValue)
-            .collect(Collectors.toList());
+        .map(Die::getFaceValue)
+        .collect(Collectors.toList());
   }
 
   /**
    * <h2>roll</h2>
    *
-   * Rolls all dice and returns the total sum.
+   * <p>Rolls all dice and returns the total sum.
    *
    * @return the sum of all dice rolls.
    */
   public int roll() {
     return dice.stream()
-            .mapToInt(Die::roll)
-            .sum();
+        .mapToInt(Die::roll)
+        .sum();
   }
 }

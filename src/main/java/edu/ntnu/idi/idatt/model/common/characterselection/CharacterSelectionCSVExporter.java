@@ -1,14 +1,13 @@
-package edu.ntnu.idi.idatt.model.common.character_selection;
+package edu.ntnu.idi.idatt.model.common.characterselection;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <h1>CharacterSelectionCSVExporter</h1>
  *
- * Observes the character selection process and prepares player-character mappings
- * for export as CSV-compatible string arrays.
+ * <p>Observes the character selection process and prepares player-character mappings for export as
+ * CSV-compatible string arrays.
  */
 public class CharacterSelectionCSVExporter implements CharacterSelectionObserver {
 
@@ -18,7 +17,7 @@ public class CharacterSelectionCSVExporter implements CharacterSelectionObserver
   /**
    * <h2>Constructor</h2>
    *
-   * Registers this exporter as an observer to the character selection manager.
+   * <p>Registers this exporter as an observer to the character selection manager.
    *
    * @param manager The manager controlling the character selection.
    */
@@ -31,7 +30,7 @@ public class CharacterSelectionCSVExporter implements CharacterSelectionObserver
   /**
    * <h2>getPlayerCharacterData</h2>
    *
-   * Retrieves the list of player-character pairs in CSV-compatible format.
+   * <p>Retrieves the list of player-character pairs in CSV-compatible format.
    *
    * @return A list of string arrays representing selected characters.
    */
@@ -42,19 +41,19 @@ public class CharacterSelectionCSVExporter implements CharacterSelectionObserver
   /**
    * <h2>update</h2>
    *
-   * Updates the internal list of selected characters when notified of changes.
+   * <p>Updates the internal list of selected characters when notified of changes.
    */
   @Override
   public void update() {
     playerCharacterData.clear();
     playerCharacterData.addAll(
-            manager.getPlayers().stream()
-                    .filter(p -> p.isActive() && p.getSelectedCharacter() != null)
-                    .map(p -> new String[]{
-                            "Player " + p.getId(),
-                            p.getSelectedCharacter().getName()
-                    })
-                    .collect(Collectors.toList())
+        manager.getPlayers().stream()
+            .filter(p -> p.isActive() && p.getSelectedCharacter() != null)
+            .map(p -> new String[]{
+                "Player " + p.getId(),
+                p.getSelectedCharacter().getName()
+            })
+            .toList()
     );
   }
 }

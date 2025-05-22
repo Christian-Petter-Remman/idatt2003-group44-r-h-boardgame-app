@@ -1,20 +1,23 @@
 package edu.ntnu.idi.idatt.model.paint;
 
+import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
-import java.util.List;
+
 
 /**
  * <h1>Stroke</h1>
  *
- * Represents a drawn stroke in a paint application, consisting of a series of points, a color, and a line width.
+ * <p>Represents a drawn stroke in a paint application, consisting of a series of points, a color,
+ * and
+ * a line width.
  */
 public record Stroke(List<Point2D> points, Color color, double width) {
 
   /**
    * <h2>points</h2>
    *
-   * The list of points defining the stroke path.
+   * <p>The list of points defining the stroke path.
    *
    * @return the list of {@link Point2D} points
    */
@@ -26,7 +29,7 @@ public record Stroke(List<Point2D> points, Color color, double width) {
   /**
    * <h2>color</h2>
    *
-   * The color of the stroke.
+   * <p>The color of the stroke.
    *
    * @return the {@link Color} used
    */
@@ -38,7 +41,7 @@ public record Stroke(List<Point2D> points, Color color, double width) {
   /**
    * <h2>width</h2>
    *
-   * The width of the stroke.
+   * <p>The width of the stroke.
    *
    * @return the stroke width as a double
    */

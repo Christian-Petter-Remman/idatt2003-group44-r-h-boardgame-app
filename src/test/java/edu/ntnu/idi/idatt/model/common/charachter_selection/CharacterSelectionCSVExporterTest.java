@@ -1,9 +1,9 @@
 package edu.ntnu.idi.idatt.model.common.charachter_selection;
 
-import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionCSVExporter;
-import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionData;
-import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
-import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
+import edu.ntnu.idi.idatt.model.common.characterselection.CharacterSelectionCSVExporter;
+import edu.ntnu.idi.idatt.model.common.characterselection.CharacterSelectionData;
+import edu.ntnu.idi.idatt.model.common.characterselection.CharacterSelectionManager;
+import edu.ntnu.idi.idatt.model.common.characterselection.PlayerData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

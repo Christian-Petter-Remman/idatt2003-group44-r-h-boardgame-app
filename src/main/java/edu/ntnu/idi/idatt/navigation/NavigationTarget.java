@@ -1,5 +1,11 @@
 package edu.ntnu.idi.idatt.navigation;
 
+/**
+ * <h1>NavigationTarget</h1>
+ *
+ * <p>Enum representing the various screens and game states in the application. This is used for
+ * navigation purposes within the application.
+ */
 public enum NavigationTarget {
   INTRO_SCREEN,
   CHARACTER_SELECTION,

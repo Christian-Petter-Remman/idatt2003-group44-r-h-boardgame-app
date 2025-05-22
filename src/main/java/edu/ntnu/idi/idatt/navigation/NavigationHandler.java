@@ -5,7 +5,8 @@ import javafx.scene.Parent;
 /**
  * <h1>NavigationHandler</h1>
  *
- * Interface for navigation-related actions in the application. Implementations handle routing between UI views.
+ * <p>Interface for navigation-related actions in the application. Implementations handle routing
+ * between UI views.
  */
 public interface NavigationHandler {
 

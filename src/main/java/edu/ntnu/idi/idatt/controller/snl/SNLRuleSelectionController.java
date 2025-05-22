@@ -2,9 +2,9 @@ package edu.ntnu.idi.idatt.controller.snl;
 
 import edu.ntnu.idi.idatt.filehandling.SNLGameStateCsvExporter;
 import edu.ntnu.idi.idatt.filehandling.SaveFileNameGenerator;
-import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
-import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
-import edu.ntnu.idi.idatt.model.model_observers.CsvExportObserver;
+import edu.ntnu.idi.idatt.model.common.characterselection.CharacterSelectionManager;
+import edu.ntnu.idi.idatt.model.common.characterselection.PlayerData;
+import edu.ntnu.idi.idatt.model.modelobservers.CsvExportObserver;
 import edu.ntnu.idi.idatt.model.snl.SNLRuleSelectionModel;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;

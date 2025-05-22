@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * <h1>Tile</h1>
  *
- * Represents a single tile on the game board. Each tile has a number and may have one or more
+ * <p>Represents a single tile on the game board. Each tile has a number and may have one or more
  * attributes that define its behavior when a player lands on it.
  */
 public class Tile {
@@ -17,7 +17,7 @@ public class Tile {
   /**
    * <h2>Constructor</h2>
    *
-   * Initializes a tile with a given number.
+   * <p>Initializes a tile with a given number.
    *
    * @param number The tile's position on the board.
    */
@@ -26,7 +26,7 @@ public class Tile {
   }
 
   /**
-   * <h2>getNumber</h2>
+   * <h2>getNumber.</h2>
    *
    * @return The numeric identifier of this tile.
    */
@@ -37,7 +37,7 @@ public class Tile {
   /**
    * <h2>hasAttribute</h2>
    *
-   * Checks if this tile contains a specific type of attribute.
+   * <p>Checks if this tile contains a specific type of attribute.
    *
    * @param clazz The class of the attribute to check for.
    * @return {@code true} if the attribute type exists on this tile, otherwise {@code false}.
@@ -47,7 +47,7 @@ public class Tile {
   }
 
   /**
-   * <h2>getAttributes</h2>
+   * <h2>getAttributes.</h2>
    *
    * @return A list of attributes associated with this tile.
    */
@@ -58,7 +58,7 @@ public class Tile {
   /**
    * <h2>addAttribute</h2>
    *
-   * Adds a new attribute to this tile.
+   * <p>Adds a new attribute to this tile.
    *
    * @param attribute The attribute to be added.
    */
@@ -69,7 +69,7 @@ public class Tile {
   /**
    * <h2>onPlayerLanded</h2>
    *
-   * Triggers the behavior of all attributes on this tile when a player lands on it.
+   * <p>Triggers the behavior of all attributes on this tile when a player lands on it.
    *
    * @param player The player who landed on the tile.
    * @param board  The board the tile belongs to.

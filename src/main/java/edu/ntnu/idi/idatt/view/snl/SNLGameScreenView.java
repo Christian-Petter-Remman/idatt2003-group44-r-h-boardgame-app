@@ -3,7 +3,7 @@ package edu.ntnu.idi.idatt.view.snl;
 import edu.ntnu.idi.idatt.controller.snl.SNLGameScreenController;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
+import edu.ntnu.idi.idatt.model.modelobservers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.snl.Ladder;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
 import edu.ntnu.idi.idatt.model.snl.SNLPlayer;
@@ -24,7 +24,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -176,10 +175,10 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
     gc.clearRect(0, 0, staticCanvas.getWidth(), staticCanvas.getHeight());
     SNLBoard board = (SNLBoard) controller.getBoard();
     for (Ladder lad : board.getLadders()) {
-      drawLadder(gc, lad.getStart(), lad.getEnd());
+      drawLadder(gc, lad.start(), lad.end());
     }
     for (Snake sn : board.getSnakes()) {
-      drawSnake(gc, sn.getStart(), sn.getEnd());
+      drawSnake(gc, sn.start(), sn.end());
     }
   }
 
@@ -370,10 +369,6 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
   public void onPlayerTurnChanged(Player c) {
     currentPlayerLabel.setText("Current turn: " + c.getName());
     positionLabel.setText("Position: " + c.getPosition());
-  }
-
-  @Override
-  public void onGameSaved(String f) {
   }
 
   @Override

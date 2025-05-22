@@ -1,7 +1,7 @@
 package edu.ntnu.idi.idatt.filehandling;
 
-import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
-import edu.ntnu.idi.idatt.model.model_observers.CsvExportObserver;
+import edu.ntnu.idi.idatt.model.common.characterselection.PlayerData;
+import edu.ntnu.idi.idatt.model.modelobservers.CsvExportObserver;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;

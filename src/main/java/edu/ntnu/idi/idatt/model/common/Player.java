@@ -3,9 +3,9 @@ package edu.ntnu.idi.idatt.model.common;
 /**
  * <h1>Player</h1>
  *
- * Abstract representation of a player in a board game.
- * Stores position, character icon, points, and jail status.
- * Concrete implementations must define victory condition and starting position.
+ * <p>Abstract representation of a player in a board game. Stores position, character icon, points,
+ * and
+ * jail status. Concrete implementations must define victory condition and starting position.
  */
 public abstract class Player {
 
@@ -17,10 +17,10 @@ public abstract class Player {
   private boolean jailed = false;
 
   /**
-   * <h2>Constructor</h2>
+   * <h2>Constructor.</h2>
    *
-   * @param name           Player's display name.
-   * @param characterIcon  Identifier or path for the player's character icon.
+   * @param name          Player's display name.
+   * @param characterIcon Identifier or path for the player's character icon.
    */
   public Player(String name, String characterIcon) {
     this.name = name;
@@ -28,7 +28,7 @@ public abstract class Player {
   }
 
   /**
-   * <h2>getName</h2>
+   * <h2>getName.</h2>
    *
    * @return Player name.
    */
@@ -37,7 +37,7 @@ public abstract class Player {
   }
 
   /**
-   * <h2>getCharacter</h2>
+   * <h2>getCharacter.</h2>
    *
    * @return Character icon reference.
    */
@@ -46,7 +46,7 @@ public abstract class Player {
   }
 
   /**
-   * <h2>setPosition</h2>
+   * <h2>setPosition.</h2>
    *
    * @param position New board position.
    */
@@ -55,7 +55,7 @@ public abstract class Player {
   }
 
   /**
-   * <h2>getPosition</h2>
+   * <h2>getPosition.</h2>
    *
    * @return Current board position.
    */
@@ -66,7 +66,7 @@ public abstract class Player {
   /**
    * <h2>move</h2>
    *
-   * Moves the player a number of steps and triggers any tile effects.
+   * <p>Moves the player a number of steps and triggers any tile effects.
    *
    * @param steps Number of steps to move.
    * @param board Reference to the board.
@@ -81,7 +81,7 @@ public abstract class Player {
   }
 
   /**
-   * <h2>setCharacter</h2>
+   * <h2>setCharacter.</h2>
    *
    * @param character New character icon identifier.
    */
@@ -90,7 +90,7 @@ public abstract class Player {
   }
 
   /**
-   * <h2>getCharacterIcon</h2>
+   * <h2>getCharacterIcon.</h2>
    *
    * @return Character icon name or path.
    */
@@ -99,7 +99,7 @@ public abstract class Player {
   }
 
   /**
-   * <h2>isJailed</h2>
+   * <h2>isJailed.</h2>
    *
    * @return True if the player is in jail.
    */
@@ -110,7 +110,7 @@ public abstract class Player {
   /**
    * <h2>setJailed</h2>
    *
-   * Sends the player to jail for a given number of turns.
+   * <p>Sends the player to jail for a given number of turns.
    *
    * @param turns Number of turns to remain in jail.
    */
@@ -123,8 +123,7 @@ public abstract class Player {
   /**
    * <h2>decreaseJailTurns</h2>
    *
-   * Reduces the jail duration by one turn.
-   * Automatically releases the player if no turns remain.
+   * <p>Reduces the jail duration by one turn. Automatically releases the player if no turns remain.
    */
   public void decreaseJailTurns() {
     if (jailTurnsLeft > 0) {
@@ -136,7 +135,7 @@ public abstract class Player {
   }
 
   /**
-   * <h2>getJailTurnsLeft</h2>
+   * <h2>getJailTurnsLeft.</h2>
    *
    * @return Remaining jail turns.
    */
@@ -147,7 +146,7 @@ public abstract class Player {
   /**
    * <h2>releaseFromJail</h2>
    *
-   * Releases the player from jail immediately.
+   * <p>Releases the player from jail immediately.
    */
   public void releaseFromJail() {
     this.jailed = false;
@@ -155,7 +154,7 @@ public abstract class Player {
   }
 
   /**
-   * <h2>getPoints</h2>
+   * <h2>getPoints.</h2>
    *
    * @return Current score or star count.
    */
@@ -164,7 +163,7 @@ public abstract class Player {
   }
 
   /**
-   * <h2>addPoints</h2>
+   * <h2>addPoints.</h2>
    *
    * @param points Points to add.
    */
@@ -173,14 +172,14 @@ public abstract class Player {
   }
 
   /**
-   * <h2>hasWon</h2>
+   * <h2>hasWon.</h2>
    *
    * @return True if this player has met the winning condition.
    */
   public abstract boolean hasWon();
 
   /**
-   * <h2>getStartPosition</h2>
+   * <h2>getStartPosition.</h2>
    *
    * @return Starting position for this player.
    */
