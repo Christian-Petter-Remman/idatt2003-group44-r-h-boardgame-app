@@ -2,26 +2,36 @@ package edu.ntnu.idi.idatt.view.snl;
 
 import edu.ntnu.idi.idatt.controller.snl.SNLRuleSelectionController;
 import edu.ntnu.idi.idatt.model.snl.SNLRuleSelectionModel;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-import java.util.stream.Stream;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 /**
  * <h1>SNLRuleSelectionView</h1>
- * <p>
- * JavaFX view for selecting rules in a Snakes and Ladders game.
- * Allows players to choose difficulty level, number of dice, and shows modifiers.
- * Updates dynamically based on {@link SNLRuleSelectionModel} state.
+ * Snakes and Ladders Rule Selection View.
+ *
+ * <p>JavaFX view for selecting rules in a Snakes and Ladders game. Allows players to choose
+ * difficulty
+ * level, number of dice, and shows modifiers. Updates dynamically based on
+ * {@link SNLRuleSelectionModel} state.
  * </p>
  */
 public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
@@ -50,7 +60,7 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
   /**
    * Constructs the view with associated model and controller.
    *
-   * @param model the rule selection model
+   * @param model      the rule selection model
    * @param controller the controller managing user interaction
    */
   public SNLRuleSelectionView(SNLRuleSelectionModel model, SNLRuleSelectionController controller) {
@@ -66,7 +76,8 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
   public void initializeUI() {
     createUI();
     root.getStylesheets().add(
-            Objects.requireNonNull(getClass().getResource("/css/RuleSelectionStyles.css")).toExternalForm()
+        Objects.requireNonNull(getClass().getResource("/css/RuleSelectionStyles.css"))
+            .toExternalForm()
     );
     setupEventHandlers();
     applyInitialUIState();
@@ -88,7 +99,7 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
     card.setPadding(new Insets(30));
     card.setMaxWidth(380);
     card.setBackground(new Background(
-            new BackgroundFill(Color.gray(0.2, 0.8), new CornerRadii(12), Insets.EMPTY)
+        new BackgroundFill(Color.gray(0.2, 0.8), new CornerRadii(12), Insets.EMPTY)
     ));
 
     Label title = new Label("Rule Selection");
@@ -142,16 +153,16 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
     VBox.setVgrow(bottomSpacer, Priority.ALWAYS);
 
     card.getChildren().addAll(
-            topSpacer,
-            title,
-            diffBox,
-            diceContainer,
-            randomBtn,
-            modTitle,
-            modifiersLabel,
-            countLabel,
-            nav,
-            bottomSpacer
+        topSpacer,
+        title,
+        diffBox,
+        diceContainer,
+        randomBtn,
+        modTitle,
+        modifiersLabel,
+        countLabel,
+        nav,
+        bottomSpacer
     );
 
     root = new StackPane(bg, card);
@@ -177,8 +188,8 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
 
     randomBtn.setOnAction(e -> {
       List<String> r = model.getAvailableBoards().stream()
-              .filter(f -> f.toLowerCase().startsWith("random"))
-              .toList();
+          .filter(f -> f.toLowerCase().startsWith("random"))
+          .toList();
       if (!r.isEmpty()) {
         controller.setSelectedBoardFile(r.get(new Random().nextInt(r.size())));
       }
@@ -223,6 +234,8 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
 
   /**
    * <h2>getRoot</h2>
+   * Returns the root node of the UI for embedding in a scene.
+   *
    * @return the root node of the UI
    */
   public Parent getRoot() {
@@ -233,9 +246,9 @@ public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {
    * <h2>createRadioButton</h2>
    * Utility method for radio button creation.
    *
-   * @param text label text
+   * @param text     label text
    * @param userData user data to associate
-   * @param group ToggleGroup to assign the button to
+   * @param group    ToggleGroup to assign the button to
    * @return configured RadioButton
    */
   private RadioButton createRadioButton(String text, Object userData, ToggleGroup group) {

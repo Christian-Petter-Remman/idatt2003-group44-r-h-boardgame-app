@@ -9,6 +9,10 @@ import edu.ntnu.idi.idatt.model.stargame.StarPlayer;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.GameScreen;
 import edu.ntnu.idi.idatt.view.common.intro.dialogs.WinnerDialogs;
+import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
@@ -17,26 +21,26 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Popup;
 
-import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * <h1>StarGameView</h1>
- * JavaFX implementation of the game screen for the Star game.
- * Handles rendering of the board, displaying player positions,
- * and observing game state changes via the GameScreenObserver interface.
+ * JavaFX implementation of the game screen for the Star game. Handles rendering of the board,
+ * displaying player positions, and observing game state changes via the GameScreenObserver
+ * interface.
  */
 
 public class StarGameView extends GameScreen {
 
-  private final int TILE_SIZE = 75;
-  private final int rows = 10;
-  private final int cols = 13;
+  private final int tileSize = 75;
   private final List<Integer> blankTiles = new ArrayList<>(List.of(0));
 
 
@@ -88,7 +92,7 @@ public class StarGameView extends GameScreen {
 
     createUI();
     setBackListener(() -> NavigationManager.getInstance().navigateToStartScreen());
-    setSaveListener(() -> showSaveGamePopup());
+    setSaveListener(this::showSaveGamePopup);
   }
 
   /**
@@ -100,7 +104,8 @@ public class StarGameView extends GameScreen {
 
     VBox content = new VBox(10);
     content.setStyle(
-        "-fx-background-color: #e0f7fa; -fx-padding: 15; -fx-border-color: #00acc1; -fx-border-width: 2;");
+        "-fx-background-color: #e0f7fa; -fx-padding: 15; -fx-border-color: #00acc1;"
+            + " -fx-border-width: 2;");
     Label header = new Label("Save Game");
     header.setStyle("-fx-font-weight: bold; -fx-text-fill: #006064;");
 
@@ -111,6 +116,19 @@ public class StarGameView extends GameScreen {
     feedbackLabel.setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
     feedbackLabel.setVisible(false);
 
+    Button confirm = createSaveButton(filenameField, feedbackLabel, popup);
+
+    content.getChildren().addAll(header, filenameField, confirm, feedbackLabel);
+    popup.getContent().add(content);
+    popup.setAutoHide(true);
+    popup.setHideOnEscape(true);
+
+    javafx.stage.Window window = root.getScene().getWindow();
+    popup.show(window, window.getX() + window.getWidth() / 2 - 150,
+        window.getY() + window.getHeight() / 2 - 70);
+  }
+
+  private Button createSaveButton(TextField filenameField, Label feedbackLabel, Popup popup) {
     Button confirm = new Button("Save");
     confirm.setStyle("-fx-cursor: hand;");
     confirm.setOnAction(e -> {
@@ -129,24 +147,21 @@ public class StarGameView extends GameScreen {
         new Thread(() -> {
           try {
             Thread.sleep(1000);
-          } catch (InterruptedException ignored) {
+          } catch (InterruptedException ex) {
+            logger.warn("Error while sleeping thread", ex);
           }
-          javafx.application.Platform.runLater(popup::hide);
+          Platform.runLater(popup::hide);
         }).start();
       }
     });
-
-    content.getChildren().addAll(header, filenameField, confirm, feedbackLabel);
-    popup.getContent().add(content);
-    popup.setAutoHide(true);
-    popup.setHideOnEscape(true);
-
-    javafx.stage.Window window = root.getScene().getWindow();
-    popup.show(window, window.getX() + window.getWidth() / 2 - 150,
-        window.getY() + window.getHeight() / 2 - 70);
+    return confirm;
   }
 
 
+  /**
+   * <h2>initializeUI</h2>
+   * Sets up the UI components for the star game view.
+   */
   public void initializeUI() {
     createUI();
   }
@@ -194,18 +209,20 @@ public class StarGameView extends GameScreen {
     boardGrid.getColumnConstraints().clear();
     boardGrid.getRowConstraints().clear();
 
-    boardGrid.setPrefSize(TILE_SIZE * cols, TILE_SIZE * rows);
+    int rows = 10;
+    int cols = 13;
+    boardGrid.setPrefSize(tileSize * cols, tileSize * rows);
     boardGrid.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
     boardGrid.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
     for (int i = 0; i < cols; i++) {
-      ColumnConstraints colConst = new ColumnConstraints(TILE_SIZE);
+      ColumnConstraints colConst = new ColumnConstraints(tileSize);
       colConst.setHalignment(HPos.CENTER);
       boardGrid.getColumnConstraints().add(colConst);
     }
 
     for (int i = 0; i < rows; i++) {
-      RowConstraints rowConst = new RowConstraints(TILE_SIZE);
+      RowConstraints rowConst = new RowConstraints(tileSize);
       rowConst.setValignment(VPos.CENTER);
       boardGrid.getRowConstraints().add(rowConst);
     }
@@ -232,21 +249,21 @@ public class StarGameView extends GameScreen {
   @Override
   public StackPane createTile(int tileNum) {
     StackPane cell = new StackPane();
-    cell.setPrefSize(TILE_SIZE, TILE_SIZE);
+    cell.setPrefSize(tileSize, tileSize);
 
     if (tileNum == 100) {
       var url = getClass().getResource("/images/jailTile.png");
       if (url != null) {
         cell.setStyle(
-            "-fx-border-color: black; -fx-background-image: url('" + url.toExternalForm() + "'); " +
-                "-fx-background-size: cover;");
+            "-fx-border-color: black; -fx-background-image: url('" + url.toExternalForm() + "'); "
+                + "-fx-background-size: cover;");
       } else {
         cell.setStyle("-fx-border-color: black; -fx-background-color: black;");
       }
     } else {
       String borderColor = isBlank(tileNum) ? "white" : "black";
-      cell.setStyle("-fx-border-color: " + borderColor + ";" +
-          "-fx-background-color:" + getTileColor(tileNum) + ";");
+      cell.setStyle("-fx-border-color: " + borderColor + ";"
+          + "-fx-background-color:" + getTileColor(tileNum) + ";");
 
       if (tileNum != 0) {
         Text tileNumber = new Text(String.valueOf(tileNum));
@@ -267,9 +284,9 @@ public class StarGameView extends GameScreen {
           continue;
         }
 
-        Image image = new Image(url.toExternalForm(), TILE_SIZE * 0.5, TILE_SIZE * 0.5, true, true);
+        Image image = new Image(url.toExternalForm(), tileSize * 0.5, tileSize * 0.5, true, true);
         ImageView icon = new ImageView(image);
-        icon.setTranslateY(TILE_SIZE * 0.15 * playersOnTile.indexOf(player));
+        icon.setTranslateY(tileSize * 0.15 * playersOnTile.indexOf(player));
         cell.getChildren().add(icon);
       } catch (Exception e) {
         logger.error("Error loading image for character: {}", characterName, e);
@@ -283,8 +300,8 @@ public class StarGameView extends GameScreen {
    * <h2>addOverlayImagesToCell</h2>
    * Adds stars, tunnels, and bridges on top of the tile if present.
    *
-   * @param cell     the tile pane
-   * @param tileNum  the tile number
+   * @param cell    the tile pane
+   * @param tileNum the tile number
    */
   private void addOverlayImagesToCell(StackPane cell, int tileNum) {
     StarBoard board = (StarBoard) controller.getBoard();
@@ -321,7 +338,7 @@ public class StarGameView extends GameScreen {
         return;
       }
 
-      Image image = new Image(url.toExternalForm(), TILE_SIZE * 0.8, TILE_SIZE * 0.8, true, true);
+      Image image = new Image(url.toExternalForm(), tileSize * 0.8, tileSize * 0.8, true, true);
       ImageView icon = new ImageView(image);
       cell.getChildren().add(icon);
     } catch (Exception e) {

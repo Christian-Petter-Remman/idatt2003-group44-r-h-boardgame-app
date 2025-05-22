@@ -11,6 +11,11 @@ import edu.ntnu.idi.idatt.model.snl.Snake;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.view.GameScreen;
 import edu.ntnu.idi.idatt.view.common.intro.dialogs.WinnerDialogs;
+import java.io.File;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
@@ -26,19 +31,25 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.stage.Popup;
 import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+/**
+ * <h1>SNLGameScreenView</h1>
+ *
+ * <p>View class for the Snakes and Ladders game. Extends the common {@link GameScreen} class and
+ * implements the {@link GameScreenObserver} interface to reflect game state changes. This class
+ * handles rendering of ladders, snakes, player movement animations, and game instructions.
+ */
 public class SNLGameScreenView extends GameScreen implements GameScreenObserver {
 
   private static final Logger logger = LoggerFactory.getLogger(SNLGameScreenView.class);
@@ -51,14 +62,13 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
   /**
    * <h1>SNLGameScreenView</h1>
    *
-   * View class for the Snakes and Ladders game. Extends the common {@link GameScreen} class and implements the
-   * {@link GameScreenObserver} interface to reflect game state changes. This class handles rendering of ladders,
-   * snakes, player movement animations, and game instructions.
+   * <p>View class for the Snakes and Ladders game. Extends the common {@link GameScreen} class and
+   * implements the {@link GameScreenObserver} interface to reflect game state changes. This class
+   * handles rendering of ladders, snakes, player movement animations, and game instructions.
    */
 
   public SNLGameScreenView(SNLGameScreenController controller) {
     this.controller = controller;
-    File tempFile = controller.getCsvFile();
     controller.registerObserver(this);
     initializeOverlay();
     createUI();
@@ -83,11 +93,11 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
     Label title = new Label("INSTRUCTIONS");
     title.setFont(Font.font("Courier New", 18));
     Label instr = new Label(
-        "• Roll the dice\n" +
-            "• Move that many steps\n" +
-            "• Climb ladders\n" +
-            "• Slide down snakes\n" +
-            "• First to tile " + (BOARD_SIZE * BOARD_SIZE) + " wins"
+        "• Roll the dice\n"
+            + "• Move that many steps\n"
+            + "• Climb ladders\n"
+            + "• Slide down snakes\n"
+            + "• First to tile " + (BOARD_SIZE * BOARD_SIZE) + " wins"
     );
     instr.setWrapText(true);
     instructionBox.getChildren().addAll(title, instr);
@@ -101,14 +111,16 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
     Platform.runLater(this::initializePlayerTokens);
 
     setBackListener(() -> NavigationManager.getInstance().navigateToStartScreen());
-    setSaveListener(() -> showSaveGamePopup());
+    setSaveListener(this::showSaveGamePopup);
   }
 
   private void showSaveGamePopup() {
     javafx.stage.Popup popup = new javafx.stage.Popup();
 
     VBox content = new VBox(10);
-    content.setStyle("-fx-background-color: #e0f7fa; -fx-padding: 15; -fx-border-color: #00acc1; -fx-border-width: 2;");
+    content.setStyle(
+        "-fx-background-color: #e0f7fa; -fx-padding: 15;"
+            + " -fx-border-color: #00acc1; -fx-border-width: 2;");
     Label header = new Label("Save Game");
     header.setStyle("-fx-font-weight: bold; -fx-text-fill: #006064;");
 
@@ -119,27 +131,7 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
     feedbackLabel.setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
     feedbackLabel.setVisible(false);
 
-    Button confirm = new Button("Save");
-    confirm.setStyle("-fx-cursor: hand;");
-    confirm.setOnAction(e -> {
-      String filename = filenameField.getText().trim();
-      if (!filename.isEmpty()) {
-        FileManager.writeSNLGameStateToCSV(
-                controller.getCsvFile(),
-                controller.getPlayers(),
-                controller.getShortenBoardPath(controller.getBoardPath()),
-                controller.getDiceCount(),
-                controller.getCurrentPlayerIndex()
-        );
-        controller.saveGame(controller.getCsvFile(), filename + ".csv");
-        feedbackLabel.setText("Game saved");
-        feedbackLabel.setVisible(true);
-        new Thread(() -> {
-          try { Thread.sleep(1000); } catch (InterruptedException ignored) {}
-          javafx.application.Platform.runLater(popup::hide);
-        }).start();
-      }
-    });
+    Button confirm = createConfirmButton(filenameField, feedbackLabel, popup);
 
     content.getChildren().addAll(header, filenameField, confirm, feedbackLabel);
     popup.getContent().add(content);
@@ -147,7 +139,38 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
     popup.setHideOnEscape(true);
 
     javafx.stage.Window window = root.getScene().getWindow();
-    popup.show(window, window.getX() + window.getWidth() / 2 - 150, window.getY() + window.getHeight() / 2 - 70);
+    popup.show(window, window.getX() + window.getWidth() / 2 - 150,
+        window.getY() + window.getHeight() / 2 - 70);
+  }
+
+  private Button createConfirmButton(TextField filenameField, Label feedbackLabel, Popup popup) {
+    Button confirm = new Button("Save");
+    confirm.setStyle("-fx-cursor: hand;");
+    confirm.setOnAction(e -> {
+      String filename = filenameField.getText().trim();
+      if (!filename.isEmpty()) {
+        FileManager.writeSNLGameStateToCSV(
+            controller.getCsvFile(),
+            controller.getPlayers(),
+            controller.getShortenBoardPath(controller.getBoardPath()),
+            controller.getDiceCount(),
+            controller.getCurrentPlayerIndex()
+        );
+        controller.saveGame(controller.getCsvFile(), filename + ".csv");
+        feedbackLabel.setText("Game saved");
+        feedbackLabel.setVisible(true);
+        new Thread(() -> {
+          try {
+            Thread.sleep(1000);
+          } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            logger.error("Error while sleeping thread: {}", ex.getMessage());
+          }
+          Platform.runLater(popup::hide);
+        }).start();
+      }
+    });
+    return confirm;
   }
 
   @Override
@@ -183,7 +206,8 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
   }
 
   private void drawLadder(GraphicsContext gc, int s, int e) {
-    StackPane ts = findTileNode(s), te = findTileNode(e);
+    StackPane ts = findTileNode(s);
+    StackPane te = findTileNode(e);
     if (ts != null && te != null) {
       Bounds sb = staticCanvas.sceneToLocal(ts.localToScene(ts.getBoundsInLocal()));
       Bounds eb = staticCanvas.sceneToLocal(te.localToScene(te.getBoundsInLocal()));
@@ -205,7 +229,8 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
   }
 
   private void drawSnake(GraphicsContext gc, int s, int e) {
-    StackPane ts = findTileNode(s), te = findTileNode(e);
+    StackPane ts = findTileNode(s);
+    StackPane te = findTileNode(e);
     if (ts != null && te != null) {
       Bounds sb = staticCanvas.sceneToLocal(ts.localToScene(ts.getBoundsInLocal()));
       Bounds eb = staticCanvas.sceneToLocal(te.localToScene(te.getBoundsInLocal()));

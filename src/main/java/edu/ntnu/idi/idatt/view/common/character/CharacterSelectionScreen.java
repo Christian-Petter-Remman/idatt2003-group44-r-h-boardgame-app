@@ -1,7 +1,13 @@
 package edu.ntnu.idi.idatt.view.common.character;
 
 import edu.ntnu.idi.idatt.controller.common.CharacterSelectionController;
-import edu.ntnu.idi.idatt.model.common.characterselection.*;
+import edu.ntnu.idi.idatt.model.common.characterselection.CharacterSelectionData;
+import edu.ntnu.idi.idatt.model.common.characterselection.CharacterSelectionManager;
+import edu.ntnu.idi.idatt.model.common.characterselection.CharacterSelectionObserver;
+import edu.ntnu.idi.idatt.model.common.characterselection.PlayerData;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -10,21 +16,27 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import javafx.stage.Popup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>CharacterSelectionScreen</h1>
  *
- * JavaFX view for selecting characters before the game starts.
- * Supports activating players, naming them, and assigning characters visually.
+ * <p>JavaFX view for selecting characters before the game starts. Supports activating players,
+ * naming
+ * them, and assigning characters visually.
  */
 public final class CharacterSelectionScreen implements CharacterSelectionObserver {
 
+  private static final Logger logger = LoggerFactory.getLogger(CharacterSelectionScreen.class);
   private final CharacterSelectionManager manager;
   private CharacterSelectionController handler;
 
@@ -43,7 +55,7 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
     manager.addObserver(this);
     buildRoot();
     root.getStylesheets().add(Objects.requireNonNull(
-            getClass().getResource("/css/CharacterSelectionScreenStyles.css")).toExternalForm());
+        getClass().getResource("/css/CharacterSelectionScreenStyles.css")).toExternalForm());
   }
 
   /**
@@ -110,8 +122,8 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
     next.setOnAction(e -> {
       boolean allSelected = manager.allActivePlayersHaveSelectedCharacters();
       boolean allNamed = manager.getPlayers().stream()
-              .filter(PlayerData::isActive)
-              .allMatch(p -> p.getName() != null && !p.getName().trim().isEmpty());
+          .filter(PlayerData::isActive)
+          .allMatch(p -> p.getName() != null && !p.getName().trim().isEmpty());
 
       if (!allNamed) {
         showNameMissingWarning();
@@ -125,8 +137,6 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
 
       handler.navigateTo("SAL_RULE_SELECTION");
     });
-
-
 
     HBox btnRow = new HBox(20, back, new Region(), next);
     btnRow.setAlignment(Pos.CENTER);
@@ -149,14 +159,14 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
   private void showNameMissingWarning() {
     Label warning = new Label("Please enter names for all active players!");
     warning.setStyle(
-            "-fx-text-fill: red;" +
-                    "-fx-font-weight: bold;" +
-                    "-fx-font-size: 14px;" +
-                    "-fx-padding: 10;" +
-                    "-fx-background-color: #ffeeee;" +
-                    "-fx-border-color: red;" +
-                    "-fx-border-radius: 5;" +
-                    "-fx-background-radius: 5;"
+        "-fx-text-fill: red;"
+            + "-fx-font-weight: bold;"
+            + "-fx-font-size: 14px;"
+            + "-fx-padding: 10;"
+            + "-fx-background-color: #ffeeee;"
+            + "-fx-border-color: red;"
+            + "-fx-border-radius: 5;"
+            + "-fx-background-radius: 5;"
     );
     StackPane.setAlignment(warning, Pos.TOP_CENTER);
     StackPane.setMargin(warning, new Insets(20));
@@ -167,20 +177,26 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
       new Thread(() -> {
         try {
           Thread.sleep(2000);
-        } catch (InterruptedException ignored) {}
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          logger.warn("Warning display interrupted", e);
+        }
         javafx.application.Platform.runLater(() -> rootPane.getChildren().remove(warning));
       }).start();
     }
   }
+
   /**
    * <h2>showCharacterMissingWarning</h2>
    * Displays a popup warning if not all active players have selected a character.
    */
   private void showCharacterMissingWarning() {
-    javafx.stage.Popup popup = new javafx.stage.Popup();
+    Popup popup = new Popup();
 
     VBox content = new VBox(10);
-    content.setStyle("-fx-background-color: #f8d7da; -fx-padding: 15; -fx-border-color: #f5c2c7; -fx-border-width: 2;");
+    content.setStyle(
+        "-fx-background-color: #f8d7da; -fx-padding: 15; -fx-border-color: #f5c2c7;"
+            + " -fx-border-width: 2;");
     Label header = new Label("Missing Character");
     header.setStyle("-fx-font-weight: bold; -fx-text-fill: #721c24;");
     Label message = new Label("Each active player must select a character before continuing.");
@@ -192,13 +208,14 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
     popup.setHideOnEscape(true);
 
     javafx.stage.Window window = root.getScene().getWindow();
-    popup.show(window, window.getX() + window.getWidth() / 2 - 150, window.getY() + window.getHeight() / 2 - 50);
+    popup.show(window, window.getX() + window.getWidth() / 2 - 150,
+        window.getY() + window.getHeight() / 2 - 50);
   }
 
   /**
    * <h1>PlayerPanel</h1>
    *
-   * Inner class that represents a UI block for one player in the selection screen.
+   * <p>Inner class that represents a UI block for one player in the selection screen.
    */
   private final class PlayerPanel {
 
@@ -206,7 +223,8 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
     private CharacterSelectionController handler;
     private final StackPane node = new StackPane();
     private final VBox activeBox = new VBox(10);
-    private final HBox row1 = new HBox(10), row2 = new HBox(10);
+    private final HBox row1 = new HBox(10);
+    private final HBox row2 = new HBox(10);
     private final Button removeBtn = new Button("X");
 
     private boolean shownActive = false;
@@ -231,8 +249,11 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
       manager.getAvailableCharacters().forEach(c -> {
         VBox portrait = createPortrait(c);
         portraits.add(portrait);
-        if (row1.getChildren().size() < 5) row1.getChildren().add(portrait);
-        else row2.getChildren().add(portrait);
+        if (row1.getChildren().size() < 5) {
+          row1.getChildren().add(portrait);
+        } else {
+          row2.getChildren().add(portrait);
+        }
       });
 
       rebuildOuter();
