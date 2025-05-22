@@ -9,15 +9,15 @@ import edu.ntnu.idi.idatt.model.snl.SNLRuleSelectionModel;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationTarget;
-import javafx.scene.Parent;
-
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.Parent;
+
 
 /**
  * <h1>SNLRuleSelectionController</h1>
- * Controller responsible for handling the logic related to rule selection in the Snakes and Ladders game.
- * It manages communication between the rule selection view, model, and navigation manager.
+ * Controller responsible for handling the logic related to rule selection in the Snakes and Ladders
+ * game. It manages communication between the rule selection view, model, and navigation manager.
  */
 public class SNLRuleSelectionController implements NavigationHandler {
 
@@ -26,12 +26,13 @@ public class SNLRuleSelectionController implements NavigationHandler {
   private final CharacterSelectionManager characterSelectionManager;
 
   /**
-   * <h2>Constructor</h2>
+   * <h2>Constructor.</h2>
    *
-   * @param model  The rule selection model.
+   * @param model   The rule selection model.
    * @param manager The character selection manager.
    */
-  public SNLRuleSelectionController(SNLRuleSelectionModel model, CharacterSelectionManager manager) {
+  public SNLRuleSelectionController(SNLRuleSelectionModel model,
+      CharacterSelectionManager manager) {
     this.model = model;
     this.characterSelectionManager = manager;
   }
@@ -71,20 +72,11 @@ public class SNLRuleSelectionController implements NavigationHandler {
   }
 
   /**
-   * <h2>Returns the selected number of dice.</h2>
-   *
-   * @return the dice count
-   */
-  public int getSelectedDiceCount() {
-    return model.getDiceCount();
-  }
-
-  /**
    * <h2>Handles the logic when the "Continue" button is pressed.</h2>
    * Generates a save file name and triggers the CSV export logic.
    */
   public void onContinuePressed() {
-    String saveFileName = SaveFileNameGenerator.SNLgenerateSaveFileName();
+    String saveFileName = SaveFileNameGenerator.snlGenerateSaveFileName();
     String savePath = "saves/temp/" + saveFileName;
     model.setSavePath(savePath);
 

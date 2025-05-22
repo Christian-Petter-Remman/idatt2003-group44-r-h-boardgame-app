@@ -11,10 +11,10 @@ import edu.ntnu.idi.idatt.controller.snl.*;
 import edu.ntnu.idi.idatt.controller.star.StarGameController;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.filehandling.GameStateCsvLoader;
+import edu.ntnu.idi.idatt.filehandling.GameStateCsvLoader.GameState;
 import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
 import edu.ntnu.idi.idatt.model.common.factory.SNLFactory;
 import edu.ntnu.idi.idatt.model.common.factory.StarFactory;
-import edu.ntnu.idi.idatt.model.common.intro.StartScreenModel;
 import edu.ntnu.idi.idatt.model.memorygame.MemoryGameSettings;
 import edu.ntnu.idi.idatt.model.paint.PaintModel;
 import edu.ntnu.idi.idatt.model.snl.*;
@@ -220,7 +220,7 @@ public class NavigationManager {
     try {
       String savePath = starCharSelectionController.getSavePath();
       File saveFile = new File(savePath);
-      GameStateCsvLoader.GameState gameState = GameStateCsvLoader.StarLoad(savePath);
+      GameState gameState = GameStateCsvLoader.starLoad(savePath);
       StarBoard board = new StarFactory().loadBoardFromFile("default.json");
       StarGame game = new StarGame(board, gameState.getPlayers(), gameState.getCurrentTurnIndex());
       StarGameController controller = new StarGameController(game, saveFile);
@@ -238,7 +238,7 @@ public class NavigationManager {
     try {
       String savePath = ruleSelectionModel.getSavePath();
       File saveFile = new File(savePath);
-      GameStateCsvLoader.GameState gameState = GameStateCsvLoader.SNLLoad(savePath);
+      GameState gameState = GameStateCsvLoader.snlLoad(savePath);
       String boardPath = FileManager.SNAKES_LADDERS_BOARDS_DIR + "/" + gameState.getBoardFile();
       SNLBoard board = new SNLFactory().loadBoardFromFile(boardPath);
       SNLGame game = new SNLGame(board, gameState.getPlayers(), gameState.getDiceCount(), gameState.getCurrentTurnIndex());

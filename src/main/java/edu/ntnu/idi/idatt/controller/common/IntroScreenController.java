@@ -10,13 +10,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <h1>IntroScreenController</h1>
- * Controls the logic for the application's intro screen, handling navigation
- * to character selection or game load screens and coordinating the view's event listeners.
- * Implements {@link NavigationHandler} for navigation responsibilities.
+ * Controls the logic for the application's intro screen, handling navigation to character selection
+ * or game load screens and coordinating the view's event listeners. Implements
+ * {@link NavigationHandler} for navigation responsibilities.
  *
- * @author Christian
+ * @author Oliver, Christian
  */
 public class IntroScreenController implements NavigationHandler {
+
   private final SNLIntroView view;
   private static final Logger logger = LoggerFactory.getLogger(IntroScreenController.class);
 
@@ -57,7 +58,7 @@ public class IntroScreenController implements NavigationHandler {
   @Override
   public void navigateTo(String destination) {
     NavigationManager.getInstance().navigateTo(
-            NavigationTarget.valueOf(destination)
+        NavigationTarget.valueOf(destination)
     );
   }
 

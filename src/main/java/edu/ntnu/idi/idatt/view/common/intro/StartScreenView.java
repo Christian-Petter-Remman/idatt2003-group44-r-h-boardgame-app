@@ -107,7 +107,7 @@ public class StartScreenView implements PropertyChangeListener {
    */
   private void handleClick(MouseEvent ev) {
     ImageView src = (ImageView) ev.getSource();
-    controller.onIconClicked(src, src.getId());
+    controller.onIconClicked(src.getId());
   }
 
   /**

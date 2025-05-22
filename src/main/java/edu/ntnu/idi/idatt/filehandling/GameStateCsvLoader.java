@@ -3,28 +3,28 @@ package edu.ntnu.idi.idatt.filehandling;
 import edu.ntnu.idi.idatt.model.common.Player;
 import edu.ntnu.idi.idatt.model.snl.SNLPlayer;
 import edu.ntnu.idi.idatt.model.stargame.StarPlayer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>GameStateCsvLoader</h1>
- * Utility class responsible for loading saved game state from CSV files
- * for both Snakes and Ladders and Star board games.
+ * Utility class responsible for loading saved game state from CSV files for both Snakes and Ladders
+ * and Star board games.
  */
 public class GameStateCsvLoader {
 
   /**
    * <h1>GameState</h1>
-   * Represents the data loaded from a CSV save file, including board file,
-   * dice count, turn index, player list, and optionally points (for StarGame).
+   * Represents the data loaded from a CSV save file, including board file, dice count, turn index,
+   * player list, and optionally points (for StarGame).
    */
   public static class GameState {
+
     private static final Logger logger = LoggerFactory.getLogger(GameStateCsvLoader.class);
 
     private String boardFile;
@@ -34,7 +34,8 @@ public class GameStateCsvLoader {
     private int points;
 
     /**
-     * <h2>getBoardFile</h2>
+     * <h2>getBoardFile.</h2>
+     *
      * @return the path to the board file
      */
     public String getBoardFile() {
@@ -43,7 +44,8 @@ public class GameStateCsvLoader {
     }
 
     /**
-     * <h2>setBoardFile</h2>
+     * <h2>setBoardFile.</h2>
+     *
      * @param boardFile the path to the board file
      */
     public void setBoardFile(String boardFile) {
@@ -52,15 +54,8 @@ public class GameStateCsvLoader {
     }
 
     /**
-     * <h2>getBoardFileName</h2>
-     * @return the board file name (same as getBoardFile)
-     */
-    public String getBoardFileName() {
-      return boardFile;
-    }
-
-    /**
-     * <h2>getDiceCount</h2>
+     * <h2>getDiceCount.</h2>
+     *
      * @return the number of dice used in the game
      */
     public int getDiceCount() {
@@ -68,7 +63,8 @@ public class GameStateCsvLoader {
     }
 
     /**
-     * <h2>getCurrentTurnIndex</h2>
+     * <h2>getCurrentTurnIndex.</h2>
+     *
      * @return the index of the player whose turn it is
      */
     public int getCurrentTurnIndex() {
@@ -76,7 +72,8 @@ public class GameStateCsvLoader {
     }
 
     /**
-     * <h2>getPlayers</h2>
+     * <h2>getPlayers.</h2>
+     *
      * @return a list of players loaded from file
      */
     public List<Player> getPlayers() {
@@ -84,7 +81,8 @@ public class GameStateCsvLoader {
     }
 
     /**
-     * <h2>getPoints</h2>
+     * <h2>getPoints.</h2>
+     *
      * @return the total points (used only in StarGame)
      */
     public int getPoints() {
@@ -92,7 +90,8 @@ public class GameStateCsvLoader {
     }
 
     /**
-     * <h2>setPoints</h2>
+     * <h2>setPoints.</h2>
+     *
      * @param points the number of points
      */
     public void setPoints(int points) {
@@ -101,14 +100,15 @@ public class GameStateCsvLoader {
   }
 
   /**
-   * <h2>SNLLoad</h2>
+   * <h2>snlLoad</h2>
    * Loads a saved game state for Snakes and Ladders from a CSV file.
    *
    * @param filePath path to the CSV file
    * @return populated {@link GameState} instance
    * @throws IOException if the file can't be read
    */
-  public static GameState SNLLoad(String filePath) throws IOException {
+  public static GameState snlLoad(String filePath) throws IOException {
+
     GameState state = new GameState();
     try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
       String line;
@@ -133,14 +133,14 @@ public class GameStateCsvLoader {
   }
 
   /**
-   * <h2>StarLoad</h2>
+   * <h2>starLoad</h2>
    * Loads a saved game state for StarGame from a CSV file.
    *
    * @param filePath path to the CSV file
    * @return populated {@link GameState} instance with points
    * @throws IOException if the file can't be read
    */
-  public static GameState StarLoad(String filePath) throws IOException {
+  public static GameState starLoad(String filePath) throws IOException {
     GameState state = new GameState();
     try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
       String line;
@@ -159,7 +159,8 @@ public class GameStateCsvLoader {
           readingPlayers = true;
         } else if (readingPlayers && !line.isBlank()) {
           String[] parts = line.split(",");
-          state.players.add(new StarPlayer(parts[0], parts[1], Integer.parseInt(parts[2]), Integer.parseInt(parts[3])));
+          state.players.add(new StarPlayer(parts[0], parts[1], Integer.parseInt(parts[2]),
+              Integer.parseInt(parts[3])));
         }
       }
     }

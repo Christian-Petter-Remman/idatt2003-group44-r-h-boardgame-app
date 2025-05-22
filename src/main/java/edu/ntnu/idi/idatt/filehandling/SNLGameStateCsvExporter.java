@@ -1,21 +1,20 @@
 package edu.ntnu.idi.idatt.filehandling;
 
 import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
-import edu.ntnu.idi.idatt.model.snl.SNLRuleSelectionModel;
 import edu.ntnu.idi.idatt.model.model_observers.CsvExportObserver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.ntnu.idi.idatt.model.snl.SNLRuleSelectionModel;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>SNLGameStateCsvExporter</h1>
- * Handles the export of the current Snakes and Ladders game setup to a CSV file.
- * Used to persist the initial game state (board, dice, players) before starting.
+ * Handles the export of the current Snakes and Ladders game setup to a CSV file. Used to persist
+ * the initial game state (board, dice, players) before starting.
  */
 public class SNLGameStateCsvExporter implements CsvExportObserver {
 
@@ -29,11 +28,12 @@ public class SNLGameStateCsvExporter implements CsvExportObserver {
    * <h2>Constructor</h2>
    * Initializes the exporter with model, players and save path.
    *
-   * @param model     the rule selection model holding game configuration.
-   * @param players   list of player data to be saved.
-   * @param savePath  full file path for the CSV output.
+   * @param model    the rule selection model holding game configuration.
+   * @param players  list of player data to be saved.
+   * @param savePath full file path for the CSV output.
    */
-  public SNLGameStateCsvExporter(SNLRuleSelectionModel model, List<PlayerData> players, String savePath) {
+  public SNLGameStateCsvExporter(SNLRuleSelectionModel model, List<PlayerData> players,
+      String savePath) {
     this.model = model;
     this.players = players;
     this.savePath = savePath;
@@ -41,8 +41,8 @@ public class SNLGameStateCsvExporter implements CsvExportObserver {
 
   /**
    * <h2>onExportRequested</h2>
-   * Triggers the export of game state to CSV when notified by the observer pattern.
-   * Writes board file, dice count, and player information to the output file.
+   * Triggers the export of game state to CSV when notified by the observer pattern. Writes board
+   * file, dice count, and player information to the output file.
    */
   @Override
   public void onExportRequested() {
@@ -67,17 +67,17 @@ public class SNLGameStateCsvExporter implements CsvExportObserver {
         writer.newLine();
 
         players.stream()
-                .filter(p -> p.isActive() && p.getSelectedCharacter() != null)
-                .forEach(player -> {
-                  try {
-                    writer.write(String.format("%s,%s,1",
-                            player.getName(),
-                            player.getSelectedCharacter().getName()));
-                    writer.newLine();
-                  } catch (IOException e) {
-                    logger.error("Failed to write player data for: {}", player.getName(), e);
-                  }
-                });
+            .filter(p -> p.isActive() && p.getSelectedCharacter() != null)
+            .forEach(player -> {
+              try {
+                writer.write(String.format("%s,%s,1",
+                    player.getName(),
+                    player.getSelectedCharacter().getName()));
+                writer.newLine();
+              } catch (IOException e) {
+                logger.error("Failed to write player data for: {}", player.getName(), e);
+              }
+            });
 
         logger.info("Game state exported to {}", savePath);
       }

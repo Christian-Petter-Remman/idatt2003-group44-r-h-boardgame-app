@@ -16,9 +16,9 @@ import java.util.function.Function;
 
 /**
  * <h1>StarBoardJsonHandler</h1>
- *
- * Handles loading and saving of StarBoard objects using JSON format.
- * Supports both generic and strongly typed board loading, board file generation, and error handling.
+ * <p>
+ * Handles loading and saving of StarBoard objects using JSON format. Supports both generic and
+ * strongly typed board loading, board file generation, and error handling.
  */
 public class StarBoardJsonHandler implements FileHandler<StarBoard> {
 
@@ -28,14 +28,15 @@ public class StarBoardJsonHandler implements FileHandler<StarBoard> {
 
   /**
    * <h2>Constructor</h2>
-   * Initializes a new Gson instance with exclusion strategies for serialization and deserialization.
+   * Initializes a new Gson instance with exclusion strategies for serialization and
+   * deserialization.
    */
   public StarBoardJsonHandler() {
     this.gson = new GsonBuilder()
-            .setPrettyPrinting()
-            .addSerializationExclusionStrategy(new RandomExclusionStrategy())
-            .addDeserializationExclusionStrategy(new RandomExclusionStrategy())
-            .create();
+        .setPrettyPrinting()
+        .addSerializationExclusionStrategy(new RandomExclusionStrategy())
+        .addDeserializationExclusionStrategy(new RandomExclusionStrategy())
+        .create();
   }
 
   /**
@@ -47,7 +48,8 @@ public class StarBoardJsonHandler implements FileHandler<StarBoard> {
    * @throws FileReadException    if file is not found or IO error occurs.
    * @throws JsonParsingException if JSON is malformed.
    */
-  public StarBoard loadBoardFromFile(String filePath) throws FileReadException, JsonParsingException {
+  public StarBoard loadBoardFromFile(String filePath)
+      throws FileReadException, JsonParsingException {
     logger.info("Loading board from file {}", filePath);
     try (Reader reader = new FileReader(filePath)) {
       JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
@@ -90,17 +92,17 @@ public class StarBoardJsonHandler implements FileHandler<StarBoard> {
       jsonObject.getAsJsonArray("paths").forEach(element -> {
         JsonObject obj = element.getAsJsonObject();
         board.addPath(
-                obj.get("start").getAsInt(),
-                obj.get("dir").getAsString(),
-                obj.get("endDyn").getAsInt(),
-                obj.get("endStat").getAsInt()
+            obj.get("start").getAsInt(),
+            obj.get("dir").getAsString(),
+            obj.get("endDyn").getAsInt(),
+            obj.get("endStat").getAsInt()
         );
       });
     }
 
     if (jsonObject.has("jail")) {
       jsonObject.getAsJsonArray("jail").forEach(element ->
-              board.addJail(element.getAsJsonObject().get("start").getAsInt())
+          board.addJail(element.getAsJsonObject().get("start").getAsInt())
       );
     }
 
@@ -117,30 +119,15 @@ public class StarBoardJsonHandler implements FileHandler<StarBoard> {
    *
    * @param filePath    Path to board file.
    * @param gameCreator Function to create a game instance from board.
+   * @param <T>         Type of the BoardGame.
    * @return The created game instance.
-   * @param <T> Type of the BoardGame.
    * @throws FileReadException    if file access fails.
    * @throws JsonParsingException if parsing fails.
    */
-  public <T extends BoardGame> T loadGameFromFile(String filePath, Function<StarBoard, T> gameCreator)
-          throws FileReadException, JsonParsingException {
+  public <T extends BoardGame> T loadGameFromFile(String filePath,
+      Function<StarBoard, T> gameCreator)
+      throws FileReadException, JsonParsingException {
     return gameCreator.apply(loadBoardFromFile(filePath));
-  }
-
-  /**
-   * <h2>saveToFile</h2>
-   * Saves a StarBoard to a JSON file.
-   *
-   * @param object   Board to save.
-   * @param fileName Destination file path.
-   * @throws Exception if writing fails.
-   */
-  @Override
-  public void saveToFile(StarBoard object, String fileName) throws Exception {
-    try (Writer writer = new FileWriter(fileName)) {
-      gson.toJson(object, writer);
-      logger.debug("Game saved to file: {}", fileName);
-    }
   }
 
   /**
