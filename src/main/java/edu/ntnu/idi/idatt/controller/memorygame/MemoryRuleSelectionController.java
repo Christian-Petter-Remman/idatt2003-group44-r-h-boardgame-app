@@ -76,6 +76,7 @@ public class MemoryRuleSelectionController implements NavigationHandler {
    *
    * <p>Assigns logic to the continue button. When pressed, it collects the board size and player
    * names, and navigates to the memory game screen.
+   * AI: partially used in this method
    *
    * @param continueBtn the JavaFX button that continues to the game
    */

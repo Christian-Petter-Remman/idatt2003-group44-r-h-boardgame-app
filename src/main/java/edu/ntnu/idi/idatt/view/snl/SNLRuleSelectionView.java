@@ -32,6 +32,7 @@ import javafx.scene.paint.Color;
  * difficulty
  * level, number of dice, and shows modifiers. Updates dynamically based on
  * {@link SNLRuleSelectionModel} state.
+ * AI: partial use
  * </p>
  */
 public class SNLRuleSelectionView implements SNLRuleSelectionModel.Observer {

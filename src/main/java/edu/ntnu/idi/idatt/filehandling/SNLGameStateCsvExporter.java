@@ -43,6 +43,7 @@ public class SNLGameStateCsvExporter implements CsvExportObserver {
    * <h2>onExportRequested</h2>
    * Triggers the export of game state to CSV when notified by the observer pattern. Writes board
    * file, dice count, and player information to the output file.
+   * AI: used for writer logic
    */
   @Override
   public void onExportRequested() {

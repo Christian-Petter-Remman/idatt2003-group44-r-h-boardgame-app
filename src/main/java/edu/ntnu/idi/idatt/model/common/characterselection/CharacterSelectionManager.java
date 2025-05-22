@@ -10,6 +10,7 @@ import java.util.Optional;
  *
  * <p>Manages the available characters and player selections during the character selection phase.
  * Implements the Observable pattern to notify views or handlers of state changes.
+ * AI: used to helped in deactivate player and select character
  */
 public class CharacterSelectionManager implements Observable {
 

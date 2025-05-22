@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
  * <h1>WinnerDialogs</h1>
  * Utility class that displays a styled winner screen for the different game modes (Star, SNL,
  * Memory).
+ * AI: partial use
  */
 public class WinnerDialogs {
 

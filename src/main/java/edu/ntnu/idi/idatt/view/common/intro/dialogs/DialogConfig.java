@@ -6,6 +6,7 @@ package edu.ntnu.idi.idatt.view.common.intro.dialogs;
  * <p>Represents the configuration for dialogs on the main menu in the application, including its
  * ID, title, body
  * text, fun fact, image path, audio file, call-to-action label, and action.
+ *
  */
 public class DialogConfig {
 

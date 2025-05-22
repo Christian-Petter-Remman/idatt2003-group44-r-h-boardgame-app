@@ -102,6 +102,7 @@ public class GameStateCsvLoader {
   /**
    * <h2>snlLoad</h2>
    * Loads a saved game state for Snakes and Ladders from a CSV file.
+   * AI: Partially used
    *
    * @param filePath path to the CSV file
    * @return populated {@link GameState} instance
@@ -135,6 +136,7 @@ public class GameStateCsvLoader {
   /**
    * <h2>starLoad</h2>
    * Loads a saved game state for StarGame from a CSV file.
+   * AI: Partially used
    *
    * @param filePath path to the CSV file
    * @return populated {@link GameState} instance with points

@@ -36,6 +36,7 @@ import javafx.stage.Popup;
  * JavaFX implementation of the game screen for the Star game. Handles rendering of the board,
  * displaying player positions, and observing game state changes via the GameScreenObserver
  * interface.
+ * AI partial used for view logic
  */
 
 public class StarGameView extends GameScreen {

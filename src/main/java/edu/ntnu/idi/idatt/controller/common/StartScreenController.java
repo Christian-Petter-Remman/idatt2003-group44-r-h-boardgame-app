@@ -36,6 +36,7 @@ public class StartScreenController {
    *
    * <p>Called when an icon is clicked. If the corresponding ID is registered in the model's dialog
    * map, this method plays an associated audio clip (if available) and shows a dialog.
+   * AI: used to generate main logic of this method
    *
    * @param id   the identifier for the dialog and audio mapping
    */

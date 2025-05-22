@@ -28,6 +28,7 @@ public class Main extends Application {
    * <h2>start</h2>
    *
    * <p>Launches the JavaFX application. Sets up directories, UI, and navigation.
+   * AI: help setting right fullscreen features
    *
    * @param primaryStage the primary stage provided by JavaFX.
    */

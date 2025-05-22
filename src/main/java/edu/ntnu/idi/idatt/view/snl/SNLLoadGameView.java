@@ -25,6 +25,7 @@ import javafx.scene.layout.VBox;
  *
  * <p>Represents the view for loading a previous game in the Snakes and Ladders game. It displays
  * buttons for each recent save file and a back button to return to the previous screen.
+ * AI: partail used for stling
  */
 public class SNLLoadGameView {
 

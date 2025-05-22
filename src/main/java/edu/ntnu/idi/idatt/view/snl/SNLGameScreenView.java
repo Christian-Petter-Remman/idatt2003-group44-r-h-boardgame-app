@@ -49,6 +49,7 @@ import org.slf4j.LoggerFactory;
  * <p>View class for the Snakes and Ladders game. Extends the common {@link GameScreen} class and
  * implements the {@link GameScreenObserver} interface to reflect game state changes. This class
  * handles rendering of ladders, snakes, player movement animations, and game instructions.
+ * AI: partial involvment.
  */
 public class SNLGameScreenView extends GameScreen implements GameScreenObserver {
 

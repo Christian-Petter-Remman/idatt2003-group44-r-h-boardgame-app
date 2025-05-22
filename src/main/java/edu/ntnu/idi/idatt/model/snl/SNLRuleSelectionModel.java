@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
  * <p>Handles logic related to rule selection for Snakes and Ladders, including available boards,
  * dice
  * count, and observer notification.
+ * AI: partially used for methods in this class
  */
 public class SNLRuleSelectionModel {
 

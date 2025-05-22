@@ -14,6 +14,7 @@ import java.util.List;
  * <p>Abstract class representing a board game with players, turn handling, dice rolling, and
  * observer
  * patterns for handling events like player movement, scoring, and winning.
+ * AI: help develop notify observer logic
  */
 public abstract class BoardGame {
 

@@ -27,6 +27,7 @@ public class DialogJsonHandler {
    * <h2>loadDialogs</h2>
    * Loads a list of {@link DialogConfig} objects from the JSON file located at {@code DIALOGS_PATH}
    * and maps them by their unique ID.
+   * AI: used in this method.
    *
    * @return a map of dialog configurations keyed by ID
    * @throws RuntimeException if reading or parsing the file fails

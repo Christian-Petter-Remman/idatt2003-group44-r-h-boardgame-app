@@ -30,6 +30,7 @@ import javafx.scene.layout.VBox;
  * <p>JavaFX view class for a simple paint/drawing application. Provides tools for selecting
  * brushes,
  * colors, line width, and undo/redo functionality.
+ *
  * </p>
  */
 public class PaintCanvasView {

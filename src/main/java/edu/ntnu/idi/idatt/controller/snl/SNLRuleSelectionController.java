@@ -74,6 +74,7 @@ public class SNLRuleSelectionController implements NavigationHandler {
   /**
    * <h2>Handles the logic when the "Continue" button is pressed.</h2>
    * Generates a save file name and triggers the CSV export logic.
+   * AI: partially used.
    */
   public void onContinuePressed() {
     String saveFileName = SaveFileNameGenerator.snlGenerateSaveFileName();

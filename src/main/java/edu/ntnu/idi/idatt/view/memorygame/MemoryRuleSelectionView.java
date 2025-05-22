@@ -28,6 +28,7 @@ import javafx.scene.paint.Color;
  *
  * <p>A JavaFX view for configuring the memory game settings before starting the game.
  * Allows the user to choose board size and input player names.
+ * AI:used for sparring
  * </p>
  */
 public class MemoryRuleSelectionView {

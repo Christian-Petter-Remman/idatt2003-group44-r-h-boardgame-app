@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
  *
  * <p>Represents the board for the Snakes and Ladders game. Manages the addition and retrieval of
  * ladders and snakes, and provides utility methods for loading a board from a file.
+ *
  */
 public class SNLBoard extends AbstractBoard {
 

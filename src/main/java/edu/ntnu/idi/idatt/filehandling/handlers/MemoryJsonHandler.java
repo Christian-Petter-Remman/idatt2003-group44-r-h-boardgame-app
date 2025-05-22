@@ -30,6 +30,7 @@ public class MemoryJsonHandler implements FileHandler<List<MemoryCard>> {
   /**
    * <h2>loadFromFile</h2>
    * Loads memory cards from a JSON file and duplicates each card for the matching pair.
+   * AI: used as helper
    *
    * @param fileName the name of the file to load from
    * @return a list of memory cards with pairs for each entry

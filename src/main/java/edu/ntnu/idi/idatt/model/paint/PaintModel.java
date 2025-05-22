@@ -10,6 +10,7 @@ import java.util.List;
  *
  * <p>Manages the state of drawn strokes in a paint application. Supports undo, redo, and change
  * notification via observer pattern.
+ * AI: partially used to do basic ops in paint
  */
 public class PaintModel {
 

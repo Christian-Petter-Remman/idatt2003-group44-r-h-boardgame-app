@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
  * GameScreen.java an abstract class that provides a base for rendering a tile-based game screen
  * in JavaFX.
  *
+ *
  * <p>Abstract base class for rendering a tile-based game screen in JavaFX. It defines shared UI
  * layout, player info, board rendering, and control buttons.
  * </p>

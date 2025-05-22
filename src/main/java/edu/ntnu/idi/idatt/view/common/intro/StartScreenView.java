@@ -23,6 +23,7 @@ import javafx.stage.Screen;
  * clickable
  * animal icons that trigger learning dialogs or game navigation. Reacts to model updates and
  * delegates click behavior to the controller.
+ * AI: helper for GUI
  */
 public class StartScreenView implements PropertyChangeListener {
 

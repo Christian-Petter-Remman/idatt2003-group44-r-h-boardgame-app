@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
  * <p>JavaFX view for selecting characters before the game starts. Supports activating players,
  * naming
  * them, and assigning characters visually.
+ * AI: used for visuals
  */
 public final class CharacterSelectionScreen implements CharacterSelectionObserver {
 

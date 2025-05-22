@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
  * <h1>PaintCanvasController</h1>
  * Controls interaction between the PaintModel and PaintCanvasView. Handles user input, drawing
  * logic, and synchronization between model and view.
+ * AI: used to understand and partially generate methods for this whole class
  *
  * @author Oliver, Christian
  */

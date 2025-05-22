@@ -29,6 +29,7 @@ import javafx.stage.Stage;
  * <p>A reusable informational modal dialog for displaying messages, fun facts, images, audio, and
  * navigation options. It is used to enhance user interaction and learning in a game or
  * application.
+ * AI used in View logic
  */
 public class InfoDialog extends Stage {
 
