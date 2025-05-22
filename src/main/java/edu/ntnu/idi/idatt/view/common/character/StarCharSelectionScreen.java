@@ -112,11 +112,22 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
 
     back.setOnAction(e -> handler.navigateBack());
     next.setOnAction(e -> {
-      if (manager.allActivePlayersHaveSelectedCharacters()) {
-        handler.onStart();
-      } else {
-        showCharacterMissingWarning();
+      boolean allSelected = manager.allActivePlayersHaveSelectedCharacters();
+      boolean allNamed = manager.getPlayers().stream()
+              .filter(PlayerData::isActive)
+              .allMatch(p -> p.getName() != null && !p.getName().trim().isEmpty());
+
+      if (!allNamed) {
+        showNameMissingWarning();
+        return;
       }
+
+      if (!allSelected) {
+        showCharacterMissingWarning();
+        return;
+      }
+
+      handler.onStart();
     });
 
     HBox btnRow = new HBox(20, back, new Region(), next);
@@ -135,6 +146,33 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
     wrap.setPadding(new Insets(30));
 
     root.getChildren().addAll(bg, wrap);
+  }
+
+  private void showNameMissingWarning() {
+    Label warning = new Label("Please enter names for all active players!");
+    warning.setStyle(
+            "-fx-text-fill: red;" +
+                    "-fx-font-weight: bold;" +
+                    "-fx-font-size: 14px;" +
+                    "-fx-padding: 10;" +
+                    "-fx-background-color: #ffeeee;" +
+                    "-fx-border-color: red;" +
+                    "-fx-border-radius: 5;" +
+                    "-fx-background-radius: 5;"
+    );
+    StackPane.setAlignment(warning, Pos.TOP_CENTER);
+    StackPane.setMargin(warning, new Insets(20));
+
+    StackPane rootPane = (StackPane) root.getScene().getRoot(); // Ensure `root` is your StackPane
+    if (!rootPane.getChildren().contains(warning)) {
+      rootPane.getChildren().add(warning);
+      new Thread(() -> {
+        try {
+          Thread.sleep(2000);
+        } catch (InterruptedException ignored) {}
+        javafx.application.Platform.runLater(() -> rootPane.getChildren().remove(warning));
+      }).start();
+    }
   }
 
   /**

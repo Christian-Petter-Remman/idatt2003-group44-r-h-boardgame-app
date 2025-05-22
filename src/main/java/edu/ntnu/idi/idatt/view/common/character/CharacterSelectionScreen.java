@@ -108,12 +108,25 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
 
     back.setOnAction(e -> handler.navigateBack());
     next.setOnAction(e -> {
-      if (manager.allActivePlayersHaveSelectedCharacters()) {
-        handler.navigateTo("SAL_RULE_SELECTION");
-      } else {
-        showCharacterMissingWarning();
+      boolean allSelected = manager.allActivePlayersHaveSelectedCharacters();
+      boolean allNamed = manager.getPlayers().stream()
+              .filter(PlayerData::isActive)
+              .allMatch(p -> p.getName() != null && !p.getName().trim().isEmpty());
+
+      if (!allNamed) {
+        showNameMissingWarning();
+        return;
       }
+
+      if (!allSelected) {
+        showCharacterMissingWarning();
+        return;
+      }
+
+      handler.navigateTo("SAL_RULE_SELECTION");
     });
+
+
 
     HBox btnRow = new HBox(20, back, new Region(), next);
     btnRow.setAlignment(Pos.CENTER);
@@ -133,6 +146,32 @@ public final class CharacterSelectionScreen implements CharacterSelectionObserve
     root.getChildren().addAll(bg, wrap);
   }
 
+  private void showNameMissingWarning() {
+    Label warning = new Label("Please enter names for all active players!");
+    warning.setStyle(
+            "-fx-text-fill: red;" +
+                    "-fx-font-weight: bold;" +
+                    "-fx-font-size: 14px;" +
+                    "-fx-padding: 10;" +
+                    "-fx-background-color: #ffeeee;" +
+                    "-fx-border-color: red;" +
+                    "-fx-border-radius: 5;" +
+                    "-fx-background-radius: 5;"
+    );
+    StackPane.setAlignment(warning, Pos.TOP_CENTER);
+    StackPane.setMargin(warning, new Insets(20));
+
+    StackPane rootPane = (StackPane) root.getScene().getRoot(); // Ensure `root` is your StackPane
+    if (!rootPane.getChildren().contains(warning)) {
+      rootPane.getChildren().add(warning);
+      new Thread(() -> {
+        try {
+          Thread.sleep(2000);
+        } catch (InterruptedException ignored) {}
+        javafx.application.Platform.runLater(() -> rootPane.getChildren().remove(warning));
+      }).start();
+    }
+  }
   /**
    * <h2>showCharacterMissingWarning</h2>
    * Displays a popup warning if not all active players have selected a character.

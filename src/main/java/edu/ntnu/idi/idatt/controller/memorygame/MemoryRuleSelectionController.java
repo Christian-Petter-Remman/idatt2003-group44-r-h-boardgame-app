@@ -6,10 +6,15 @@ import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationTarget;
 import java.util.List;
+
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.StackPane;
 
 /**
  * <h1>MemoryRuleSelectionController</h1>
@@ -77,16 +82,48 @@ public class MemoryRuleSelectionController implements NavigationHandler {
    */
   public void setContinueButton(Button continueBtn) {
     continueBtn.setOnAction(e -> {
+      String name1 = player1Field.getText().trim();
+      String name2 = player2Field.getText().trim();
+
+      if (name1.isEmpty() || name2.isEmpty()) {
+        Label warning = new Label("Please enter names for both players!");
+        warning.setStyle(
+                "-fx-text-fill: red;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-font-size: 14px;" +
+                        "-fx-padding: 10;" +
+                        "-fx-background-color: #ffeeee;" +
+                        "-fx-border-color: red;" +
+                        "-fx-border-radius: 5;" +
+                        "-fx-background-radius: 5;"
+        );
+        StackPane.setAlignment(warning, Pos.TOP_CENTER);
+        StackPane.setMargin(warning, new Insets(20));
+
+        StackPane container = (StackPane) continueBtn.getScene().getRoot();
+        if (!container.getChildren().contains(warning)) {
+          container.getChildren().add(warning);
+          new Thread(() -> {
+            try {
+              Thread.sleep(2000);
+            } catch (InterruptedException ignored) {}
+            javafx.application.Platform.runLater(() -> container.getChildren().remove(warning));
+          }).start();
+        }
+        return;
+      }
+
       settings = new MemoryGameSettings(
               selectedSize,
               List.of(
-                      new MemoryPlayer(player1Field.getText()),
-                      new MemoryPlayer(player2Field.getText())
+                      new MemoryPlayer(name1),
+                      new MemoryPlayer(name2)
               )
       );
       navigateTo(NavigationTarget.MEMORY_GAME_SCREEN.name());
     });
   }
+
 
   /**
    * <h2>getSettings</h2>
