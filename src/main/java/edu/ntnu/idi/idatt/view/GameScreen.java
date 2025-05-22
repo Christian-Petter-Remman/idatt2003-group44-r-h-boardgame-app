@@ -1,6 +1,8 @@
 package edu.ntnu.idi.idatt.view;
 
 import edu.ntnu.idi.idatt.model.common.Player;
+import java.net.URL;
+import java.util.List;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -9,23 +11,29 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-
 /**
  * <h1>GameScreen</h1>
- * <p>
- * Abstract base class for rendering a tile-based game screen in JavaFX.
- * It defines shared UI layout, player info, board rendering, and control buttons.
+ * GameScreen.java an abstract class that provides a base for rendering a tile-based game screen
+ * in JavaFX.
+ *
+ * <p>Abstract base class for rendering a tile-based game screen in JavaFX. It defines shared UI
+ * layout, player info, board rendering, and control buttons.
  * </p>
  */
 public abstract class GameScreen {
+
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   protected static final int TILE_SIZE = 60;
@@ -46,7 +54,8 @@ public abstract class GameScreen {
   /**
    * Constructs the GameScreen base.
    */
-  public GameScreen() {}
+  public GameScreen() {
+  }
 
   /**
    * <h2>createUI</h2>
@@ -61,7 +70,9 @@ public abstract class GameScreen {
 
     StackPane boardWithOverlay = new StackPane(boardGrid, getOverlay());
     boardGrid.toBack();
-    if (getOverlay() != null) getOverlay().toFront();
+    if (getOverlay() != null) {
+      getOverlay().toFront();
+    }
     root.setLeft(boardWithOverlay);
 
     VBox currentPlayerBox = new VBox(5);
@@ -84,24 +95,29 @@ public abstract class GameScreen {
 
     Button saveButton = new Button("Save Game");
     saveButton.setOnAction(e -> {
-      if (saveListener != null) saveListener.run();
+      if (saveListener != null) {
+        saveListener.run();
+      }
     });
 
     Button homeButton = new Button("Home");
     homeButton.setStyle(
-            "-fx-font-size: 14px;" +
-                    "-fx-background-color: #cccccc;" +
-                    "-fx-text-fill: black;" +
-                    "-fx-background-radius: 12;" +
-                    "-fx-padding: 6 14;" +
-                    "-fx-cursor: hand;"
+        "-fx-font-size: 14px;"
+            + "-fx-background-color: #cccccc;"
+            + "-fx-text-fill: black;"
+            + "-fx-background-radius: 12;"
+            + "-fx-padding: 6 14;"
+            + "-fx-cursor: hand;"
     );
     homeButton.setOnAction(e -> {
-      if (backListener != null) backListener.run();
+      if (backListener != null) {
+        backListener.run();
+      }
     });
 
     bottomBox.setAlignment(Pos.CENTER);
-    bottomBox.getChildren().addAll(positionLabel, diceResultLabel, rollButton, saveButton, homeButton);
+    bottomBox.getChildren()
+        .addAll(positionLabel, diceResultLabel, rollButton, saveButton, homeButton);
 
     VBox infoPanel = new VBox(30, currentPlayerBox, playerInfoList, bottomBox);
     infoPanel.setAlignment(Pos.TOP_CENTER);
@@ -118,7 +134,8 @@ public abstract class GameScreen {
     playerInfoList.getChildren().clear();
 
     getAllPlayers().forEach(player -> {
-      String characterName = player.getCharacter() != null ? player.getCharacter().toLowerCase() : "default";
+      String characterName =
+          player.getCharacter() != null ? player.getCharacter().toLowerCase() : "default";
       try {
         URL url = getClass().getResource("/player_icons/" + characterName + ".png");
         Image image = url != null ? new Image(url.toExternalForm(), 50, 50, true, true) : null;
@@ -198,10 +215,13 @@ public abstract class GameScreen {
     List<Player> playersOnTile = getPlayersAtPosition(tileNum);
     for (int i = 0; i < playersOnTile.size(); i++) {
       Player player = playersOnTile.get(i);
-      String characterName = player.getCharacter() != null ? player.getCharacter().toLowerCase() : "default";
+      String characterName =
+          player.getCharacter() != null ? player.getCharacter().toLowerCase() : "default";
       try {
         URL url = getClass().getResource("/player_icons/" + characterName + ".png");
-        if (url == null) continue;
+        if (url == null) {
+          continue;
+        }
 
         Image image = new Image(url.toExternalForm(), TILE_SIZE * 0.5, TILE_SIZE * 0.5, true, true);
         ImageView icon = new ImageView(image);
@@ -213,24 +233,6 @@ public abstract class GameScreen {
     }
 
     return cell;
-  }
-
-  /**
-   * <h2>getTileCenter</h2>
-   * Calculates the pixel center position of a given tile on the grid.
-   *
-   * @param tileNum the tile number
-   * @return a double array containing x and y center
-   */
-  protected double[] getTileCenter(int tileNum) {
-    int i = tileNum - 1;
-    int row = 9 - (i / BOARD_SIZE);
-    int col = (row % 2 == 0) ? i % BOARD_SIZE : (BOARD_SIZE - 1 - i % BOARD_SIZE);
-
-    double x = col * TILE_SIZE + TILE_SIZE / 2.0;
-    double y = row * TILE_SIZE + TILE_SIZE / 2.0;
-
-    return new double[]{x, y};
   }
 
   /**
@@ -253,7 +255,12 @@ public abstract class GameScreen {
     this.backListener = listener;
   }
 
-  protected void initializeOverlay() {}
+  /**
+   * <h2>initializeOverlay</h2>
+   * Initializes the overlay for the game screen. Can be overridden by subclasses.
+   */
+  protected void initializeOverlay() {
+  }
 
   /**
    * <h2>getRoot</h2>
@@ -265,15 +272,48 @@ public abstract class GameScreen {
     return root;
   }
 
+  /**
+   * <h2>getCurrentPlayerImage</h2>
+   * Absract method to get the current player's image. Must be implemented by subclasses.
+   */
   protected abstract Image getCurrentPlayerImage();
 
+  /**
+   * <h2>handleRoll</h2>
+   * Abstract method to handle the dice roll action. Must be implemented by subclasses.
+   */
   protected abstract void handleRoll();
 
+  /**
+   * <h2>getTileColor</h2>
+   * Abstract method to get the color of a tile based on its number. Must be implemented by subclasses.
+   *
+   * @param tileNumber The tile number
+   */
   protected abstract String getTileColor(int tileNumber);
 
+  /**
+   * <h2>getPlayersAtPosition</h2>
+   * Abstract method to get the list of players at a specific tile position. Must be implemented by
+   * subclasses.
+   *
+   * @param tileNumber The tile number
+   */
   protected abstract List<Player> getPlayersAtPosition(int tileNumber);
 
+  /**
+   * <h2>getOverlay</h2>
+   * Abstract method to get the overlay pane. Must be implemented by subclasses.
+   *
+   * @return Pane representing the overlay
+   */
   protected abstract Pane getOverlay();
 
+  /**
+   * <h2>getAllPlayers</h2>
+   * Abstract method to get the list of all players. Must be implemented by subclasses.
+   *
+   * @return List of all players
+   */
   protected abstract List<Player> getAllPlayers();
 }

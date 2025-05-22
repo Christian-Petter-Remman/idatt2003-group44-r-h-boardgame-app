@@ -5,8 +5,9 @@ import java.util.Random;
 /**
  * <h1>Die</h1>
  *
- * Represents a single die with a configurable number of sides.
- * Provides functionality for rolling the die and retrieving its face value.
+ * <p>Represents a single die with a configurable number of sides. Provides functionality for
+ * rolling
+ * the die and retrieving its face value.
  */
 public class Die {
 
@@ -17,10 +18,10 @@ public class Die {
   /**
    * <h2>Constructor</h2>
    *
-   * Constructs a die with a specified number of sides.
+   * <p>Constructs a die with a specified number of sides.
    *
    * @param sides The number of sides of the die. Must be at least 2.
-   * @throws IllegalArgumentException if the number of sides is less than 2.
+   * @throws IllegalArgumentException if the number of sides is lower than 2.
    */
   public Die(int sides) {
     if (sides < 2) {
@@ -34,7 +35,7 @@ public class Die {
   /**
    * <h2>getFaceValue</h2>
    *
-   * Retrieves the current face value of the die.
+   * <p>Retrieves the current face value of the die.
    *
    * @return The value currently facing up.
    */
@@ -45,7 +46,7 @@ public class Die {
   /**
    * <h2>roll</h2>
    *
-   * Rolls the die to produce a new random face value.
+   * <p>Rolls the die to produce a new random face value.
    *
    * @return The result of the die roll.
    */
@@ -57,7 +58,7 @@ public class Die {
   /**
    * <h2>getSides</h2>
    *
-   * Retrieves the number of sides on the die.
+   * <p>Retrieves the number of sides on the die.
    *
    * @return The number of sides.
    */

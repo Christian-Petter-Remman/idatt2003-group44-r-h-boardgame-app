@@ -1,37 +1,36 @@
 package edu.ntnu.idi.idatt.controller.common;
 
-import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionData;
-import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
-import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
+import edu.ntnu.idi.idatt.model.common.characterselection.CharacterSelectionData;
+import edu.ntnu.idi.idatt.model.common.characterselection.CharacterSelectionManager;
+import edu.ntnu.idi.idatt.model.common.characterselection.PlayerData;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationTarget;
 import edu.ntnu.idi.idatt.view.common.character.CharacterSelectionScreen;
 import javafx.scene.Parent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <h1>CharacterSelectionController</h1>
- * Handles interactions related to character selection in the game setup phase.
- * It mediates between the CharacterSelectionManager and the UI screen.
- * Implements navigation for transitioning between views.
+ * Handles interactions related to character selection in the game setup phase. It mediates between
+ * the CharacterSelectionManager and the UI screen. Implements navigation for transitioning between
+ * views.
  *
- * @author Christian
+ * @author Oliver, Christian
  */
 public class CharacterSelectionController implements NavigationHandler {
 
   private final CharacterSelectionManager manager;
-  private static final Logger logger = LoggerFactory.getLogger(CharacterSelectionController.class);
 
   /**
    * <h2>CharacterSelectionController</h2>
-   * Constructor that sets the handler for the CharacterSelectionScreen and initializes the manager.
+   * Constructor that sets the handler for the CharacterSelectionScreen and initializes the
+   * manager.
    *
    * @param manager the manager handling character and player logic
    * @param screen  the UI screen for character selection
    */
-  public CharacterSelectionController(CharacterSelectionManager manager, CharacterSelectionScreen screen) {
+  public CharacterSelectionController(CharacterSelectionManager manager,
+      CharacterSelectionScreen screen) {
     this.manager = manager;
     screen.setHandler(this);
   }
@@ -45,8 +44,8 @@ public class CharacterSelectionController implements NavigationHandler {
    */
   public void handleCharacterSelection(int playerId, CharacterSelectionData character) {
     PlayerData player = manager.getPlayerById(playerId);
-    if (player != null && player.isActive() &&
-            (!character.isSelected() || character.getSelectedBy() == player)) {
+    if (player != null && player.isActive()
+        && (!character.isSelected() || character.getSelectedBy() == player)) {
       manager.selectCharacter(player, character);
     }
   }

@@ -1,29 +1,27 @@
 package edu.ntnu.idi.idatt.controller.common;
 
+
 import edu.ntnu.idi.idatt.filehandling.SaveFileNameGenerator;
 import edu.ntnu.idi.idatt.filehandling.StarGameStateExporter;
-import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionData;
-import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
-import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
-import edu.ntnu.idi.idatt.model.model_observers.CsvExportObserver;
+import edu.ntnu.idi.idatt.model.common.characterselection.CharacterSelectionData;
+import edu.ntnu.idi.idatt.model.common.characterselection.CharacterSelectionManager;
+import edu.ntnu.idi.idatt.model.common.characterselection.PlayerData;
+import edu.ntnu.idi.idatt.model.modelobservers.CsvExportObserver;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationTarget;
 import edu.ntnu.idi.idatt.view.common.character.StarCharSelectionScreen;
-import javafx.scene.Parent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.Parent;
 
 /**
  * <h1>StarCharSelectionController</h1>
- * Controller responsible for managing character selection logic in the Star game mode.
- * Handles character assignment, observer notification for CSV export, and transitions to the game screen.
+ * Controller responsible for managing character selection logic in the Star game mode. Handles
+ * character assignment, observer notification for CSV export, and transitions to the game screen.
  * Implements {@link NavigationHandler} to enable UI transitions.
  *
- * @author Oliver
+ * @author Oliver, Christian
  */
 public class StarCharSelectionController implements NavigationHandler {
 
@@ -31,32 +29,31 @@ public class StarCharSelectionController implements NavigationHandler {
   private final List<CsvExportObserver> observers = new ArrayList<>();
   private String savePath = "";
 
-  private static final Logger logger = LoggerFactory.getLogger(StarCharSelectionController.class);
-
   /**
    * <h2>Constructor</h2>
    * Sets up the controller and binds the handler to the character selection screen.
    *
    * @param manager the shared character selection manager
-   * @param screen the UI screen for Star character selection
+   * @param screen  the UI screen for Star character selection
    */
-  public StarCharSelectionController(CharacterSelectionManager manager, StarCharSelectionScreen screen) {
+  public StarCharSelectionController(CharacterSelectionManager manager,
+      StarCharSelectionScreen screen) {
     this.manager = manager;
-    this.savePath = savePath;
     screen.setHandler(this);
   }
 
   /**
    * <h2>handleCharacterSelection</h2>
-   * Assigns a character to a player if the character is not taken or is already selected by the same player.
+   * Assigns a character to a player if the character is not taken or is already selected by the
+   * same player.
    *
-   * @param playerId the ID of the player making the selection
+   * @param playerId  the ID of the player making the selection
    * @param character the selected character data
    */
   public void handleCharacterSelection(int playerId, CharacterSelectionData character) {
     PlayerData player = manager.getPlayerById(playerId);
-    if (player != null && player.isActive() &&
-        (!character.isSelected() || character.getSelectedBy() == player)) {
+    if (player != null && player.isActive()
+        && (!character.isSelected() || character.getSelectedBy() == player)) {
       manager.selectCharacter(player, character);
     }
   }
@@ -104,7 +101,7 @@ public class StarCharSelectionController implements NavigationHandler {
    * Begins the game after generating a save file and notifying the exporter.
    */
   public void onStart() {
-    String saveFileName = SaveFileNameGenerator.StargenerateSaveFileName();
+    String saveFileName = SaveFileNameGenerator.starGenerateSaveFileName();
     savePath = "saves/temp/" + saveFileName;
 
     List<PlayerData> players = getPlayerDataList();

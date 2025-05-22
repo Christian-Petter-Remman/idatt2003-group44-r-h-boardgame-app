@@ -3,29 +3,27 @@ package edu.ntnu.idi.idatt.controller.snl;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.model.common.AbstractBoard;
 import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
-import edu.ntnu.idi.idatt.model.snl.SNLBoard;
+import edu.ntnu.idi.idatt.model.modelobservers.GameScreenObserver;
 import edu.ntnu.idi.idatt.model.snl.SNLGame;
 import edu.ntnu.idi.idatt.navigation.NavigationHandler;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationTarget;
+import java.io.File;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import javafx.scene.Parent;
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 /**
  * <h1>SNLGameScreenController</h1>
- * Controller for Snakes and Ladders game screen.
- * Manages player state, game actions, observers, and navigation.
+ * Controller for Snakes and Ladders game screen. Manages player state, game actions, observers, and
+ * navigation.
+ *
+ * @author Oliver, Christian
  */
 public class SNLGameScreenController implements NavigationHandler {
 
@@ -39,10 +37,10 @@ public class SNLGameScreenController implements NavigationHandler {
 
   /**
    * <h2>Constructor</h2>
-   * Initializes controller with game instance, save file and board path.
+   * Initializes controller with game instance, save file, and board path.
    *
-   * @param game the SNL game instance
-   * @param csvFile the file containing game state
+   * @param game      the SNL game instance
+   * @param csvFile   the file containing game state
    * @param boardPath the path to the board file
    */
   public SNLGameScreenController(SNLGame game, File csvFile, String boardPath) {
@@ -102,10 +100,6 @@ public class SNLGameScreenController implements NavigationHandler {
   }
 
 
-  public List<Player> getAllPlayers() {
-    return game.getPlayers();
-  }
-
   public SNLGame getGame() {
     return game;
   }
@@ -135,28 +129,22 @@ public class SNLGameScreenController implements NavigationHandler {
    */
   public List<Player> getPlayersAtPosition(int position) {
     return game.getPlayers().stream()
-            .filter(player -> player.getPosition() == position)
-            .collect(Collectors.toList());
-  }
-
-  /**
-   * <h2>Notifies observers of all players' current positions.</h2>
-   */
-  public void initializeGameScreen() {
-    notifyPlayerPositionChangedAll();
+        .filter(player -> player.getPosition() == position)
+        .collect(Collectors.toList());
   }
 
   /**
    * <h2>Sends player position updates to all observers.</h2>
    */
   public void notifyPlayerPositionChangedAll() {
-    game.getPlayers().forEach(p -> notifyPlayerPositionChanged(p, p.getPosition(), p.getPosition()));
+    game.getPlayers()
+        .forEach(p -> notifyPlayerPositionChanged(p, p.getPosition(), p.getPosition()));
   }
 
   /**
    * <h2>Notifies observers of a single player's position update.</h2>
    *
-   * @param player the player
+   * @param player      the player
    * @param oldPosition the old position
    * @param newPosition the new position
    */
@@ -186,10 +174,10 @@ public class SNLGameScreenController implements NavigationHandler {
   @Override
   public void navigateTo(String destination) {
 
-    // Implement navigation handling logic
-    switch (destination) {
-      case "INTRO_SCREEN" -> NavigationManager.getInstance().navigateTo(NavigationTarget.START_SCREEN);
-      default -> logger.warn("Unknown destination: {}", destination);
+    if (destination.equals("INTRO_SCREEN")) {
+      NavigationManager.getInstance().navigateTo(NavigationTarget.START_SCREEN);
+    } else {
+      logger.warn("Unknown destination: {}", destination);
     }
   }
 

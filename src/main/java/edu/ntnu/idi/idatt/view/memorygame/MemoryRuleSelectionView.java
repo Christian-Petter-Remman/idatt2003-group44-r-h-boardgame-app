@@ -6,16 +6,27 @@ import java.util.Objects;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 /**
- * <h1>MemoryRuleSelectionView</h1>
- * <p>
- * A JavaFX view for configuring the memory game settings before starting the game.
+ * <h1>MemoryRuleSelectionView.</h1>
+ *
+ * <p>A JavaFX view for configuring the memory game settings before starting the game.
  * Allows the user to choose board size and input player names.
  * </p>
  */
@@ -48,7 +59,8 @@ public class MemoryRuleSelectionView {
     VBox card = createCardLayout();
     StackPane container = new StackPane(background, card);
     container.getStylesheets().add(
-            Objects.requireNonNull(getClass().getResource("/css/RuleSelectionStyles.css")).toExternalForm()
+        Objects.requireNonNull(getClass().getResource("/css/RuleSelectionStyles.css"))
+            .toExternalForm()
     );
     StackPane.setAlignment(card, Pos.CENTER);
     StackPane.setMargin(card, new Insets(20));
@@ -68,7 +80,7 @@ public class MemoryRuleSelectionView {
     card.setPadding(new Insets(30));
     card.setMaxWidth(380);
     card.setBackground(new Background(
-            new BackgroundFill(Color.gray(0.2, 0.8), new CornerRadii(12), Insets.EMPTY)
+        new BackgroundFill(Color.gray(0.2, 0.8), new CornerRadii(12), Insets.EMPTY)
     ));
 
     Label title = new Label("Memory Game Settings");
@@ -86,11 +98,11 @@ public class MemoryRuleSelectionView {
     HBox navigation = createNavigationControls(player1Field, player2Field);
 
     card.getChildren().addAll(
-            title,
-            difficultyBox,
-            player1Label, player1Field,
-            player2Label, player2Field,
-            navigation
+        title,
+        difficultyBox,
+        player1Label, player1Field,
+        player2Label, player2Field,
+        navigation
     );
 
     return card;
@@ -104,9 +116,12 @@ public class MemoryRuleSelectionView {
    */
   private HBox createDifficultySelection() {
     ToggleGroup sizeGroup = new ToggleGroup();
-    RadioButton rb4x4 = createRadioButton("4 × 4", MemoryGameSettings.BoardSize.FOUR_BY_FOUR, sizeGroup);
-    RadioButton rb4x5 = createRadioButton("4 × 5", MemoryGameSettings.BoardSize.FOUR_BY_FIVE, sizeGroup);
-    RadioButton rb6x6 = createRadioButton("6 × 6", MemoryGameSettings.BoardSize.SIX_BY_SIX, sizeGroup);
+    RadioButton rb4x4 = createRadioButton("4 × 4", MemoryGameSettings.BoardSize.FOUR_BY_FOUR,
+        sizeGroup);
+    RadioButton rb4x5 = createRadioButton("4 × 5", MemoryGameSettings.BoardSize.FOUR_BY_FIVE,
+        sizeGroup);
+    RadioButton rb6x6 = createRadioButton("6 × 6", MemoryGameSettings.BoardSize.SIX_BY_SIX,
+        sizeGroup);
     rb4x4.setSelected(true);
 
     HBox box = new HBox(10, rb4x4, rb4x5, rb6x6);
@@ -124,7 +139,8 @@ public class MemoryRuleSelectionView {
    * @param group the ToggleGroup it belongs to
    * @return a configured RadioButton
    */
-  private RadioButton createRadioButton(String label, MemoryGameSettings.BoardSize value, ToggleGroup group) {
+  private RadioButton createRadioButton(String label, MemoryGameSettings.BoardSize value,
+      ToggleGroup group) {
     RadioButton rb = new RadioButton(label);
     rb.setUserData(value);
     rb.setToggleGroup(group);

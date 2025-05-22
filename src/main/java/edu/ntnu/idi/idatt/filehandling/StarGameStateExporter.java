@@ -1,21 +1,21 @@
 package edu.ntnu.idi.idatt.filehandling;
 
-import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
-import edu.ntnu.idi.idatt.model.model_observers.CsvExportObserver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.ntnu.idi.idatt.model.common.characterselection.PlayerData;
+import edu.ntnu.idi.idatt.model.modelobservers.CsvExportObserver;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>StarGameStateExporter</h1>
  *
- * Exports the current StarGame configuration to a CSV file.
- * Used to save initial game setup such as board, dice count, and player information.
+ * <p>Exports the current StarGame configuration to a CSV file. Used to save initial game setup
+ * such
+ * as board, dice count, and player information.
  */
 public class StarGameStateExporter implements CsvExportObserver {
 
@@ -25,7 +25,7 @@ public class StarGameStateExporter implements CsvExportObserver {
   private final String savePath;
 
   /**
-   * <h2>Constructor</h2>
+   * <h2>Constructor.</h2>
    *
    * @param players  List of players to export.
    * @param savePath File path to save the CSV file to.
@@ -38,8 +38,9 @@ public class StarGameStateExporter implements CsvExportObserver {
   /**
    * <h2>onExportRequested</h2>
    *
-   * Called when the observer is triggered to export the game state to CSV.
-   * Includes board filename, dice count, current turn, and player data.
+   * <p>Called when the observer is triggered to export the game state to CSV. Includes board
+   * filename,
+   * dice count, current turn, and player data.
    */
   @Override
   public void onExportRequested() {
@@ -64,18 +65,19 @@ public class StarGameStateExporter implements CsvExportObserver {
         writer.newLine();
 
         players.stream()
-                .filter(p -> p.isActive() && p.getSelectedCharacter() != null)
-                .forEach(player -> {
-                  try {
-                    writer.write(String.format("%s,%s,1,%d",
-                            player.getName(),
-                            player.getSelectedCharacter().getName(),
-                            player.getPoints()));
-                    writer.newLine();
-                  } catch (IOException e) {
-                    logger.error("Error writing player data for {}: {}", player.getName(), e.getMessage());
-                  }
-                });
+            .filter(p -> p.isActive() && p.getSelectedCharacter() != null)
+            .forEach(player -> {
+              try {
+                writer.write(String.format("%s,%s,1,%d",
+                    player.getName(),
+                    player.getSelectedCharacter().getName(),
+                    player.getPoints()));
+                writer.newLine();
+              } catch (IOException e) {
+                logger.error("Error writing player data for {}: {}", player.getName(),
+                    e.getMessage());
+              }
+            });
 
         logger.info("StarGame state exported to {}", savePath);
       }

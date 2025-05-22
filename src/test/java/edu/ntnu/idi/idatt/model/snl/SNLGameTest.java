@@ -1,7 +1,7 @@
 package edu.ntnu.idi.idatt.model.snl;
 
 import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
+import edu.ntnu.idi.idatt.model.modelobservers.GameScreenObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -123,10 +123,6 @@ class SNLGameTest {
       this.gameOverWinner = winner;
     }
 
-    @Override
-    public void onGameSaved(String filePath) {
-
-    }
   }
 
 }

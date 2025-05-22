@@ -5,8 +5,8 @@ import java.util.Objects;
 /**
  * <h1>MemoryCard</h1>
  *
- * Represents a single memory card used in the Memory game. Each card has a unique identifier,
- * an associated image, and state information such as whether it is face-up or matched.
+ * <p>Represents a single memory card used in the Memory game. Each card has a unique identifier, an
+ * associated image, and state information such as whether it is face-up or matched.
  */
 public class MemoryCard {
 
@@ -20,8 +20,8 @@ public class MemoryCard {
    * <h2>Constructor</h2>
    * Creates a new MemoryCard with the given ID and image path.
    *
-   * @param id         the unique identifier for the card
-   * @param imagePath  the path to the card's image
+   * @param id        the unique identifier for the card
+   * @param imagePath the path to the card's image
    */
   public MemoryCard(String id, String imagePath) {
     this.id = id;
@@ -110,9 +110,12 @@ public class MemoryCard {
    */
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof MemoryCard)) return false;
-    MemoryCard that = (MemoryCard) o;
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof MemoryCard that)) {
+      return false;
+    }
     return Objects.equals(id, that.id);
   }
 

@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * Handles UI interactions for starting a new game or loading an existing one.
  * Implements {@link NavigationHandler} to support application navigation.
  *
- * @author Oliver
+ * @author Oliver, Christian
  */
 public class StarIntroScreenController implements NavigationHandler {
 

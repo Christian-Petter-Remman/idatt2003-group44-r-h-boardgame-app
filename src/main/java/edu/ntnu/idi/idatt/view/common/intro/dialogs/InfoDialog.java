@@ -2,6 +2,7 @@ package edu.ntnu.idi.idatt.view.common.intro.dialogs;
 
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
 import edu.ntnu.idi.idatt.navigation.NavigationTarget;
+import java.util.Objects;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -10,20 +11,24 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.util.Objects;
 
 /**
  * <h1>InfoDialog</h1>
  *
- * A reusable informational modal dialog for displaying messages, fun facts, images, audio, and navigation options.
- * It is used to enhance user interaction and learning in a game or application.
+ * <p>A reusable informational modal dialog for displaying messages, fun facts, images, audio, and
+ * navigation options. It is used to enhance user interaction and learning in a game or
+ * application.
  */
 public class InfoDialog extends Stage {
 
@@ -35,7 +40,7 @@ public class InfoDialog extends Stage {
   /**
    * <h2>Constructor</h2>
    *
-   * Constructs the InfoDialog with layout and functionality based on the provided configuration.
+   * <p>Constructs the InfoDialog with layout and functionality based on the provided configuration.
    *
    * @param cfg a configuration object with all necessary dialog content and action handlers
    */
@@ -44,7 +49,8 @@ public class InfoDialog extends Stage {
     initModality(Modality.WINDOW_MODAL);
     setResizable(false);
     setTitle(cfg.getTitle());
-    getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/logo.png"))));
+    getIcons().add(
+        new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/logo.png"))));
 
     BorderPane root = new BorderPane();
     root.setPadding(new Insets(20));
@@ -56,14 +62,14 @@ public class InfoDialog extends Stage {
 
     Scene scene = new Scene(root);
     scene.getStylesheets().add(Objects.requireNonNull(
-            getClass().getResource("/css/StartScreenStyleSheet.css")).toExternalForm());
+        getClass().getResource("/css/StartScreenStyleSheet.css")).toExternalForm());
     setScene(scene);
   }
 
   /**
    * <h2>createTopBar</h2>
    *
-   * Constructs the top bar of the dialog including title and logo.
+   * <p>Constructs the top bar of the dialog including title and logo.
    *
    * @param cfg configuration with title
    * @return HBox node for top section
@@ -73,7 +79,7 @@ public class InfoDialog extends Stage {
     titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
 
     ImageView logo = new ImageView(new Image(
-            Objects.requireNonNull(getClass().getResourceAsStream("/images/logo.png"))));
+        Objects.requireNonNull(getClass().getResourceAsStream("/images/logo.png"))));
     logo.setFitWidth(30);
     logo.setFitHeight(30);
 
@@ -88,7 +94,7 @@ public class InfoDialog extends Stage {
   /**
    * <h2>createCenterContent</h2>
    *
-   * Builds the scrollable center content including main body, fun fact and image.
+   * <p>Builds the scrollable center content including main body, fun fact and image.
    *
    * @param cfg the dialog configuration
    * @return VBox with content
@@ -120,7 +126,7 @@ public class InfoDialog extends Stage {
     }
 
     ImageView mainImage = new ImageView(new Image(
-            Objects.requireNonNull(getClass().getResourceAsStream(cfg.getImagePath()))));
+        Objects.requireNonNull(getClass().getResourceAsStream(cfg.getImagePath()))));
     mainImage.setFitWidth(150);
     mainImage.setPreserveRatio(true);
     centerBox.getChildren().add(mainImage);
@@ -131,7 +137,7 @@ public class InfoDialog extends Stage {
   /**
    * <h2>createBottomButtons</h2>
    *
-   * Constructs the button row including optional "Listen", "CTA", and "Close" buttons.
+   * <p>Constructs the button row including optional "Listen", "CTA", and "Close" buttons.
    *
    * @param cfg the dialog configuration
    * @return HBox containing all buttons
@@ -168,13 +174,14 @@ public class InfoDialog extends Stage {
   /**
    * <h2>playSound</h2>
    *
-   * Plays the sound file associated with the dialog if not already loaded.
+   * <p>Plays the sound file associated with the dialog if not already loaded.
    *
    * @param audioRes path to the sound file resource
    */
   private void playSound(String audioRes) {
     if (player == null) {
-      Media media = new Media(Objects.requireNonNull(getClass().getResource(audioRes)).toExternalForm());
+      Media media = new Media(
+          Objects.requireNonNull(getClass().getResource(audioRes)).toExternalForm());
       player = new MediaPlayer(media);
     }
     player.stop();
@@ -184,7 +191,7 @@ public class InfoDialog extends Stage {
   /**
    * <h2>estimateLineHeight</h2>
    *
-   * Approximates the height of a single line of text based on font metrics.
+   * <p>Approximates the height of a single line of text based on font metrics.
    *
    * @param label the label to base calculation on
    * @return the estimated line height

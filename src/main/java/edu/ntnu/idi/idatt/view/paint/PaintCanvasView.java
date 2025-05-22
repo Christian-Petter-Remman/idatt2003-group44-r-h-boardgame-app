@@ -4,21 +4,32 @@ import edu.ntnu.idi.idatt.controller.paint.PaintCanvasController;
 import edu.ntnu.idi.idatt.controller.paint.PaintCanvasController.ToolType;
 import edu.ntnu.idi.idatt.model.paint.PaintModel;
 import edu.ntnu.idi.idatt.navigation.NavigationManager;
-import javafx.geometry.Insets;
-import javafx.scene.Parent;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
+import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
+import javafx.scene.control.Slider;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 /**
  * <h1>PaintCanvasView</h1>
- * <p>
- * JavaFX view class for a simple paint/drawing application. Provides tools for
- * selecting brushes, colors, line width, and undo/redo functionality.
+ * Javafx view class for a paint/drawing application.
+ *
+ * <p>JavaFX view class for a simple paint/drawing application. Provides tools for selecting
+ * brushes,
+ * colors, line width, and undo/redo functionality.
  * </p>
  */
 public class PaintCanvasView {
@@ -50,7 +61,7 @@ public class PaintCanvasView {
 
     root.getChildren().addAll(toolbar, canvasHolder);
     root.getStylesheets().add(
-            Objects.requireNonNull(getClass().getResource("/css/PaintStyleSheet.css")).toExternalForm()
+        Objects.requireNonNull(getClass().getResource("/css/PaintStyleSheet.css")).toExternalForm()
     );
     root.getStyleClass().add("paint-root");
 
@@ -85,10 +96,10 @@ public class PaintCanvasView {
     VBox.setVgrow(new Region(), Priority.ALWAYS);
 
     box.getChildren().addAll(
-            drawLabel, pencil, eraser,
-            sep1, undoBtn, redoBtn, clearBtn,
-            sep2, colorLabel, colorPicker, widthLabel, sizeSlider,
-            new Region(), backBtn
+        drawLabel, pencil, eraser,
+        sep1, undoBtn, redoBtn, clearBtn,
+        sep2, colorLabel, colorPicker, widthLabel, sizeSlider,
+        new Region(), backBtn
     );
 
     ToggleGroup group = new ToggleGroup();
@@ -126,6 +137,8 @@ public class PaintCanvasView {
 
   /**
    * <h2>getCanvas</h2>
+   * gets the drawing canvas.
+   *
    * @return the drawing canvas
    */
   public Canvas getCanvas() {
@@ -134,6 +147,8 @@ public class PaintCanvasView {
 
   /**
    * <h2>getUndoButton</h2>
+   * gets the undo button.
+   *
    * @return the Undo button
    */
   public Button getUndoButton() {
@@ -142,6 +157,8 @@ public class PaintCanvasView {
 
   /**
    * <h2>getRedoButton</h2>
+   * gets the redo button.
+   *
    * @return the Redo button
    */
   public Button getRedoButton() {
@@ -150,6 +167,8 @@ public class PaintCanvasView {
 
   /**
    * <h2>getClearButton</h2>
+   * gets the clear button.
+   *
    * @return the Clear button
    */
   public Button getClearButton() {
@@ -157,15 +176,9 @@ public class PaintCanvasView {
   }
 
   /**
-   * <h2>getBackButton</h2>
-   * @return the Back button
-   */
-  public Button getBackButton() {
-    return backBtn;
-  }
-
-  /**
    * <h2>getColorPicker</h2>
+   * gets the color picker for stroke color.
+   *
    * @return the ColorPicker for stroke color
    */
   public ColorPicker getColorPicker() {
@@ -174,6 +187,8 @@ public class PaintCanvasView {
 
   /**
    * <h2>getSizeSlider</h2>
+   * gets the slider for stroke width.
+   *
    * @return the slider for stroke width
    */
   public Slider getSizeSlider() {
@@ -182,6 +197,8 @@ public class PaintCanvasView {
 
   /**
    * <h2>getToolButtons</h2>
+   * gets the map of tool buttons.
+   *
    * @return map of tool type to toggle buttons
    */
   public Map<ToolType, ToggleButton> getToolButtons() {

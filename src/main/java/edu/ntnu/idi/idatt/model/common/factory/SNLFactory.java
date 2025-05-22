@@ -2,16 +2,16 @@ package edu.ntnu.idi.idatt.model.common.factory;
 
 import edu.ntnu.idi.idatt.filehandling.handlers.SNLBoardJsonHandler;
 import edu.ntnu.idi.idatt.model.snl.SNLBoard;
+import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 
 /**
  * <h1>SNLFactory</h1>
  *
- * Factory class responsible for loading {@link SNLBoard} instances from JSON files
- * using the {@link SNLBoardJsonHandler}.
+ * <p>Factory class responsible for loading {@link SNLBoard} instances from JSON files using the
+ * {@link SNLBoardJsonHandler}.
  */
 public class SNLFactory {
 
@@ -21,7 +21,7 @@ public class SNLFactory {
   /**
    * <h2>loadBoardFromFile</h2>
    *
-   * Loads a Snakes and Ladders board from a given JSON file path.
+   * <p>Loads a Snakes and Ladders board from a given JSON file path.
    *
    * @param fileName The path to the JSON board file.
    * @return A valid {@link SNLBoard} if successful, otherwise {@code null}.

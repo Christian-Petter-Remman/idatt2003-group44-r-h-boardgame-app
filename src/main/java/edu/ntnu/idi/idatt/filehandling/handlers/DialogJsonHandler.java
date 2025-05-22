@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.view.common.intro.dialogs.DialogConfig;
-
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
@@ -15,8 +14,10 @@ import java.util.stream.Collectors;
 
 /**
  * <h1>DialogJsonHandler</h1>
- * Utility class responsible for loading dialog configurations from a JSON file into a map.
- * Each dialog is uniquely identified by an ID.
+ * Utility class responsible for loading dialog configurations from a JSON file into a map. Each
+ * dialog is uniquely identified by an ID.
+ *
+ * @author Oliver, Christian
  */
 public class DialogJsonHandler {
 
@@ -33,11 +34,12 @@ public class DialogJsonHandler {
   public static Map<String, DialogConfig> loadDialogs() {
     try {
       String json = Files.readString(Path.of(DIALOGS_PATH));
-      Type listType = new TypeToken<List<DialogConfig>>() {}.getType();
+      Type listType = new TypeToken<List<DialogConfig>>() {
+      }.getType();
       List<DialogConfig> dialogList = new Gson().fromJson(json, listType);
 
       return dialogList.stream()
-              .collect(Collectors.toMap(DialogConfig::getId, cfg -> cfg));
+          .collect(Collectors.toMap(DialogConfig::getId, cfg -> cfg));
 
     } catch (IOException e) {
       throw new RuntimeException("Failed to load dialogs.json", e);

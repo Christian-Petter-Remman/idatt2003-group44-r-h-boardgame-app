@@ -1,12 +1,13 @@
-package edu.ntnu.idi.idatt.model.common.character_selection;
+package edu.ntnu.idi.idatt.model.common.characterselection;
 
 /**
  * <h1>PlayerData</h1>
  *
- * Represents a player participating in a game. Stores the player's ID, name,
- * active status, selected character, points, and character icon used for display.
+ * <p>Represents a player participating in a game. Stores the player's ID, name, active status,
+ * selected character, points, and character icon used for display.
  */
 public class PlayerData {
+
   private int id;
   private String name;
   private CharacterSelectionData selectedCharacter;
@@ -17,7 +18,7 @@ public class PlayerData {
   /**
    * <h2>Constructor</h2>
    *
-   * Initializes a player with a given ID. Players with ID 1 or 2 are active by default.
+   * <p>Initializes a player with a given ID. Players with ID 1 or 2 are active by default.
    *
    * @param id The ID of the player.
    */
@@ -28,7 +29,7 @@ public class PlayerData {
   }
 
   /**
-   * <h2>getId</h2>
+   * <h2>getId.</h2>
    *
    * @return The player's ID.
    */
@@ -37,7 +38,7 @@ public class PlayerData {
   }
 
   /**
-   * <h2>setId</h2>
+   * <h2>setId.</h2>
    *
    * @param id The player's new ID.
    */
@@ -46,7 +47,7 @@ public class PlayerData {
   }
 
   /**
-   * <h2>getName</h2>
+   * <h2>getName.</h2>
    *
    * @return The name of the player.
    */
@@ -55,7 +56,7 @@ public class PlayerData {
   }
 
   /**
-   * <h2>setName</h2>
+   * <h2>setName.</h2>
    *
    * @param name The new name for the player.
    */
@@ -64,7 +65,7 @@ public class PlayerData {
   }
 
   /**
-   * <h2>getSelectedCharacter</h2>
+   * <h2>getSelectedCharacter.</h2>
    *
    * @return The character currently selected by the player.
    */
@@ -73,7 +74,7 @@ public class PlayerData {
   }
 
   /**
-   * <h2>setSelectedCharacter</h2>
+   * <h2>setSelectedCharacter.</h2>
    *
    * @param selectedCharacter The character to assign to the player.
    */
@@ -82,7 +83,7 @@ public class PlayerData {
   }
 
   /**
-   * <h2>isActive</h2>
+   * <h2>isActive.</h2>
    *
    * @return Whether the player is active in the current game.
    */
@@ -91,7 +92,7 @@ public class PlayerData {
   }
 
   /**
-   * <h2>setActive</h2>
+   * <h2>setActive.</h2>
    *
    * @param active Sets the player's active status.
    */
@@ -100,7 +101,7 @@ public class PlayerData {
   }
 
   /**
-   * <h2>getCharacterIcon</h2>
+   * <h2>getCharacterIcon.</h2>
    *
    * @return The name of the selected character icon.
    */
@@ -109,7 +110,7 @@ public class PlayerData {
   }
 
   /**
-   * <h2>setCharacterIcon</h2>
+   * <h2>setCharacterIcon.</h2>
    *
    * @param characterIcon The name of the character icon to assign.
    */
@@ -118,7 +119,7 @@ public class PlayerData {
   }
 
   /**
-   * <h2>getPoints</h2>
+   * <h2>getPoints.</h2>
    *
    * @return The number of points this player has accumulated.
    */
@@ -127,7 +128,7 @@ public class PlayerData {
   }
 
   /**
-   * <h2>setPoints</h2>
+   * <h2>setPoints.</h2>
    *
    * @param points The number of points to assign to the player.
    */

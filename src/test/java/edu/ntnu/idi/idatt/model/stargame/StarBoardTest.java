@@ -33,8 +33,8 @@ class StarBoardTest {
     board.addBridge(5, 10);
     Bridge bridge = board.getBridgeAt(5);
     assertNotNull(bridge);
-    assertEquals(5, bridge.getStart());
-    assertEquals(10, bridge.getEnd());
+    assertEquals(5, bridge.start());
+    assertEquals(10, bridge.end());
     assertTrue(board.getBridges().contains(bridge));
   }
 
@@ -43,8 +43,8 @@ class StarBoardTest {
     board.addTunnel(3, 7);
     Tunnel tunnel = board.getTunnelAt(3);
     assertNotNull(tunnel);
-    assertEquals(3, tunnel.getStart());
-    assertEquals(7, tunnel.getEnd());
+    assertEquals(3, tunnel.start());
+    assertEquals(7, tunnel.end());
     assertTrue(board.getTunnels().contains(tunnel));
   }
 
@@ -53,10 +53,10 @@ class StarBoardTest {
     board.addPath(4, "right", 6, 8);
     Path path = board.getPathAt(4);
     assertNotNull(path);
-    assertEquals(4, path.getStart());
-    assertEquals("right", path.getDirection());
-    assertEquals(6, path.getEndStatic());
-    assertEquals(8, path.getEndDynamic());
+    assertEquals(4, path.start());
+    assertEquals("right", path.direction());
+    assertEquals(6, path.endStatic());
+    assertEquals(8, path.endDynamic());
     assertTrue(board.getPaths().contains(path));
   }
 
@@ -65,7 +65,7 @@ class StarBoardTest {
     board.addJail(12);
     Jail jail = board.getJailAt(13);
     assertNotNull(jail);
-    assertEquals(12, jail.getStart());
+    assertEquals(12, jail.start());
     assertTrue(board.getJailTiles().contains(jail));
   }
 
@@ -74,7 +74,7 @@ class StarBoardTest {
     Star star = board.addStar();
     assertNotNull(star, "Should add a new star");
     assertTrue(board.getStars().contains(star), "Star should be tracked by board");
-    Tile tile = board.getTile(star.getStart());
+    Tile tile = board.getTile(star.start());
     assertTrue(tile.getAttributes().contains(star), "Star should be an attribute of its tile");
   }
 
@@ -84,19 +84,19 @@ class StarBoardTest {
     assertNotNull(star);
     board.removeStar(star);
     assertFalse(board.getStars().contains(star), "Star should be removed from board");
-    Tile tile = board.getTile(star.getStart());
+    Tile tile = board.getTile(star.start());
     assertFalse(tile.getAttributes().contains(star), "Star attribute should be removed from tile");
   }
 
   @Test
   void testRespawnStar() {
     Star oldStar = board.addStar();
-    int oldPosition = oldStar.getStart();
+    int oldPosition = oldStar.start();
     int newPosition = board.respawnStar(oldStar);
     assertNotEquals(oldPosition, newPosition, "Star should respawn at a new position");
-    assertFalse(board.getStars().stream().anyMatch(s -> s.getStart() == oldPosition),
+    assertFalse(board.getStars().stream().anyMatch(s -> s.start() == oldPosition),
         "Old star should be gone");
-    assertTrue(board.getStars().stream().anyMatch(s -> s.getStart() == newPosition),
+    assertTrue(board.getStars().stream().anyMatch(s -> s.start() == newPosition),
         "New star should exist");
   }
 
@@ -104,7 +104,7 @@ class StarBoardTest {
   void testGetStarPosition() {
     Star star = board.addStar();
     int pos = board.getStarPosition(star);
-    assertEquals(star.getStart(), pos, "getStarPosition should return star's start");
+    assertEquals(star.start(), pos, "getStarPosition should return star's start");
   }
 
   @Test
@@ -120,17 +120,17 @@ class StarBoardTest {
   void testNoDuplicateBridgesOrTunnelsOrJails() {
     board.addBridge(10, 20);
     board.addBridge(10, 20);
-    assertEquals(1, board.getBridges().stream().filter(b -> b.getStart() == 10).count(),
+    assertEquals(1, board.getBridges().stream().filter(b -> b.start() == 10).count(),
         "Duplicate bridges on same tile should not exist");
 
     board.addTunnel(15, 25);
     board.addTunnel(15, 25);
-    assertEquals(2, board.getTunnels().stream().filter(t -> t.getStart() == 15).count(),
+    assertEquals(2, board.getTunnels().stream().filter(t -> t.start() == 15).count(),
         "2 tunnels on same tile should exist");
 
     board.addJail(30);
     board.addJail(30);
-    assertEquals(1, board.getJailTiles().stream().filter(j -> j.getStart() == 30).count(),
+    assertEquals(1, board.getJailTiles().stream().filter(j -> j.start() == 30).count(),
         "Duplicate jail on same tile should not exist");
   }
 
@@ -166,7 +166,7 @@ class StarBoardTest {
     Star s2 = board.addStar();
     assertNotNull(s1);
     assertNotNull(s2);
-    assertNotEquals(s1.getStart(), s2.getStart(), "Stars should not be placed on same tile");
+    assertNotEquals(s1.start(), s2.start(), "Stars should not be placed on same tile");
     assertEquals(2, board.getStars().size());
   }
 
@@ -175,8 +175,8 @@ class StarBoardTest {
     board.addBridge(-1, -5);
     Bridge bridge = board.getBridgeAt(-1);
     assertNotNull(bridge);
-    assertEquals(-1, bridge.getStart());
-    assertEquals(-5, bridge.getEnd());
+    assertEquals(-1, bridge.start());
+    assertEquals(-5, bridge.end());
   }
 
   @Test
@@ -190,7 +190,7 @@ class StarBoardTest {
   void testJailCanOnlyExistOncePerTile() {
     board.addJail(50);
     board.addJail(50);
-    long count = board.getJailTiles().stream().filter(j -> j.getStart() == 50).count();
+    long count = board.getJailTiles().stream().filter(j -> j.start() == 50).count();
     assertEquals(1, count, "Only one jail should exist per tile");
   }
 
@@ -200,14 +200,14 @@ class StarBoardTest {
     board.addTunnel(62, 63);
     board.addJail(64);
     Star star = board.addStar();
-    assertNotEquals(60, star.getStart());
-    assertNotEquals(61, star.getStart());
-    assertNotEquals(62, star.getStart());
-    assertNotEquals(63, star.getStart());
-    assertNotEquals(64, star.getStart());
-    assertNotEquals(65, star.getStart());
-    assertNotEquals(63, star.getStart());
-    assertNotEquals(65, star.getStart());
+    assertNotEquals(60, star.start());
+    assertNotEquals(61, star.start());
+    assertNotEquals(62, star.start());
+    assertNotEquals(63, star.start());
+    assertNotEquals(64, star.start());
+    assertNotEquals(65, star.start());
+    assertNotEquals(63, star.start());
+    assertNotEquals(65, star.start());
   }
 
   @Test

@@ -1,10 +1,14 @@
 package edu.ntnu.idi.idatt.view.common.character;
 
 import edu.ntnu.idi.idatt.controller.common.StarCharSelectionController;
-import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionData;
-import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionManager;
-import edu.ntnu.idi.idatt.model.common.character_selection.CharacterSelectionObserver;
-import edu.ntnu.idi.idatt.model.common.character_selection.PlayerData;
+import edu.ntnu.idi.idatt.model.common.characterselection.CharacterSelectionData;
+import edu.ntnu.idi.idatt.model.common.characterselection.CharacterSelectionManager;
+import edu.ntnu.idi.idatt.model.common.characterselection.CharacterSelectionObserver;
+import edu.ntnu.idi.idatt.model.common.characterselection.PlayerData;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.IntStream;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -13,24 +17,25 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 /**
- * <h1>StarCharSelectionScreen</h1>
- * <p>
- * JavaFX UI screen for character selection in the Star board game.
- * Allows activating/deactivating players, naming them, and assigning unique character icons.
+ * <h1>StarCharSelectionScreen.</h1>
+ *
+ * <p>JavaFX UI screen for character selection in the Star board game. Allows
+ * activating/deactivating players, naming them, and assigning unique character icons.
  * </p>
  */
 public class StarCharSelectionScreen implements CharacterSelectionObserver {
 
+  private static final org.slf4j.Logger logger =
+      org.slf4j.LoggerFactory.getLogger(StarCharSelectionScreen.class);
   private final CharacterSelectionManager manager;
   private StarCharSelectionController handler;
 
@@ -39,7 +44,7 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
   private final List<PlayerPanel> panels = new ArrayList<>();
 
   /**
-   * <h2>Constructor</h2>
+   * <h2>Constructor.</h2>
    *
    * @param manager the shared character selection manager instance
    */
@@ -48,7 +53,7 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
     manager.addObserver(this);
     buildRoot();
     root.getStylesheets().add(Objects.requireNonNull(
-            getClass().getResource("/css/CharacterSelectionScreenStyles.css")).toExternalForm());
+        getClass().getResource("/css/CharacterSelectionScreenStyles.css")).toExternalForm());
   }
 
   /**
@@ -64,7 +69,7 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
   }
 
   /**
-   * <h2>getView</h2>
+   * <h2>getView.</h2>
    *
    * @return root layout node for this view
    */
@@ -114,8 +119,8 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
     next.setOnAction(e -> {
       boolean allSelected = manager.allActivePlayersHaveSelectedCharacters();
       boolean allNamed = manager.getPlayers().stream()
-              .filter(PlayerData::isActive)
-              .allMatch(p -> p.getName() != null && !p.getName().trim().isEmpty());
+          .filter(PlayerData::isActive)
+          .allMatch(p -> p.getName() != null && !p.getName().trim().isEmpty());
 
       if (!allNamed) {
         showNameMissingWarning();
@@ -151,14 +156,14 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
   private void showNameMissingWarning() {
     Label warning = new Label("Please enter names for all active players!");
     warning.setStyle(
-            "-fx-text-fill: red;" +
-                    "-fx-font-weight: bold;" +
-                    "-fx-font-size: 14px;" +
-                    "-fx-padding: 10;" +
-                    "-fx-background-color: #ffeeee;" +
-                    "-fx-border-color: red;" +
-                    "-fx-border-radius: 5;" +
-                    "-fx-background-radius: 5;"
+        "-fx-text-fill: red;"
+            + "-fx-font-weight: bold;"
+            + "-fx-font-size: 14px;"
+            + "-fx-padding: 10;"
+            + "-fx-background-color: #ffeeee;"
+            + "-fx-border-color: red;"
+            + "-fx-border-radius: 5;"
+            + "-fx-background-radius: 5;"
     );
     StackPane.setAlignment(warning, Pos.TOP_CENTER);
     StackPane.setMargin(warning, new Insets(20));
@@ -169,7 +174,10 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
       new Thread(() -> {
         try {
           Thread.sleep(2000);
-        } catch (InterruptedException ignored) {}
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          logger.warn("Thread interrupted", e);
+        }
         javafx.application.Platform.runLater(() -> rootPane.getChildren().remove(warning));
       }).start();
     }
@@ -183,7 +191,9 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
     javafx.stage.Popup popup = new javafx.stage.Popup();
 
     VBox content = new VBox(10);
-    content.setStyle("-fx-background-color: #f8d7da; -fx-padding: 15; -fx-border-color: #f5c2c7; -fx-border-width: 2;");
+    content.setStyle(
+        "-fx-background-color: #f8d7da; -fx-padding: 15; -fx-border-color: #f5c2c7;"
+            + " -fx-border-width: 2;");
     Label header = new Label("Missing Character");
     header.setStyle("-fx-font-weight: bold; -fx-text-fill: #721c24;");
     Label message = new Label("Each active player must select a character before continuing.");
@@ -195,28 +205,31 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
     popup.setHideOnEscape(true);
 
     javafx.stage.Window window = root.getScene().getWindow();
-    popup.show(window, window.getX() + window.getWidth() / 2 - 150, window.getY() + window.getHeight() / 2 - 50);
+    popup.show(window, window.getX() + window.getWidth() / 2 - 150,
+        window.getY() + window.getHeight() / 2 - 50);
   }
 
   /**
    * <h1>PlayerPanel</h1>
    *
-   * UI panel for a single player in the character selection screen.
+   * <p>UI panel for a single player in the character selection screen.
    */
   private final class PlayerPanel {
+
     private final PlayerData player;
     private StarCharSelectionController handler;
 
     private final StackPane node = new StackPane();
     private final VBox activeBox = new VBox(10);
-    private final HBox row1 = new HBox(10), row2 = new HBox(10);
+    private final HBox row1 = new HBox(10);
+    private final HBox row2 = new HBox(10);
     private final Button removeBtn = new Button("X");
 
     private boolean shownActive = false;
     private final List<VBox> portraits = new ArrayList<>();
 
     /**
-     * <h2>Constructor</h2>
+     * <h2>Constructor.</h2>
      *
      * @param player the PlayerData instance
      */
@@ -239,8 +252,11 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
       manager.getAvailableCharacters().forEach(c -> {
         VBox portrait = createPortrait(c);
         portraits.add(portrait);
-        if (row1.getChildren().size() < 5) row1.getChildren().add(portrait);
-        else row2.getChildren().add(portrait);
+        if (row1.getChildren().size() < 5) {
+          row1.getChildren().add(portrait);
+        } else {
+          row2.getChildren().add(portrait);
+        }
       });
 
       rebuildOuter();
@@ -248,7 +264,7 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
     }
 
     /**
-     * <h2>setHandler</h2>
+     * <h2>setHandler.</h2>
      *
      * @param handler controller responsible for interaction callbacks
      */
@@ -339,7 +355,7 @@ public class StarCharSelectionScreen implements CharacterSelectionObserver {
     }
 
     /**
-     * <h2>createPortrait</h2>
+     * <h2>createPortrait.</h2>
      *
      * @param character character data
      * @return VBox containing the image for the character

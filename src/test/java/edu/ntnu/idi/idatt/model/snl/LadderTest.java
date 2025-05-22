@@ -21,8 +21,8 @@ class LadderTest {
   @Test
   void testConstructorAndGetters() {
     Ladder ladder = new Ladder(3, 17);
-    assertEquals(3, ladder.getStart());
-    assertEquals(17, ladder.getEnd());
+    assertEquals(3, ladder.start());
+    assertEquals(17, ladder.end());
   }
 
   @Test

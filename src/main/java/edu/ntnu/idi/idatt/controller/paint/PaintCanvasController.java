@@ -3,23 +3,30 @@ package edu.ntnu.idi.idatt.controller.paint;
 import edu.ntnu.idi.idatt.model.paint.PaintModel;
 import edu.ntnu.idi.idatt.model.paint.Stroke;
 import edu.ntnu.idi.idatt.view.paint.PaintCanvasView;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * <h1>PaintCanvasController</h1>
- * Controls interaction between the PaintModel and PaintCanvasView.
- * Handles user input, drawing logic, and synchronization between model and view.
+ * Controls interaction between the PaintModel and PaintCanvasView. Handles user input, drawing
+ * logic, and synchronization between model and view.
  *
- * @author NTNU
+ * @author Oliver, Christian
  */
 public class PaintCanvasController implements PaintModel.Observer {
 
-  public enum ToolType { PENCIL, ERASER }
+  /**
+   * <h2>ToolType</h2>
+   * Enum representing the type of tool currently selected in the paint application.
+   */
+  public enum ToolType {
+    PENCIL,
+    ERASER
+  }
 
   private final PaintModel model;
   private final PaintCanvasView view;
@@ -51,15 +58,15 @@ public class PaintCanvasController implements PaintModel.Observer {
     final GraphicsContext gc = view.getCanvas().getGraphicsContext2D();
 
     view.getToolButtons().forEach((type, btn) ->
-            btn.setOnAction(e -> currentTool = type)
+        btn.setOnAction(e -> currentTool = type)
     );
 
     view.getColorPicker().setOnAction(e ->
-            currentColor = view.getColorPicker().getValue()
+        currentColor = view.getColorPicker().getValue()
     );
 
     view.getSizeSlider().valueProperty().addListener((obs, oldVal, newVal) ->
-            currentWidth = newVal.doubleValue()
+        currentWidth = newVal.doubleValue()
     );
 
     view.getUndoButton().setOnAction(e -> model.undo());
@@ -72,14 +79,18 @@ public class PaintCanvasController implements PaintModel.Observer {
     });
 
     view.getCanvas().setOnMouseDragged(e -> {
-      double x = e.getX(), y = e.getY();
+      double x;
+      double y;
+      x = e.getX();
+      y = e.getY();
       Point2D last = currentPoints.getLast();
       currentPoints.add(new Point2D(x, y));
-
+      double lastX = last.getX();
+      double lastY = last.getY();
       Color drawColor = (currentTool == ToolType.ERASER) ? Color.WHITE : currentColor;
       gc.setStroke(drawColor);
       gc.setLineWidth(currentWidth);
-      gc.strokeLine(last.getX(), last.getY(), x, y);
+      gc.strokeLine(lastX, lastY, x, y);
     });
 
     view.getCanvas().setOnMouseReleased(e -> {

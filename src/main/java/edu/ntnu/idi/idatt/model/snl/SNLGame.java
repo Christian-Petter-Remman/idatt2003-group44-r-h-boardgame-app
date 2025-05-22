@@ -3,19 +3,20 @@ package edu.ntnu.idi.idatt.model.snl;
 import edu.ntnu.idi.idatt.model.common.BoardGame;
 import edu.ntnu.idi.idatt.model.common.Dice;
 import edu.ntnu.idi.idatt.model.common.Player;
-import edu.ntnu.idi.idatt.model.model_observers.BoardObserver;
-import edu.ntnu.idi.idatt.model.model_observers.GameScreenObserver;
+import edu.ntnu.idi.idatt.model.modelobservers.BoardObserver;
+import edu.ntnu.idi.idatt.model.modelobservers.GameScreenObserver;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * <h1>SNLGame</h1>
  *
- * Represents the core logic of a Snakes and Ladders game, including turn management,
- * dice rolling, ladder/snake tile interactions, and observer notifications.
+ * <p>Represents the core logic of a Snakes and Ladders game, including turn management, dice
+ * rolling,
+ * ladder/snake tile interactions, and observer notifications.
  */
 public class SNLGame extends BoardGame {
 
@@ -23,7 +24,7 @@ public class SNLGame extends BoardGame {
 
   private boolean gameOver = false;
 
-  private final List<GameScreenObserver> turnObservers = new ArrayList<>();
+
   private final List<GameScreenObserver> moveObservers = new ArrayList<>();
   private final List<GameScreenObserver> winnerObservers = new ArrayList<>();
   private final List<BoardObserver> boardObservers = new ArrayList<>();
@@ -31,7 +32,7 @@ public class SNLGame extends BoardGame {
   /**
    * <h2>SNLGame</h2>
    *
-   * Initializes a new Snakes and Ladders game instance.
+   * <p>Initializes a new Snakes and Ladders game instance.
    *
    * @param board            the game board
    * @param players          list of players
@@ -45,17 +46,21 @@ public class SNLGame extends BoardGame {
     this.dice = new Dice(diceCount);
     this.currentPlayerIndex = currentTurnIndex;
     initializePlayer(players);
-    logger.info("Snakes and Ladders created with board size {} and turn index {}", board.getSize(), currentTurnIndex);
+    logger.info("Snakes and Ladders created with board size {} and turn index {}", board.getSize(),
+        currentTurnIndex);
   }
 
   /**
    * <h2>playTurn</h2>
    *
-   * Executes the current player's turn including dice roll, movement,
-   * special tile handling, and turn progression.
+   * <p>Executes the current player's turn including dice roll, movement, special tile handling,
+   * and
+   * turn progression.
    */
   public void playTurn() {
-    if (gameOver) return;
+    if (gameOver) {
+      return;
+    }
 
     SNLPlayer player = (SNLPlayer) getCurrentPlayer();
     logger.info("It's {}'s turn (position: {})", player.getName(), player.getPosition());
@@ -76,8 +81,9 @@ public class SNLGame extends BoardGame {
     Integer snakeEnd = ((SNLBoard) board).getSnakeEnd(newPosition);
 
     if (ladderEnd != null) {
-      logger.info("{} landed on a ladder at {}! Climbing to {}...", player.getName(), newPosition, ladderEnd);
-      delay(500);
+      logger.info("{} landed on a ladder at {}! Climbing to {}...", player.getName(), newPosition,
+          ladderEnd);
+      delay();
       player.setPosition(ladderEnd);
       logger.info("{} climbed to {}", player.getName(), ladderEnd);
       boardObservers.forEach(observer -> {
@@ -86,8 +92,9 @@ public class SNLGame extends BoardGame {
       });
       notifyMoveObservers(player, 0);
     } else if (snakeEnd != null) {
-      logger.info("{} landed on a snake at {}! Sliding to {}...", player.getName(), newPosition, snakeEnd);
-      delay(500);
+      logger.info("{} landed on a snake at {}! Sliding to {}...", player.getName(), newPosition,
+          snakeEnd);
+      delay();
       player.setPosition(snakeEnd);
       logger.info("{} slid down to {}", player.getName(), snakeEnd);
       boardObservers.forEach(observer -> {
@@ -109,13 +116,11 @@ public class SNLGame extends BoardGame {
   /**
    * <h2>delay</h2>
    *
-   * Introduces a pause in execution.
-   *
-   * @param milliseconds time to sleep
+   * <p>Introduces a pause in execution.
    */
-  private void delay(int milliseconds) {
+  private void delay() {
     try {
-      Thread.sleep(milliseconds);
+      Thread.sleep(500);
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
@@ -124,7 +129,7 @@ public class SNLGame extends BoardGame {
   /**
    * <h2>addTurnObserver</h2>
    *
-   * Adds a turn observer.
+   * <p>Adds a turn observer.
    *
    * @param observer observer to register
    */
@@ -136,7 +141,7 @@ public class SNLGame extends BoardGame {
   /**
    * <h2>addMoveObserver</h2>
    *
-   * Adds a move observer.
+   * <p>Adds a move observer.
    *
    * @param observer observer to register
    */
@@ -148,7 +153,7 @@ public class SNLGame extends BoardGame {
   /**
    * <h2>addWinnerObserver</h2>
    *
-   * Adds a winner observer.
+   * <p>Adds a winner observer.
    *
    * @param observer observer to register
    */
@@ -158,20 +163,9 @@ public class SNLGame extends BoardGame {
   }
 
   /**
-   * <h2>addMoveObserver (BoardObserver)</h2>
-   *
-   * Adds a board-level move observer.
-   *
-   * @param observer observer to register
-   */
-  public void addMoveObserver(BoardObserver observer) {
-    boardObservers.add(observer);
-  }
-
-  /**
    * <h2>notifyMoveObservers</h2>
    *
-   * Notifies all move observers of a movement event.
+   * <p>Notifies all move observers of a movement event.
    *
    * @param player the player who moved
    * @param roll   the dice roll result
@@ -188,7 +182,7 @@ public class SNLGame extends BoardGame {
   /**
    * <h2>notifyWinnerObservers</h2>
    *
-   * Notifies all observers that a player has won.
+   * <p>Notifies all observers that a player has won.
    *
    * @param winner the player who won
    */
@@ -198,7 +192,7 @@ public class SNLGame extends BoardGame {
   }
 
   /**
-   * <h2>isGameOver</h2>
+   * <h2>isGameOver.</h2>
    *
    * @return true if the game has ended
    */

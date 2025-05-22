@@ -5,7 +5,6 @@ import com.google.gson.reflect.TypeToken;
 import edu.ntnu.idi.idatt.filehandling.FileHandler;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
 import edu.ntnu.idi.idatt.model.memorygame.MemoryCard;
-
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
@@ -17,27 +16,16 @@ import java.util.stream.Stream;
 
 /**
  * <h1>MemoryJsonHandler</h1>
- * Handles loading of memory card configurations from JSON files.
- * This class implements {@link FileHandler} for {@link MemoryCard} objects.
- * Saving functionality is currently not supported.
+ * Handles loading of memory card configurations from JSON files. This class implements
+ * {@link FileHandler} for {@link MemoryCard} objects. Saving functionality is currently not
+ * supported.
+ *
+ * @author Oliver, Christian
  */
 public class MemoryJsonHandler implements FileHandler<List<MemoryCard>> {
 
   private static final Gson GSON = new Gson();
   private static final String MEMORY_DIR = FileManager.MEMORYGAME_DIR;
-
-  /**
-   * <h2>saveToFile</h2>
-   * Saving memory cards is currently not supported and will throw an exception.
-   *
-   * @param cards the list of memory cards to save
-   * @param fileName the name of the file to save to
-   * @throws UnsupportedOperationException always thrown since saving is unsupported
-   */
-  @Override
-  public void saveToFile(List<MemoryCard> cards, String fileName) {
-    throw new UnsupportedOperationException("Saving memory boards not supported");
-  }
 
   /**
    * <h2>loadFromFile</h2>
@@ -52,14 +40,15 @@ public class MemoryJsonHandler implements FileHandler<List<MemoryCard>> {
     Path path = Path.of(MEMORY_DIR, fileName);
     String json = Files.readString(path);
 
-    Type listType = new TypeToken<List<Map<String, String>>>() {}.getType();
+    Type listType = new TypeToken<List<Map<String, String>>>() {
+    }.getType();
     List<Map<String, String>> entries = GSON.fromJson(json, listType);
 
     return entries.stream()
-            .flatMap(entry -> Stream.of(
-                    new MemoryCard(entry.get("id"), entry.get("imagePath")),
-                    new MemoryCard(entry.get("id"), entry.get("imagePath"))
-            ))
-            .collect(Collectors.toList());
+        .flatMap(entry -> Stream.of(
+            new MemoryCard(entry.get("id"), entry.get("imagePath")),
+            new MemoryCard(entry.get("id"), entry.get("imagePath"))
+        ))
+        .collect(Collectors.toList());
   }
 }

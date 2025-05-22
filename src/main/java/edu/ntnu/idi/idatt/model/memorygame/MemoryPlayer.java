@@ -3,7 +3,7 @@ package edu.ntnu.idi.idatt.model.memorygame;
 /**
  * <h1>MemoryPlayer</h1>
  *
- * Represents a player in the Memory game, tracking their name and score.
+ * <p>Represents a player in the Memory game, tracking their name and score.
  */
 public class MemoryPlayer {
 
@@ -13,7 +13,7 @@ public class MemoryPlayer {
   /**
    * <h2>Constructor</h2>
    *
-   * Initializes a player with the given name and a starting score of zero.
+   * <p>Initializes a player with the given name and a starting score of zero.
    *
    * @param name the name of the player
    */
@@ -25,7 +25,7 @@ public class MemoryPlayer {
   /**
    * <h2>getName</h2>
    *
-   * Returns the name of the player.
+   * <p>Returns the name of the player.
    *
    * @return the player's name
    */
@@ -36,7 +36,7 @@ public class MemoryPlayer {
   /**
    * <h2>getScore</h2>
    *
-   * Returns the current score of the player.
+   * <p>Returns the current score of the player.
    *
    * @return the player's score
    */
@@ -45,9 +45,9 @@ public class MemoryPlayer {
   }
 
   /**
-   * <h2>incrementScore</h2>
+   * <h2>incrementScore</h2>'
    *
-   * Increments the player's score by 1.
+   * <p>Increments the player's score by 1.
    */
   public void incrementScore() {
     score++;
@@ -56,7 +56,7 @@ public class MemoryPlayer {
   /**
    * <h2>resetScore</h2>
    *
-   * Resets the player's score to zero.
+   * <p>Resets the player's score to zero.
    */
   public void resetScore() {
     this.score = 0;
