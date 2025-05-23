@@ -30,7 +30,9 @@ import javafx.scene.text.Font;
  *
  * <p>JavaFX UI screen for character selection in the Star board game. Allows
  * activating/deactivating players, naming them, and assigning unique character icons.
- * AI: used for visuals
+ *
+ <P>AI: active involvement as sparring partner and created underlying frame for view development.
+ * </P>
  * </p>
  */
 public class StarCharSelectionScreen implements CharacterSelectionObserver {

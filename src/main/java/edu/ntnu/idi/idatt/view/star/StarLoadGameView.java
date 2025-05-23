@@ -24,7 +24,9 @@ import javafx.scene.layout.VBox;
  * <h1>StarLoadGameView</h1>
  * JavaFX view that displays a list of recent saved games for the Star game and allows the user to
  * load one of them.
- * AI: partial use in view logic
+ *
+ * <P>AI: active involvement as sparring partner and created underlying frame for view development.
+ * </P>
  */
 public class StarLoadGameView {
 

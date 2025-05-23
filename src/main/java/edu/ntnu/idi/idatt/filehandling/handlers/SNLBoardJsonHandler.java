@@ -24,7 +24,9 @@ import org.slf4j.LoggerFactory;
  * <p>Handles JSON-based loading and saving of Snakes and Ladders boards. Supports parsing of JSON
  * files to construct {@link SNLBoard} objects, as well as creating default board files
  * programmatically.
- * AI: partially used
+ *
+ * <P>AI: active involvement as sparring partner and created underlying frame for development.
+ * </P>
  */
 public class SNLBoardJsonHandler implements FileHandler<SNLBoard> {
 

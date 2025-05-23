@@ -1,6 +1,6 @@
 package edu.ntnu.idi.idatt.model.common.intro;
 
-import edu.ntnu.idi.idatt.view.common.intro.dialogs.DialogConfig;
+import edu.ntnu.idi.idatt.model.common.DialogConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

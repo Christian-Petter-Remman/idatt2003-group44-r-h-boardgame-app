@@ -19,7 +19,9 @@ import java.util.function.Function;
  * <p>
  * Handles loading and saving of StarBoard objects using JSON format. Supports both generic and
  * strongly typed board loading, board file generation, and error handling.
- * AI: partially used for all methods here
+ *
+ * <P>AI: active involvement as sparring partner and created underlying frame for development.
+ * </P>
  */
 public class StarBoardJsonHandler implements FileHandler<StarBoard> {
 

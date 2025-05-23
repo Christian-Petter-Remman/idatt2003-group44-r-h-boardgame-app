@@ -41,7 +41,9 @@ public class StarGameStateExporter implements CsvExportObserver {
    * <p>Called when the observer is triggered to export the game state to CSV. Includes board
    * filename,
    * dice count, current turn, and player data.
-   * AI: used for writer logic
+   *
+   * <p>AI: used for writer logic
+   * </p>
    */
   @Override
   public void onExportRequested() {

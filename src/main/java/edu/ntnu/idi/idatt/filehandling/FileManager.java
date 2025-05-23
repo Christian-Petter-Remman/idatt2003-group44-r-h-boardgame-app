@@ -38,7 +38,7 @@ public class FileManager {
    *
    * <p>Creates required application directories if they do not exist, and verifies they are
    * writable.
-   * AI: used partially used in this class
+   *
    *
    * @throws IOException If a directory is missing or inaccessible.
    */

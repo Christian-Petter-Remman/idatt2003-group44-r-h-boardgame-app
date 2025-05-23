@@ -27,10 +27,12 @@ import javafx.scene.layout.VBox;
  * <h1>PaintCanvasView</h1>
  * Javafx view class for a paint/drawing application.
  *
+ * <P>AI: active involvement as sparring partner
+ * </P>
+ *
  * <p>JavaFX view class for a simple paint/drawing application. Provides tools for selecting
  * brushes,
  * colors, line width, and undo/redo functionality.
- *
  * </p>
  */
 public class PaintCanvasView {

@@ -23,7 +23,9 @@ import org.slf4j.LoggerFactory;
  *
  * <p>Represents the introduction view for the Snakes and Ladders game. It provides options to
  * start a new game or load an existing one.
- * AI: used in styling
+ *
+ * <P>AI: active involvement as sparring partner and created underlying frame for view development.
+ * </P>
  */
 public class SNLIntroView implements IntroView {
 

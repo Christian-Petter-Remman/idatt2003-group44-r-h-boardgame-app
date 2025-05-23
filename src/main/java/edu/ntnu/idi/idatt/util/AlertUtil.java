@@ -11,7 +11,6 @@ import javafx.stage.Window;
  *
  * <p>Utility class for displaying JavaFX alert dialogs in a consistent and modal way. Provides
  * simplified methods to show error alerts tied to the main application window.
- * AI: partially used in this class
  */
 public class AlertUtil {
 

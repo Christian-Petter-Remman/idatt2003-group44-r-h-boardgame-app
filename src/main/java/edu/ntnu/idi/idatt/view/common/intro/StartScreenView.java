@@ -2,7 +2,7 @@ package edu.ntnu.idi.idatt.view.common.intro;
 
 import edu.ntnu.idi.idatt.controller.common.StartScreenController;
 import edu.ntnu.idi.idatt.model.common.intro.StartScreenModel;
-import edu.ntnu.idi.idatt.view.common.intro.dialogs.DialogConfig;
+import edu.ntnu.idi.idatt.model.common.DialogConfig;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Map;
@@ -23,7 +23,9 @@ import javafx.stage.Screen;
  * clickable
  * animal icons that trigger learning dialogs or game navigation. Reacts to model updates and
  * delegates click behavior to the controller.
- * AI: helper for GUI
+ *
+ * <P>AI: active involvement as sparring partner and created underlying frame for view development.
+ * </P>
  */
 public class StartScreenView implements PropertyChangeListener {
 

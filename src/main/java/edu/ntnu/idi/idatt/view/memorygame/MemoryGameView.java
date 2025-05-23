@@ -35,7 +35,9 @@ import javafx.util.Duration;
  * <p>JavaFX view class that renders the memory game board, handles user interaction, displays
  * scores,
  * turn information, and responds to updates in the game model.
- * AI: Partial use for GUI
+ *
+ * <P>AI: active involvement as sparring partner and created underlying frame for view development.
+ * </P>
  */
 public class MemoryGameView implements MemoryGameObserver {
 

@@ -7,7 +7,8 @@ import com.google.gson.FieldAttributes;
  * <h1>RandomExclusionStrategy</h1>
  * A custom Gson {@link ExclusionStrategy} used to exclude {@link java.util.Random} fields during
  * serialization and deserialization.
- * AI: used to develop this class
+ *
+ * <p>AI: used to develop this class</p>
  *
  * <p>This is useful for avoiding issues with serializing non-deterministic fields or fields that
  * are not relevant to the data model (e.g. random number generators).

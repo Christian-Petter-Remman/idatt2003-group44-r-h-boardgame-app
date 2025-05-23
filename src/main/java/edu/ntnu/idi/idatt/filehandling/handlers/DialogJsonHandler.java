@@ -3,7 +3,7 @@ package edu.ntnu.idi.idatt.filehandling.handlers;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import edu.ntnu.idi.idatt.filehandling.FileManager;
-import edu.ntnu.idi.idatt.view.common.intro.dialogs.DialogConfig;
+import edu.ntnu.idi.idatt.model.common.DialogConfig;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;

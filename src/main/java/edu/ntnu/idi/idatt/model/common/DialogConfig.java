@@ -1,4 +1,4 @@
-package edu.ntnu.idi.idatt.view.common.intro.dialogs;
+package edu.ntnu.idi.idatt.model.common;
 
 /**
  * <h1>DialogConfig</h1>

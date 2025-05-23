@@ -11,8 +11,7 @@ import org.slf4j.LoggerFactory;
 /**
  * <h1>MemoryBoardGame</h1>
  * Manages the state and logic of a memory card matching game. It tracks player turns, card flips,
- * scorekeeping, and notifies observers of game events.
- * AI: flipCard method help by ai.
+ * score keeping, and notifies observers of game events.
  */
 public class MemoryBoardGame {
 
@@ -76,6 +75,9 @@ public class MemoryBoardGame {
   /**
    * <h2>flipCard</h2>
    * Handles logic for flipping a card at a given index.
+   *
+   * <p>AI actively used in this method
+   * </p>
    *
    * @param index the index of the card to flip
    */

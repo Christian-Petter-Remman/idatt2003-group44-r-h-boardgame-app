@@ -25,7 +25,9 @@ import org.slf4j.LoggerFactory;
  * starting
  * a new game or loading a previously saved game. It implements {@link IntroView} and defines the
  * visual layout and button behaviors.
- * AI: Styling
+ *
+ * <P>AI: active involvement as sparring partner and created underlying frame for view development.
+ * </P>
  */
 public class StarIntroView implements IntroView {
 

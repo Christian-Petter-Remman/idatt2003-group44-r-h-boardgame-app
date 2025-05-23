@@ -55,7 +55,9 @@ import org.slf4j.LoggerFactory;
  *
  * <p>Singleton responsible for handling all view transitions across the application. Provides
  * centralized navigation logic and maintains a history stack.
- * AI: help in development of this class
+ *
+ * <p>AI: Used as help in setting up nav handler
+ * </p>
  */
 public class NavigationManager {
 

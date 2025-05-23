@@ -26,9 +26,11 @@ import javafx.scene.paint.Color;
 /**
  * <h1>MemoryRuleSelectionView.</h1>
  *
+ * <P>AI: active involvement as sparring partner and created underlying frame for view development.
+ * </P>
+ *
  * <p>A JavaFX view for configuring the memory game settings before starting the game.
  * Allows the user to choose board size and input player names.
- * AI:used for sparring
  * </p>
  */
 public class MemoryRuleSelectionView {
