@@ -43,6 +43,7 @@ import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * <h1>SNLGameScreenView</h1>
  *
@@ -52,8 +53,7 @@ import org.slf4j.LoggerFactory;
  * animating player tokens, and handling user interactions such as rolling dice, saving,
  * and navigating.</p>
  *
- * <P>AI: active involvement as sparring partner and created underlying frame for view development.
- * </P>
+ * <p>AI: active involvement as sparring partner and created underlying frame for view development.</p>
  *
  * <h2>Responsibilities</h2>
  * <ul>
@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
  *   <li>Display game instructions and current game status.</li>
  *   <li>Handle save game operations via popup dialogs.</li>
  *   <li>Notify controller of user actions (roll dice, navigate, save).</li>
- * </ul>
+ * </ul>.
  */
 public class SNLGameScreenView extends GameScreen implements GameScreenObserver {
 
@@ -94,19 +94,11 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
       logger.warn("Could not find styles.css");
     }
 
-    setupInstructionPane();
-    renderBoardGrid();
-    Platform.runLater(this::initializePlayerTokens);
+    boardGrid.setId("boardGrid");
+    diceResultLabel.setId("diceResultLabel");
+    currentPlayerLabel.setId("currentPlayerLabel");
+    positionLabel.setId("positionLabel");
 
-    setBackListener(() -> NavigationManager.getInstance().navigateToStartScreen());
-    setSaveListener(this::showSaveGamePopup);
-  }
-
-  /**
-   * <h2>Instruction Pane Setup</h2>
-   * Sets up the instruction pane displayed on the left side of the screen.
-   */
-  private void setupInstructionPane() {
     BorderPane bp = root;
     VBox instructionBox = new VBox(10);
     instructionBox.setId("instruction-box");
@@ -124,6 +116,16 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
     instr.setWrapText(true);
     instructionBox.getChildren().addAll(title, instr);
     bp.setLeft(instructionBox);
+
+    StackPane center = new StackPane(boardGrid, overlayPane);
+    center.setAlignment(Pos.CENTER);
+    bp.setCenter(center);
+
+    renderBoardGrid();
+    Platform.runLater(this::initializePlayerTokens);
+
+    setBackListener(() -> NavigationManager.getInstance().navigateToStartScreen());
+    setSaveListener(this::showSaveGamePopup);
   }
 
   /**
@@ -131,39 +133,32 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
    * Displays a popup allowing the user to save the current game state to a CSV file.
    */
   private void showSaveGamePopup() {
-    Popup popup = new Popup();
+    javafx.stage.Popup popup = new javafx.stage.Popup();
+
     VBox content = new VBox(10);
     content.setStyle(
             "-fx-background-color: #e0f7fa; -fx-padding: 15;"
                     + " -fx-border-color: #00acc1; -fx-border-width: 2;");
     Label header = new Label("Save Game");
     header.setStyle("-fx-font-weight: bold; -fx-text-fill: #006064;");
+
     TextField filenameField = new TextField("snl_save_" + System.currentTimeMillis());
     filenameField.setPrefWidth(220);
-    Label feedbackLabel = createFeedbackLabel();
+
+    Label feedbackLabel = new Label();
+    feedbackLabel.setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
+    feedbackLabel.setVisible(false);
+
     Button confirm = createConfirmButton(filenameField, feedbackLabel, popup);
+
     content.getChildren().addAll(header, filenameField, confirm, feedbackLabel);
     popup.getContent().add(content);
     popup.setAutoHide(true);
     popup.setHideOnEscape(true);
-    javafx.stage.Window window = root.getScene().getWindow();
-    popup.show(window,
-            window.getX() + window.getWidth() / 2 - 150,
-            window.getY() + window.getHeight() / 2 - 70
-    );
-  }
 
-  /**
-   * <h2>Create Feedback Label</h2>
-   * Creates a feedback label used in the save game popup.
-   *
-   * @return a styled Label for feedback messages
-   */
-  private Label createFeedbackLabel() {
-    Label label = new Label();
-    label.setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
-    label.setVisible(false);
-    return label;
+    javafx.stage.Window window = root.getScene().getWindow();
+    popup.show(window, window.getX() + window.getWidth() / 2 - 150,
+            window.getY() + window.getHeight() / 2 - 70);
   }
 
   /**
@@ -175,8 +170,7 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
    * @param popup the Popup to close upon successful save
    * @return a configured Button
    */
-  private Button createConfirmButton(TextField filenameField, Label feedbackLabel,
-                                     Popup popup) {
+  private Button createConfirmButton(TextField filenameField, Label feedbackLabel, Popup popup) {
     Button confirm = new Button("Save");
     confirm.setStyle("-fx-cursor: hand;");
     confirm.setOnAction(e -> {
@@ -193,7 +187,9 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
         feedbackLabel.setText("Game saved");
         feedbackLabel.setVisible(true);
         new Thread(() -> {
-          try { Thread.sleep(1000); } catch (InterruptedException ex) {
+          try {
+            Thread.sleep(1000);
+          } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             logger.error("Error while sleeping thread: {}", ex.getMessage());
           }
@@ -225,11 +221,11 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
   protected Pane getOverlay() {
     return overlayPane;
   }
-
   /**
    * <h2>renderBoardGrid</h2>
    * {@inheritDoc} Schedules rendering of static elements after base grid is drawn.
    */
+
   @Override
   protected void renderBoardGrid() {
     super.renderBoardGrid();
@@ -256,8 +252,7 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
    * <h2>drawLadder</h2>
    * Renders a ladder between two tiles on the board.
    *
-   * <P>AI: Heavy AI involvement
-   * </P>
+   * <p>AI: Heavy AI involvement</p>
    *
    * @param gc the GraphicsContext to draw on
    * @param s  the starting tile number
@@ -286,12 +281,12 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
     }
   }
 
+
   /**
    * <h2>drawSnake</h2>
    * Renders a snake curve between two tiles on the board.
    *
-   * <P>Heavi AI involvement
-   * </P>
+   * <p>Heavy AI involvement</p>
    *
    * @param gc the GraphicsContext to draw on
    * @param s  the starting tile number (snake's head)
@@ -313,8 +308,10 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
       gc.setLineWidth(4);
       gc.beginPath();
       gc.moveTo(x1, y1);
+
       double dx = x2 - x1;
       double dy = y2 - y1;
+
       gc.bezierCurveTo(
               x1 + dx * 0.25, y1 + dy * 0.1,
               x1 + dx * 0.25, y1 + dy * 0.4,
@@ -326,6 +323,7 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
               x2, y2
       );
       gc.stroke();
+
       gc.setFill(Color.DARKRED);
       gc.fillOval(x1 - 7, y1 - 7, 14, 14);
     }
@@ -363,7 +361,6 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
       }
     }
   }
-
   /**
    * <h2>getImageForPlayer</h2>
    * Helper to load the player icon image based on the chosen character.
@@ -371,6 +368,7 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
    * @param p the Player whose icon should be loaded
    * @return the Image if found, otherwise null
    */
+
   private Image getImageForPlayer(Player p) {
     if (p.getCharacter() != null) {
       URL u = getClass().getResource("/player_icons/" + p.getCharacter().toLowerCase() + ".png");
@@ -384,12 +382,15 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
   /**
    * <h2>moveToken</h2>
    * Animates a token to a new tile position without transition.
+   *
    * @param n   the token Node to move
    * @param pos the target tile number
    */
   private void moveToken(Node n, int pos) {
     StackPane t = findTileNode(pos);
-    if (t == null) return;
+    if (t == null) {
+      return;
+    }
     Bounds tb = t.localToScene(t.getBoundsInLocal());
     Bounds bb = boardGrid.localToScene(boardGrid.getBoundsInLocal());
     Bounds nb = n.getBoundsInLocal();
@@ -429,23 +430,33 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
   public void onPlayerPositionChanged(Player p, int oldPos, int newPos) {
     Platform.runLater(() -> {
       Node token = playerTokens.get(p);
-      if (token == null) return;
+      if (token == null) {
+        return;
+      }
+
       double oldX = token.getLayoutX();
       double oldY = token.getLayoutY();
+
       moveToken(token, newPos);
+
       double newX = token.getLayoutX();
       double newY = token.getLayoutY();
+
       double dx = oldX - newX;
       double dy = oldY - newY;
+
       token.setTranslateX(dx);
       token.setTranslateY(dy);
       token.setOpacity(0);
+
       FadeTransition fade = new FadeTransition(Duration.millis(300), token);
       fade.setFromValue(0);
       fade.setToValue(1);
+
       TranslateTransition slide = new TranslateTransition(Duration.millis(300), token);
       slide.setToX(0);
       slide.setToY(0);
+
       ParallelTransition anim = new ParallelTransition(fade, slide);
       anim.setOnFinished(e -> {
         token.setTranslateX(0);
@@ -455,89 +466,52 @@ public class SNLGameScreenView extends GameScreen implements GameScreenObserver 
     });
   }
 
-  /**
-   * <h2>onGameOver</h2>
-   * {@inheritDoc} Shows winner dialog and cleans up saved game.
-   */
   @Override
   public void onGameOver(Player winner) {
-    if (winner instanceof SNLPlayer sp) {
-      Platform.runLater(() -> showWinner(sp));
+    if (winner instanceof SNLPlayer SNLPlayer) {
+      Platform.runLater(() -> showWinner(SNLPlayer));
       File gameFile = controller.getCsvFile();
       controller.deleteGame(gameFile);
     }
   }
 
-  /**
-   * <h2>showWinner</h2>
-   * Displays the winner dialog for the SNLPlayer.
-   *
-   * @param winner the winning SNLPlayer
-   */
   private void showWinner(SNLPlayer winner) {
     WinnerDialogs dialogs = new WinnerDialogs();
     dialogs.showWinnerDialog(winner);
   }
 
-  /**
-   * <h2>onDiceRolled</h2>
-   * {@inheritDoc} Updates the dice result label.
-   */
+
   @Override
   public void onDiceRolled(int r) {
     diceResultLabel.setText("Roll result: " + r);
   }
 
-  /**
-   * <h2>onPlayerTurnChanged</h2>
-   * {@inheritDoc} Updates labels indicating the current player and position.
-   */
   @Override
   public void onPlayerTurnChanged(Player c) {
     currentPlayerLabel.setText("Current turn: " + c.getName());
     positionLabel.setText("Position: " + c.getPosition());
   }
 
-  /**
-   * <h2>getCurrentPlayerImage</h2>
-   * {@inheritDoc} Retrieves the current player's image for display.
-   */
   @Override
   protected Image getCurrentPlayerImage() {
     return getImageForPlayer(controller.getCurrentPlayer());
   }
 
-  /**
-   * <h2>getAllPlayers</h2>
-   * {@inheritDoc} Provides the list of all players in the game.
-   */
   @Override
   protected List<Player> getAllPlayers() {
     return controller.getPlayers();
   }
 
-  /**
-   * <h2>handleRoll</h2>
-   * {@inheritDoc} Delegates dice roll handling to controller.
-   */
   @Override
   protected void handleRoll() {
     controller.handleRoll();
   }
 
-  /**
-   * <h2>getTileColor</h2>
-   * {@inheritDoc} Asks controller for tile color styling.
-   */
   @Override
   protected String getTileColor(int n) {
     return controller.getTileColor(n);
   }
 
-  /**
-   * <h2>getPlayersAtPosition</h2>
-   * {@inheritDoc} Retrieves players at a given tile for rendering.
-   */
   @Override
   protected List<Player> getPlayersAtPosition(int n) {
     return controller.getPlayersAtPosition(n);
